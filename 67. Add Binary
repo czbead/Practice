@@ -1,0 +1,79 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat**
+| O(t): O(m+n) | O(m): O(1) | Rt: 40ms | 
+```python
+    def addBinary(self, a: str, b: str) -> str:
+        return '{0:b}'.format(int(a, 2) + int(b, 2))
+```
+Alternative: | Rt: 36ms |
+```python
+    def addBinary(self, a: str, b: str) -> str:
+        return bin(int(a, 2) + int(b, 2))[2:]
+```
+
+**II). Pop Add as Num**
+| O(t): O(m+n) | O(m): O(n) | Rt: 32ms | 
+```python
+    def addBinary(self, a: str, b: str) -> str:
+        a, b = list(a), list(b)
+        rst = []
+        carry = 0
+        while a or b or carry:
+            tmpa = int(a.pop()) if a else 0
+            tmpb = int(b.pop()) if b else 0
+            cur = tmpa + tmpb + carry
+            carry = cur // 2
+            rst.append(cur % 2)
+        rst.reverse()
+        return ''.join(map(str, rst))
+```
+Alternative: same idea two pointer. | Rt: 36ms |
+```python
+    def addBinary(self, a: str, b: str) -> str:
+        rst = ''
+        i, j = len(a) - 1, len(b) - 1
+        carry = 0
+        while i >= 0 or j >=0 or carry:
+            if i >= 0: 
+                carry += int(a[i])
+                i -= 1
+            if j >= 0: 
+                carry += int(b[j])
+                j -= 1
+            rst = str(carry % 2) + rst
+            carry //= 2
+        return rst
+```
+Referrence: https://leetcode.com/problems/add-binary/discuss/24770/Python-concise-solution-with-two-pointer.
+
+**III). Recursion-No Int**
+| O(t): O(n+m) | O(n+m): O(n) | Rt: 36ms | 
+```python
+    def addBinary(self, a: str, b: str) -> str:
+        if not a: return b
+        if not b: return a
+        ab = self.addBinary
+        if a[-1] == '1' and b[-1] == '1':
+            return ab(ab(a[:-1] ,b[:-1]), '1') + '0'
+        elif a[-1] == '0' and b[-1] == '0':
+            return ab(a[:-1] ,b[:-1]) + '0'
+        else:
+            return ab(a[:-1] ,b[:-1]) + '1'
+```
+Referrence: https://leetcode.com/problems/add-binary/discuss/24500/An-accepted-concise-Python-recursive-solution-10-lines
+Alternative: with int conciser version. | Rt: 32ms |
+```python
+    def addBinary(self, a: str, b: str) -> str:
+        if not a: return b
+        if not b: return a
+        ab = self.addBinary
+        if a[-1] == '1' and b[-1] == '1':
+            return ab(ab(a[:-1] ,b[:-1]), '1') + '0'
+        else:
+            return ab(a[:-1] ,b[:-1]) + str(int(a[-1]) + int(b[-1]))
+```
+
+
+
+
+

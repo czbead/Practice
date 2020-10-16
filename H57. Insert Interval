@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy: Insert and Merge Interval**
+| O(T): O(n) | O(S): O(1) | Rt: 84ms | 
+```python
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        if not intervals: return [newInterval]
+        rst, l, r, leng, k = [], newInterval[0], newInterval[1], len(intervals), 0
+        while k < leng:
+            i, j = intervals[k]
+            if i > r: rst.append([l, r]); break
+            if j < l: rst.append([i, j])
+            else: l, r = min(i, l), max(r, j)
+            k += 1
+        if not rst or rst[-1] != [l, r]: return rst + [[l, r]]
+        return rst + intervals[k:]
+```
+
+Alternative: | Rt: 72ms |
+```python
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        if not intervals: return [newInterval]
+        rst, l, r = [], newInterval[0], newInterval[1]
+        for ind, (i, j) in enumerate(intervals):
+            if j < l: rst.append([i, j])
+            elif i <= r: l, r = min(i, l), max(r, j)
+            else: rst.append([l, r]); break
+        #be very careful with the edge case: merge the last intervals
+        if not rst or rst[-1] != [l, r]: return rst + [[l, r]]
+        return rst + intervals[ind:]
+```
+Comment: be aware that in enumeration, the index variable will never move out of the right bound of the array. 

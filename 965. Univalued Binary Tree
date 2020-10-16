@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Simple Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 24ms | 
+```python
+    def isUnivalTree(self, root: TreeNode, val = None) -> bool:
+        if not root: return True
+        if val is None: val = root.val
+        elif root.val != val: return False
+        return self.isUnivalTree(root.left, val) and self.isUnivalTree(root.right, val)
+```
+Alternative: two level check.  | Rt: 32ms |
+```python
+    def isUnivalTree(self, root: TreeNode) -> bool:
+        if not root: return True
+        if root.left and root.left.val != root.val: return False
+        if root.right and root.right.val != root.val: return False
+        return self.isUnivalTree(root.left) and self.isUnivalTree(root.right)
+```
+Referrence: https://leetcode.com/problems/univalued-binary-tree/discuss/211190/JavaC++Python-Straight-Forward/214741
+Alternative:  concise recursion.  | Rt: 36ms |
+```python
+    def isUnivalTree(self, root: TreeNode) -> bool:
+        def uni(node):
+            return not node or node.val == root.val and uni(node.left) and uni(node.right)
+        return uni(root)
+```
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def isUnivalTree(self, root: TreeNode) -> bool:
+        if not root: return True
+        val, s = root.val, [root]
+        while s:
+            node = s.pop()
+            if not node: continue
+            if node.val != val: return False
+            s.append(node.right); s.append(node.left)
+        return True
+```

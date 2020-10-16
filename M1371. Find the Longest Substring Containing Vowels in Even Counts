@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Prefix State with HashMap**
+| O(T): O(n) | O(S): O(1) | Rt: 2736ms | 
+```python
+    def findTheLongestSubstring(self, s: str) -> int:
+        rst, l = 0, len(s)
+        last, dt = {'00000': -1}, {i: 0 for i in 'aeiou'}
+        for i in range(l):
+            if s[i] in dt: dt[s[i]] ^= 1
+            k = ''.join(str(dt[k]) for k in 'aeiou')
+            if k not in last: last[k] = i
+            else: rst = max(rst, i-last[k])
+        return rst
+```
+
+Alternative: | Rt: 436ms |
+```python
+    def findTheLongestSubstring(self, s: str) -> int:
+        rst, l = 0, len(s)
+        k, last, mask = 0, {0: -1}, {'a': 1, 'e': 2, 'i': 4, 'o': 8, 'u': 16}
+        for i in range(l):
+            if s[i] in mask: k ^= mask[s[i]]
+            if k not in last: last[k] = i
+            else: rst = max(rst, i-last[k])
+        return rst
+```
+Referrence: https://leetcode.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/discuss/531850/Python-solution-in-O(n)-time-and-O(1)-space-explained
+

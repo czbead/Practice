@@ -1,0 +1,150 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Preorder for General Binary Tree**
+| O(T): O(n) | O(S): O(n) | Rt: 76ms | 
+```python
+    def findTarget(self, root: TreeNode, k: int) -> bool:
+        def preorder(node, target, k):
+            if not node: return 
+            if node.val in target: return True
+            target.add(k - node.val)
+            return  preorder(node.left, target, k) or preorder(node.right, target, k) or False
+        return preorder(root, set(), k)
+```
+Comment: this solution works for general binary tree, don't need to be BST
+
+
+**II). Iteration for General Binary Tree**
+| O(T): O(n) | O(S): O(n) | Rt: 76ms | 
+```python
+    def findTarget(self, root: TreeNode, k: int) -> bool:
+        target, s = set(), [root]
+        while s:
+            node = s.pop()
+            if not node: continue
+            if node.val in target: return True
+            target.add(k - node.val)
+            s.append(node.left); s.append(node.right)
+        return False
+```
+
+
+**III). Convert to Sorted List**
+| O(T): O(n) | O(S): O(n) | Rt: 80ms | 
+```python
+    def findTarget(self, root: TreeNode, k: int) -> bool:
+        def inorder(node, lst):
+            if not node: return
+            inorder(node.left, lst)
+            lst.append(node.val)
+            inorder(node.right, lst)
+        lst = []
+        inorder(root, lst)
+        l, r = 0, len(lst) - 1
+        while l < r:
+            cur = lst[l] + lst[r]
+            if cur < k: l += 1
+            elif cur > k: r -= 1
+            else: return True
+        return False
+```
+
+
+**IV). Dual Recursion**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def findTarget(self, root: TreeNode, k: int) -> bool:
+        def search(node, target):
+            copynode = node
+            while node: 
+                val = node.val
+                if target > val: node = node.right
+                elif target < val: node = node.left
+                #cannot find the same node twice
+                elif node != copynode: return True
+            return False
+            
+        if not root: return 
+        find, setar = self.findTarget, k - root.val
+        return search(root, setar) or find(root.left, k) or find(root.right, k)
+```
+Comment: this solution is wrong, I give up on this because it is not a decent solution from perspective of efficiency and memory. 
+
+
+**V). Both End Generator**
+| O(T): O(n) | O(S): O(h) | Rt: 80ms | 
+```python
+    def findTarget(self, root: TreeNode, k: int) -> bool:
+    def findTarget(self, root: TreeNode, k: int) -> bool:
+        def leftgen(node):
+            if node.left: yield from leftgen(node.left)
+            yield node.val
+            if node.right: yield from leftgen(node.right)
+            
+        def rightgen(node):
+            if node.right: yield from rightgen(node.right)
+            yield node.val
+            if node.left: yield from rightgen(node.left)            
+            
+        lgen, rgen = leftgen(root), rightgen(root)
+        l, r = next(lgen), next(rgen)
+        while l < r: 
+            cur = l + r
+            if cur < k: l = next(lgen)
+            elif cur > k: r = next(rgen)
+            else: return True
+        return False
+```
+Comment: if your solution is for general binary tree, how will you optimize it for BST? This is the option. A O(lgn) solution is a have-to-do option for real interviews. return <something> in a generator will raise StopIteration(<something>).
+
+
+**VI). Generator by Stack**
+| O(T): O(n) | O(S): O(h) | Rt: 76ms | 
+```python
+    def findTarget(self, root: TreeNode, k: int) -> bool:
+        def gen(node, isleft):
+            stack = []
+            while node or stack:
+                #stack nodes into stack, reversing the order as you wish
+                if node:
+                    stack.append(node)
+                    node = node.left if isleft else node.right
+                #consume node val from stack, stack has every node in order
+                else:
+                    node = stack.pop()
+                    yield node.val
+                    #left -> root -> right or right -> root -> left
+                    node = node.right if isleft else node.left
+                    
+        lgen, rgen = gen(root, True), gen(root, False)
+        l, r = next(lgen), next(rgen)
+        while l < r: 
+            cur = l + r
+            if cur < k: l = next(lgen)
+            elif cur > k: r = next(rgen)
+            else: return True
+        return False
+```
+
+**VI). Just Stack**
+| O(T): O(n) | O(S): O(h) | Rt: 80ms | 
+```python
+    def findTarget(self, root: TreeNode, k: int) -> bool:
+        def stack_node(node, stack, isleft):
+            while node: 
+                stack.append(node)
+                node = node.left if isleft else node.right
+                    
+        stackL, stackR = [], []
+        stack_node(root, stackL, True)
+        stack_node(root, stackR, False)
+        while stackL and stackR and stackL[-1].val < stackR[-1].val: 
+            cursum = stackL[-1].val + stackR[-1].val
+            #left and root node are already in stack, stack right child
+            if cursum < k: stack_node(stackL.pop().right, stackL, True)
+            #right and root node are in stack already, stack left child
+            elif cursum > k: stack_node(stackR.pop().left, stackR, False)
+            else: return True
+        return False
+```
+
+

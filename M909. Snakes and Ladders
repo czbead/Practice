@@ -1,0 +1,48 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS**
+| O(T): O() | O(S): O() | Rt: 148ms | 
+```python
+    def snakesAndLadders(self, board: List[List[int]]) -> int:
+        arr, l = [], len(board)
+        for i in range(l-1, -1, -1):
+            if (l-1-i) % 2 == 0: arr += board[i]
+            else: arr += board[i][::-1]
+
+        visited, st = [0] * (l * l), 0 if arr[0]  == -1 else arr[0] - 1
+        q, visited[st], step = collections.deque([st]), 1, 0
+        while q:
+            size, step = len(q), step+1
+            for _ in range(size):
+                i = q.popleft()
+                for j in range(i+1, min(l*l, i+7)):
+                    k = j if arr[j] == -1 else arr[j]-1
+                    if visited[k]: continue
+                    visited[k] = 1
+                    if k == l*l - 1: return step
+                    q.append(k)
+        return -1
+```
+Referrence: https://leetcode.com/problems/snakes-and-ladders/discuss/173403/Change-to-1D-array-then-BFS
+
+Alternative: | Rt: 140ms |
+```python
+    def snakesAndLadders(self, board: List[List[int]]) -> int:
+        l = len(board)
+        visited, st = [0] * (l*l), 0
+        q, visited[st], step = collections.deque([st]), 1, 0
+        while q:
+            size, step = len(q), step+1
+            for _ in range(size):
+                i = q.popleft()
+                for j in range(i+1, min(i+7, l*l)):
+                    x, y = j // l, j % l
+                    if x & 1: y = ~y
+                    if board[~x][y] == -1: k = j
+                    else: k = board[~x][y] - 1
+                    if visited[k]: continue
+                    visited[k] = 1
+                    if k == l*l - 1: return step
+                    q.append(k)
+        return -1
+```
+Referrence: https://leetcode.com/problems/snakes-and-ladders/discuss/173378/Diagram-and-BFS

@@ -1,0 +1,58 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 48ms | 
+```python
+    def preorder(self, root: 'Node') -> List[int]:
+        def dfs(node, lst):
+            if not node: return 
+            lst.append(node.val)
+            for child in node.children: dfs(child, lst)
+        rst = []
+        dfs(root, rst)
+        return rst
+```
+Alternative: | Rt: 52ms |
+```python
+    def preorder(self, root: 'Node') -> List[int]:
+        def dfs(node, lst):
+            if not node: return 
+            lst.append(node.val)
+            for child in node.children: dfs(child, lst)
+            return lst
+        return dfs(root, [])
+```
+Triple: without helper. | Rt: 48ms |
+```python
+    def preorder(self, root: 'Node') -> List[int]:
+        if not root: return 
+        rst = [root.val]
+        for i in root.children: rst.extend(self.preorder(i))
+        return rst
+```
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 44ms | 
+```python
+    def preorder(self, root: 'Node') -> List[int]:
+        rst, s = [], [root]
+        while s:
+            node = s.pop()
+            if not node: continue
+            s.extend(reversed(node.children))
+            rst.append(node.val)
+        return rst
+```
+Comment: using node.children[::-1] is much slower at 48 ms.
+Alternative: deque version. | Rt: 52ms |
+```python
+    def preorder(self, root: 'Node') -> List[int]:
+        rst, q = [], collections.deque([root])
+        while q:
+            node = q.popleft()
+            if not node: continue
+            for i in reversed(node.children): q.appendleft(i)
+            rst.append(node.val)
+        return rst
+```
+

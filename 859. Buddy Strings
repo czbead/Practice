@@ -1,0 +1,66 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer with Counter**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def buddyStrings(self, A: str, B: str) -> bool:
+        #if not A or not B or len(A) != len(B): return False
+        if len(A) != len(B): return False
+        l, r = 0, len(A) - 1
+        while l < r: 
+            if A[l] == B[l]: l += 1
+            elif A[r] == B[r]: r -= 1
+            else: return A[l] == B[r] and A[r] == B[l] and A[l+1:r] == B[l+1:r]
+        return max(collections.Counter(A).values() or [0]) > 1
+```
+Alternative:  using set length to exclude A == B situation.  | Rt: 28ms |
+```python
+    def buddyStrings(self, A: str, B: str) -> bool:
+        if len(A) != len(B): return False
+        if A == B: return len(set(A)) < len(A)
+        l, r = 0, len(A) - 1
+        while l < r and A[l] == B[l]: l += 1
+        while l < r and A[r] == B[r]: r -= 1
+        return A[l] == B[r] and A[r] == B[l] and A[l+1:r] == B[l+1:r]
+```
+
+
+**II). Zip**
+| O(T): O(n) | O(S): O(n) | Rt: 48ms | 
+```python
+    def buddyStrings(self, A: str, B: str) -> bool:
+        if not A or not B or len(A) != len(B): return False
+        diff = [(i, j) for i, j in zip(A, B) if i != j]
+        if not diff: return max(collections.Counter(A).values() or [0]) > 1
+        if len(diff) != 2: return False
+        return diff[0] == diff[1][::-1]
+```
+Alternative: concise version.   | Rt: 32ms |
+```python
+    def buddyStrings(self, A: str, B: str) -> bool:
+        if len(A) != len(B): return False
+        if A == B: return len(set(A)) < len(A)
+        diff = [(i, j) for i, j in zip(A, B) if i != j]
+        return len(diff) == 2 and diff[0] == diff[1][::-1]
+```
+
+
+**III). O(1) Space One Pass**
+| O(T): O() | O(S): O() | Rt: 20ms | 
+```python
+    def buddyStrings(self, A: str, B: str) -> bool:
+        if len(A) != len(B): return False
+        pos, diff, alpha, switchable = [None] * 2, 0, [0] * 26, False
+        for i in range(len(A)):
+            if not switchable: 
+                ind = ord(A[i]) - ord('a')
+                alpha[ind] += 1
+                if alpha[ind] > 1: switchable = True
+            if A[i] != B[i]:
+                diff += 1
+                if diff > 2: return False
+                pos[diff - 1] = i
+        a, b = pos
+        return (not diff and switchable) or (diff == 2 and A[a] == B[b] and A[b] == B[a])
+```
+
+

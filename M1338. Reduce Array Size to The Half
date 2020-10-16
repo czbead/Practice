@@ -1,0 +1,13 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy: Most Frequent First**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 612ms | 
+```python
+    def minSetSize(self, arr: List[int]) -> int:
+        ct, l = collections.Counter(arr), len(arr)
+        rst = count = 0
+        for i in sorted(ct.values(), reverse=True):
+            rst, count = rst + 1, count + i
+            if count >= (l+1)//2: return rst
+```
+
+Others: O(n) trade off with memory (10 ^ 5 arr is too much trade off for me) - https://leetcode.com/problems/reduce-array-size-to-the-half/discuss/496714/Java-O(N)-solution

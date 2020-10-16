@@ -1,0 +1,75 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive with Bucket Collect**
+| O(T): O(n) | O(S): O(n) | Rt: 100ms | 
+```python
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        def checkrep(lst):
+            m = [0] * 9
+            for i in lst:
+                if i == '.': continue
+                ind = ord(i) - ord('1')
+                if m[ind]: return True  #return True when not valid
+                m[ind] += 1
+            return False
+        def gengrid(sti, stj):
+            return [board[sti+i][stj+j] for i in range(3) for j in range(3)]
+        
+        #if any(i != '.' and (ord(i) < ord('1') or ord(i) > ord('9')) for row in board for i in row): return False
+                
+        if any(checkrep(row) for row in board): return False
+        if any(checkrep(col) for col in zip(*board)): return False
+        if any(checkrep(gengrid(i, j)) for i in range(0, 9, 3) for j in range(0, 9, 3)): return False
+        return True
+```
+Alternative: using set length. | Rt: 96ms |
+```python
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        def checkrep(lst):
+            l = [i for i in lst if i != '.']
+            return len(set(l)) != len(l)  #return True once invalid 
+        
+        def gengrid(sti, stj):
+            return [board[sti+i][stj+j] for i in range(3) for j in range(3)]
+                
+        if any(checkrep(row) for row in board): return False
+        if any(checkrep(col) for col in zip(*board)): return False
+        if any(checkrep(gengrid(i, j)) for i in range(0, 9, 3) for j in range(0, 9, 3)): return False
+        return True
+```
+
+
+**II). One Pass**
+| O(T): O(n) | O(S): O(n) | Rt: 96ms | 
+```python
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        row, col, grid = [[0] * 9 for _ in range(9)], [[0] * 9 for _ in range(9)], [[0] * 9 for _ in range(9)]
+        for i in range(9):
+            for j in range(9):
+                if board[i][j] == '.': continue
+                #elif ord(board[i][j]) < ord('1') or ord(board[i][j]) > ord('9'): return False
+                else:
+                    ind = ord(board[i][j]) - ord('1')
+                    gridi = (i//3) * 3 + (j // 3)
+                    if row[i][ind] or col[j][ind] or grid[gridi][ind]: return False
+                    row[i][ind] += 1; col[j][ind] += 1; grid[gridi][ind] += 1
+        return True
+```
+Others: here is a similar solution using string and set https://leetcode.com/problems/valid-sudoku/discuss/15472/Short%2BSimple-Java-using-Strings; python set add don't return a state. 
+Alternative: set version. | Rt: 96ms |
+```python
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        s = set()
+        for i in range(9):
+            for j in range(9):
+                if board[i][j] == '.': continue
+                #elif ord(board[i][j]) < ord('1') or ord(board[i][j]) > ord('9'): return False
+                else:
+                    rs = 'r' + board[i][j] + str(i) 
+                    cs = 'c' + board[i][j] + str(j) 
+                    gs = 'g' + board[i][j] + str(i//3) + str(j//3)
+                    if rs in s or cs in s or gs in s: return False
+                    s.add(rs); s.add(cs); s.add(gs)
+        return True
+```
+Commment: the core of this solution is index resolving for the 3*3 grid. 
+

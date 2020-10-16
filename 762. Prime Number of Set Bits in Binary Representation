@@ -1,0 +1,63 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Count 1s**
+| O(T): O(n) | O(S): O(1) | Rt: 168ms | 
+```python
+    def countPrimeSetBits(self, L: int, R: int) -> int:
+        rst, prime = 0, {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31}
+        for i in range(L, R + 1):
+            if bin(i).count('1') in prime: rst += 1
+        return rst
+```
+Comment: R < 10 ^ 6 (2 ^ 20), therefore we can remove 23, 29, 31 from prime set. 
+Alternative: | Rt: 192ms |
+```python
+    def countPrimeSetBits(self, L: int, R: int) -> int:
+        return sum(0b10100010100010101100 >> bin(i).count('1') & 1 for i in range(L, R+1) )
+```
+Referrence: https://leetcode.com/problems/prime-number-of-set-bits-in-binary-representation/discuss/113232/665772
+Triple: One-liner.  | Rt: 180ms |
+```python
+    def countPrimeSetBits(self, L: int, R: int) -> int:
+        return sum(bin(i).count('1') in {2, 3, 5, 7, 11, 13, 17, 19} for i in range(L, R+1))
+```
+
+
+**II). Bit Manipulation For Fun**
+| O(T): O(n) | O(S): O(1) | Rt: 1756ms | 
+```python
+    def countPrimeSetBits(self, L: int, R: int) -> int:
+    	#(x & 1) the parentheses cannot omit, or it will be wrong since x >> 1 will execute first
+        ctBit = lambda x: (x & 1) + ctBit(x >> 1) if x > 0 else 0
+        return sum(ctBit(i) in {2, 3, 5, 7, 11, 13, 17, 19} for i in range(L, R+1))
+```
+Alternative: tuitive fashion.  | Rt: 1124ms |
+```python
+    def countPrimeSetBits(self, L: int, R: int) -> int:
+        def getBit(n):
+            rst = 0
+            while n:
+                rst += n & 1
+                n >>= 1
+            return rst
+        return sum(getBit(i) in {2, 3, 5, 7, 11, 13, 17, 19} for i in range(L, R+1))
+```
+Comment: these two are bit-by-bit fashion. 
+Triple:  n & (n - 1)  | Rt: 548ms |
+```python
+    def countPrimeSetBits(self, L: int, R: int) -> int:
+        def getBit(n):
+            rst = 0
+            while n:
+                rst += 1
+                n &= n - 1
+            return rst
+        return sum(getBit(i) in {2, 3, 5, 7, 11, 13, 17, 19} for i in range(L, R+1))
+```
+Forth: lambda fashion.  | Rt: 840ms |
+```python
+    def countPrimeSetBits(self, L: int, R: int) -> int:
+        ctBit = lambda x: 1 + ctBit(x & (x-1)) if x else 0
+        return sum(ctBit(i) in {2, 3, 5, 7, 11, 13, 17, 19} for i in range(L, R+1))
+```
+Comment: these two are 1-by-1 fashon, skip all 0s between, therefore much faster. 
+Summary: all of the solutions, they play two things - prime check or bit counting. You can use bit manipulation (masking) to do the prime check, or using set which is probably faster (prime product is also a way to check the prime here). Counting bit, can utilize bin and string count function, or bit-by-bit count 1s, or 1-by-1 count 1s.  

@@ -1,0 +1,69 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def canMakePaliQueries(self, s: str, queries: List[List[int]]) -> List[bool]:
+        rst = []
+        for st, end, k in queries:
+            m = [0] * 26
+            for i in range(st, end+1):
+                ind = ord(s[i]) - ord('a')
+                m[ind] += 1
+                if m[ind] == 2: m[ind] = 0
+            if sum(m) // 2 <= k: rst.append(True)
+            else: rst.append(False)
+        return rst
+```
+
+
+**II). Prefix Sum with Bucket Snapshot**
+| O(T): O() | O(S): O() | Rt: 2872ms | 
+```python
+    def canMakePaliQueries(self, s: str, queries: List[List[int]]) -> List[bool]:
+        l, m = len(s), [0] * 26
+        presum = [[0]*26 for _ in range(l+1)]
+        for i in range(l):
+            m[ord(s[i]) - ord('a')] += 1
+            presum[i+1] = m[:]
+  
+        rst = []
+        for st, end, k in queries:
+            arr = [presum[end+1][i] - presum[st][i] for i in range(26)]
+            if sum(i % 2 for i in arr) // 2 <= k: rst.append(True)
+            else: rst.append(False)
+        return rst
+```
+
+Alternative: with xor; | Rt: 2480ms |
+```python
+    def canMakePaliQueries(self, s: str, queries: List[List[int]]) -> List[bool]:
+        l, m = len(s), [0] * 26
+        presum = [[0]*26 for _ in range(l+1)]
+        for i in range(l):
+            m[ord(s[i]) - ord('a')] ^= 1
+            presum[i+1] = m[:]
+  
+        rst = []
+        for st, end, k in queries:
+            arr = [presum[end+1][i] ^ presum[st][i] for i in range(26)]
+            rst.append(sum(arr)//2 <= k)
+        return rst
+```
+
+
+**III). Bit Manipulation**
+| O(T): O() | O(S): O() | Rt: 1420ms | 
+```python
+    def canMakePaliQueries(self, s: str, queries: List[List[int]]) -> List[bool]:
+        l, m = len(s), 0
+        presum = [0] * (l+1)
+        for i in range(l):
+            m ^= (1 << (ord(s[i]) - ord('a')))
+            presum[i+1] = m
+  
+        rst, mask = [], 0x3ffffff
+        for st, end, k in queries:
+            bi = (presum[end+1] ^ presum[st]) & mask
+            rst.append(bin(bi).count('1')//2 <= k)
+        return rst
+```

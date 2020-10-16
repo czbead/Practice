@@ -1,0 +1,42 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Anchor Diagonal Ends**
+| O(T): O(n*n) | O(S): O() | Rt: 2018ms | 
+```python
+    def minAreaRect(self, points: List[List[int]]) -> int:
+        rst, seen = float('inf'), set()
+        for i, j in points:
+            for m, n in points:
+                if (i, n) in seen and (m, j) in seen:
+                    rst = min(rst, abs(j-n) * abs(i-m))
+            seen.add((i, j))
+        return 0 if rst == float('inf') else rst
+```
+Referrence: https://leetcode.com/problems/minimum-area-rectangle/discuss/192021/Python-O(N1.5)-80ms
+
+
+**II). Sort with HashMap**
+| O(T): O() | O(S): O() | Rt: 664ms | 
+```python
+    def minAreaRect(self, points: List[List[int]]) -> int:
+        dt = collections.defaultdict
+        xs, ys, l = dt(list), dt(list), len(points)
+        for i, j in points: xs[i].append(j); ys[j].append(i)
+        if len(xs) == l or len(ys) == l: return 0
+        axe = xs
+        if len(ys) < len(xs): axe = ys
+            
+        rst, pre = float('inf'), {}
+        for k in sorted(axe):
+            if len(axe[k]) < 2: continue
+            axe[k].sort()
+            arr, leng = axe[k], len(axe[k])
+            for i in range(1, leng):
+                for j in range(i):
+                    y0, y1 = arr[j], arr[i]
+                    if (y0, y1) in pre:
+                        rst = min(rst, (y1-y0) * (k-pre[(y0, y1)]))
+                    pre[(y0, y1)] = k     
+        return 0 if rst == float('inf') else rst
+```
+Referrence: https://leetcode.com/problems/minimum-area-rectangle/discuss/192021/Python-O(N1.5)-80ms
+

@@ -1,0 +1,16 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Math**
+| O(T): O() | O(S): O() | Rt: 32ms | 
+```python
+    def mirrorReflection(self, p: int, q: int) -> int:
+        gcdv = math.gcd(p, q)
+        p, q = p // gcdv, q // gcdv
+        if p & 1:
+            #p is odd; q is odd
+            if q & 1: return 1
+            #p is odd, q is even
+            else: return 0
+        #p is even, q is odd
+        return 2
+```
+Referrence: https://leetcode.com/problems/mirror-reflection/discuss/146336/Java-solution-with-an-easy-to-understand-explanation

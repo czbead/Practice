@@ -1,0 +1,21 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Post Order Traverse**
+| O(T): O(n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def distributeCoins(self, root: TreeNode) -> int:
+        def postorder(node, rst):
+            if not node: return 0
+            #amount of coins gets from left branch and right branch
+            l, r = postorder(node.left, rst), postorder(node.right, rst)
+            rst[0] += abs(l) + abs(r)  #offset (moves) from children nodes to current node
+            #amount of coins in current node that needs move in (negative) or move out (positive); 
+            return node.val + l + r - 1
+        
+        rst = [0]
+        postorder(root, rst)
+        return rst[0]
+```
+Referrence: https://leetcode.com/problems/distribute-coins-in-binary-tree/discuss/221939/C%2B%2B-with-picture-post-order-traversal
+
+Others: iterative solution can be found here - https://leetcode.com/problems/distribute-coins-in-binary-tree/discuss/221930/JavaC%2B%2BPython-Recursive-Solution
+

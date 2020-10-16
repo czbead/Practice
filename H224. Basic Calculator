@@ -1,0 +1,73 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack**
+| O(T): O(n) | O(S): O() | Rt: 108ms | 
+```python
+    def calculate(self, s: str) -> int:
+        if not s: return 0
+        cur, stack = '', []
+        for i in s:
+            if i == ' ': continue
+            if i == ')': 
+                n = int(cur) if cur else 0
+                while stack and stack[-1] != '+' and stack[-1] != '-':
+                    n += stack.pop()
+                stack.append(n if stack.pop() == '+' else -n)
+                cur = ''
+            elif i == '(': 
+                stack.append('-' if cur == '-' else '+')
+                cur  = ''
+            elif i == '+' or i == '-':
+                if cur: stack.append(int(cur))
+                cur = i
+            else: cur += i
+        if cur: stack.append(int(cur))
+        return sum(stack)
+```
+
+Alternative: | Rt: 88ms |
+```python
+    def calculate(self, s: str) -> int:
+        if not s: return 0
+        cur, stack, summ = '', [], 0
+        for i in s:
+            if i == ' ': continue
+            if i == ')': 
+                if cur: summ += int(cur)
+                summ = summ * stack.pop() + stack.pop()
+                cur = ''
+            elif i == '(': 
+                stack.append(summ)
+                stack.append(-1 if cur == '-' else 1)
+                cur, summ  = '', 0
+            elif i == '+' or i == '-':
+                if cur: summ += int(cur)
+                cur = i
+            else: cur += i
+        if cur: summ += int(cur)
+        return summ
+```
+Referrence: https://leetcode.com/problems/basic-calculator/discuss/62361/Iterative-Java-solution-with-stack
+
+Alternative: | Rt: 92ms |
+```python
+    def calculate(self, s: str) -> int:
+        if not s: return 0
+        n, stack, summ, sign = 0, [], 0, 1
+        for i in s:
+            if i == ' ': continue
+            if i == ')': 
+                summ, n = summ+n*sign, 0
+                summ = summ * stack.pop() + stack.pop()
+            elif i == '(': 
+                stack.append(summ)
+                stack.append(sign)
+                summ, sign = 0, 1
+            elif i == '+' or i == '-':
+                summ += sign * n
+                n, sign = 0, 1 if i == '+' else -1
+            else: n = n*10 + int(i)
+        return summ + n * sign
+```
+Reference: https://leetcode.com/problems/basic-calculator/discuss/62361/Iterative-Java-solution-with-stack
+
+Others: https://leetcode.com/problems/basic-calculator/discuss/62361/Iterative-Java-solution-with-stack/64037

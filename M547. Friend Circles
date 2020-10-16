@@ -1,0 +1,86 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS: Paint All**
+| O(T): O(n*n) | O(S): O(n*n) | Rt: 824ms | 
+```python
+    def findCircleNum(self, M: List[List[int]]) -> int:
+        def dfs(M, n, i, j, visited):
+            for x in range(n):
+                if M[i][x] and (i, x) not in visited:
+                    visited.add((i, x))
+                    dfs(M, n, i, x, visited)
+                if M[x][j] and (x, j) not in visited:
+                    visited.add((x, j))
+                    dfs(M, n, x, j, visited)
+        
+        n = len(M)
+        rst, visited = 0, set()
+        for i in range(n):
+            for j in range(n):
+                if M[i][j] and (i, j) not in visited:
+                    rst += 1
+                    visited.add((i, j))
+                    dfs(M, n, i, j, visited)
+        return rst
+```
+
+Alternative: O(1) space soluion. | Rt: 496ms |
+```python
+    def findCircleNum(self, M: List[List[int]]) -> int:
+        def dfs(M, n, i, j):
+            for x in range(n):
+                if M[i][x]:
+                    M[i][x] = 0
+                    dfs(M, n, i, x)
+                if M[x][j]:
+                    M[x][j] = 0
+                    dfs(M, n, x, j)
+        
+        n = len(M)
+        rst = 0
+        for i in range(n):
+            for j in range(n):
+                if M[i][j]:
+                    rst += 1
+                    M[i][j] = 0
+                    dfs(M, n, i, j)
+        return rst
+```
+
+
+**II). DFS: Person Angle**
+| O(T): O(n) | O(S): O(n) | Rt: 192ms | 
+```python
+    def findCircleNum(self, M: List[List[int]]) -> int:
+        def dfs(M, n, i, visited):
+            for j in range(n):
+                if not visited[j] and (M[i][j] or M[j][i]):
+                    visited[j] = 1
+                    dfs(M, n, j, visited)
+        
+        rst, n = 0, len(M)
+        visited = [0] * n
+        for i in range(n):
+            if not visited[i]:
+                rst += 1
+                visited[i] = 1
+                dfs(M, n, i, visited)
+        return rst
+```
+Referrence: https://leetcode.com/problems/friend-circles/discuss/101338/Neat-DFS-java-solution
+
+Alternative: O(1) space. | Rt: 320ms |
+```python
+    def findCircleNum(self, M: List[List[int]]) -> int:
+        def dfs(M, n, i):
+            for j in range(n):
+                if M[i][j] or M[j][i]:
+                    M[i][j] = M[j][i] = 0
+                    dfs(M, n, j)
+        
+        rst, n = 0, len(M)
+        for i in range(n):
+            if M[i][i]:
+                rst += 1
+                dfs(M, n, i)
+        return rst
+```

@@ -1,0 +1,66 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Union Find: Disjoint Set**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def findRedundantConnection(self, edges: List[List[int]]) -> List[int]:
+        def find(node, i):
+            #single node set, single node component, itself is root node
+            if node[i] == -1: return i
+            #bottom-up from leaf node to root node
+            return find(node, node[i])
+        
+        N = len(edges)
+        node, rst = [-1] * N, None
+        for i, j in edges:
+            iRoot, jRoot = find(node, i-1), find(node, j-1)
+            #find one edge that leads to a cycle, go on searching because this may not be the last one
+            if iRoot == jRoot: rst = (i, j)
+            #this is the union operation
+            else: node[iRoot] = jRoot
+        return rst
+```
+Referrence: https://www.youtube.com/watch?v=wU6udHRIkcc; https://leetcode.com/problems/redundant-connection/discuss/123819/Union-Find-with-Explanations-(Java-Python)
+
+Alternative: with collapsing find operation. | Rt: 52ms |
+```python
+    def findRedundantConnection(self, edges: List[List[int]]) -> List[int]:
+        def find(node, i):
+            #collapsing find, makes new direct edge; 
+            if node[i] == -1: return i
+            node[i] = find(node, node[i])
+            return node[i]
+        
+        N = len(edges)
+        node, candidate = [-1] * (N+1), None
+        for i, j in edges:
+            iroot = find(node, i)
+            jroot = find(node, j)
+            #a edge makes a cycle, may not be the last one. I think cannot return directly
+            #it is a candidate, we need the last candidate; don't perform union on it!
+            if iroot == jroot: candidate = (i, j)
+            else: node[iroot] = jroot
+        return candidate
+```
+
+Triple: return first cycle-caused edge seems ok. | Rt: 48ms |
+```python
+    def findRedundantConnection(self, edges: List[List[int]]) -> List[int]:
+        def find(node, i):
+            #collapsing find, makes new direct edge; 
+            if node[i] == -1: return i
+            node[i] = find(node, node[i])
+            return node[i]
+        
+        N = len(edges)
+        node = [-1] * (N+1)
+        for i, j in edges:
+            iroot = find(node, i)
+            jroot = find(node, j)
+            #a edge makes a cycle, may not be the last one. I think cannot return directly
+            #it is a candidate, we need the last candidate; don't perform union on it!
+            if iroot == jroot: return (i, j)
+            node[iroot] = jroot
+```
+
+Comment: be very careful don't perform union on cycle-triggled edge, that will leads to dead loop and wrong result. I guess why we can return the first cycle-triggled edge is because of the description: "The given input is a graph that started as a tree with N nodes (with distinct values 1, 2, ..., N), with one additional edge added. "
+

@@ -1,0 +1,70 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort then Brute Force**
+| O(T): O(n*n) | O(S): O(n) | Rt: 1468ms | 
+```python
+    def findLongestChain(self, pairs: List[List[int]]) -> int:
+        if len(pairs) == 1: return 1 
+        pairs.sort(key=lambda x: x[1])
+        rst, seen, l = 0, set(), len(pairs)
+        for i in range(l-1):
+            if i in seen: continue
+            if l - i <= rst: break
+            cnt, ii = 1, i
+            for j in range(i+1, l):
+                if pairs[j][0] > pairs[ii][1]: 
+                    cnt, ii = cnt+1, j
+                    seen.add(j)
+            rst = max(rst, cnt)
+        return rst
+```
+
+Alternative: | Rt: 308ms |
+```python
+    def findLongestChain(self, pairs: List[List[int]]) -> int:
+        if len(pairs) == 1: return 1 
+        pairs.sort(key=lambda x: x[1])
+        rst, seen, l = 0, set(), len(pairs)
+        for i in range(l-1):
+            if i in seen: continue
+            if l - i <= rst: break
+            cnt, ii = 1, i
+            for j in range(i+1, l):
+                if j in seen or cnt + l-j <= rst: break
+                if pairs[j][0] > pairs[ii][1]: 
+                    cnt, ii = cnt+1, j
+                    seen.add(j)
+            rst = max(rst, cnt)
+        return rst
+```
+
+
+**II). Greedy**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 208ms | 
+```python
+    def findLongestChain(self, pairs: List[List[int]]) -> int:
+        pairs.sort(key=lambda x: x[1])
+        ct, j = 1, 0
+        for i in range(1, len(pairs)):
+            if pairs[i][0] > pairs[j][1]: ct, j = ct + 1, i
+        return ct
+```
+Referrence: https://leetcode.com/problems/maximum-length-of-pair-chain/discuss/105607/4-Liner-Python-Greedy
+Comment: the piars are sorted by the second item, whenever the comming item can be taken, always take it, because it gives "the greatest room" for following sequence. Let us make an assumption, you don't take the current pair, instead, you take the next valid pair, the ending number of that pair has to be greater than current ending number which leaves less room for following sequence. Those interval problem, schedule problem (has start time and end time), most likeyly has greedy solution, we often need to sort by the ending time. 
+
+
+**III). DP**
+| O(T): O(n*n) | O(S): O(1) | Rt: 3936ms | 
+```python
+    def findLongestChain(self, pairs: List[List[int]]) -> int:
+        pairs.sort(key=lambda x: x[1])
+        l = len(pairs)
+        dp = [1] * l
+        for i in range(1, l):
+            for j in range(i):
+                if pairs[i][0] > pairs[j][1]: cur = dp[j] + 1
+                else: cur = dp[j]
+                dp[i] = max(dp[i], cur)
+        return dp[-1]
+```
+Referrence: https://leetcode.com/problems/maximum-length-of-pair-chain/discuss/105602/easy-dp
+Comment: dp has no advantage on this problem. 

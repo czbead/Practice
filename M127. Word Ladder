@@ -1,0 +1,74 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Step BFS with Brute Froce**
+| O(T): O(n) | O(S): O(n) | Rt:292ms | 
+```python
+    def ladderLength(self, st: str, end: str, words: List[str]) -> int:
+        available = set(words)
+        if end not in available: return 0
+        step, q = 0, collections.deque([st])
+        while q:
+            size, step = len(q), step+1
+            for _ in range(size):
+                cur = q.popleft()
+                if cur == end: return step
+                for i in range(len(cur)):
+                    a, b = cur[:i], cur[i+1:]
+                    for j in 'abcdefghijklmnopqrstuvwxyz':
+                        tmp = a + j + b
+                        if tmp in available:
+                            available.remove(tmp)
+                            q.append(tmp)
+        return 0
+```
+
+Alternative: | Rt: 368ms |
+```python
+    def ladderLength(self, st: str, end: str, words: List[str]) -> int:
+        available = set(words)
+        if end not in available: return 0
+        step, q = 0, collections.deque([st])
+        while q:
+            size, step = len(q), step+1
+            for _ in range(size):
+                cur = q.popleft()
+                if cur == end: return step
+                curasarr = list(cur)
+                for i in range(len(cur)):
+                    original = cur[i]
+                    for j in 'abcdefghijklmnopqrstuvwxyz':
+                        curasarr[i] = j
+                        tmp = ''.join(curasarr)
+                        if tmp in available:
+                            available.remove(tmp)
+                            q.append(tmp)
+                    curasarr[i] = original
+        return 0
+```
+
+
+**II). BFS Two-End Search**
+| O(T): O(n) | O(S): O() | Rt: 72ms | 
+```python
+    def ladderLength(self, st: str, end: str, words: List[str]) -> int:
+        total, used = set(words), set()
+        if end not in total: return 0
+        step, s1, s2, l = 0, set([st]), set([end]), len(st)
+        while s1 and s2:
+            step += 1
+            if len(s1) > len(s2): s1, s2 = s2, s1
+            s_next = set()
+            for word in s1:
+                for i in range(l):
+                    a, b = word[:i], word[i+1:]
+                    for j in 'abcdefghijklmnopqrstuvwxyz':
+                        tmp = a + j + b
+                        if tmp in total:
+                            if tmp in s2: return step + 1
+                            if tmp not in used:
+                                used.add(tmp)
+                                s_next.add(tmp)
+            s1 = s_next
+     
+        return 0
+```
+Referrence: https://leetcode.com/problems/word-ladder/discuss/40711/Two-end-BFS-in-Java-31ms.

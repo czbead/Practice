@@ -1,0 +1,70 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Conditional Analysis**
+| O(T): O(m+n) | O(S): O(1) | Rt: 564ms | 
+```python
+    def sumEvenAfterQueries(self, A: List[int], queries: List[List[int]]) -> List[int]:
+        rst, base = [], sum(i for i in A if not i % 2)
+        for v, i in queries:
+            #new: odd, old: odd 
+            if v % 2 and A[i] % 2: base += v + A[i]
+            #new: old, old: even
+            elif v % 2 and not (A[i] % 2): base -= A[i]
+            #new: even, old: even
+            elif not (v % 2) and not (A[i] % 2): base += v
+            #the else is new: even, old: odd. base remain
+            A[i] += v
+            rst.append(base)
+        return rst
+```
+Alternative: using "&1" trick.  | Rt: 564ms |
+```python
+    def sumEvenAfterQueries(self, A: List[int], queries: List[List[int]]) -> List[int]:
+        rst,base = [], sum(i for i in A if not i % 2)
+        for v, i in queries:
+            if A[i] & 1 == v & 1 == 0: base += v
+            elif A[i] & 1 == v & 1 == 1: base += A[i] + v
+            elif A[i] & 1 == 0 and v & 1 == 1: base -= A[i]
+            A[i] += v
+            rst.append(base)
+        return rst
+```
+
+
+**II). Remove then Reconsider**
+| O(T): O(m+n) | O(S): O(1) | Rt: 580ms | 
+```python
+    def sumEvenAfterQueries(self, A: List[int], queries: List[List[int]]) -> List[int]:
+        rst, base = [], sum(i for i in A if not i % 2)
+        for v, i in queries:
+            if A[i] % 2 == 0: base -= A[i]
+            A[i] += v
+            if A[i] % 2 == 0: base += A[i]
+            rst.append(base)
+        return rst
+```
+Alternative: using &1 to detect odd.  | Rt: 560ms |
+```python
+    def sumEvenAfterQueries(self, A: List[int], queries: List[List[int]]) -> List[int]:
+        rst,base = [], sum(i for i in A if not i % 2)
+        for v, i in queries:
+            if A[i] & 1 == 0: base -= A[i]
+            A[i] += v
+            if A[i] & 1 == 0: base += A[i]
+            rst.append(base)
+        return rst
+```
+Comment: it seems that "&1" tirck works for negative number as well. 
+
+
+**III). Naive -- TLE**
+| O(T): O(mn) | O(S): O(1) | Rt: ms | TLE 
+```python
+    def sumEvenAfterQueries(self, A: List[int], queries: List[List[int]]) -> List[int]:
+        rst = []
+        for v, i in queries:
+            A[i] += v
+            rst.append(sum(i for i in A if i % 2 == 0))
+        return rst
+```
+
+

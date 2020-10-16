@@ -1,0 +1,131 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stringify**
+| O(T): O(n) | O(S): O(1) | Rt: 116ms | 
+```python
+    def rotatedDigits(self, N: int) -> int:
+        rst, same, valid = 0, {'0', '1', '8'}, {'0', '1', '8', '2', '5', '6', '9'}
+        for i in range(1, N + 1):
+            s = str(i)
+            if any(d not in valid for d in s): continue
+            if all(d in same for d in s): continue
+            rst += 1
+        return rst
+```
+Alternative: | Rt: 116ms |
+```python
+    def rotatedDigits(self, N: int) -> int:
+        rst, same, valid = 0, {'0', '1', '8'}, {'0', '1', '8', '2', '5', '6', '9'}
+        for i in range(1, N + 1):
+            s = str(i)
+            if all(d in valid for d in s) and any(d not in same for d in s): rst += 1
+        return rst
+```
+Triple: One-liner.  | Rt: 108ms |
+```python
+    def rotatedDigits(self, N: int) -> int:
+        return sum(all(m in {'0', '1', '8', '2', '5', '6', '9'} for m in str(i)) and any(n not in {'0', '1', '8'} for n in str(i)) for i in range(1, N+1))
+```
+
+
+**II). No String**
+| O(T): O(n) | O(S): O(1) | Rt: 92ms | 
+```python
+    def rotatedDigits(self, N: int) -> int:
+        def isGood(n, same, valid):
+            is_good = False
+            while n:
+                digit = n % 10
+                if digit not in valid: return False
+                if digit not in same: is_good = True
+                n //= 10
+            return is_good
+                
+        rst, same, valid = 0, {0, 1, 8}, {0, 1, 8, 2, 5, 6, 9}   
+        return sum(isGood(i, same, valid) for i in range(1, N + 1))
+```
+Alternative: lambda fashion.  | Rt: 224ms |
+```python
+    def rotatedDigits(self, N: int) -> int:
+        getDigit = lambda n: [n % 10] + getDigit(n // 10) if n > 0 else [0]    
+        same, valid = {0, 1, 8}, {0, 1, 8, 2, 5, 6, 9}   
+        isGood = lambda l: all(i in valid for i in l) and any(i not in same for i in l)
+        return sum(isGood(getDigit(i)) for i in range(1, N + 1))
+```
+
+
+**III). Stringify with Set**
+| O(T): O(n) | O(S): O(lgn) | Rt: 88ms | 
+```python
+    def rotatedDigits(self, N: int) -> int:
+        rst, same, valid = 0, {'0', '1', '8'}, {'0', '1', '8', '2', '5', '6', '9'}
+        for i in range(1, N + 1):
+            s = set(str(i))
+            if s & valid == s and (s - same): rst += 1
+        return rst
+```
+Alternative: lambda fashion.  | Rt: 100ms |
+```python
+    def rotatedDigits(self, N: int) -> int:
+        same, valid = {'0', '1', '8'}, {'0', '1', '8', '2', '5', '6', '9'}
+        isGood = lambda s: bool(s & valid == s and (s - same))
+        return sum(isGood(set(str(i))) for i in range(1, N + 1))
+```
+Triple: issubset.   | Rt: 92ms |
+```python
+    def rotatedDigits(self, N: int) -> int:
+        same, valid = {'0', '1', '8'}, {'0', '1', '8', '2', '5', '6', '9'}
+        isGood = lambda s: s.issubset(valid) and not s.issubset(same)
+        return sum(isGood(set(str(i))) for i in range(1, N + 1))
+```
+Referrence: https://leetcode.com/problems/rotated-digits/discuss/116530/O(logN)-Time-O(1)-Space
+
+
+**IV). Opposite Check with Stringify**
+| O(T): O(n) | O(S): O(1) | Rt: 124ms | 
+```python
+    def rotatedDigits(self, N: int) -> int:
+        good, nonvalid = {'2', '5', '6', '9'}, {'3', '4', '7'}
+        isGood = lambda s: all(i not in nonvalid for i in s) and any(i in good for i in s) 
+        return sum(isGood(str(i)) for i in range(1, N + 1))
+```
+
+
+**V). DP: Optimal**
+| O(T): O(lgn) | O(S): O(n) | Rt: 52ms | 
+```python
+    def rotatedDigits(self, N: int) -> int:
+        #-1 -> invalid, 0 -> same, 1 -> diff
+        dp = [-1] * (N + 1)
+        #need to start at 0, or dp[0] will remain -1, should be same: [0]
+        for i in range(N + 1):
+            if i < 10:
+                if i in {0, 1, 8}: dp[i] = 0
+                elif i in {2, 5, 6, 9}: dp[i] = 1
+            else:
+                #no worry for a, b not initialized, because all previous index has been visited before, has real state in it
+                a, b = dp[i//10], dp[i%10]
+                if a == b == 0: dp[i] = 0
+                elif a >= 0 and b >= 0: dp[i] = 1
+        return sum(i > 0 for i in dp)
+```
+Referrence: https://leetcode.com/problems/rotated-digits/discuss/117975/Java-dp-solution-9ms
+Comment: this DP solution saves a lot of repeat work. Instead of checking that 10 digits again and again, it look up the established number for quick check. This solution is based on the assumption that the previous establised state can decide the current state.  
+Alternative: using product  | Rt: 92ms |
+```python
+    def rotatedDigits(self, N: int) -> int:
+        rst, n = 0, [1, 1, 2, 0, 0, 2, 2, 0, 1, 2]
+        for i in range(N+1):
+            j, s = i, 1
+            while j:
+                s *= n[j % 10]
+                j //= 10
+                if not s: continue
+            if s > 1: rst += 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/rotated-digits/discuss/130681/simple-easy-C%2B%2B
+
+
+Other: here is another O(lgN) solution which is understandable (permutation style), however I not recommend it because you can hardly come up with in real interviews. Even you can think it out, you easily code out problematic implementation. 
+https://leetcode.com/problems/rotated-digits/discuss/116530/O(logN)-Time-O(1)-Space
+

@@ -1,0 +1,89 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(t): O(n) | O(m): O(1) | Rt: 32ms | 
+note: the result is a collection, the result itself is not counted into the space complexity
+```python
+    def binaryTreePaths(self, root: TreeNode) -> List[str]:
+        def dfs(node, path):
+            if not node: return
+            path = path + str(node.val)
+            if not node.left and not node.right: self.rst.append(path)
+            dfs(node.left, path + "->")
+            dfs(node.right, path + "->")
+            
+        self.rst = []
+        dfs(root, '')
+        return self.rst
+```
+Comment: the problem asks to return all the paths, better use an outer container to collect them from the process instead of returning it directly from the recursion function. Alternatively, you can pass the result as a parameter and return it at last.
+Alternative: 
+```python
+    def binaryTreePaths(self, root: TreeNode) -> List[str]:
+        def dfs(node, path, rst):
+            path = path + str(node.val)
+            if not node.left and not node.right: rst.append(path)
+            if node.left: dfs(node.left, path + "->", rst)
+            if node.right: dfs(node.right, path + "->", rst)
+            return rst
+
+        return dfs(root, '', []) if root else []
+```
+
+
+**II). Iteration-DFS**
+| O(t): O(n) | O(m): O(1) | Rt: 16ms | 
+```python
+    def binaryTreePaths(self, root: TreeNode) -> List[str]:
+        rst, s = [], [(root, '')]
+        while s:
+            node, path = s.pop()
+            if not node: continue
+            path = path + str(node.val)
+            if not node.left and not node.right: rst.append(path)
+            s.append((node.right, path + "->"))
+            s.append((node.left, path + "->")) 
+        return rst
+```
+Alternative: strict check, less iterations. | Rt: 20ms |
+```python
+    def binaryTreePaths(self, root: TreeNode) -> List[str]:
+        rst, s = [], [(root, '')] if root else []
+        while s:
+            node, path = s.pop()
+            path = path + str(node.val)
+            if not node.left and not node.right: rst.append(path)
+            if node.right: s.append((node.right, path + "->"))
+            if node.left: s.append((node.left, path + "->")) 
+        return rst
+```
+Comment: no matter "loose none check" or "strict none check", it is a good habit to keep it consistent from the begining to the end. 
+
+
+**III). Iteration-BFS**
+| O(t): O(n) | O(m): O(1) | Rt: 28ms | 
+```python
+    def binaryTreePaths(self, root: TreeNode) -> List[str]:
+        rst, q = [], collections.deque([(root, '')])
+        while q:
+            node, path = q.popleft()
+            if not node: continue
+            path = path + str(node.val)
+            if not node.left and not node.right: rst.append(path)
+            q.append((node.left, path + "->")) 
+            q.append((node.right, path + "->"))
+        return rst
+```
+
+
+**IV). Recursion-Advance**
+| O(t): O(n) | O(m): O(1) | Rt: 28ms | 
+```python
+    def binaryTreePaths(self, root: TreeNode) -> List[str]:
+        #only applys to the root node, other nodes will be stopped by the second check in advance.
+        if not root: return []
+        if not root.left and not root.right: return [str(root.val)]
+        btp = self.binaryTreePaths
+        path = str(root.val) + '->'
+        return [path + i for i in btp(root.left)] + [path + i for i in btp(root.right)]
+```
+Comment: better practice multiple versions. This version may not be a good choice for interview if you are not confident enough.

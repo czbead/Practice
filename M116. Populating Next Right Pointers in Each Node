@@ -1,0 +1,52 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 60ms | 
+```python
+    def connect(self, root: 'Node') -> 'Node':
+        if not root: return 
+        #only need to check one side, because of "perfect"
+        if not root.left: return root
+        root.left.next = root.right
+        if root.next: root.right.next = root.next.left
+        self.connect(root.left)
+        self.connect(root.right)
+        return root
+```
+
+
+**II). Iteration -- Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 60ms | 
+```python
+    def connect(self, root: 'Node') -> 'Node':
+        if not root: return 
+        st, flat = root, None
+        while st.left:  
+            flat = st
+            while flat:
+                flat.left.next = flat.right
+                if flat.next: flat.right.next = flat.next.left
+                flat = flat.next
+            st = st.left
+        return root
+```
+Referrence: https://leetcode.com/problems/populating-next-right-pointers-in-each-node/discuss/37472/A-simple-accepted-solution
+Comment: st pointer point to the left most node of each level; flat pointer traverse nodes in current level and connect nodes in next level.  
+Alternative: 
+```python
+    def connect(self, root: 'Node') -> 'Node':
+        if not root: return 
+        #nxtrow pointer point to the left most of next row, cur move both vertical and horizontal
+        #it will lose the track of next row left child node.
+        cur, nxtrow = root, root.left
+        while nxtrow:
+            cur.left.next = cur.right
+            if cur.next:
+                #build the horizontal connection
+                cur.right.next = cur.next.left
+                #cur pointer move along the row: head right
+                cur = cur.next
+            #cur pointer go down to next row
+            else: cur, nxtrow = nxtrow, nxtrow.left
+        return root
+```
+Referrence: https://leetcode.com/problems/populating-next-right-pointers-in-each-node/discuss/37465/Python-Solution-With-Explaintion

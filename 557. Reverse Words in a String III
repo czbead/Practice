@@ -1,0 +1,38 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Split**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def reverseWords(self, s: str) -> str:
+        return ' '.join([word[::-1] for word in s.split()])
+```
+
+
+**II). In-place Swap**
+| O(T): O(n) | O(S): O(n) | Rt: 96ms | 
+```python
+    def reverseWords(self, s: str) -> str:
+        s = list(s)
+        sind = [-1] + [i for i, v in enumerate(s) if v == ' '] + [len(s)]
+        for i, j in zip(sind, sind[1:]):
+            l, r = i + 1, j - 1
+            while l < r: 
+                s[l], s[r] = s[r], s[l]
+                l, r = l + 1, r - 1
+        return ''.join(s)
+```
+
+
+**III). Reverse after Reverse**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def reverseWords(self, s: str) -> str:
+        return ' '.join(reversed(s.split()))[::-1]
+```
+Comment: a global reverse and a block reverse, order dosen't matter.
+Alternative: | Rt: 20ms |
+```python
+    def reverseWords(self, s: str) -> str:
+        return ' '.join(reversed(s[::-1].split()))
+```
+Comment: it seems a string reverse operation is much faster than a list reverse operation.
+

@@ -1,0 +1,134 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Find with Start-index**
+| O(T): O(mn) | O(S): O(1) | Rt: 20ms | 
+```python
+    def isSubsequence(self, s: str, t: str) -> bool:
+        st = -1
+        for i in s:
+            st = t.find(i, st+1)
+            if st == -1: return False
+        return True
+```
+Alternative: | O(S): O(n) | Rt: 32ms | 
+```python
+    def isSubsequence(self, s: str, t: str) -> bool:
+        for i in s:
+            st = t.find(i)
+            if st == -1: return False
+            t = t[st+1:]
+        return True
+``` 
+Comment: not as good as the indexed find solution
+
+
+**II). Two Pointer**
+| O(T): O(m + n) | O(S): O(1) | Rt: 200ms | 
+```python
+    def isSubsequence(self, s: str, t: str) -> bool:
+        i , j, ls, lt, s, t = 0, 0, len(s), len(t), list(s), list(t)
+        while i < ls and j < lt:
+            while j < lt and t[j] != s[i]: j += 1
+            # careful with this overflow check
+            if j == lt: return False
+            i, j = i+1, j+1
+        return i == ls
+```
+Alternative: safer two pointer solution. | Rt: 220ms |
+```python
+    def isSubsequence(self, s: str, t: str) -> bool:
+        i , j, ls, lt, s, t = 0, 0, len(s), len(t), list(s), list(t)
+        while i < ls and j < lt:
+            if t[j] == s[i]: i += 1
+            j += 1
+        return i == ls
+```
+
+
+**III). Pop**
+| O(T): O(m+n) | O(S): O(1) | Rt: 208ms | 
+```python
+    def isSubsequence(self, s: str, t: str) -> bool:
+        s, t = list(s), list(t)
+        while s and t:
+            while t and s[-1] != t[-1]: t.pop()
+            if not t: return False
+            s.pop(); t.pop()
+        return not s
+```
+Alternative: safer version.  | Rt: 204ms |
+```python
+    def isSubsequence(self, s: str, t: str) -> bool:
+        s, t = list(s), list(t)
+        while s and t:
+            if s[-1] == t[-1]: s.pop()
+            t.pop()
+        return not s
+```
+
+
+**IV). Binary Search**
+| O(T): O(n + mlgn) | O(S): O(n) | Rt: 208ms | 
+```python
+    def isSubsequence(self, s: str, t: str) -> bool:
+        st, dt = 0, collections.defaultdict(list)
+        for i, v in enumerate(t): dt[v].append(i)
+        for i in s:
+            cur = dt[i]
+            if not cur: return False
+            ind = bisect.bisect_left(cur, st)
+            if ind == len(cur): return False
+            st = cur[ind] + 1
+        return True
+```
+Comment: this solution is efficient for the "Follow-Up" because we only to build the dict on the longish t once and can use it in following matching. 
+Alternative: | Rt: 200ms |
+```python
+    def isSubsequence(self, s: str, t: str) -> bool:
+        st, dt = -1, collections.defaultdict(list)
+        for i, v in enumerate(t): dt[v].append(i)
+        for i in s:
+            cur = dt[i]
+            if not cur: return False
+            ind = bisect.bisect(cur, st)
+            if ind == len(cur): return False
+            st = cur[ind]
+        return True
+```
+Comment: "bisect.bisect" is the same as "bisect.bisect_right". It will returns the index of next **bigger (> not >=)** element. If there is no such element, return len(list). bisect_left is lower bound binary search while bisect (bisect_right) is upper bound binary search. 
+
+
+**V). Limited State**
+| O(T): O(n + mlgn) | O(S): O(n) | Rt: 248ms | 
+```python
+    def isSubsequence(self, s: str, t: str) -> bool:
+        st, base, dt = -1, ord('a'), [[] for _ in range(26)]
+        for i, v in enumerate(t): dt[ord(v) - base].append(i)
+        for i in s:
+            cur = dt[ord(i) - base]
+            if not cur: return False
+            ind = bisect.bisect(cur, st)
+            if ind == len(cur): return False
+            st = cur[ind]
+        return True
+```
+Comment: look the same as previous Binary Search solution. I think there is something extra to learn this solution. This method can help reduce space complexity sometimes. Whenever there are limited states in a problem, prioritize this kind of solution. 
+Bonus: 
+```python
+[[] * n] 
+```
+creates n empty lists. 
+```python
+[[]] * n
+```
+creates n referrences to the same [[]] (nested empty list). This is painful. 
+
+
+**VI). Iterator**
+| O(T): O(m+n) | O(S): O(n) | Rt: 64ms | 
+```python
+    def isSubsequence(self, s: str, t: str) -> bool:
+        it = iter(t)
+        return all(i in it for i in s)
+```
+Comment: Iterator and Generator are beautiful feature in Python.
+

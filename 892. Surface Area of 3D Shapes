@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(mn) | O(S): O(mn) | Rt: 80ms | 
+```python
+    def surfaceArea(self, grid: List[List[int]]) -> int:
+        rst = sum([(i * 4) + 2 for row in grid for i in row if i])
+        row = sum(min(i, j) for row in grid for i, j in zip(row, row[1:])) * 2
+        col = sum(min(i, j) for col in zip(*grid) for i, j in zip(col, col[1:])) * 2
+        return rst - row - col 
+```
+Comment: first calculate the overall surface area of towers in grids. Then remove the overlapped area. The overlapped area has two parts: overlapped in a row, overlapped in a column. Ant the overlapped area is the min of two adjacent towers. Once overlapped, should remove 2 * overlapped area. 
+Alternative: lambda fashion.  | Rt: 84ms |
+```python
+    def surfaceArea(self, grid: List[List[int]]) -> int:
+    	#sum up the surface area of all tower consists of cubes
+        rst = sum([(i * 4) + 2 for row in grid for i in row if i])
+        #calculate the overlapped surface area in a row or in a column (once, should count twice), 
+        getOverlapArea = lambda x: sum(min(i, j) for i, j in zip(x, x[1:]))
+        #sum up the overlapped area in all rows
+        row = sum(getOverlapArea(row) for row in grid) * 2
+        #sum up the overlapped area in all columns
+        col = sum(getOverlapArea(col) for col in zip(*grid)) * 2
+        #overall surface area subtract the overlapped area give you the real surface area
+        return rst - row - col 
+``` 
+
+
+**II). One Pass -- One by One**
+| O(T): O(n) | O(S): O(1) | Rt: 92ms | 
+```python
+    def surfaceArea(self, grid: List[List[int]]) -> int:
+        rst = 0
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                if grid[i][j]: rst += (4 * grid[i][j]) + 2
+                if i: rst -= min(grid[i][j], grid[i-1][j]) * 2
+                if j: rst -= min(grid[i][j], grid[i][j-1]) * 2
+        return rst
+```
+Referrence: https://leetcode.com/problems/surface-area-of-3d-shapes/discuss/163414/C%2B%2BJava1-line-Python-Minus-Hidden-Area
+

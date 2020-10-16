@@ -1,0 +1,62 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Topological Order**
+| O(T): O(n) | O(S): O(n) | Rt: 100ms | 
+```python
+    def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+        dt, indegree = collections.defaultdict(list), [0] * numCourses
+        for i, j in prerequisites: 
+            indegree[j] += 1
+            dt[i].append(j)
+            
+        rst, q = [], collections.deque([i for i in range(numCourses) if indegree[i] == 0])
+        while q:
+            cur, numCourses = q.popleft(), numCourses-1
+            rst.append(cur)
+            for i in dt[cur]:
+                indegree[i] -= 1
+                if indegree[i] == 0: q.append(i)
+        if numCourses: return []
+        return rst[::-1]
+```
+
+Alternative: | Rt: 96ms |
+```python
+    def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+        dt, indegree = collections.defaultdict(list), [0] * numCourses
+        for i, j in prerequisites: 
+            indegree[i] += 1
+            dt[j].append(i)
+            
+        rst, q = [], collections.deque([i for i in range(numCourses) if indegree[i] == 0])
+        while q:
+            cur, numCourses = q.popleft(), numCourses-1
+            rst.append(cur)
+            for i in dt[cur]:
+                indegree[i] -= 1
+                if indegree[i] == 0: q.append(i)
+        if numCourses: return []
+        return rst
+```
+
+
+**II). DFS**
+| O(T): O(n) | O(S): O(n) | Rt: 100ms | 
+```python
+    def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+        #pre[i] records the courses you need to take before course i
+        #after[i] records the courses you can take after course i
+        pre, after = collections.defaultdict(list), collections.defaultdict(list)
+        for i, j in prerequisites: 
+            pre[i].append(j)
+            after[j].append(i)
+            
+        rst, stack = [], [i for i in range(numCourses) if not pre[i]]
+        while stack:
+            cur = stack.pop()
+            rst.append(cur)
+            for i in after[cur]:
+                pre[i].remove(cur)
+                if not pre[i]: stack.append(i)
+        return rst if len(rst) == numCourses else []
+```
+Referrence: https://leetcode.com/problems/course-schedule-ii/discuss/59321/Python-dfs-bfs-solutions-with-comments.

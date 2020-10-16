@@ -1,0 +1,25 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy: Tilt Toward Upper Bound**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 324ms | 
+```python
+    def minIncrementForUnique(self, A: List[int]) -> int:
+        A.sort()
+        nxt = rst = 0
+        for i in A:
+            if i >= nxt: nxt = i + 1
+            else: nxt, rst = nxt + 1, rst + (nxt - i)
+        return rst
+```
+
+Alternative: using a counter. | Rt: 360ms |
+```python
+    def minIncrementForUnique(self, A: List[int]) -> int:
+        ct = collections.Counter(A)
+        nxt = rst = 0
+        for k in sorted(ct):
+            # 0 + 1 + ... + ct[k]-1 = ct[k] * (ct[k] - 1) // 2
+            rst += ct[k] * max(nxt - k, 0) + ct[k] * (ct[k] - 1) // 2
+            nxt = max(k, nxt) + ct[k]
+        return rst
+```
+Referrence: https://leetcode.com/problems/minimum-increment-to-make-array-unique/discuss/197687/JavaC%2B%2BPython-Straight-Forward

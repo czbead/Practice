@@ -1,0 +1,66 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat with Buildin**
+| O(T): O(n) | O(S): O(n) | Rt: 968ms | 
+```python
+    def prefixesDivBy5(self, A: List[int]) -> List[bool]:
+        rst, cur = [], ''
+        for i in A:
+            cur += str(i)
+            rst.append(int(cur, 2) % 5 == 0)
+        return rst
+```
+
+
+**II). Prefix Sum**
+| O(T): O(n) | O(S): O(1) | Rt: 324ms | 
+```python
+    def prefixesDivBy5(self, A: List[int]) -> List[bool]:
+        rst, summ = [], 0
+        for i in A:
+            summ = (summ << 1) + i
+            rst.append(summ % 5 == 0)
+        return rst
+```
+Alternative:  reduce scale by mod.  | Rt: 96ms |
+```python
+    def prefixesDivBy5(self, A: List[int]) -> List[bool]:
+        rst, summ = [], 0
+        for i in A:
+            summ = (summ * 2 + i) % 5
+            rst.append(summ == 0)
+        return rst
+```
+Question: we can apply this reduction operation because 5 is a prime number? Can we append this reduce trick to any number k? 
+Triple: bit wise style.  | Rt: 136ms |
+```python
+    def prefixesDivBy5(self, A: List[int]) -> List[bool]:
+        rst, summ = [], 0
+        for i in A:
+            summ = (summ << 1 | i) % 5
+            rst.append(not summ)
+        return rst
+```
+Forth: | Rt: 120ms |
+```python
+    def prefixesDivBy5(self, A: List[int]) -> List[bool]:
+        for i in range(len(A) - 1):
+            A[i+1] += (A[i] << 1) % 5
+        return [a == 0 or a == 5 for a in A]
+```
+Referrence: idea from https://leetcode.com/problems/binary-prefix-divisible-by-5/discuss/265509/Python-Calculate-Prefix-Mod
+
+
+**III). From High to Low**
+| O(T): O(n) | O(S): O(1) | Rt: 300ms | 
+```python
+    def prefixesDivBy5(self, A: List[int]) -> List[bool]:
+        rst, a = [], int(''.join(map(str, A)), 2)
+        while a:
+            rst.append(a % 5 == 0)
+            a >>= 1
+        for i in A: 
+            if i: break
+            rst.append(True)
+        rst.reverse()
+        return rst
+```

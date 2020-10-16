@@ -1,0 +1,30 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat: Convert to Integer**
+| O(T): O() | O(S): O() | Rt: 24ms | 
+```python
+    def numSteps(self, s: str) -> int:
+        step, n = 0, int(s, 2)
+        while n != 1:
+            if n & 1: n += 1
+            else: n >>= 1
+            step += 1
+        return step
+```
+
+
+**II). Carry**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def numSteps(self, s: str) -> int:
+        step, arr, carry,  = 0, list(s), 0
+        while len(arr) > 1 or carry:
+            if not arr: break
+            if carry: 
+                if arr[-1] == '1': arr[-1] = '0'; carry = 1
+                else: arr[-1] = '1'; carry = 0
+            if arr[-1] == '1': carry = 1; step += 1
+            step += 1; arr.pop()
+        return step
+```
+
+Others: https://leetcode.com/problems/number-of-steps-to-reduce-a-number-in-binary-representation-to-one/discuss/564287/C%2B%2BJava-O(n)

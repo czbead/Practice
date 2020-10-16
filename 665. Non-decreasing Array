@@ -1,0 +1,92 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Foward Probing**
+| O(T): O(n) | O(S): O(n) | Rt: 204ms | 
+```python
+    def checkPossibility(self, nums: List[int]) -> bool:
+    	#found decreasing element so far, we don't need count here, because at most 1
+        flag = False
+        #append the head and end for saving energy in index out of boundary check
+        nums = [-float('inf')] + nums + [float('inf')]
+        #start and end in real nums elements, both end excluded (only used for validation check)
+        for i in range(1, len(nums) - 2):
+        	#decreasing found
+            if nums[i + 1] < nums[i]:
+            	#this is the second decreasing instance, return false directly 
+                if flag: return False
+                else:     #this is the first decreasig instance so far
+                	#the hardest part. a decreasing instance is formed by a pair of number, does drop one of it make the current sequence non-decrasing?
+                	#if yes, flag it and move forward, if not (means you need to drop both of them to make so-far sequence non-decreasing) return false
+                    if nums[i + 2] >= nums[i] or nums[i + 1] >= nums[i - 1]: flag = True.   #the redundant head (i - 1) and end (i + 2) only works here 
+                    else: return False
+        return True
+```
+Analysis: Whenever you found a "decreasing" instance, it must have two numbers envolves. Whenever there is a decreasing instance, there have to be at least 1 decreasing elements (you need to delete at least 1 of them to make so-far sequence non-decreasing) if not both of them. The so-far sequence must include all pairs which means you need to include the next element.  Therefore, there are 3 senarioes: 
+a). both elements in the decreasing instance are decreasing ones, you need to delete both of them to make so-far sequnce non-decreasing. for example [ 3, 4, 2, 3], decreasing instance "4 -> 2", so-far sequence: [3, 4, 2, 3] (why first 3 and last 3 is included? because first 3 pair up with 4 as a instance which may be decreasing, the last 3 pair up with 2.) remove "4", so-far [3, 2, 3] still decreasing, doesn't work. remove, "2", [3, 4, 3], still decreasing, failed. Only by removing both of them [3, 3], is non-decreasing. This is False
+b). first element in the decreasing instance is decreasing while the other one is good. for example [3, 4, 3, 4 ], decreasing instance "4 -> 3", remove first "4", [3, 3, 4], non-decreasing. Good! flag it and move forward.
+c). last element in the decreasing instance is decreaing while the first one is good. for example [3, 4, 2, 5], decreasing instance "4 -> 2", remove '2', [3, 4, 5], non-decreasing. Good! flat it and move forward.
+
+Comment: no matter decreasing or non-decreasing, it is a concept over number pairs not single number which makes this problem very complicated becase 4 number is envolves in a single check, not to say the index boundary. 
+
+Alternative: without modiry the input.  | Rt: 188ms |
+```python
+    def checkPossibility(self, nums: List[int]) -> bool:
+        flag, l = False, len(nums)
+        for i in range(l - 1):
+            if nums[i + 1] < nums[i]: 
+                if flag: return False
+                else: 
+                	#two cases: drop nums[i] or drop nums[i+1]. each case two senarioes: index out of boundary or non-decreasing.
+                	#I know this looks not very readable and understandable, that is why I code the former one for you
+                    if (i + 2 >= l or nums[i + 2] >= nums[i]) or (i - 1 < 0 or nums[i + 1] >= nums[i - 1]): flag = True
+                    else: return False
+        return True
+```
+Comment: copy or create list could be costly. This is the tradeoff,  exclude edge case + readability + easy thingking and understand vs efficiency. 
+
+
+**II). Concise Version**
+| O(T): O(n) | O(S): O(1) | Rt: 200ms | 
+```python
+    def checkPossibility(self, nums: List[int]) -> bool:
+        flag, l = False, len(nums)
+        for i in range(l - 1):
+            if nums[i + 1] < nums[i]: 
+                if flag: return False
+                if (i + 2 < l and nums[i + 2] < nums[i]) and (i - 1 >= 0 and nums[i + 1] < nums[i - 1]): return False
+                flag = True
+        return True
+```
+Alternative: | Rt: 196ms |
+```python
+    def checkPossibility(self, nums: List[int]) -> bool:
+        flag, nums = False, [-float('inf')] + nums + [float('inf')]
+        for i in range(1, len(nums) - 2):
+            if nums[i + 1] < nums[i]: 
+                if flag: return False
+                if nums[i + 2] < nums[i] and nums[i + 1] < nums[i - 1]: return False
+                flag = True
+        return True
+```
+Comment: make sure you understand the solution I fully, this is the same as it with little simplifying in syntax. 
+
+
+**III). Modify Input**
+| O(T): O(n) | O(S): O(1) | Rt: 184ms | 
+```python
+    def checkPossibility(self, nums: List[int]) -> bool:
+        flag, l = False, len(nums)
+        for i in range(l - 1):
+            if nums[i + 1] < nums[i]: 
+                if flag: return False
+                flag = True
+                #greedy method, if nums[i+1] is non-decreasing, good one. the other one has to be bad. modify num[i]
+                if i - 1 < 0 or nums[i - 1] <= nums[i + 1]: nums[i] == nums[i + 1]
+                #modify either nums[i] or nums[i + 1]. nums[i+1] is decreasing, is bad. modify it. 
+                else: nums[i + 1] = nums[i]
+        return True
+```
+referrence: https://leetcode.com/problems/non-decreasing-array/discuss/106816/Python-Extremely-Easy-to-Understand/109163
+Analysis: the idea is pretty staightforward, modify the first bad found in a decreasing pair (without any care for the other number in the pair, the other one can be good or bad, we never know. Leave it with the next round). Anyway, we can at most modify one element, do it and see if the sequence becomes non-decreasing. However, modify input is not a good practice in real world. Avoid it as you could. 
+Comment: the charm of this solution we only take care of a single number in a pair which makes it slightly simple. 
+
+

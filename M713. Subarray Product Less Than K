@@ -1,0 +1,34 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O(n * n) | O(S): O() | Rt: ms | TLE
+```python
+    def numSubarrayProductLessThanK(self, nums: List[int], k: int) -> int:
+        if k == 0: return 0
+        count, l = 0, len(nums)
+        for i in range(l):
+            cur = nums[i]
+            if cur < k: count += 1
+            for j in range(i+1, l):
+                cur *= nums[j]
+                if cur >= k: break 
+                count += 1
+        return count
+```
+
+
+**II). Slide Window with Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 1152ms | 
+```python
+    def numSubarrayProductLessThanK(self, nums: List[int], k: int) -> int:
+        if k <= 1: return 0
+        st, count, cur = 0, 0, 1
+        for i in range(len(nums)):
+            cur *= nums[i]
+            #as long as k > 1, st will never go beyond i
+            while cur >= k: cur, st = cur//nums[st], st+1
+            #each comming item brings (end - st + 1) valid subarray
+            #say previous subarray is (a, b), introduce c brings (c), (b, c), (a, b, c)
+            count += i - st + 1
+        return count
+```
+Referrence: https://leetcode.com/problems/subarray-product-less-than-k/discuss/108861/JavaC%2B%2B-Clean-Code-with-Explanation

@@ -1,0 +1,81 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 436ms | 
+```python
+    def canPartition(self, nums: List[int]) -> bool:
+        if not nums: return
+        summ = sum(nums)
+        if summ & 1: return False
+        target = summ // 2
+        if target == 0: return True
+        lst = set([0])  #using list cause MLE
+        for i in nums:
+            nxt = set([0])
+            for j in lst:
+                if i + j == target: return True
+                nxt.add(j)
+                nxt.add(i + j)
+            lst = nxt
+        return False
+```
+Comment: this is a little bit similar to the DP solution.
+
+
+**II). DP**
+| O(T): O() | O(S): O() | Rt: 3420ms | 
+```python
+    def canPartition(self, nums: List[int]) -> bool:
+        if not nums: return
+        summ = sum(nums)
+        if summ & 1: return False
+        target = summ // 2
+        l = len(nums)
+        dp = [[0]*(target + 1) for _ in range(l+1)]
+        for i in range(l + 1): dp[i][0] = 1
+        for i in range(1, l + 1):
+             for j in range(1, target + 1):
+                    dp[i][j] = dp[i-1][j]
+                    if j >= nums[i-1]:
+                        dp[i][j] |= dp[i-1][j-nums[i-1]]
+        return dp[-1][-1]
+```
+Alternative:  | Rt: 1124ms |
+```python
+    def canPartition(self, nums: List[int]) -> bool:
+        if not nums: return
+        summ = sum(nums)
+        if summ & 1: return False
+        target = summ // 2
+        if target == 0: return True
+        l = len(nums)
+        dp = [0] * (target + 1)
+        dp[0] = 1
+        for n in nums:
+            for i in range(target, n-1, -1):
+                dp[i] |= dp[i-n]
+        return dp[-1]
+```
+Referrence: https://leetcode.com/problems/partition-equal-subset-sum/discuss/90592/01-knapsack-detailed-explanation
+Comment: why we cannot dp from left to right? like 
+```python
+	for i in range(n, target+1)
+```
+think about it, for a coming specific n number, what will this do? it will make dp[n] = dp[2*n] = dp[m*n] = True as long as m * n <= target. That will lead to multiple use a single occurance of a number, which is not allowed in this problem. But do the dp from right to left will avoid this situation - every number won't be used more than once.
+
+
+**III). Bit Map**
+| O(T): O() | O(S): O() | Rt: 32ms | 
+```python
+    def canPartition(self, nums: List[int]) -> bool:
+        summ = sum(nums)
+        if summ & 1: return False
+        mask = 1  #means dp[0] is true
+        for i in nums:
+            #mask is previous subset sum bitmap
+            #mask << i is the bitmap of adding i to all previous sum (indcluding i + 0)
+            #using | to merge these two bitmap to form the current bitmap
+            mask |= (mask << i)  
+        return (mask >> (summ // 2)) & 1
+```
+Referrence: https://leetcode.com/problems/partition-equal-subset-sum/discuss/90590/Simple-C%2B%2B-4-line-solution-using-a-bitset
+Comment: this is a amazing solution although not trivial to understand. If you really cannot understand it, take a look at the first BFS solution -- they are the same in nature. 

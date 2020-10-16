@@ -1,0 +1,51 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def wordBreak(self, s: str, wordDict: List[str]) -> List[str]:
+        def backtrack(s, words, wlens, path, st, rst):
+            if st == len(s): rst.append(path.strip()); return
+            for i in range(st, len(s)):
+                if i-st+1 in wlens and s[st: i+1] in words:
+                     backtrack(s, words, wlens, path + ' ' + s[st: i+1], i+1, rst)
+        
+        rst, words, wlens = [], set(wordDict), set([len(w) for w in wordDict])
+        backtrack(s, words, wlens, '', 0, rst)
+        return rst
+```
+
+Alternative: | Rt: 40ms |
+```python
+    def wordBreak(self, s: str, wordDict: List[str]) -> List[str]:
+        def dfs(s, words, wlens, dt):
+            if not s: return ['']
+            if s in dt: return dt[s]
+            arr = []
+            for i in range(len(s)):
+                if i+1 in wlens and s[:i+1] in words:
+                    cur, rst = s[:i+1],  dfs(s[i+1:] , words, wlens, dt)
+                    arr += [(cur + ' ' + j).strip() for j in rst]
+            dt[s] = arr
+            return dt[s]
+         
+        words, wlens = set(wordDict), set([len(w) for w in wordDict]) 
+        return dfs(s, words, wlens, {})
+```
+
+Triple: | Rt: 48ms |
+```python
+    def wordBreak(self, s: str, wordDict: List[str]) -> List[str]:
+        def dfs(s, words, dt):
+            if not s: return ['']
+            if s in dt: return dt[s]
+            arr = []
+            for w in words:
+                if s.startswith(w):
+                    rst = dfs(s[len(w):] , words, dt)
+                    arr += [(w + ' ' + j).strip() for j in rst]
+            dt[s] = arr
+            return dt[s]
+
+        return dfs(s, wordDict, {})
+```
+Referrence: https://leetcode.com/problems/word-break-ii/discuss/44311/Python-easy-to-understand-solution

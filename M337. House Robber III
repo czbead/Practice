@@ -1,0 +1,65 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion: Top-Down**
+| O(T): O() | O(S): O() | Rt: ms | TLE 
+```python
+    def rob(self, root: TreeNode) -> int:
+        if not root: return 0
+        robval = 0
+        if root.left: robval += self.rob(root.left.left) + self.rob(root.left.right)
+        if root.right: robval += self.rob(root.right.left) + self.rob(root.right.right)
+        return max(root.val + robval, self.rob(root.left) + self.rob(root.right)) 
+```
+Referrence: https://leetcode.com/problems/house-robber-iii/discuss/79330/Step-by-step-tackling-of-the-problem
+
+
+**II). Recursion: Top-Down with Cache**
+| O(T): O(n) | O(S): O(h) | Rt: 52ms | 
+```python
+    def rob(self, root: TreeNode) -> int:
+        def robtree(node, dt):
+            if not node: return 0
+            if node in dt: return dt[node]
+            robval = 0
+            if node.left: robval += robtree(node.left.left, dt) + robtree(node.left.right, dt)
+            if node.right: robval += robtree(node.right.left, dt) + robtree(node.right.right, dt)
+            rst = max(node.val + robval, robtree(node.left, dt) + robtree(node.right, dt)) 
+            dt[node] = rst
+            return rst
+        
+        return robtree(root, {})
+```
+Comment: no repeated computing for each node. 
+Referrence: https://leetcode.com/problems/house-robber-iii/discuss/79330/Step-by-step-tackling-of-the-problem
+
+Alternative: global variable version. | Rt: 56ms |
+```python
+    dt = {}
+    def rob(self, root: TreeNode) -> int:
+        if not root: return 0
+        if root in self.dt: return self.dt[root]
+        robval = 0
+        if root.left: robval += self.rob(root.left.left) + self.rob(root.left.right)
+        if root.right: robval += self.rob(root.right.left) + self.rob(root.right.right)
+        rst = max(root.val + robval, self.rob(root.left) + self.rob(root.right)) 
+        self.dt[root] = rst
+        return rst
+```
+
+
+**III). Recursion Bottom-Up DP**
+| O(T): O(n) | O(S): O(h) | Rt: 56ms | 
+```python
+    def rob(self, root: TreeNode) -> int:
+        def robtree(node):
+            if not node: return [0, 0]
+            ldo, lno = robtree(node.left)
+            rdo, rno = robtree(node.right)
+            
+            do = lno + rno + node.val
+            no = max(ldo, lno) + max(rdo, rno)
+            return (do, no)
+        
+        return max(robtree(root))
+```
+Referrence: https://leetcode.com/problems/house-robber-iii/discuss/79330/Step-by-step-tackling-of-the-problem
+Comment: this is a DP-DFS-Bottom-UP solution. The critical point is that this solution separate the state of each rob -- rob it or not. Since the two state of every node is very clear, it makes the solution very clear and straightforward. 

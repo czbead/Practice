@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS**
+| O(T): O() | O(S): O() | Rt: 3056ms | 
+```python
+    def countServers(self, grid: List[List[int]]) -> int:
+        def dfs(grid, r, c, i, j):
+            if i < 0 or i >= r or j < 0 or j >= c or grid[i][j] == 0: return 0
+            grid[i][j], ct = 0, 1
+            ct += sum(dfs(grid, r, c, x, j) for x in range(r))
+            ct += sum(dfs(grid, r, c, i, y) for y in range(c))
+            return ct
+            
+        m, n, rst = len(grid), len(grid[0]), 0
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j]:
+                    conn = dfs(grid, m, n, i, j)
+                    if conn > 1: rst += conn
+        return rst
+```
+
+
+**II). 2-D to 1-D**
+| O(T): O(mn) | O(S): O(m+n) | Rt: 520ms | 
+```python
+    def countServers(self, grid: List[List[int]]) -> int:
+        m, n = len(grid), len(grid[0])
+        r, c = [0] * m, [0] * n
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j]:
+                    r[i], c[j] = r[i]+1, c[j]+1
+        return sum(grid[i][j] and r[i]+c[j] > 2 for i in range(m) for j in range(n))
+```
+

@@ -1,0 +1,24 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack: Max Histogram Area**
+| O(T): O(n*m) | O(S): O() | Rt: 196ms | 
+```python
+    def maximalRectangle(self, matrix: List[List[str]]) -> int:
+        if not matrix or not matrix[0]: return 0
+        r, c = len(matrix), len(matrix[0])
+        mx, h = 0, [0] * (c+1)
+        for i in range(r):
+            #let the last height be the mininum one, insure the stack will all pop out
+            stack, h[-1] = [-1], -1
+            for j in range(c+1):
+                if j < c: h[j] = h[j]+1 if matrix[i][j] == '1' else 0
+                while h[j] < h[stack[-1]]:
+                    curh = h[stack.pop()]
+                    mx = max(mx, curh * (j-stack[-1]-1))
+                stack.append(j)
+        return mx
+```
+Referrence: https://leetcode.com/problems/maximal-rectangle/discuss/29065/AC-Python-DP-solutioin-120ms-based-on-largest-rectangle-in-histogram
+Comment: go back and revisit problem 84 if you don't understand this solution.
+
+Others: dp solution - https://leetcode.com/problems/maximal-rectangle/discuss/29054/Share-my-DP-solution
+

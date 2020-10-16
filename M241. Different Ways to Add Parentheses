@@ -1,0 +1,39 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O() | O(S): O(n) | Rt: 32ms | 
+```python
+    def diffWaysToCompute(self, input: str) -> List[int]:
+        if input.isdigit(): return [int(input)]
+        rst, tmp = [], 0
+        for i in range(len(input)):
+            if input[i] in '+-*':
+                a, b = input[:i], input[i+1:]
+                l, r = self.diffWaysToCompute(a), self.diffWaysToCompute(b)
+                for p in l: 
+                    for q in r:
+                        if input[i] == '+': tmp = p + q
+                        elif input[i] == '-': tmp = p - q
+                        else: tmp = p * q
+                        rst.append(tmp)
+        return rst
+```
+Alternative: recursion with cache. | Rt: 36ms |
+```python
+    dt = {}
+    def diffWaysToCompute(self, input: str) -> List[int]:
+        if input.isdigit(): return [int(input)]
+        if input in self.dt: return self.dt[input]
+        rst, tmp = [], 0
+        for i in range(len(input)):
+            if input[i] in '+-*':
+                for l in self.diffWaysToCompute(input[:i]): 
+                    for r in self.diffWaysToCompute(input[i+1:]):
+                        if input[i] == '+': tmp = l + r
+                        elif input[i] == '-': tmp = l - r
+                        else: tmp = l * r
+                        rst.append(tmp)
+        self.dt[input] = rst
+        return rst
+```
+Referrence: https://leetcode.com/problems/different-ways-to-add-parentheses/discuss/66419/Python-easy-to-understand-solution-(divide-and-conquer); https://leetcode.com/problems/different-ways-to-add-parentheses/discuss/66328/A-recursive-Java-solution-(284-ms);
+Comment: I should have noticed the "sub-problem structure". 

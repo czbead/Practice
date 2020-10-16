@@ -1,0 +1,54 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def minDistance(self, word1: str, word2: str) -> int:
+        if not word1: return len(word2)
+        if not word2: return len(word1)
+        
+        if word1[0] == word2[0]: return self.minDistance(word1[1:], word2[1:])
+        delete = 1 + self.minDistance(word1[1:], word2)
+        insert = 1 + self.minDistance(word1, word2[1:])
+        replace = 1 + self.minDistance(word1[1:], word2[1:])
+        return min(delete, insert, replace)
+```
+
+Alternative: with cache. | Rt: 112ms |
+```python
+    def minDistance(self, word1: str, word2: str) -> int:
+        def getMin(w1, w2, i1, i2, dt):
+            if i1 == len(w1): return len(w2) - i2
+            if i2 == len(w2): return len(w1) - i1
+            if (i1, i2) not in dt: 
+                if w1[i1] == w2[i2]: dt[(i1, i2)] = getMin(w1, w2, i1+1, i2+1, dt)
+                else:
+                    delete = 1 + getMin(w1, w2, i1+1, i2, dt)
+                    insert = 1 + getMin(w1, w2, i1, i2+1, dt)
+                    replace = 1 + getMin(w1, w2, i1+1, i2+1, dt)
+                    dt[(i1, i2)] = min(delete, insert, replace)
+            return dt[(i1, i2)]
+        
+        return getMin(word1, word2, 0, 0, {})
+```
+Referrence: https://leetcode.com/problems/edit-distance/discuss/159295/Python-solutions-and-intuition
+
+
+**II). DP**
+| O(T): O(mn) | O(S): O(mn) | Rt: 188ms | 
+```python
+    def minDistance(self, word1: str, word2: str) -> int:
+        m, n = len(word1), len(word2)
+        dp = [[0] * (m+1) for _ in range(n+1)]
+        for j in range(m+1): dp[0][j] = j
+        for i in range(n+1): dp[i][0] = i
+        
+        for i in range(1, n+1):
+            for j in range(1, m+1):
+                if word2[i-1] == word1[j-1]:
+                    dp[i][j] = dp[i-1][j-1]
+                else:
+                    dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
+        return dp[-1][-1]
+```
+Referrence: https://leetcode.com/problems/edit-distance/discuss/159295/Python-solutions-and-intuition
+

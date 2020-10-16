@@ -1,0 +1,15 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O() | O(S): O() | Rt: 128ms | 
+```python
+    def processQueries(self, queries: List[int], m: int) -> List[int]:
+        rst, seq = [], list(range(1, m+1))
+        for q in queries:
+            index = next(i for i in range(m) if seq[i] == q)
+            rst.append(index)
+            seq[1:index+1], seq[0] = seq[:index], q
+        return rst
+```
+
+Others: Fenwich Tree - https://leetcode.com/problems/queries-on-a-permutation-with-key/discuss/575019/Python-Fenwick-tree-O(n-log-n)
+

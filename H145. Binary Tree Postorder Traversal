@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive**
+| O(T): O(n) | O(S): O(h) | Rt: 28ms | 
+```python
+    def postorderTraversal(self, root: TreeNode) -> List[int]:
+        if not root: return []
+        return self.postorderTraversal(root.left) + self.postorderTraversal(root.right) + [root.val]
+```
+
+
+**II). Iterative**
+| O(T): O(n) | O(S): O(n) | Rt: 48ms | 
+```python
+    def postorderTraversal(self, root: TreeNode) -> List[int]:
+        if not root: return []
+        rst, stack, pre = [], [], None
+        while root or stack:
+            while root:
+                stack.append(root)
+                root = root.left
+            #check the top most node;
+            if stack[-1].right and stack[-1].right != pre:
+                root = stack[-1].right; continue
+            pre = stack.pop()
+            rst.append(pre.val)
+        return rst
+```
+
+Alternative: by reverse. | Rt: 48ms |
+```python
+    def postorderTraversal(self, root: TreeNode) -> List[int]:
+        if not root: return []
+        rst, stack = [], [root]
+        while stack:
+            node = stack.pop()
+            rst.append(node.val)
+            if node.left: stack.append(node.left)
+            if node.right: stack.append(node.right)
+        return rst[::-1]
+```
+Referrence: https://leetcode.com/problems/binary-tree-postorder-traversal/discuss/45550/C++-Iterative-Recursive-and-Morris-Traversal/44965
+Comment: since python don't have O(1) addFirst List, I avoid that solution you may view in top posts. This solution is slightly similar to pre-order iterative solution, we push the node in the order: root -> right -> left; when we finally reverse it, we got: left -> right -> root which is exactly postorder traversal; Notice, by switch the push right left order and remove the reversing, we got preorder iterative solution; 
+
+Others: with a visited state - https://leetcode.com/problems/binary-tree-postorder-traversal/discuss/45785/Share-my-two-Python-iterative-solutions-post-order-and-modified-preorder-then-reverse
+

@@ -1,0 +1,24 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O() | O(S): O() | Rt: 36ms | 
+```python
+    def fractionToDecimal(self, numerator: int, denominator: int) -> str:
+        if not numerator: return '0'
+        rst = ['-'] if (numerator > 0) ^ (denominator > 0) else []
+        num, den = abs(numerator), abs(denominator)
+        inte, frac = divmod(num, den)
+        rst.append(str(inte))
+        if not frac: return ''.join(rst)
+        rst.append('.')
+        dt, ind = {}, len(rst)
+        while frac and frac not in dt:
+            tmp = frac
+            cur, frac = divmod(frac*10, den)
+            rst.append(str(cur)); 
+            dt[tmp], ind = ind, ind + 1
+        if not frac: return ''.join(rst)
+        rst.insert(dt[frac], '('); rst.append(')')
+        return ''.join(rst)
+```
+Referrence: https://leetcode.com/problems/fraction-to-recurring-decimal/discuss/51106/My-clean-Java-solution
+

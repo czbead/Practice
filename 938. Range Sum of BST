@@ -1,0 +1,83 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 224ms | 
+```python
+    def rangeSumBST(self, root: TreeNode, L: int, R: int, summ = [0]) -> int:
+        def dfs(node, l, r, rst):
+            if not node: return
+            val = node.val
+            if val > r: dfs(node.left, l, r, rst)
+            elif val < l: dfs(node.right, l, r, rst)
+            else: 
+                rst[0] += val
+                dfs(node.left, l, r, rst)
+                dfs(node.right, l, r, rst)
+                
+        rst = [0]
+        dfs(root, L, R, rst)
+        return rst[0]
+```
+Alternative: concise version.  | Rt: 220ms |
+```python
+    def rangeSumBST(self, root: TreeNode, L: int, R: int) -> int:
+        if not root: return 0
+        if root.val > R: return self.rangeSumBST(root.left, L, R)
+        if root.val < L: return self.rangeSumBST(root.right, L, R)
+        return root.val + self.rangeSumBST(root.left, L, R) + self.rangeSumBST(root.right, L, R)
+```
+Referrence: https://leetcode.com/problems/range-sum-of-bst/discuss/205181/Java-4-lines-Beats-100
+Others: other recursion solutions (not as good as ones you have seen here) can be found in this post https://leetcode.com/problems/range-sum-of-bst/discuss/192019/JavaPython-3-3-similar-recursive-and-1-iterative-methods-with-comment.
+
+
+**II). Generator**
+| O(T): O(n) | O(S): O(1) | Rt: 288ms | 
+```python
+    def rangeSumBST(self, root: TreeNode, L: int, R: int, summ = [0]) -> int:
+        def genNode(node):
+            if node.left: yield from genNode(node.left)
+            yield node.val
+            if node.right: yield from genNode(node.right)
+                
+        rst, nxtNode = 0, genNode(root)
+        for i in nxtNode:
+            if i > R: return rst
+            elif i >= L: rst += i
+        return rst
+```
+
+
+**III). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 204ms | 
+```python
+    def rangeSumBST(self, root: TreeNode, L: int, R: int, summ = [0]) -> int:
+        rst, s = 0, [root]
+        while s:
+            node = s.pop()
+            if not node: continue
+            val = node.val
+            if val < L: s.append(node.right)
+            elif val > R: s.append(node.left)
+            else: 
+                rst += val
+                s.append(node.right)
+                s.append(node.left)
+        return rst
+```
+Alternative:  | Rt: 216ms |
+```python
+    def rangeSumBST(self, root: TreeNode, L: int, R: int, summ = [0]) -> int:
+        rst, s = 0, [root]
+        while s:
+            node = s.pop()
+            if not node: continue
+            val = node.val
+            #unique value, left must at least val - 1
+            if val > L: s.append(node.left)
+            if val < R: s.append(node.right)
+            if L <= val <= R: rst += val
+        return rst
+```
+
+
+Summary: try not to implement a generally traverse all the node, take the advantage of BST features. 
+

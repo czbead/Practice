@@ -1,0 +1,14 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). HashMap**
+| O(T): O(n) | O(S): O(n) | Rt: 80ms | 
+```python
+    def groupThePeople(self, groupSizes: List[int]) -> List[List[int]]:
+        rst, dt = [], collections.defaultdict(list)
+        for i, g in enumerate(groupSizes):
+            dt[g].append(i)
+            if len(dt[g]) == g: 
+                rst.append(dt[g])
+                dt[g] = []
+        return rst
+```
+

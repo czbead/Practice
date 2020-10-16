@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: 24ms | 
+```python
+    def solveEquation(self, equation: str) -> str:
+        #all 'subtract' operation convert to '+ negative' operation
+        equation = equation.replace('-', '+-')
+        left, right = equation.split('=')
+        left, right = left.split('+'), right.split('+')
+        
+        lx = rn = 0
+        for i in left: 
+            if not i: continue
+            if i[-1] == 'x': 
+                if i == 'x': lx += 1
+                elif i == '-x': lx -= 1
+                else: lx += int(i[:-1])
+            else: right.append(str(-int(i)))
+        for i in right:
+            if not i: continue
+            if i[-1] == 'x': 
+                if i == 'x': lx -= 1
+                elif i == '-x': lx += 1
+                else: lx -= int(i[:-1])
+            else: rn += int(i)
+                
+        if lx == 0 and rn == 0: return "Infinite solutions"
+        if lx == 0: return "No solution"
+        rst = rn // lx
+        return 'x=' + str(rst)
+```

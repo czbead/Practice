@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Judge Safe by Assuming Unsafe**
+| O(T): O() | O(S): O() | Rt: 676ms | 
+```python
+    def eventualSafeNodes(self, graph: List[List[int]]) -> List[int]:
+        def isSafe(graph, safe, i):
+            if safe[i] is not None: return safe[i]
+            if not graph[i]: return True
+            safe[i] = False  
+            for j in graph[i]:
+                if not isSafe(graph, safe, j): return False
+            safe[i] = True
+            return True
+        
+        if not graph: return []
+        l = len(graph)
+        safe = [None] * l
+        return [i for i in range(l) if isSafe(graph, safe, i)]
+```
+Reference: https://leetcode.com/problems/find-eventual-safe-states/discuss/119871/Straightforward-Java-solution-easy-to-understand!
+
+
+**II). Toplogical Sort with Sort**
+| O(T): O() | O(S): O() | Rt: 712ms | 
+```python
+    def eventualSafeNodes(self, graph: List[List[int]]) -> List[int]:
+        if not graph: return 
+        l = len(graph)
+        out_degree, in_node = [0] * l, [[] for _ in range(l)] 
+        rst, stack = [], []
+        for i in range(l):
+            for j in graph[i]: in_node[j].append(i)
+            out_degree[i] = len(graph[i])
+            if out_degree[i] == 0: stack.append(i)
+        while stack:
+            safe_node = stack.pop()
+            rst.append(safe_node)
+            for i in in_node[safe_node]:
+                out_degree[i] -= 1
+                if out_degree[i] == 0: stack.append(i)
+        rst.sort() 
+        return rst
+```

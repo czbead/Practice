@@ -1,0 +1,11 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Reverse Order Traverse**
+| O(T): O(n) | O(S): O(n) | Rt: 192ms | 
+```python
+    def shiftingLetters(self, S: str, shifts: List[int]) -> str:
+        s, l, accu = list(S), len(S), 0
+        for i in range(l-1, -1, -1):
+            accu = (accu + shifts[i]) % 26
+            s[i] = chr((ord(s[i]) - ord('a') + accu) % 26 + ord('a'))
+        return ''.join(s)
+```

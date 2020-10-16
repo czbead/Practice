@@ -1,0 +1,23 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**Naive** | Rt: 339ms |
+```sql
+select Name as Customers from Customers
+    where Id not in (
+            select CustomerId from Orders
+        )
+```
+
+**Not Exists** | Rt: 664ms |
+```sql
+select c.Name as Customers from Customers c
+    where not exists 
+        (select 1 from Orders o where c.id = o.CustomerId)
+```
+
+**Left Join** | Rt: 633ms |
+```sql
+select c.Name as Customers 
+    from Customers c left join Orders o
+        on c.Id = o.CustomerId
+            where o.CustomerId is null
+```

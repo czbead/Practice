@@ -1,0 +1,36 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 48ms | 
+```python
+    def maxDepth(self, root: 'Node') -> int:
+        if not root: return 0
+        pre_deps = [self.maxDepth(i) for i in root.children]
+        return 1 + max(pre_deps or [0])
+```
+
+
+**II). Iteration, Pair-wise**
+| O(T): O(n) | O(S): O(n) | Rt: 48ms | 
+```python
+    def maxDepth(self, root: 'Node') -> int:
+        rst, s = 0, [(root, 0)]
+        while s:
+            node, depth = s.pop()
+            if not node: continue
+            rst = max(rst, depth + 1)
+            s.extend([(child, depth+1) for child in node.children])
+        return rst
+```
+
+
+**III). Iteration, Row-wise**
+| O(T): O(n) | O(S): O(n) | Rt: 40ms | 
+```python
+    def maxDepth(self, root: 'Node') -> int:
+        rst, s = 0, [root] if root else None
+        while s:
+            rst += 1
+            s = [n for node in s for n in node.children if n]
+        return rst
+```
+

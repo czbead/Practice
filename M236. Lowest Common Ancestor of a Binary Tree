@@ -1,0 +1,38 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 84ms | 
+```python
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        if root is None or root is p or root is q: return root
+        l = self.lowestCommonAncestor(root.left, p, q)
+        r = self.lowestCommonAncestor(root.right, p, q)
+        if l and r: return root
+        return l or r
+```
+Referrence: https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/discuss/65225/4-lines-C%2B%2BJavaPythonRuby
+Comment: this great solution is actually super simple: the p or q come out (bottom-up traverse, top-down decision) first is the result. 
+
+
+**II). Iterative: Path Intersection**
+| O(T): O(n) | O(S): O(n) | Rt: 72ms | 
+```python
+     def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        stack, par = [root], {root: None}
+        while p not in par or q not in par:
+            node = stack.pop()
+            if node.left:
+                par[node.left] = node
+                stack.append(node.left)
+            if node.right:
+                par[node.right] = node
+                stack.append(node.right)
+        
+        rout = set()
+        while p:
+            rout.add(p)
+            p = par[p]
+        while q not in rout: q = par[q]
+        return q
+```
+Referrence: https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/discuss/65236/JavaPython-iterative-solution
+

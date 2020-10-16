@@ -1,0 +1,54 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(t): O(n) | O(m): O(n) | Rt: 60ms | 
+note: tree nodes memory not counted, the list slicing still requires extra O(n) space.
+```python
+    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:
+        if not nums: return 
+        mid = len(nums) // 2
+        node = TreeNode(nums[mid])
+        node.left = self.sortedArrayToBST(nums[:mid])
+        node.right = self.sortedArrayToBST(nums[mid+1:])
+        return node
+```
+
+
+**II). Recursion without Extra Space**
+| O(t): O(n) | O(m): O(1) | Rt: 68ms | 
+note: if we don't count the tree node space (shouldn't be counted, because any solution need to create the tree nodes), this solution is O(1) space complexity. 
+```python
+        def recur(nums, l, r):
+        	#works when l < r
+            if l >= r: return
+            m = (l + r) // 2
+            n = TreeNode(nums[m])
+            n.left = recur(nums, l, m)
+            n.right = recur(nums, m+1, r)
+            return n
+        if not nums: return 
+       
+        #the range is [l, r), this is critical, right bound not included
+        #here is not len(num) - 1, it works with l < r and (l, m), (m+1, r), all ranges here not include right bound
+        return recur(nums, 0, len(nums))
+```
+Comment: consistency really matters when composing binary search of any kinds! If the initial range doesn't include the right bound, all of the following range should exclude right bound using l < r and ragnes like (l, real-right-bound + 1), therefore no need for (l, m - 1).
+
+Alternative:
+```python
+    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:
+        def recur(nums, l, r):
+        	#works when l <= r
+            if l > r: return 
+            m = (l + r) // 2
+            n = TreeNode(nums[m])
+            n.left = recur(nums, l, m-1)
+            n.right = recur(nums, m+1, r)
+            return n
+        #here is len(nums) - 1, all right bound included
+        return recur(nums, 0, len(nums) - 1)
+```
+Comment: Consistency again. I recommend the former solution because l == r in the last execution while l == r + 1 for the latter one. In the former solution, you can return r or l (they are the same) which definitely saves you a huge lot~ 
+
+**Bonus: Standard Upper-bound Binary Search  & Standard Lower-boumd Binary Search adopting [l, r) **
+<iframe src="https://leetcode.com/playground/WjER6cDq/shared" frameBorder="0" width="400" height="300"></iframe>
+

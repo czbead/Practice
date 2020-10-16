@@ -1,0 +1,90 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort with Key Lambda**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 28ms | 
+```python
+    def reorderLogFiles(self, logs: List[str]) -> List[str]:
+        digs = [i for i in logs if i[-1].isdigit()]
+        lets = [i for i in logs if i[-1].isalpha()]
+        lets.sort(key=lambda x: ' '.join(x.split()[1:]) + x.split()[0])
+        return lets + digs
+```
+Alternative: find instead of split.  | Rt: 32ms |
+```python
+    def reorderLogFiles(self, logs: List[str]) -> List[str]:
+        digs, lets = [], []
+        for i in logs:
+            if i[-1].isalpha(): lets.append(i)
+            else: digs.append(i)
+        lets.sort(key=lambda x: x[x.find(' '):] + x[:x.find(' ')])
+        return lets + digs
+```
+Referrence: https://leetcode.com/problems/reorder-data-in-log-files/discuss/380665/Easy-solution-with-Python
+Triple: multiple key sort.  | Rt: 28ms |
+```python 
+    def reorderLogFiles(self, logs: List[str]) -> List[str]:
+        digs = [i for i in logs if i[-1].isdigit()]
+        lets = [i for i in logs if i[-1].isalpha()]
+        lets.sort(key=lambda x: (x.split()[1:], x.split()[0]))
+        return lets + digs
+```
+Referrence: https://leetcode.com/problems/reorder-data-in-log-files/discuss/198197/simple-Python3-solution-beats-99/258439
+Comment: I am not sure whether there is such a "multiple key sort" or just comparing tuples (no optimization). Tuple is comparable, first key of first priority. 
+
+
+**II). Naive**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 24ms | 
+```python
+    def reorderLogFiles(self, logs: List[str]) -> List[str]:
+        digs, lets, let1, let2 = [], [], [], []
+        for i in logs:
+            if i[-1].isdigit(): digs.append(i)
+            else: lets.append(i)
+        
+        for i in lets:
+            cur = i.split()
+            let1.append(' '.join(cur[1:]) + ' ' + cur[0])
+        let1.sort()
+        
+        for i in let1:
+            cur = i.split()
+            let2.append(cur[-1] + ' ' + ' '.join(cur[:-1]))
+        return let2 + digs
+```
+Comment: I am a little suprised that the dumb naive way of sorting is more efficient than the sort by key solution. I think it is because the naive sort is faster than sort by key or probably the key lambda split twice in the process. 
+
+
+**III). Sort Both Together**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 48ms | 
+```python
+    def reorderLogFiles(self, logs: List[str]) -> List[str]:
+        def sortKey(x):
+            iden, rest = x.split(' ', 1)
+            return (0, rest, iden) if rest[0].isalpha() else (1, ) 
+        logs.sort(key = sortKey)
+        return logs
+```
+Alternative: non-in-place.  | Rt: 32ms |
+```python
+    def reorderLogFiles(self, logs: List[str]) -> List[str]:
+        def sortKey(x):
+            iden, rest = x.split(' ', 1)
+            return (0, rest, iden) if rest[0].isalpha() else (1, ) 
+        return sorted(logs, key = sortKey)
+```
+**Comment**: python uses **TimSort**. **the sort method sorts a list in place, it does use some additional space**, as stated in the description of the implementation:
+
+timsort can require a temp array containing as many as N//2 pointers, which means as many as 2*N extra bytes on 32-bit boxes. It can be expected to require a temp array this large when sorting random data; on data with significant structure, it may get away without using any extra heap memory.
+
+Therefore the worst case space complexity is O(N) and best case O(1). 
+
+Reference for the code: https://leetcode.com/problems/reorder-data-in-log-files/discuss/192144/Python-1-liner/226614
+Referrence for the comment: https://stackoverflow.com/questions/48759175/what-is-the-space-complexity-of-the-python-sort/48759241
+
+**Sort vs Sorted**: **sorted() works on any iterable, not just lists. Strings, tuples, dictionaries (you'll get the keys), generators, etc., returning a list containing all elements, sorted. While sort only works for list**.
+Generally, Sort is faster than Sorted. **The sorting process are pretty much the same (timsort) both in time and space, but the input loading and outputing differs.** Both functions bytecode is pretty much the same. The only difference is, that **the list_sort function first loads the list, loads the method (sort) followed by calling the method on the list without any arguments, whereas the the sorted_builtin function first loads the built-in sorted function, followed by loading the list and calling the loaded function with the list as argument**.
+
+The time difference mostly lies in the **output period**. Sort knows where to output and how big the size is while sorted need to creat a new copy for the result. The major difference lies in this **list creation** process because the list creation requires **resizing**. **Along with the resizing there probably are a lot of list copy operations that may take a lot of time**. For the details of the analysis, please find it at: https://blog.usejournal.com/list-sort-vs-sorted-list-aab92c00e17
+
+Referrence: https://stackoverflow.com/questions/22442378/what-is-the-difference-between-sortedlist-vs-list-sort; https://blog.usejournal.com/list-sort-vs-sorted-list-aab92c00e17
+
+

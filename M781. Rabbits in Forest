@@ -1,0 +1,44 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Let the Max Dominant**
+| O(T): O(n) | O(S): O(n) | Rt: 44ms | 
+```python
+    def numRabbits(self, answers: List[int]) -> int:
+        ct = collections.Counter(answers)
+        rst = 0
+        for k in ct:
+            if ct[k] <= k+1: rst += k+1
+            #equal to math.ceil(ct[k] // (k+1))
+            #to get the ceil of a / b, could use -(-a//b)
+            else: rst += (k+1) * (-(-ct[k]//(k+1)))
+        return rst
+```
+
+Alternative: make them consistant. | Rt: 40ms |
+```python
+    def numRabbits(self, answers: List[int]) -> int:
+        ct = collections.Counter(answers)
+        return sum((k+1) * math.ceil(ct[k]/(k+1)) for k in ct)
+```
+
+
+**II). Bucket Collect**
+| O(T): O(n) | O(S): O(1) | Rt: 44ms | 
+```python
+    def numRabbits(self, answers: List[int]) -> int:
+        rst, m = 0, [0] * 1000
+        for i in answers: m[i] += 1
+        #another way to do the math.ceil(a / b) is that (a + b - 1) // b
+        return sum((i+1) * ((m[i] + i) // (i+1))  for i in range(1000) if m[i])
+```
+
+Alternative: count in the fly. | Rt: 40ms |
+```python
+    def numRabbits(self, answers: List[int]) -> int:
+        rst, m = 0, [0] * 1000
+        for i in answers: 
+            m[i] += 1
+            if m[i] == i+1: 
+                rst += i+1
+                m[i] = 0
+        return rst + sum(i+1 for i in range(1000) if m[i])
+```

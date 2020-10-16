@@ -1,0 +1,13 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack: Count Open**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def minAddToMakeValid(self, S: str) -> int:
+        rst = ct_open = 0
+        for i in S:
+            if i == '(': ct_open += 1
+            else:
+                if ct_open: ct_open -= 1
+                else: rst += 1
+        return rst + ct_open
+```

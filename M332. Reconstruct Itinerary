@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS Iterative**
+| O(T): O(n) | O(S): O(n) | Rt: 80ms | 
+```python
+    def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+        dt = collections.defaultdict(list)
+        tickets.sort(reverse=True)
+        for i, j in tickets: dt[i].append(j)
+        rst, stack = [], ['JFK']
+        while stack:
+            while dt[stack[-1]]:
+                stack.append(dt[stack[-1]].pop())
+            rst.append(stack.pop())
+        rst.reverse()
+        return rst
+```
+Referrence: https://leetcode.com/problems/reconstruct-itinerary/discuss/78768/Short-Ruby-Python-Java-C%2B%2B
+Comment: [["JFK","KUL"],["JFK","NRT"],["NRT","JFK"]], this test case is really difficult to understand, at least not covered by the description (what happens if there is a dead end while we have't visited all airport). Before I view the solutions, I couldn't figure out this case -- each dead end should be taken as the global last node according to their appearance order. All in all, this is a very confusing problem, you hardly make it clear before you know it is dfs path traversal. 
+
+
+**II). DFS Recursive**
+| O(T): O(n) | O(S): O(h) | Rt: 80ms | 
+```python
+    def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+        def visit(dt, city, rst):
+            while dt[city]: visit(dt, dt[city].pop(), rst)
+            rst.append(city)
+            
+        dt = collections.defaultdict(list)
+        tickets.sort(reverse=True)
+        for i, j in tickets: dt[i].append(j)
+        rst = [] 
+        visit(dt, 'JFK', rst)
+        rst.reverse()
+        return rst
+```
+Referrence: https://leetcode.com/problems/reconstruct-itinerary/discuss/78768/Short-Ruby-Python-Java-C%2B%2B

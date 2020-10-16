@@ -1,0 +1,16 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Only Count the Head of a Pattern**
+| O(T): O(n) | O(S): O(1) | Rt: 68ms | 
+```python
+    def countBattleships(self, board: List[List[str]]) -> int:
+        if not board or not board[0]: return 0
+        rst = 0
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j]=="X" and (i==0 or board[i-1][j]=='.') and (j==0 or board[i][j-1]=='.'): rst += 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/battleships-in-a-board/discuss/90902/Simple-Java-Solution
+Comment: only count the leading bit (top-left one) of a battleship and ignore the remaining part.
+
+

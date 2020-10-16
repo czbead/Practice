@@ -1,0 +1,12 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive Greedy**
+| O(T): O() | O(S): O() | Rt: 40ms | 
+```python
+    def findMinFibonacciNumbers(self, k: int) -> int:
+        if k < 1: return k
+        a, b = 1, 1
+        while a+b <= k:
+            a, b = b, a+b
+        return 1 + self.findMinFibonacciNumbers(k-b)
+```
+Referrence: https://leetcode.com/problems/find-the-minimum-number-of-fibonacci-numbers-whose-sum-is-k/discuss/585632/JavaC%2B%2BPython-Easy-Prove

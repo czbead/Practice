@@ -1,0 +1,85 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def sampleStats(self, count: List[int]) -> List[float]:
+        def getMedian(arr, ind, only):
+            ct, summ = 0, None
+            for i in range(len(arr)):
+                if not arr[i]: continue
+                ct += arr[i]
+                if ct == ind:
+                    if only: return i
+                    summ = i
+                if ct > ind:
+                    if summ is None: return i
+                    return (summ + i) / 2
+        
+        ct, l = sum(count), len(count)
+        mi = next(i for i in range(l) if count[i])
+        mx = next(i for i in range(l-1, -1, -1) if count[i])
+        mean = sum(count[i] * i for i in range(l)) / ct
+        #comput mode
+        mode = 0
+        for i in range(l):
+            if count[i] > count[mode]: mode = i
+        #compute median
+        median = getMedian(count, (ct+1)//2, ct%2)
+        return (mi, mx, mean, median, mode)
+```
+
+Alternative: | Rt: 48ms |
+```python
+    def sampleStats(self, count: List[int]) -> List[float]:
+        def getMedian(arr, ind, only):
+            ct, summ = 0, None
+            for i in range(len(arr)):
+                if not arr[i]: continue
+                ct += arr[i]
+                if ct == ind:
+                    if only: return i
+                    summ = i
+                if ct > ind:
+                    if summ is None: return i
+                    return (summ + i) / 2
+        
+        mi, mx, summ, ct, mode, l = None, 0, 0, 0, 0, len(count)
+        for i in range(l):
+            if not count[i]: continue
+            if mi is None: mi = i
+            mx = i
+            if count[i] > count[mode]: mode = i
+            ct += count[i]
+            summ += count[i] * i
+        mean = summ / ct
+        #compute median
+        median = getMedian(count, (ct+1)//2, ct%2)
+        return (mi, mx, mean, median, mode)
+```
+
+Triple: | Rt: 40ms |
+```python
+    def sampleStats(self, count: List[int]) -> List[float]:
+        def getMedian(arr, ind):
+            ct, summ = 0, None
+            for i in range(len(arr)):
+                if not arr[i]: continue
+                ct += arr[i]
+                if ct >= ind: return i, ct-ind
+        
+        mi, mx, summ, ct, mode, l = None, 0, 0, 0, 0, len(count)
+        for i in range(l):
+            if not count[i]: continue
+            if mi is None: mi = i
+            mx = i
+            if count[i] > count[mode]: mode = i
+            ct += count[i]
+            summ += count[i] * i
+        mean = summ / ct
+        #compute median
+        median, cnt = getMedian(count, (ct+1)//2)
+        if ct % 2 == 0 and cnt == 0: 
+            median = (median + next(i for i in range(median+1, l) if count[i])) / 2
+        return (mi, mx, mean, median, mode)
+```
+Others: you can use prefix sum as well, but build prefix sum is a full pass itself just for at most two traverse (a little bit expensive) - https://leetcode.com/problems/statistics-from-a-large-sample/discuss/317626/Python-Solution;

@@ -1,0 +1,14 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy with Two Pointer**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 488ms | 
+```python
+    def numRescueBoats(self, people: List[int], limit: int) -> int:
+        ct = 0
+        people.sort()
+        l, r = 0, len(people)-1
+        while l <= r:
+            if people[l] + people[r] > limit: r -= 1
+            else: l, r = l+1, r-1
+            ct += 1
+        return ct
+```

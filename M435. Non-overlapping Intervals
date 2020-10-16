@@ -1,0 +1,32 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy: Sort by Interval End**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 76ms | 
+```python
+    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+        intervals.sort(key=lambda x: x[1])
+        rst, pre = 0, -float('inf')
+        for i, j in intervals:
+            if i >= pre: pre = j
+            else: rst += 1
+        return rst
+```
+Comment: I sort by the first value for the first try, then think it should be the second value.
+
+
+**II). Greedy: Sort by Interval Start**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 72ms | 
+```python
+    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+        intervals.sort()
+        rst, pre = 0, -float('inf')
+        for i, j in intervals:
+            if i >= pre: pre = j
+            else: 
+                rst += 1
+                #narrow the cur interval, greedily; 
+                #since the order is sorted by first val of interval, the coming interval's start time is always >= last one's. No worry for the overlap.
+                pre = min(pre, j)
+        return rst
+```
+Referrence: https://leetcode.com/problems/non-overlapping-intervals/discuss/91768/Python-greedy-solution-with-explanation
+

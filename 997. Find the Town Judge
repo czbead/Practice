@@ -1,0 +1,76 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Head Count**
+| O(T): O(n) | O(S): O(n) | Rt: 764ms | 
+```python
+    def findJudge(self, N: int, trust: List[List[int]]) -> int:
+        if N == 1 and not trust: return 1
+        dt = collections.defaultdict(int)
+        #i cannot be, count head for j
+        for i, j in trust: dt[j] += 1; dt[i] = -1
+        for k in dt: 
+            if dt[k] == N-1: return k
+        return -1
+```
+
+
+**II). Bucket Collect**
+| O(T): O(n) | O(S): O(1) | Rt: 784ms | 
+```python
+    def findJudge(self, N: int, trust: List[List[int]]) -> int:
+        m = [0] * 1000
+        for i, j in trust: m[i-1], m[j-1] = -1, m[j-1] + 1
+        for i, v in enumerate(m): 
+            if v == N-1: return i + 1
+        return -1
+```
+Alternative: index of maximum value | Rt: 764ms |
+```python
+    def findJudge(self, N: int, trust: List[List[int]]) -> int:
+        m = [0] * 1000
+        for i, j in trust: m[i-1], m[j-1] = -1, m[j-1] + 1
+        maxv = max(m)
+        return m.index(maxv) + 1 if maxv == N-1 else -1
+```
+Triple:  | Rt: 784ms |
+```python
+    def findJudge(self, N: int, trust: List[List[int]]) -> int:
+        m = [0] * 1000
+        for i, j in trust: m[i-1], m[j-1] = -1, m[j-1] + 1
+        try:
+            index = m.index(N-1)
+            return index + 1
+        except:
+            return -1
+```
+
+
+**III). Set and Dict**
+| O(T): O(n) | O(S): O(n) | Rt: 796ms | 
+```python
+    def findJudge(self, N: int, trust: List[List[int]]) -> int:
+        ilst, dt = set(), {}
+        for i, j in trust: ilst.add(i); dt[j] = dt.get(j, 0) + 1
+        for k in set(range(1, N + 1)) - ilst:
+            if dt.get(k, 0) == N - 1: return k
+        return -1
+```
+
+
+**IV). Set and Counter Most**
+| O(T): O(n) | O(S): O(n) | Rt: 792ms | 
+```python
+    def findJudge(self, N: int, trust: List[List[int]]) -> int:
+        if N == 1 and not trust: return 1
+        iset, jlst = {i for i, j in trust}, [j for i, j in trust]
+        most = collections.Counter(jlst).most_common(1)[0]
+        return most[0] if most[0] not in iset and most[1] == N-1 else -1
+```
+Alternative: count potential.  | Rt: 800ms |
+```python
+    def findJudge(self, N: int, trust: List[List[int]]) -> int:
+        iset, jlst = {i for i, j in trust}, [j for i, j in trust]
+        for i in set(range(1, N+1)) - iset:
+            if jlst.count(i) == N-1: return i
+        return -1
+```
+

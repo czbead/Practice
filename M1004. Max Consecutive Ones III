@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer with Slide Window**
+| O(T): O(n) | O(S): O(1) | Rt: 624ms | 
+```python
+    def longestOnes(self, A: List[int], K: int) -> int:
+        l, k, rst, st = len(A), K, 0, 0
+        for i in range(l):
+            if A[i] == 0:
+                rst = max(rst, i-st)
+                if k: k -= 1
+                else:
+                    while A[st]: st += 1
+                    st += 1
+        return max(rst, l-st)
+```
+
+Alternative: | Rt: 680ms |
+```python
+    def longestOnes(self, A: List[int], K: int) -> int:
+        l, k, rst, st = len(A), K, 0, 0
+        for i in range(l):
+            if A[i] == 0: k -= 1
+            while k < 0:
+                if A[st] == 0: k += 1
+                st += 1
+            rst = max(rst, i-st+1)
+        return rst
+```
+Referrence: https://leetcode.com/problems/max-consecutive-ones-iii/discuss/247543/O(n)-Java-Solution-using-sliding-window
+
+Triple: | Rt: 640ms |
+```python
+    def longestOnes(self, A: List[int], K: int) -> int:
+        l, k, rst, st = len(A), K, 0, 0
+        for i in range(l):
+            if A[i] == 0: 
+                k -= 1
+                rst = max(rst, i-st)
+            while k < 0:
+                if A[st] == 0: k += 1
+                st += 1
+        return max(rst, l-st)
+```

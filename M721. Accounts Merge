@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Merge All Previous Repeat Account**
+| O(T): O() | O(S): O() | Rt: 1000ms | 
+```python
+    def accountsMerge(self, accounts: List[List[str]]) -> List[List[str]]:
+        dt_emails, dt_name, dt_name_no = collections.defaultdict(list), {}, {}
+        for arr in accounts:
+            name, emails = arr[0], arr[1:]
+            duplicate = [dt_name[e] for e in emails if e in dt_name]
+            for nameTu in duplicate: 
+                emails += dt_emails[nameTu] 
+                del dt_emails[nameTu]
+            
+            dt_name_no[name] = dt_name_no.get(name, 0) + 1
+            name_no = dt_name_no[name]
+            dt_emails[(name,name_no)] = emails
+            for e in emails: dt_name[e] = (name, name_no)
+
+        return [[tu[0]] + sorted(set(dt_emails[tu])) for tu in dt_emails]
+```
+
+Alternative: | Rt: 732ms |
+```python
+    def accountsMerge(self, accounts: List[List[str]]) -> List[List[str]]:
+        dt_emails, dt_name, dt_name_no = collections.defaultdict(list), {}, {}
+        for arr in accounts:
+            name, emails = arr[0], set(arr[1:])
+            duplicate = [dt_name[e] for e in emails if e in dt_name]
+            for nameTu in duplicate: 
+                emails.update(dt_emails[nameTu])
+                del dt_emails[nameTu]
+            
+            dt_name_no[name] = dt_name_no.get(name, 0) + 1
+            name_no = dt_name_no[name]
+            dt_emails[(name,name_no)] = list(emails)
+            for e in emails: dt_name[e] = (name, name_no)
+
+        return [[tu[0]] + sorted(dt_emails[tu]) for tu in dt_emails]
+```
+
+Others: Graph DFS - https://leetcode.com/problems/accounts-merge/discuss/109161/Python-Simple-DFS-with-explanation!!!

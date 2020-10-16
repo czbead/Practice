@@ -1,0 +1,69 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer with Slide Window**
+| O(T): O(n) | O(S): O(n) | Rt: 380ms | 
+```python
+    def maxWidthRamp(self, A: List[int]) -> int:
+        if not A: return 0
+        l = len(A)
+        M = [None] * l; M[-1] = A[-1]
+        #the key of this solution is: backward traverse
+        for i in range(l-2, -1, -1): M[i] = max(A[i], M[i+1])
+        rst = i = j = 0
+        while i < l:
+            while j < l and A[i] <= M[j]: j += 1
+            rst = max(rst, j - i - 1)
+            i += 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/maximum-width-ramp/discuss/265765/Detailed-Explaination-of-all-the-three-approaches
+
+
+**II). Hash Index**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 464ms | 
+```python
+    def maxWidthRamp(self, A: List[int]) -> int:
+        if not A: return 0
+        dt = collections.defaultdict(list)
+        for i in range(len(A)):
+            if len(dt[A[i]]) < 2: dt[A[i]].append(i)
+            else: dt[A[i]][-1] = i
+        rst, min_index = 0, float('inf')
+        for k in sorted(dt):
+            min_index = min(min_index, dt[k][0])
+            rst = max(rst, dt[k][-1] - min_index)
+        return rst
+```
+
+Alternativd: | Rt: 784ms |
+```python
+    def maxWidthRamp(self, A: List[int]) -> int:
+        if not A: return 0
+        M = [(A[i], i) for i in range(len(A))]
+        M.sort()
+        rst, min_index = 0, float('inf')
+        for v, i in M:
+            min_index = min(min_index, i)
+            rst = max(rst, i - min_index)
+        return rst
+```
+Referrence: https://leetcode.com/problems/maximum-width-ramp/discuss/208326/Python-O(N*logN)-straightforward
+
+
+**III). Stack**
+| O(T): O() | O(S): O() | Rt: 320ms | 
+```python
+    def maxWidthRamp(self, A: List[int]) -> int:
+        if not A: return 0
+        stack, l = [], len(A)
+        for i in range(l):
+            while not stack or A[stack[-1]] > A[i]: 
+                stack.append(i)
+                
+        rst = 0
+        for i in range(l-1, -1, -1):
+            while stack and A[i] >= A[stack[-1]]:
+                rst = max(rst, i-stack.pop())
+        return rst
+```
+Referrence: https://leetcode.com/problems/maximum-width-ramp/discuss/208348/JavaC%2B%2BPython-O(N)-Using-Stack
+

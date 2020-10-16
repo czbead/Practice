@@ -1,0 +1,40 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort by Frequency and Value**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 508ms | 
+```python
+    def rearrangeBarcodes(self, barcodes: List[int]) -> List[int]:
+        ct = collections.Counter(barcodes)
+        #most frequent -> less frequent
+        barcodes.sort(key= lambda x: (-ct[x], x))
+        l = len(barcodes)
+        rst, it = [None] * l, iter(barcodes)
+        for i in list(range(0, l, 2)) + list(range(1, l, 2)):
+            rst[i] = next(it)
+        return rst
+```
+
+
+**II). Deposit Most Frequent**
+| O(T): O(n) | O(S): O(n) | Rt: 532ms | 
+```python
+    def rearrangeBarcodes(self, barcodes: List[int]) -> List[int]:
+        ct, most_frequent, l = collections.Counter(), 0, len(barcodes)
+        for i in barcodes:
+            ct[i] += 1
+            if ct[i] > ct[most_frequent]: most_frequent = i
+        rst, i = [0] * l, 0
+        while ct[most_frequent]:
+                rst[i] = most_frequent
+                ct[most_frequent] -= 1
+                i += 2
+        del ct[most_frequent]
+        for k in ct:
+            while ct[k]:
+                if i >= l: i = 1
+                rst[i] = k
+                ct[k] -= 1
+                i += 2
+        return rst
+```
+Referrence: https://leetcode.com/problems/distant-barcodes/discuss/299371/C%2B%2B-with-picture-O(N)
+

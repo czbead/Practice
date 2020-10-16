@@ -1,0 +1,69 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Set Len**
+| O(t): O(n) | O(m): O(n) | Rt: 128ms | 
+```python
+    def containsDuplicate(self, nums: List[int]) -> bool:
+        return len(set(nums)) != len(nums)
+```
+
+
+**II). Set In**
+| O(t): O(n) | O(m): O(n) | Rt: 132ms | 
+```python
+    def containsDuplicate(self, nums: List[int]) -> bool:
+        s = set()
+        for i in nums:
+            if i not in s: s.add(i)
+            else: return True
+        return False
+```
+
+
+**III). Counter**
+| O(t): O(n) | O(m): O(n) | Rt: 172ms | 
+```python
+    def containsDuplicate(self, nums: List[int]) -> bool:
+        return max(collections.Counter(nums).values() or [0]) > 1
+```
+
+
+**IV). Sort for Practice**
+| O(t): O(nlgn) | O(m): O(1) | Rt: 152ms | 
+```python
+    def containsDuplicate(self, nums: List[int]) -> bool:
+        nums.sort()
+        for i in range(len(nums)-1):
+            if nums[i] == nums[i+1]: return True
+        return False
+```
+Alterntive: Pythonic | Rt: 128ms |
+```python
+    def containsDuplicate(self, nums: List[int]) -> bool:
+        nums.sort()
+        for i, j in zip(nums, nums[1:]):
+            if i == j: return True
+        return False
+```
+Triple: | Rt: 132ms |
+```python
+    def containsDuplicate(self, nums: List[int]) -> bool:
+        nums.sort()
+        return any(i == j for i, j in zip(nums, nums[1:]))
+```
+
+
+**V). Nested For for Practice**
+| O(t): O(n*n) | O(m): O(1) | Rt: ms | TLE
+```python
+    def containsDuplicate(self, nums: List[int]) -> bool:
+        for i in range(len(nums)):
+            for j in range(i+1, len(nums)):
+                if nums[i] == nums[j]: return True
+        return False
+```
+Alternative: | TLE |
+```python
+    def containsDuplicate(self, nums: List[int]) -> bool:
+        return any(nums[i] == nums[j] for i in range(len(nums)) for j in range(i+1, len(nums)))
+```
+

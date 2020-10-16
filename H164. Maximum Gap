@@ -1,0 +1,38 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bucket Sort**
+| O(T): O(n) | O(S): O(n) | Rt: 60ms | 
+```python
+    def maximumGap(self, nums: List[int]) -> int:
+        l = len(nums)
+        if l < 2: return 0
+        minv, maxv = float('inf'), -float('inf')
+        for i in nums:
+            minv = min(minv, i)
+            maxv = max(maxv, i)
+        if minv == maxv: return 0
+        #the minimum possible gap, ensure gaps between items within same bucket can't be the max gap;
+        gap = math.ceil((maxv-minv) / (l-1))
+        bucketMin = [float('inf')] * l
+        bucketMax = [-float('inf')] * l
+        for n in nums:
+            i = (n-minv) // gap
+            bucketMin[i] = min(bucketMin[i], n)
+            bucketMax[i] = max(bucketMax[i], n)
+        for i in range(l):
+            if bucketMin[i] == float('inf'): continue
+            gap = max(gap, bucketMin[i] - minv)
+            minv = bucketMax[i]
+        return gap
+```
+Referrence: https://leetcode.com/problems/maximum-gap/discuss/50643/bucket-sort-JAVA-solution-with-explanation-O(N)-time-and-space
+
+
+**II). Sort**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 56ms | 
+```python
+    def maximumGap(self, nums: List[int]) -> int:
+        if len(nums) < 2: return 0
+        nums.sort()
+        return max(nums[i+1] - nums[i] for i in range(len(nums)-1))
+```
+

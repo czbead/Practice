@@ -1,0 +1,71 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search with Nested List**
+| O(T): O() | O(S): O() | Rt: 508ms | 
+```python
+class SnapshotArray:
+
+    def __init__(self, length: int):
+        self.arr = [[] for _ in range(length)]
+        self.id = 0
+
+    def set(self, index: int, val: int) -> None:
+        i = bisect.bisect(self.arr[index], [self.id]) - 1
+        if i < 0 or self.arr[index] != self.id:
+            self.arr[index].append([self.id, val])
+        else: 
+            self.arr[index][i][1] = val
+
+    def snap(self) -> int:
+        self.id += 1
+        return self.id - 1
+
+    def get(self, index: int, snap_id: int) -> int:
+        i = bisect.bisect(self.arr[index], [snap_id+1]) - 1
+        if i < 0: return 0
+        return self.arr[index][i][1]
+```
+
+Alternative: | Rt: 480ms |
+```python
+class SnapshotArray:
+
+    def __init__(self, length: int):
+        self.arr = [[] for _ in range(length)]
+        self.id = 0
+
+    def set(self, index: int, val: int) -> None:
+        self.arr[index].append([self.id, val])
+
+    def snap(self) -> int:
+        self.id += 1
+        return self.id - 1
+
+    def get(self, index: int, snap_id: int) -> int:
+        i = bisect.bisect(self.arr[index], [snap_id+1]) - 1
+        if i < 0: return 0
+        return self.arr[index][i][1]
+```
+Referrence: https://leetcode.com/problems/snapshot-array/discuss/350562/JavaPython-Binary-Search
+
+
+**II). Snapshot a HashMap**
+| O(T): O() | O(S): O() | Rt: 384ms | 
+```python
+class SnapshotArray:
+
+    def __init__(self, length: int):
+        self.nums = {}
+        self.version = []
+
+    def set(self, index: int, val: int) -> None:
+        self.nums[index] = val
+
+    def snap(self) -> int:
+        self.version.append(self.nums.copy())
+        return len(self.version) - 1
+
+    def get(self, index: int, snap_id: int) -> int:
+        if index not in self.version[snap_id]: return 0
+        return self.version[snap_id][index]
+```
+Referrence: https://leetcode.com/problems/snapshot-array/discuss/350562/JavaPython-Binary-Search/317655

@@ -1,0 +1,42 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 40ms | 
+```python
+    def largestValues(self, root: TreeNode) -> List[int]:
+        if not root: return
+        rst, stack = [], [root]
+        while stack:
+            rst.append(max(n.val for n in stack))
+            stack = [i for n in stack for i in (n.left, n.right) if i]
+        return rst
+```
+
+
+**II). DFS**
+| O(T): O(n) | O(S): O(h) | Rt: 40ms | 
+```python
+    def largestValues(self, root: TreeNode) -> List[int]:
+        def dfs(node, dep, rst):
+            if dep == len(rst): rst.append(node.val)
+            else: rst[dep] = max(rst[dep], node.val)
+            if node.left: dfs(node.left, dep+1, rst)
+            if node.right: dfs(node.right, dep+1, rst)
+                
+        if not root: return []
+        rst = []
+        dfs(root, 0, rst)
+        return rst
+```
+Alternative: iterative version. | Rt: 52ms |
+```python
+    def largestValues(self, root: TreeNode) -> List[int]:
+        rst, stack = [], [(root, 0)]
+        while stack:
+            node, dep = stack.pop()
+            if not node: continue
+            if dep == len(rst): rst.append(node.val)
+            else: rst[dep] = max(rst[dep], node.val)
+            stack.append((node.right, dep+1))
+            stack.append((node.left, dep+1))
+        return rst
+```

@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Swap Sort Nums within Array Len**
+| O(T): O(n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def firstMissingPositive(self, nums: List[int]) -> int:
+        if not nums: return 1
+        l = len(nums)
+        for i in range(l):
+            while 0<nums[i]<=l and nums[nums[i]-1] != nums[i]:
+                #the order does matter!, excute from left to right
+                nums[nums[i]-1], nums[i] = nums[i], nums[nums[i]-1]
+                
+        return next((i+1 for i in range(l) if nums[i] != i+1), l+1)
+```
+Referrence: https://leetcode.com/problems/first-missing-positive/discuss/17071/My-short-c%2B%2B-solution-O(1)-space-and-O(n)-time
+
+
+**II). Negate or Mod**
+| O(T): O(n) | O(S): O(1) | Rt: 36ms | 
+```python
+    def firstMissingPositive(self, nums: List[int]) -> int:
+        if not nums: return 1
+        n = len(nums)
+        for i in range(n):
+            if nums[i] <= 0: nums[i] = n+1
+                
+        for i in nums:
+            tmp = abs(i)
+            if tmp <= n and nums[tmp-1] > 0: nums[tmp-1] = -nums[tmp-1]
+                
+        return next((i+1 for i in range(n) if nums[i] > 0), n+1)
+```
+Referrence: https://leetcode.com/problems/first-missing-positive/discuss/17214/Java-simple-solution-with-documentation
+
+Similar: https://leetcode.com/problems/first-missing-positive/discuss/17080/Python-O(1)-space-O(n)-time-solution-with-explanation

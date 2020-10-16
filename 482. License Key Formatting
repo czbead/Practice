@@ -1,0 +1,52 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Replace and Segment**
+| O(T): O(n) | O(S): O(n) | Rt: 36ms | 
+```python
+    def licenseKeyFormatting(self, S: str, K: int) -> str:
+        s = S.replace("-", '').upper()
+        l = len(s)
+        f = l % K
+        lst = [s[i:i+K] for i in range(f, l, K)]
+        if f: lst = [s[:f]] + lst
+        return '-'.join(lst)
+```
+
+
+**II). Reverse Back**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def licenseKeyFormatting(self, S: str, K: int) -> str:
+        s = S.replace("-", '').upper()
+        l = len(s)
+        ss = s[::-1]
+        lst = [ss[i:i+K] for i in range(0, l, K)]
+        return '-'.join(lst)[::-1]
+```
+Alternative: two-liner elegant version. | Rt: 32ms |
+```python
+    def licenseKeyFormatting(self, S: str, K: int) -> str:
+        s = S.replace('-', '').upper()[::-1]
+        return '-'.join([s[i:i+K] for i in range(0, len(s), K)])[::-1]
+```
+
+
+**III). Pointer**
+| O(T): O(n) | O(S): O(n) | Rt: 64ms | 
+```python
+    def licenseKeyFormatting(self, S: str, K: int) -> str:
+        rst, lst, ct, r = [], [], 0, len(S) - 1
+        S = S.upper()
+        while r >= 0: 
+            if S[r] != "-": 
+                lst.append(S[r])
+                ct += 1
+                if ct == K: 
+                    rst.append(''.join(lst))
+                    lst = []
+                    ct  = 0
+            r -= 1
+        if lst: rst.append(''.join(lst))
+        return '-'.join(rst)[::-1]
+```
+
+

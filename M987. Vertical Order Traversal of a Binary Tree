@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Pre-Oredre Traverse with HashMap**
+| O(T): O() | O(S): O() | Rt: 36ms | 
+```python
+    def verticalTraversal(self, root: TreeNode) -> List[List[int]]:
+        def preorder(node, x, y, dtx, dtv):
+            if not node: return
+            dtx[x].append(node.val)
+            dtv[node.val] = -y
+            preorder(node.left, x-1, y-1, dtx, dtv)
+            preorder(node.right, x+1, y-1, dtx, dtv)
+            
+        dtx, dtv = collections.defaultdict(list), {}
+        preorder(root, 0, 0, dtx, dtv)
+        return [sorted(dtx[k], key=lambda k: (dtv[k], k)) for k in sorted(dtx)]
+```
+
+Alternative: | Rt: 28ms |
+```python
+    def verticalTraversal(self, root: TreeNode) -> List[List[int]]:
+        def preorder(node, x, y, dt):
+            if not node: return
+            dt[x].append((-y, node.val))
+            preorder(node.left, x-1, y-1, dt)
+            preorder(node.right, x+1, y-1, dt)
+            
+        dt = collections.defaultdict(list)
+        preorder(root, 0, 0, dt)
+        return [[tu[1] for tu in sorted(dt[k])] for k in sorted(dt)]
+```
+

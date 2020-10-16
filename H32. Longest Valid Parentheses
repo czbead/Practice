@@ -1,0 +1,52 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack: Off By 1*
+| O(T): O(n) | O(S): O(1) | Rt: 44ms | 
+```python
+    def longestValidParentheses(self, s: str) -> int:
+        rst, left, l = 0, [], len(s)
+        for i in range(l):
+            if s[i] == '(': left.append(i)
+            else: 
+                cur = 0
+                while left and left[-1] < 0: left.pop()
+                if left: cur = i - left.pop() + 1
+                while left and left[-1] < 0: cur += -left.pop()
+                if cur:  #cur may equal to 0
+                    left.append(-cur)
+                    rst = max(rst, cur)
+        return rst
+```
+
+Alternative: | Rt: 40ms |
+```python
+    def longestValidParentheses(self, s: str) -> int:
+        rst, left, l = 0, [-1], len(s)
+        for i in range(l):
+            if s[i] == '(': left.append(i)
+            else: 
+                left.pop()
+                if not left: left.append(i)
+                else: rst = max(rst, i-left[-1])
+        return rst
+```
+Referrence: https://leetcode.com/problems/longest-valid-parentheses/discuss/14126/My-O(n)-solution-using-a-stack/243370
+Comment: this is a great stack solution, I am afraid I cannot come up with this in an interview, not that easy to understand.
+
+
+**II). DP Chainning**
+| O(T): O(n) | O(S): O(n) | Rt: 44ms | 
+```python
+    def longestValidParentheses(self, s: str) -> int:
+        mx, opened, l = 0, 0, len(s)
+        dp = [0] * (l+1)
+        for i in range(1, l+1):
+            if s[i-1] == '(': opened += 1
+            elif opened:
+                dp[i] = dp[i-1] + 2  #each match increase two 
+                dp[i] += dp[i-dp[i]]  #cover previous sequence, like a chain
+                opened -= 1
+                mx = max(mx, dp[i])
+        return mx
+```
+Referrence: https://leetcode.com/problems/longest-valid-parentheses/discuss/14126/My-O(n)-solution-using-a-stack/14449; https://leetcode.com/problems/longest-valid-parentheses/discuss/14278/Two-Java-solutions-with-explanation.-Stack-and-DP.-Short-and-easy-to-understand./216841
+

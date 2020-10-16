@@ -1,0 +1,191 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Merge Two Sorted Lists**
+| O(T): O(m+n) | O(S): O(m+n) | Rt: 1056ms | 
+```python
+    def getAllElements(self, root1: TreeNode, root2: TreeNode) -> List[int]:
+        def reversepreorder(node):
+            if not node: return []
+            return reversepreorder(node.right) + [node.val] + reversepreorder(node.left)
+            
+        rst, a, b = [], reversepreorder(root1), reversepreorder(root2)
+        while a and b:
+            if a[-1] < b[-1]:
+                rst.append(a.pop())
+            else: rst.append(b.pop())
+        if a: rst += a[::-1]
+        if b: rst += b[::-1]
+        return rst
+```
+
+Alternative: | Rt: 368ms |
+```python
+    def getAllElements(self, root1: TreeNode, root2: TreeNode) -> List[int]:
+        def reversepreorder(node, arr):
+            if not node: return 
+            reversepreorder(node.right, arr)
+            arr.append(node.val)
+            reversepreorder(node.left, arr)  
+        
+        rst, a, b = [], [], []
+        reversepreorder(root1, a), reversepreorder(root2, b)
+        while a and b:
+            if a[-1] < b[-1]:
+                rst.append(a.pop())
+            else: rst.append(b.pop())
+        if a: rst += a[::-1]
+        if b: rst += b[::-1]
+        return rst
+```
+
+Triple: with deque. | Rt: 376ms |
+```python
+    def getAllElements(self, root1: TreeNode, root2: TreeNode) -> List[int]:
+        def preorder(node, arr):
+            if not node: return 
+            preorder(node.left, arr)
+            arr.append(node.val)
+            preorder(node.right, arr)  
+        
+        rst, a, b = [], collections.deque(), collections.deque()
+        preorder(root1, a), preorder(root2, b)
+        while a and b:
+            if a[0] < b[0]:
+                rst.append(a.popleft())
+            else: rst.append(b.popleft())
+        if a: rst += a
+        if b: rst += b
+        return rst
+```
+
+Forth: | Rt: 628ms |
+```python
+    def getAllElements(self, root1: TreeNode, root2: TreeNode) -> List[int]:
+        def preorder(node, arr):
+            if not node: return 
+            preorder(node.left, arr)
+            arr.append(node.val)
+            preorder(node.right, arr)  
+        
+        rst, a, b = [], [], []
+        preorder(root1, a), preorder(root2, b)
+        if not a or not b: return a or b
+        ai, bi, al, bl = 0, 0, len(a), len(b)
+        while ai < al and bi < bl:
+            if a[ai] < b[bi]: rst.append(a[ai]); ai += 1
+            else: rst.append(b[bi]); bi += 1
+        for i in range(ai, al): rst.append(a[i])
+        for i in range(bi, bl): rst.append(b[i])
+        return rst
+```
+
+Fifth: | Rt: 388ms |
+```python
+    def getAllElements(self, root1: TreeNode, root2: TreeNode) -> List[int]:
+        def preorder(node, arr):
+            if not node: return 
+            preorder(node.left, arr)
+            arr.append(node.val)
+            preorder(node.right, arr)  
+        
+        a, b = [], []
+        preorder(root1, a), preorder(root2, b)
+        if not a or not b: return a or b
+        i, ai, bi, al, bl = 0, 0, 0, len(a), len(b)
+        rst = [0] * (al + bl)
+        while i < al + bl:
+            if bi == bl or ai < al and a[ai] < b[bi]: rst[i], ai = a[ai], ai+1
+            else: rst[i], bi = b[bi], bi+1
+            i += 1
+        return rst
+```
+
+
+**II). Sort**
+| O(T): O((m+n)lg(m+n)) | O(S): O(m+n) | Rt: 828ms | 
+```python
+    def getAllElements(self, root1: TreeNode, root2: TreeNode) -> List[int]:
+        def preorder(node):
+            if not node: return []
+            return preorder(node.left) + [node.val] + preorder(node.right)
+            
+        return sorted(preorder(root1) + preorder(root2))
+```
+Comment: the sort solution is faster than merge solution due to TimSort can identify two sorted lists and take use of both order. https://leetcode.com/problems/all-elements-in-two-binary-search-trees/discuss/464368/Short-O(n)-Python
+
+Alternative: | Rt: 348ms |
+```python
+    def getAllElements(self, root1: TreeNode, root2: TreeNode) -> List[int]:
+        def preorder(node, arr):
+            if not node: return
+            preorder(node.left, arr)
+            arr.append(node.val)
+            preorder(node.right, arr)
+            
+        arr = []
+        preorder(root1, arr)
+        preorder(root2, arr)
+        arr.sort()
+        return arr
+```
+Referrence: https://leetcode.com/problems/all-elements-in-two-binary-search-trees/discuss/463852/JavaPython-3-2-codes%3A-O(n)-time-w-analysis.
+
+
+**III). Wrong Try: Insert SubTree as Insert Node**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+    def getAllElements(self, root1: TreeNode, root2: TreeNode) -> List[int]:
+        def insert(root, node):
+            if not root or not node: return root or node
+            if node.val <= root.val: root.left = insert(root.left, node)
+            else: root.right = insert(root.right, node)
+            return root
+        
+        def preorder(node):
+            if not node: return []
+            return preorder(node.left) + [node.val] + preorder(node.right)
+        
+        head = insert(root1, root2)
+        return preorder(head)
+```
+Comment: this is a wrong solution, somebody may come up with this like me when they practice. 
+
+
+**IV). Generator**
+| O(T): O(m+n) | O(S): O() | Rt: 3308ms | 
+```python
+    def getAllElements(self, root1: TreeNode, root2: TreeNode) -> List[int]: 
+        def preorder(node):
+            if not node: return
+            if node.left: yield from preorder(node.left)
+            yield node.val
+            if node.right: yield from preorder(node.right)
+            
+        return heapq.merge(preorder(root1), preorder(root2))
+```
+Referrence: https://leetcode.com/problems/all-elements-in-two-binary-search-trees/discuss/464167/Why-is-Python-generator-based-inorder-traversal-so-slow
+
+
+**V). Preorder Stack**
+| O(T): O(m+n) | O(S): O(m+n) | Rt: 364ms | 
+```python
+    def getAllElements(self, root1: TreeNode, root2: TreeNode) -> List[int]: 
+        rst, s1, s2 = [], [], []
+        while root1 or root2 or s1 or s2:
+            while root1:
+                s1.append(root1)
+                root1 = root1.left
+            while root2:
+                s2.append(root2)
+                root2 = root2.left
+            if not s2 or s1 and s1[-1].val <= s2[-1].val:
+                node1 = s1.pop()
+                rst.append(node1.val)
+                root1 = node1.right
+            else:
+                node2 = s2.pop()
+                rst.append(node2.val)
+                root2 = node2.right
+        return rst
+```
+Referrence: https://leetcode.com/problems/all-elements-in-two-binary-search-trees/discuss/464073/C%2B%2B-One-Pass-Traversal
+

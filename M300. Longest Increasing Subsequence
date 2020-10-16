@@ -1,0 +1,55 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP Naive**
+| O(T): O(n * n) | O(S): O(n) | Rt: 1184ms | 
+```python
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        if not nums: return 0
+        dp = [1] * len(nums)
+        for i in range(len(nums)):
+            for j in range(i):
+                if nums[i] > nums[j]: dp[i] = max(dp[i], dp[j]+1)
+        return max(dp)
+```
+Referrence: https://leetcode.com/problems/longest-increasing-subsequence/discuss/74953/Java-solution-dp-simple
+
+
+**II). DP Binary Search**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+**III). **
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+**IV). **
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+**V). **
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+**VI). **
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+Alternative: | Rt: ms |
+```python
+
+```
+

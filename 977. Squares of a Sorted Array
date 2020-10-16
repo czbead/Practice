@@ -1,0 +1,75 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 224ms | 
+```python
+    def sortedSquares(self, A: List[int]) -> List[int]:
+        rst, l, r = [], 0, len(A) - 1
+        while l <= r:
+        	#no need to apply abs to the right side value
+            if abs(A[l]) > A[r]: 
+                rst.append(A[l] * A[l])
+                l += 1
+            else: 
+                rst.append(A[r] * A[r])
+                r -= 1
+        rst.reverse()
+        return rst
+```
+Comment: l <= r to ensure the last item being calculated. 
+Alternative: interesting index resolving version.  | Rt: 24ms |
+```python
+    def sortedSquares(self, A: List[int]) -> List[int]:
+        rst, l, r = [None] * len(A), 0, len(A) - 1
+        while l <= r:
+            if abs(A[l]) > A[r]: rst[r-l], l = A[l] * A[l], l+1  
+            else: rst[r-l], r = A[r] * A[r], r-1
+        return rst
+```
+Referrence: idea from https://leetcode.com/problems/squares-of-a-sorted-array/discuss/222079/Python-O(N)-10-lines-two-solutions-explained-beats-100
+
+
+**II). Sort**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 228ms | 
+```python
+    def sortedSquares(self, A: List[int]) -> List[int]:
+        rst = [i * i for i in A]
+        rst.sort()
+        return rst
+```
+Alternative: Sort Before.  | Rt: 224ms |
+```python
+    def sortedSquares(self, A: List[int]) -> List[int]:
+        a = [abs(i) for i in A]
+        a.sort()
+        return [i * i for i in a]
+```
+
+
+**III). Bucket Collect**
+| O(T): O(n) | O(S): O(1) | Rt: 288ms | 
+```python
+    def sortedSquares(self, A: List[int]) -> List[int]:
+        rst, buck = [], [0] * 10001
+        for i in A: buck[abs(i)] += 1
+        for i, v in enumerate(buck):
+            if v: rst.extend([i * i] * v)
+        return rst
+```
+
+
+**IV). Deque**
+| O(T): O(n) | O(S): O(n) | Rt: 280ms | 
+```python
+    def sortedSquares(self, A: List[int]) -> List[int]:
+        rst, q = [], collections.deque(A)
+        while q:
+            if abs(q[0]) > q[-1]: rst.append(q[0] * q[0]); q.popleft()
+            else: rst.append(q[-1] * q[-1]); q.pop()
+        rst.reverse()
+        return rst
+```
+Comment: whenever you traverse a list from both ends by two pointer, you can compose a deque version by pop and poeleft. Of course, moving pointer is much lighter therefore faster than pop. 
+
+
+Others: find generator or iterator style solution at post https://leetcode.com/problems/squares-of-a-sorted-array/discuss/310865/Python%3A-A-comparison-of-lots-of-approaches!-Sorting-two-pointers-deque-iterator-generator
+

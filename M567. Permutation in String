@@ -1,0 +1,44 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sliding Window with Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 64ms | 
+```python
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        l1, l2 = len(s1), len(s2)
+        if l1 > l2: return False
+        m = [0] * 26
+        for i in s1: m[ord(i) - ord('a')] += 1
+        i = 0
+        for j in range(len(s2)):
+            index = ord(s2[j]) - ord('a')
+            m[index] -= 1
+            #has an 'error' letter, forward start pointer until 'no error' 
+            while m[index] < 0:
+                m[ord(s2[i]) - ord('a')] += 1
+                i += 1
+            if j - i + 1 == l1: return True
+        return False
+```
+Referrence: https://leetcode.com/problems/permutation-in-string/discuss/102590/8-lines-slide-window-solution-in-Java
+
+Alternative: using a count to decide return. | Rt: 68ms |
+```python
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        l1, l2 = len(s1), len(s2)
+        if l1 > l2: return False
+        m = [0] * 26
+        for i in s1: m[ord(i) - ord('a')] += 1
+        i = count = 0
+        for j in range(l2):
+            index = ord(s2[j]) - ord('a')
+            m[index] -= 1
+            #only count "correct letter" which has m[index] >= 0
+            if m[index] >= 0: count += 1
+            if count == l1: return True
+            if j - i + 1 == l1: 
+                index = ord(s2[i]) - ord('a')
+                m[index] += 1
+                #means we drop an "correct letter" which drift the m value away from 0
+                if m[index] > 0: count -= 1
+                i += 1
+        return False
+```

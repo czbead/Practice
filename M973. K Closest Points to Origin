@@ -1,0 +1,67 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Lazy Sort**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 640ms | 
+```python
+    def kClosest(self, points: List[List[int]], K: int) -> List[List[int]]:
+        points.sort(key=lambda x: x[0] * x[0] + x[1] * x[1])
+        return points[:K]
+```
+
+
+**II). Heap Nlargest**
+| O(T): O(n + klgn) | O(S): O(n) | Rt: 752ms | 
+```python
+    def kClosest(self, points: List[List[int]], K: int) -> List[List[int]]:
+        p = [(-(i*i + j*j), [i, j]) for i, j in points]
+        return [j for i, j in heapq.nlargest(K, p)]
+```
+
+
+**III). Qucik Select**
+| O(T): O(n*n) | O(S): O() | Rt: 840ms | 
+```python
+    def kClosest(self, points: List[List[int]], K: int) -> List[List[int]]:
+        cmp = lambda x, y: x[0]*x[0] + x[1]*x[1] - (y[0]*y[0] + y[1]*y[1])
+        def partition(points, l, r):
+            pivoti, r = r, r-1
+            while l <= r:
+                if cmp(points[l], points[pivoti]) <= 0: l += 1
+                elif cmp(points[r], points[pivoti]) > 0: r -= 1
+                else:
+                    points[l], points[r] = points[r], points[l]
+                    l, r = l+1, r-1
+            points[pivoti], points[l] = points[l], points[pivoti]
+            return l
+        
+        l, r = 0, len(points)-1
+        while l <= r:
+            m = partition(points, l, r)
+            if m == K: break
+            elif m < K: l = m+1
+            else: r = m-1
+        return points[:K]
+```
+Referrence: https://leetcode.com/problems/k-closest-points-to-origin/discuss/220235/Java-Three-solutions-to-this-classical-K-th-problem.
+
+Alternative: | Rt: 756ms |
+```python
+    def kClosest(self, points: List[List[int]], K: int) -> List[List[int]]:
+        cmp = lambda x, y: x[0]*x[0] + x[1]*x[1] - (y[0]*y[0] + y[1]*y[1])
+        def partition(points, st, end):
+            l = st
+            for r in range(st, end):
+                # "<" or "<=" both works. 
+                if cmp(points[r], points[end]) < 0:
+                    points[l], points[r] = points[r], points[l]
+                    l += 1
+            points[l], points[end] = points[end], points[l]
+            return l
+        
+        l, r = 0, len(points)-1
+        while l <= r:
+            m = partition(points, l, r)
+            if m == K: break
+            elif m < K: l = m+1
+            else: r = m-1
+        return points[:K]
+```

@@ -1,0 +1,38 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counting Sort**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def sortColors(self, nums: List[int]) -> None:
+        m = [0] * 3
+        for i in nums: m[i] += 1
+        nums[:] = m[0] * [0] + m[1] * [1] + m[2] * [2]
+```
+
+
+**II). Two Pointer One Iterator**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def sortColors(self, nums: List[int]) -> None:
+        i, l, r = 0, 0, len(nums)-1
+        while i <= r:
+            while nums[i] == 2 and i < r: 
+                nums[i], nums[r], r = nums[r], nums[i], r-1
+            while nums[i] == 0 and i > l: 
+                nums[i], nums[l], l = nums[l], nums[i], l+1
+            i += 1
+```
+Referrence: https://leetcode.com/problems/sort-colors/discuss/26472/Share-my-at-most-two-pass-constant-space-10-line-solution
+Alternative: | Rt: 32ms |
+```python
+    def sortColors(self, nums: List[int]) -> None:
+        i, l, r = 0, 0, len(nums)-1
+        while i <= r:
+            if nums[i] == 0:
+                nums[i], nums[l] = nums[l], nums[i]
+                i, l = i+1, l+1
+            elif nums[i] == 2:
+                nums[r], nums[i], r = nums[i], nums[r], r-1
+            else: i += 1
+```
+Referrence: https://leetcode.com/problems/sort-colors/discuss/26472/Share-my-at-most-two-pass-constant-space-10-line-solution/25489; https://leetcode.com/problems/sort-colors/discuss/26481/Python-O(n)-1-pass-in-place-solution-with-explanation
+

@@ -1,0 +1,63 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Pop from Two End**
+| O(T): O(n) | O(S): O(n) | Rt: 80ms | 
+```python
+    def removeDuplicates(self, S: str) -> str:
+        rst, s = [''], list(S)
+        while s:
+            if s[-1] != rst[-1]: rst.append(s.pop())
+            else: s.pop(); rst.pop()
+        rst.reverse()
+        return ''.join(rst)
+```
+Alternative: this is a wrong solution, my first try. You can only remove pairs. 'aaa' should return 'a' rather than '' 
+```python
+    def removeDuplicates(self, S: str) -> str:
+        rst, s = [''], list(S)
+        while s:
+            if s[-1] != rst[-1]: rst.append(s.pop())
+            else: 
+                s.pop()
+                while s and s[-1] == rst[-1]: s.pop()
+                rst.pop()
+        rst.reverse()
+        return ''.join(rst)
+```
+Triple: better version. | Rt: 72ms |
+```python
+    def removeDuplicates(self, S: str) -> str:
+        rst = []
+        for i in S:
+            if rst and i == rst[-1]: rst.pop()
+            else: rst.append(i)
+        return ''.join(rst)
+```
+
+
+**II). Pointer Control Collect**
+| O(T): O(n) | O(S): O(n) | Rt: 80ms | 
+```python
+    def removeDuplicates(self, S: str) -> str:
+        i, rst = 0, [''] * len(S)
+        for c in S:
+            rst[i] = c
+            if i > 0 and rst[i] == rst[i-1]: i -= 2
+            i += 1
+        # the real ending index is i - 1
+        return ''.join(rst[:i])
+```
+Alternative: 
+```python
+    def removeDuplicates(self, S: str) -> str:
+        i, rst = 0, [''] * len(S)
+        for c in S:
+            if i > 0 and c == rst[i-1]: i -= 2
+            else: rst[i] = c
+            i += 1
+        return ''.join(rst[:i])
+```
+Referrence: https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/discuss/294893/JavaC%2B%2BPython-Two-Pointers-and-Stack-Solution
+
+
+Others: here is a recursive solution.  https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/discuss/294930/C%2B%2B-Recursive
+

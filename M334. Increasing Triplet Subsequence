@@ -1,0 +1,26 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Iterate the Current 2 Minimum Num**
+| O(T): O(n) | O(S): O(1) | Rt: 56ms | 
+```python
+    def increasingTriplet(self, nums: List[int]) -> bool:
+        if not nums or len(nums) < 3: return
+        a = b = float('inf')
+        for i in nums:
+            if i > b: return True
+            elif i > a: b = min(b, i)
+            else: a = i
+        return False
+```
+Comment: I think this is greedy strategy. 
+Alternative: without min. | Rt: 44ms |
+```python
+    def increasingTriplet(self, nums: List[int]) -> bool:
+        if not nums or len(nums) < 3: return
+        a = b = float('inf')
+        for i in nums:
+            if i <= a: a = i
+            elif i <= b: b = i
+            else: return True
+        return False
+```
+Referrence: https://leetcode.com/problems/increasing-triplet-subsequence/discuss/79004/Concise-Java-solution-with-comments.

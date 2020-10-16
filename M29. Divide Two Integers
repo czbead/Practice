@@ -1,0 +1,63 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bit Wise**
+| O(T): O(lgn*lgn) | O(S): O(1) | Rt: 20ms | 
+```python
+    def divide(self, dividend: int, divisor: int) -> int:
+        if dividend == 0: return 0
+        reverse = True
+        #both positive, or both negative
+        if (dividend > 0) == (divisor > 0): reverse = False
+        dividend, divisor, ct =  abs(dividend), abs(divisor), 0
+        if dividend < divisor: return 0
+        if divisor == 1: ct = dividend
+        # n & (n-1) check whether devisor is a power of 2, 
+        # math.log(2, n).is_integer() 
+        elif divisor & (divisor - 1) == 0: ct = dividend >> int(math.log(divisor, 2))
+        else: 
+            cur, accu = divisor, 1
+            while cur <= dividend: cur, accu = cur << 1, accu << 1
+            while divisor <= dividend: 
+                while cur > dividend: cur, accu = cur >> 1, accu >> 1
+                ct, dividend = ct + accu, dividend - cur
+
+        if reverse: ct = -ct
+        minint = -(2 << 30); maxint = -minint - 1
+        if ct < minint: return minint
+        if ct > maxint: return maxint
+        return ct
+```
+Alternative: remove all case check and concise version. | Rt: 20ms |
+```python
+    def divide(self, dividend: int, divisor: int) -> int:
+        if dividend == 0: return 0
+        isneg = (dividend > 0) != (divisor > 0)
+        dividend, divisor, ct =  abs(dividend), abs(divisor), 0
+        
+        cur, accu = divisor, 1
+        while cur <= dividend: cur, accu = cur << 1, accu << 1
+        while divisor <= dividend: 
+            while cur > dividend: cur, accu = cur >> 1, accu >> 1
+            ct, dividend = ct + accu, dividend - cur
+
+        minint = -(2 << 30); maxint = -minint - 1
+        if isneg: return max(-ct, minint)
+        return min(ct, maxint)
+```
+Triple: since the input is bounded. | Rt: 40ms |
+```python
+    def divide(self, dividend: int, divisor: int) -> int:
+        if dividend == -2147483648 and divisor == -1: return 2147483647
+        isneg = (dividend > 0) != (divisor > 0)
+        dividend, divisor, ct =  abs(dividend), abs(divisor), 0
+        
+        cur, accu = divisor, 1
+        while cur <= dividend: cur, accu = cur << 1, accu << 1
+        while divisor <= dividend: 
+            while cur > dividend: cur, accu = cur >> 1, accu >> 1
+            ct, dividend = ct + accu, dividend - cur
+
+        return -ct if isneg else ct
+```
+Comment: all solutions are not overflow safe. We can do this because python never overflow. 
+
+

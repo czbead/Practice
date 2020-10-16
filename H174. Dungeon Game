@@ -1,0 +1,52 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def calculateMinimumHP(self, dungeon: List[List[int]]) -> int:
+        def dfs(dungeon, i, j, H):
+            H = max(1, H-dungeon[i][j])
+            if i == j == 0: return H
+            if i == 0: return dfs(dungeon, i, j-1, H)
+            if j == 0: return dfs(dungeon, i-1, j, H)
+            return min(dfs(dungeon, i-1, j, H), dfs(dungeon, i, j-1, H))
+        
+        if not dungeon or not dungeon[0]: return 
+        r, c = len(dungeon), len(dungeon[0])
+        return dfs(dungeon, r-1, c-1, 1)
+```
+
+Alternative: | Rt: 120ms |
+```python
+    def calculateMinimumHP(self, dungeon: List[List[int]]) -> int:
+        def dfs(dungeon, r, c, i, j, m):
+            if i >= r or j >= c: return float('inf')
+            if m[i][j]: return m[i][j]
+            H = min(dfs(dungeon, r, c, i+1, j, m), dfs(dungeon, r, c, i, j+1, m))
+            if H == float('inf'): H = 1  #when i, j is P
+            m[i][j] = max(H-dungeon[i][j], 1)
+            return m[i][j]
+        
+        if not dungeon or not dungeon[0]: return 
+        r, c = len(dungeon), len(dungeon[0])
+        m = [[0] * c for _ in range(r)]
+        return dfs(dungeon, r, c, 0, 0, m)
+```
+Referrence: https://leetcode.com/problems/dungeon-game/discuss/52790/My-AC-Java-Version-Suggestions-are-welcome
+
+
+**II). DP**
+| O(T): O(mn) | O(S): O(mn) | Rt: 72ms | 
+```python
+    def calculateMinimumHP(self, dungeon: List[List[int]]) -> int:
+        if not dungeon or not dungeon[0]: return 
+        r, c = len(dungeon), len(dungeon[0])
+        dp = [[float(inf)] * (c+1) for _ in range(r+1)]
+        #P is at (r-1, c-1), the next step is (r, c-1) and (r-1, c)
+        dp[r-1][c] = dp[r][c-1] = 1
+        for i in range(r-1, -1, -1):
+            for j in range(c-1, -1, -1):
+                dp[i][j] = max(1, min(dp[i+1][j], dp[i][j+1]) - dungeon[i][j])
+        return dp[0][0]
+        
+```
+Referrence: https://leetcode.com/problems/dungeon-game/discuss/52774/C%2B%2B-DP-solution; https://leetcode.com/problems/dungeon-game/discuss/52826/A-very-clean-and-intuitive-solution-(with-explanation);

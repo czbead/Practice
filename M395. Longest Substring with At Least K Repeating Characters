@@ -1,0 +1,58 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Multiple Condition Sliding Window**
+| O(T): O(26n) | O(S): O(1) | Rt: 112ms | 
+```python
+    def longestSubstring(self, s: str, k: int) -> int:
+        mx, l = 0, len(s)
+        if l < k: return 0
+        if k == 1: return l
+        for unique in range(1, 27):
+            st, m, unique_char, overk_char = 0, [0] * 26, 0, 0
+            for i in range(l):
+                ind = ord(s[i]) - 97
+                if m[ind] == 0: unique_char += 1
+                m[ind] += 1
+                if m[ind] == k: overk_char += 1
+                while unique_char > unique:
+                    ind = ord(s[st]) - 97
+                    if m[ind] == k: overk_char -= 1
+                    m[ind] -= 1
+                    if m[ind] == 0: unique_char -= 1
+                    st += 1
+                if overk_char == unique_char == unique: mx = max(mx, i-st+1)
+        return mx
+```
+Referrence: https://leetcode.com/problems/longest-substring-with-at-least-k-repeating-characters/discuss/87739/Java-Strict-O(N)-Two-Pointer-Solution/92538
+
+
+**II). SubString Pattern Matching by SKIP/ CUT**
+| O(T): O() | O(S): O() | Rt: 32ms | 
+```python
+    def longestSubstring(self, s: str, k: int) -> int:
+        l = len(s)
+        if l < k: return 0
+        if k == 1: return l
+        m = [0] * 26
+        for i in s: m[ord(i) - 97] += 1
+        if all(i == 0 or i >= k for i in m): return l
+        split = [-1] + [i for i in range(l) if 0<m[ord(s[i]) - 97]<k] + [l]
+        return max(self.longestSubstring(s[split[i]+1: split[i+1]], k) for i in range(len(split)-1))
+        return mx
+```
+Referrence: https://leetcode.com/problems/longest-substring-with-at-least-k-repeating-characters/discuss/87738/Java-20-lines-very-easy-solution-7ms-with-explanation
+
+Alternative: | Rt: 36ms |
+```python
+    def longestSubstring(self, s: str, k: int) -> int:
+        def dfssub(s, l, r, k):
+            le = r-l+1
+            if le < k: return 0
+            m = [0] * 26
+            for i in range(l, r+1): m[ord(s[i]) - 97] += 1
+            if all(i == 0 or i >= k for i in m): return le
+            cut = [l-1] + [i for i in range(l, r+1) if 0<m[ord(s[i]) - 97]<k] + [r+1]
+            return max(dfssub(s, cut[i]+1, cut[i+1]-1, k) for i in range(len(cut)-1))
+        
+        if k == 1: return len(s)
+        return dfssub(s, 0, len(s)-1, k)
+```

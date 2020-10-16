@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Take Care of Odds**
+| O(T): O(n) | O(S): O(n) | Rt: 60ms | 
+```python
+    def canConstruct(self, s: str, k: int) -> bool:
+        if k > len(s): return False
+        ct = collections.Counter(s)
+        odd = sum(ct[i]&1 for i in ct)
+        return k >= odd
+```
+
+Alternative: | Rt: 136ms |
+```python
+    def canConstruct(self, s: str, k: int) -> bool:
+        if k > len(s): return False
+        m = [0] * 26
+        for i in s: m[ord(i) - 97] += 1
+        odd = sum(i&1 for i in m)
+        return k >= odd
+```
+
+Triple: | Rt: 156ms |
+```python
+    def canConstruct(self, s: str, k: int) -> bool:
+        if k > len(s): return False
+        m = 0
+        for i in s: m ^= 1 << (ord(i) - 97)
+        return k >= bin(m).count('1')
+```
+Referrence: https://leetcode.com/problems/construct-k-palindrome-strings/discuss/563298/javaPython-3-Count-odd-occurrences-2-codes-w-brief-explanation-and-analysis.
+

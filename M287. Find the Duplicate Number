@@ -1,0 +1,60 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Code the Index**
+| O(T): O(n) | O(S): O(1) | Rt: 140ms | 
+```python
+    def findDuplicate(self, nums: List[int]) -> int:
+        for i in nums:
+            j = abs(i)
+            if nums[j] < 0: return j
+            nums[j] = -nums[j]
+```
+Comment: input modified in the process.
+
+
+**II). Binary Search**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 80ms | 
+```python
+    def findDuplicate(self, nums: List[int]) -> int:
+        l, r = 0, len(nums)-1
+        while l < r:
+            m = l + (r - l) // 2
+            cnt = 0
+            for i in nums:
+                if i <= m: cnt += 1
+            if cnt <= m: l = m + 1
+            else: r = m
+        return l
+```
+Referrence: https://leetcode.com/problems/find-the-duplicate-number/discuss/72844/Two-Solutions-(with-explanation)%3A-O(nlog(n))-and-O(n)-time-O(1)-space-without-changing-the-input-array;
+
+
+**III). Linked List Cycle**
+| O(T): O(n) | O(S): O(1) | Rt: 56ms | 
+```python
+    def findDuplicate(self, nums: List[int]) -> int:
+        slow = fast = 0
+        while True:
+            slow, fast = nums[slow], nums[nums[fast]]
+            if slow == fast: break
+        fast = 0
+        while fast != slow:
+            fast, slow = nums[fast], nums[slow]
+        return fast
+```
+Referrence: https://leetcode.com/problems/find-the-duplicate-number/discuss/72846/My-easy-understood-solution-with-O(n)-time-and-O(1)-space-without-modifying-the-array.-With-clear-explanation.; https://keithschwarz.com/interesting/code/?dir=find-duplicate; 
+
+Alternative: the start doesn't matter as long as it is before the entry of the cycle. | Rt: 88ms |
+```python
+    def findDuplicate(self, nums: List[int]) -> int:
+        slow = fast = nums[0]
+        while True:
+            slow, fast = nums[slow], nums[nums[fast]]
+            if slow == fast: break
+        fast = nums[0]
+        while fast != slow:
+            fast, slow = nums[fast], nums[slow]
+        return fast
+```
+Comment: step1: find the cycle (get the met point) -- it is guaranteed there exists a cycle. step2: find the entry of the cycle -- using exactly the algorithm applied in Problem-142. You can find details in that problem. I suggest you remember the algorithm or prove it by this simple method -- https://leetcode.com/problems/find-the-duplicate-number/discuss/72846/My-easy-understood-solution-with-O(n)-time-and-O(1)-space-without-modifying-the-array.-With-clear-explanation./216048; 
+
+Summary: to find the entry of a cycle in a linked list. First, using slow fast pointer to find the "joint node" where the fast pointer met the slow pointer. Second, slow pointer remains while fast pointer go back to the start (head) of the linked list. Third, forward fast pointer and slow pointer step by step until they met each other again -- the pointer they met again is the entry of the cycle.  

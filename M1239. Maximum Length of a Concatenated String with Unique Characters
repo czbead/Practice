@@ -1,0 +1,63 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bit Manipulation and Backtracking**
+| O(T): O() | O(S): O() | Rt: 108ms | 
+```python
+    def maxLength(self, arr: List[str]) -> int:
+        def backtrack(bit, path, st, end):
+            if st == end: return bin(path).count('1')
+            rst = backtrack(bit, path, st+1, end)
+            if not bit[st] & path: rst = max(rst, backtrack(bit, path|bit[st], st+1, end))
+            return rst
+        
+        l = len(arr)
+        bit, mx = [0] * l, 0
+        for i in range(l):
+            for j in arr[i]: 
+                mask = 1 << (ord(j) - ord('a'))
+                if bit[i] & mask: bit[i] = 0; break
+                bit[i] |= mask
+        
+        return backtrack(bit, 0, 0, l)
+```
+
+
+**II). HashSet Keep All Sums**
+| O(T): O() | O(S): O() | Rt: 60ms | 
+```python
+    def maxLength(self, arr: List[str]) -> int:
+        l = len(arr)
+        bit, mx = [0] * l, 0
+        for i in range(l):
+            for j in arr[i]: 
+                mask = 1 << (ord(j) - ord('a'))
+                if bit[i] & mask: bit[i] = 0; break
+                bit[i] |= mask
+        
+        s = {0}
+        for i in bit:
+            s = s | {j | i for j in s if j & i == 0}
+        return max(bin(i).count('1') for i in s)
+```
+
+Alternative: | Rt: 80ms |
+```python
+    def maxLength(self, arr: List[str]) -> int:
+        s = [set()]
+        for i in arr:
+            iset = set(i)
+            if len(iset) < len(i): continue
+            s += [j | iset for j in s if not (j & iset)]
+        return max(len(i) for i in s)
+```
+
+Triple: | Rt: 84ms |
+```python
+    def maxLength(self, arr: List[str]) -> int:
+        s = {''}
+        for i in arr:
+            iset = set(i)
+            if len(iset) < len(i): continue
+            s |= {j + i for j in s if not (set(j) & iset)}
+        return max(len(i) for i in s)
+```
+

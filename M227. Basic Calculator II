@@ -1,0 +1,94 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack and Priority**
+| O(T): O(n) | O(S): O(n) | Rt: 156ms | 
+```python
+    def calculate(self, s: str) -> int:
+        def getNum(s, st):
+            i = st + 1
+            while i < len(s) and s[i].isdigit(): i += 1
+            return i
+        
+        i, stack, s = 0, [], s.replace(' ', '')
+        if not s: return 
+        while i < len(s):
+            if i < len(s):
+                if s[i] == '*':
+                    end = getNum(s, i+1)
+                    stack.append(stack.pop() * int(s[i+1: end]))
+                    i = end - 1
+                elif s[i] == "/":
+                    end = getNum(s, i+1)
+                    stack.append(int(stack.pop() / int(s[i+1: end])))
+                    i = end - 1
+                elif s[i] == '-': stack.append(s[i])
+                elif s[i] == '+': stack.append(s[i])
+                else: 
+                    end = getNum(s, i)
+                    stack.append(int(s[i: end]))
+                    i = end - 1
+                i += 1
+                
+        stack.reverse()
+        num = stack.pop()
+        while stack: 
+            if stack.pop() == '-': num = num - stack.pop()
+            else: num += stack.pop()
+        return num
+```
+Comment: this solution takes two steps: first step give priority to "*" and '/', second step take care of '+' and '-'. 
+
+
+**II). Stack: One Pass**
+| O(T): O(n) | O(S): O(n) | Rt: 68ms | 
+```python
+    def calculate(self, s: str) -> int:
+        stack, num, sign, s = [], 0, '+', s+'+'
+        for i in s:
+            if i == ' ': continue
+            elif i.isdigit(): num = num * 10 + int(i)
+            else:
+                if sign == '+': stack.append(num)
+                elif sign == '-': stack.append(-num)
+                elif sign == '*': stack.append(stack.pop() * num)
+                else: stack.append(int(stack.pop() / num))
+                sign, num = i, 0   #always save the current sign for next round
+        return sum(stack)
+```
+Referrence: https://leetcode.com/problems/basic-calculator-ii/discuss/63003/Share-my-java-solution
+Comment: very elegant solution. In this solution, '+' and '-' wasn't taken as 'operator', it is taken as 'sign' of a number. As '-' indicates negative number, '+' indicates positive number, we only have two operation now '*' and '/'. '/' and '*' have same priority in term of number operation. The most import point of this solution is: when we met a new operator, we apply the previous operation and record the current operator for next round operation. The initialization is '+' because a number without sign is positive on default. Since we operate each round based on the last state (sign), we need to do a last round compute individually in the end. To avoid the last round computing, we can concat a operator/ sign to the original input (whatever it is as long as it is not empty space or digit string).  
+
+Alternative: without stack O(1) space. | Rt: 72ms |
+```python
+    def calculate(self, s: str) -> int:
+        rst, num, pre, sign, s = 0, 0, 0, '+', s+'+'
+        for i in s:
+            if i == ' ': continue
+            elif i.isdigit(): num = num * 10 + int(i)
+            else:
+                if sign == '+': rst, pre = rst + num, num
+                elif sign == '-': rst, pre = rst - num, -num
+                elif sign == '*': rst, pre = rst - pre + pre * num, pre * num
+                else: rst, pre = rst - pre + int(pre / num), int(pre / num)
+                sign, num = i, 0   #always save the current sign for next num
+        return rst
+```
+Comment: Greedy approach, take each step as the last step and make the decision. if last step is not the last one, withdraw the last step and revise the result when necessary. 
+
+
+Triple: cache the current num for next round computing. | Rt: 84ms |
+```python
+    def calculate(self, s: str) -> int:
+        rst, num, pre, sign, s = 0, 0, 0, '+', s+'+'
+        for i in s:
+            if i == ' ': continue
+            elif i.isdigit(): num = num * 10 + int(i)
+            else:
+                if sign == '+': rst, pre = rst + pre, num
+                elif sign == '-': rst, pre = rst + pre, -num
+                elif sign == '*': pre = pre * num
+                else: pre = int(pre / num)
+                sign, num = i, 0 
+        return rst + pre  #need to take care of last round pre individually
+```
+Referrence: https://leetcode.com/problems/basic-calculator-ii/discuss/63003/Share-my-java-solution/239365
+Comment: be careful with the last round computing for pre because the first num is added in second round while the last num should be added after the loop.

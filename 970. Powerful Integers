@@ -1,0 +1,121 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Part**
+| O(T): O(m+n+mn) | O(S): O(m+n) | Rt: 20ms | 
+note: complexity: m = log(x, b); n = log(y, b)
+```python
+    def powerfulIntegers(self, x: int, y: int, bound: int) -> List[int]:
+        xlst, ylst = [1], [1]
+        dux, duy = x, y
+        if x != 1:
+            while dux <= bound:
+                xlst.append(dux)
+                dux *= x
+        if y != 1:
+            while duy <= bound:
+                ylst.append(duy)
+                duy *= y
+        rst = set()
+        for i in xlst:
+            for j in ylst:
+                if i + j > bound: break
+                rst.add(i + j)
+        return rst
+```
+Alternative: concise but not as efficient version.  | Rt: 28ms |
+```python
+    def powerfulIntegers(self, x: int, y: int, bound: int) -> List[int]:
+        xlst, ylst = [1], [1]
+        dux, duy = x, y
+        while 1 < dux <= bound:
+            xlst.append(dux)
+            dux *= x
+        while 1 < duy <= bound:
+            ylst.append(duy)
+            duy *= y
+        return {i+j for i in xlst for j in ylst if i + j <= bound}
+```
+Triple:  | Rt: 16ms |
+```python
+    def powerfulIntegers(self, x: int, y: int, bound: int) -> List[int]:
+        if bound < 2: return []
+        xs = {x ** i for i in range(20) if x ** i < bound} if x > 1 else [1]
+        ys = {y ** i for i in range(20) if y ** i < bound} if y > 1 else [1]
+        return {i + j for i in xs for j in ys if i + j <= bound}
+```
+Referrence: idea from https://leetcode.com/problems/powerful-integers/discuss/214212/JavaC%2B%2BPython-Easy-Brute-Force
+
+
+**II). Conditional Analysis**
+| O(T): (m+n+mn) | O(S): O(m+n) | Rt: 28ms | 
+```python
+    def powerfulIntegers(self, x: int, y: int, bound: int) -> List[int]:
+        if bound < 2: return []
+        if x > y: x, y = y, x
+        rst = set([2])
+        if x == y == 1: return [2]
+        elif x == 1: 
+            dy = y
+            while dy < bound:
+                rst.add(dy + 1)
+                dy = dy * y
+        else:
+            for i in range(bound):
+                for j in range(bound):
+                    cur = x ** i + y ** j
+                    if cur <= bound: rst.add(cur)
+                    else: break
+                if x ** i > bound - 1: break
+        return rst
+```
+Comment: remember that ** operation is pretty slow, if you can code it in a growing way, do it instead of **.  
+
+
+**III). Nested Loop Brute Force**
+| O(T): O(mn) | O(S): O(1) | Rt: 28ms | 
+```python
+    def powerfulIntegers(self, x: int, y: int, bound: int) -> List[int]:
+        rst, dy, dx = set(), 1, 1
+        while dx < bound:
+            dy = 1
+            while dx + dy <= bound:
+                rst.add(dx + dy)
+                if y == 1: break
+                dy *= y
+            if x == 1: break
+            dx *= x
+        return rst
+```
+Referrence: idea from https://leetcode.com/problems/powerful-integers/discuss/214197/Java-straightforward-try-all-combinations
+
+
+**IV). DFS Recursion**
+| O(T): O(mn) | O(S): O(h) | Rt: 40ms | 
+```python
+    def powerfulIntegers(self, x: int, y: int, bound: int) -> List[int]:
+        def case(dx, dy, rst):
+            if dx + dy > bound: return 
+            rst.add(dx + dy)
+            if x != 1: case(dx * x, dy, rst)
+            if y != 1: case(dx, dy * y, rst)
+                
+        rst = set()
+        case(1, 1, rst)
+        return rst
+```
+Referrence: https://leetcode.com/problems/powerful-integers/discuss/214280/Python-BFS-recursive-brutal-force-with-explanation
+
+
+**V). DFS Iteration**
+| O(T): O(mn) | O(S): O(m+n) | Rt: 32ms | 
+```python
+    def powerfulIntegers(self, x: int, y: int, bound: int) -> List[int]:
+        rst, case = set(), [(1, 1)]
+        while case:
+            dx, dy = case.pop()
+            if dx + dy > bound: continue
+            rst.add(dx + dy)
+            if x != 1: case.append((dx * x, dy))
+            if y != 1: case.append((dx, dy * y))
+        return rst
+```
+

@@ -1,0 +1,67 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort the Offset**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 40ms | 
+```python
+    def twoCitySchedCost(self, costs: List[List[int]]) -> int:
+        #if cur goes to a, it will saves you b - a 
+        offset = [(b-a, a) for a, b in costs]
+        offset.sort(key=lambda x: x[0])
+        l = len(costs)
+        #we want save most
+        goa, gob = offset[l//2:], offset[:l//2]
+        return sum(i[1] for i in goa) + sum(i[0] + i[1] for i in gob)
+```
+Comment: why we want the offset? because the offset represents the "cost-efficiency" in the context. 
+Alternative:
+```python
+    def twoCitySchedCost(self, costs: List[List[int]]) -> int:
+        costs.sort(key=lambda x: x[1] - x[0])
+        rst, l = 0, len(costs)
+        rst += sum(j for i, j in costs[:l//2])
+        rst += sum(i for i, j in costs[l//2:])
+        return rst
+```
+
+
+**II). How Much Saved**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 36ms | 
+```python
+    def twoCitySchedCost(self, costs: List[List[int]]) -> int:
+        allgoa = sum(i for i, j in costs)
+        gobsave = [i-j for i, j in costs]
+        gobsave.sort()
+        mostsave = sum(gobsave[len(costs)//2:])
+        return allgoa - mostsave
+```
+Alternative: go A waste.  | Rt: 40ms |
+```python
+    def twoCitySchedCost(self, costs: List[List[int]]) -> int:
+        allgoa = sum(i for i, j in costs)
+        goawaste = [j - i for i, j in costs]
+        goawaste.sort()
+        leastwaste = sum(goawaste[:len(costs)//2])
+        return allgoa + leastwaste
+```
+Comment: this solution and the previous one are both sort-based solutions, similar idea slightly different thinking. 
+
+
+**III). Collect Sort**
+| O(T): O(n) | O(S): O(1) | Rt: 36ms | 
+```python
+    def twoCitySchedCost(self, costs: List[List[int]]) -> int:
+        allgoa, m = 0, [0] * 2000
+        #understand i-j as go b will save you $ or go a will cost extra $
+        for i, j in costs: m[j-i + 1000] += 1; allgoa += i
+        extra, left = 0, len(costs)//2
+        for i, v in enumerate(m):
+            if v: 
+                take = min(left, v)
+                extra += take * (i - 1000)
+                left -= take
+            if not left: break
+        return allgoa + extra
+```
+
+Others: DP solution -- https://leetcode.com/problems/two-city-scheduling/discuss/278731/Java-DP-Easy-to-Understand;
+        K-neighbor solution -- https://leetcode.com/problems/two-city-scheduling/discuss/279548/Beats-100-Average-O(n)-Complexity-solution
+

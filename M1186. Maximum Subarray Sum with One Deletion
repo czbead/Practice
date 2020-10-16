@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP Two State**
+| O(T): O(n) | O(S): O(n) | Rt: 312ms | 
+```python
+    def maximumSum(self, arr: List[int]) -> int:
+        l = len(arr)
+        oneDel, noDel = [0] * l, [0] * l
+        rst = noDel[0] = arr[0]
+        for i in range(1, l):
+            oneDel[i] = max(noDel[i-1], oneDel[i-1]+arr[i])
+            noDel[i] = max(noDel[i-1] + arr[i], arr[i])
+            rst = max(rst, oneDel[i], noDel[i])
+        return rst
+```
+
+Alternative: constant space. | Rt: 280ms |
+```python
+    def maximumSum(self, arr: List[int]) -> int:
+        l = len(arr)
+        oneDel = 0
+        rst = noDel = arr[0]
+        for i in range(1, l):
+            oneDel = max(noDel, oneDel+arr[i])
+            noDel = max(noDel + arr[i], arr[i])
+            rst = max(rst, oneDel, noDel)
+        return rst
+```
+Referrence: https://leetcode.com/problems/maximum-subarray-sum-with-one-deletion/discuss/377397/Intuitive-Java-Solution-With-Explanation/376444
+

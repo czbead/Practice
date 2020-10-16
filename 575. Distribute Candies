@@ -1,0 +1,9 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(n) | Rt: 892ms | 
+```python
+    def distributeCandies(self, candies: List[int]) -> int:
+        return min(len(set(candies)), len(candies) // 2)
+```
+Comment: if you truely understand what the problem ask for, it is fairly to come out with this solution. The point is all about find the real limitation. Here are two extreme cases. First, the list consists of all different candies; The list consists of only one kind of candie; Trivially, the answer for former case is: length // 2 while the answer for the later one is 1 (unique types).
+

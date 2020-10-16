@@ -1,0 +1,77 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bellman-Ford**
+| O(T): O(VE) | O(S): O(n) | Rt: 1648ms | 
+```python
+    def networkDelayTime(self, times: List[List[int]], N: int, K: int) -> int:
+        #the cost/ distance from K to {1~N} nodes; initialized as "unreachable"
+        cost = [float('inf')] * (N+1)
+        #from K node to K has cost 0; we don't use 0-th item at all, make it as small;
+        cost[0] = cost[K] = 0  
+        for _ in range(N):
+            for u, v, w in times:
+                #do the "relaxation"; find the min cost between nodes in cloud and nodes directly connect to cloud nodes.
+                if cost[u] != float("inf") and cost[v] > cost[u] + w:
+                    cost[v] = cost[u] + w
+        #maximum of mininum, the least cost that insure all nodes receive signal
+        maxofmin = max(cost)
+        return -1 if maxofmin == float('inf') else maxofmin
+```
+Referrence: https://leetcode.com/problems/network-delay-time/discuss/109982/C%2B%2B-Bellman-Ford
+Comment: when we solve "shortest path" problem, there are two concept we better know -- "relaxation" and  "cloud"; the most confusing part of this solution is the first loop, why we need that? To make it simple, we have N node, except the K node, we have other (N-1) nodes, the path to any remainning node is at most of length (N-1); Each round, we enlarge the cloud by adding those nodes who are not in cloud but connect to cloud nodes directly (have edge connection), the cost between cloud nodes are fixed while distance of nodes out of cloud are keeping relaxing. Bellman-Ford works in a BFS manner. 
+
+
+**II). Dijkstra with Queue**
+| O(T): O() | O(S): O(n) | Rt: 544ms | 
+```python
+    def networkDelayTime(self, times: List[List[int]], N: int, K: int) -> int:
+        cost, graph = [float('inf')] * (N+1), collections.defaultdict(list)
+        que, cost[0] = [(0, K)], 0 
+        for u, v, w in times: graph[u].append((v, w))
+        while que:
+            ncost, node = heapq.heappop(que)
+            #add the node into cloud, push the node connected with the node into queue
+            if cost[node] == float('inf'): 
+                cost[node] = ncost
+                for v, w in graph[node]:
+                    heapq.heappush(que, (ncost+w, v))
+        maxofmin = max(cost)
+        return -1 if maxofmin == float('inf') else maxofmin 
+```
+Referrence: https://leetcode.com/problems/network-delay-time/discuss/187713/Python-concise-queue-and-heap-solutions
+
+Alternative: graph with list. | Rt: 500ms |
+```python
+    def networkDelayTime(self, times: List[List[int]], N: int, K: int) -> int:
+        cost, graph = [float('inf')] * (N+1), [[] for _ in range(N+1)] 
+        que, cost[0] = [(0, K)], 0 
+        for u, v, w in times: graph[u].append((v, w))
+        while que:
+            ncost, node = heapq.heappop(que)
+            #add the node into cloud, push the node connected with the node into queue
+            if cost[node] == float('inf'): 
+                cost[node] = ncost
+                for v, w in graph[node]:
+                    heapq.heappush(que, (ncost+w, v))
+        maxofmin = max(cost)
+        return -1 if maxofmin == float('inf') else maxofmin
+```
+Comment: the heap-based dijkstra solution doesn't have "relaxation" operation because the min heap makes the edge pop-out in ideal order.
+
+
+**III). Floyd-Warshall**
+| O(T): O(N^3) | O(S): O(n^2) | Rt: 1928ms | 
+```python
+    def networkDelayTime(self, times: List[List[int]], N: int, K: int) -> int:
+        cost = [[float('inf')] * (N+1) for _ in range(N+1)]
+        for i, j, c in times: cost[i][j] = c
+        # for i in range(N+1): cost[i][i] = 0
+        for k in range(1, N+1):
+            for i in range(1, N+1):
+                for j in range(1, N+1):
+                    cost[i][j] = min(cost[i][k] + cost[k][j], cost[i][j])
+        costk = cost[K]; costk[0] = costk[K] = 0
+        maxcost = max(costk)
+        return -1 if maxcost == float('inf') else maxcost
+```
+Referrence: https://leetcode.com/problems/network-delay-time/discuss/183873/Java-solutions-using-Dijkstra-FloydWarshall-and-Bellman-Ford-algorithm
+Comment: I omit some details since we only care K-th row of the final cost matrix. 

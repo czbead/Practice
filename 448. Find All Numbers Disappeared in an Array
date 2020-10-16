@@ -1,0 +1,72 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Limited State**
+| O(T): O(n) | O(S): O(n) | Rt: 372ms | 
+```python
+    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:
+        m = [0] * len(nums)
+        for i in nums: m[i - 1] = 1
+        return [i + 1 for i in range(len(m)) if not m[i]]
+        #return [i + 1 for i, v in enumerate(m) if not v]
+```
+
+
+**II). Onliner - Set**
+| O(T): O(n) | O(S): O(n) | Rt: 376ms | 
+```python
+    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:
+        return set(range(1, len(nums) + 1)) - set(nums)
+```
+Alternative: | Rt: 372ms |
+```python
+    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:
+        s = set(nums)
+        return [i + 1 for i in range(len(nums)) if i + 1 not in s]
+```
+
+
+**III). Mark By Negating**
+| O(T): O(1) | O(S): O(1) | Rt: 412ms | 
+```python
+    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:
+        for i in nums:
+            ind = abs(i) - 1
+            nums[ind] = -abs(nums[ind])
+        return [i + 1 for i, v in enumerate(nums) if v > 0]
+```
+Comment: for each element in the list, its original value is kept while we add new state to its index.
+Alternative: | Rt: 408ms |
+```python
+    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:
+        for i in nums:
+            ind = abs(i) - 1
+            if nums[ind] > 0: nums[ind] = -nums[ind]
+        return [i + 1 for i, v in enumerate(nums) if v > 0]
+```
+
+
+**IV). Mark by Mod**
+| O(T): O(1) | O(S): O(1) | Rt: 392ms | 
+```python
+    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:
+        l = len(nums)
+        for i in nums:
+            ind = i % l - 1
+            nums[ind] = nums[ind] + l
+        return [i + 1 for i, v in enumerate(nums) if v <= l]
+```
+
+
+**V). In-place Sort by Swap**
+| O(T): O(n) | O(S): O(1) | Rt: 436ms |
+note: each swap put at least one number in the right position 
+```python
+    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:
+        for i in range(len(nums)):
+            #both are in wrong position
+            while nums[i] != i + 1 and nums[nums[i] - 1] != nums[i]:
+                index = nums[i] - 1
+                nums[i], nums[index] = nums[index], nums[i]
+        return [i + 1 for i, v in enumerate(nums) if v != i + 1]
+```
+Referrence: idea from https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/discuss/93007/Simple-Java-In-place-sort-solution
+Comment: This solution may look like O(n * n), but I think it is truely O(n)

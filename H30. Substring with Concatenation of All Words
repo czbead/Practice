@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sliding Window**
+| O(T): O() | O(S): O(1) | Rt: 452ms | 
+```python
+    def findSubstring(self, s: str, words: List[str]) -> List[int]:
+        if not words: return []
+        lw, lws, ls = len(words[0]), len(words), len(s)
+        totallen = lw * lws
+        if ls < totallen: return []
+        rst, ct = [], collections.Counter(words)
+        for i in range(ls-totallen+1):
+            ctt, j = {}, 0
+            while j < lws:
+                cur = s[i+j*lw:i+(j+1)*lw]
+                ctt[cur] = ctt.get(cur, 0) + 1
+                if ctt[cur] > ct[cur]: break
+                j += 1
+            if j == lws: rst.append(i)
+        return rst
+```
+Referrence: https://leetcode.com/problems/substring-with-concatenation-of-all-words/discuss/13658/Easy-Two-Map-Solution-(C%2B%2BJava)
+
+Alternative: | Rt: 420ms |
+```python
+    def findSubstring(self, s: str, words: List[str]) -> List[int]:
+        def isValid(counter, s, st, gap, amt):
+            dt = {}
+            for i in range(amt):
+                cur = s[st + gap*i: st+gap*(i+1)]
+                dt[cur] = dt.get(cur, 0) + 1
+                if dt[cur] > counter[cur]: return False
+            return True
+        
+        if not words: return []
+        lw, lws, ls = len(words[0]), len(words), len(s)
+        totallen = lw * lws
+        if ls < totallen: return []
+        rst, ct = [], collections.Counter(words)
+        for i in range(ls-totallen+1):
+            if isValid(ct, s, i, lw, lws): rst.append(i)
+        return rst
+```
+Referrence: https://leetcode.com/problems/substring-with-concatenation-of-all-words/discuss/13658/Easy-Two-Map-Solution-(C++Java)/299685

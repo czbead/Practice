@@ -1,0 +1,24 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Zip**
+| O(T): O(mn) | O(S): O() | Rt: 28ms | 
+```python
+    def printVertically(self, s: str) -> List[str]:
+        return [''.join([i if i else " " for i in a]).rstrip() for a in itertools.zip_longest(*s.split())]
+```
+
+Alternative: | Rt: 40ms |
+```python
+    def printVertically(self, s: str) -> List[str]:
+        return [''.join(a).rstrip() for a in itertools.zip_longest(*s.split(), fillvalue=' ')]
+```
+Referrence: https://leetcode.com/problems/print-words-vertically/discuss/484284/Python-1-Line-Zip-Longest
+
+
+**II). Naive**
+| O(T): O(mn) | O(S): O() | Rt: 28ms | 
+```python
+    def printVertically(self, s: str) -> List[str]:
+        arr = s.split()
+        longest = max(len(i) for i in arr)
+        return [''.join([word[i] if i < len(word) else " " for word in arr]).rstrip() for i in range(longest)]
+```

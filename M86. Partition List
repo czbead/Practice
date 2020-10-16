@@ -1,0 +1,14 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 36ms | 
+```python
+    def partition(self, head: ListNode, x: int) -> ListNode:
+        l, r = ListNode(None), ListNode(None)
+        rst, hr = l, r
+        while head:
+            if head.val < x: l.next = head; l = l.next
+            else: r.next = head; r = r.next
+            head = head.next
+        r.next = None; l.next = hr.next
+        return rst.next
+```

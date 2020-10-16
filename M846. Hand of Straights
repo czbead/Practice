@@ -1,0 +1,17 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Ordered HashMap with Greedy**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 192ms | 
+```python
+    def isNStraightHand(self, hand: List[int], W: int) -> bool:
+        l = len(hand)
+        if l % W != 0: return False
+        ct = collections.Counter(hand)
+        for i in sorted(ct):
+            if not ct[i]: continue
+            for j in range(i+1, i+W):
+                if ct[j] < ct[i]: return False
+                ct[j] -= ct[i]
+            ct[i] = 0
+        return True
+```
+Comment: the sequence always start with the smallest number in the dict greedily. 

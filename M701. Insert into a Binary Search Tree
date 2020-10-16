@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive**
+| O(T): O(n) | O(S): O(1) | Rt: 140ms | 
+```python
+    def insertIntoBST(self, root: TreeNode, val: int) -> TreeNode:
+        if not root: return TreeNode(val)
+        if val < root.val: root.left = self.insertIntoBST(root.left, val)
+        else: root.right = self.insertIntoBST(root.right, val)
+        return root
+```
+
+
+**II). Iterative**
+| O(T): O(n) | O(S): O(1) | Rt: 140ms | 
+```python
+    def insertIntoBST(self, root: TreeNode, val: int) -> TreeNode:
+        if not root: return TreeNode(val)
+        head, node = root, TreeNode(val)
+        while True:
+            if val < root.val: 
+                if root.left: root = root.left
+                else: root.left = node; return head
+            else: 
+                if root.right: root = root.right
+                else: root.right = node; return head
+```
+
+Alternative: | Rt: 144ms |
+```python
+    def insertIntoBST(self, root: TreeNode, val: int) -> TreeNode:
+        if not root: return TreeNode(val)
+        head, node, pre = root, TreeNode(val), root
+        while root:
+            pre = root
+            if val < root.val: root = root.left
+            else: root = root.right
+        if val < pre.val: pre.left = node
+        else: pre.right = node
+        return head
+```
+

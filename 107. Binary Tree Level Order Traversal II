@@ -1,0 +1,79 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS Iteration**
+| O(t): O(n) | O(m): O(n) | Rt: 32ms | 
+note: tc n is decided by the amount of rows of the tree; mc n is decided by the maximum amount of row elements.
+```python
+    def levelOrderBottom(self, root: TreeNode) -> List[List[int]]:
+        rst, l = [], [root] if root else []
+        while l:
+            rst.append([node.val for node in l if node])
+            l = [n for node in l if node for n in (node.left, node.right) if n]
+        rst.reverse()
+        #return rst[::-1] requires more memory
+        return rst
+```
+Alternative: | Rt: 32ms |
+```python
+    def levelOrderBottom(self, root: TreeNode) -> List[List[int]]:
+        rst, l = [], [root] if root else []
+        while l:
+            vals = [node.val for node in l if node]
+            #more memory required
+            rst = [vals] + rst
+            l = [n for node in l if node for n in (node.left, node.right) if n]
+        return rst
+```
+
+
+**II). Pair-wise DFS**
+| O(t): O(n) | O(m): O(n) | Rt: 32ms | 
+```python
+    def levelOrderBottom(self, root: TreeNode) -> List[List[int]]:
+        rst, de, s = [], 0, [(root, 0)] if root else []
+        while s:
+            node, de = s.pop()
+            #be careful, empty node may add [] to rst which is wrong
+            if not node: continue
+            if len(rst) <= de: rst.append([])
+            rst[de].append(node.val)
+            s.append((node.right, de+1))
+            s.append((node.left, de+1))
+        rst.reverse()
+        return rst
+```
+Comment: this may look like BFS, but it is actually DFS. The DFS depends of the depth info to put node vals into right positions. BFS or DFS is decided by the execution process, go deep first or go horizontally first. Here the stack (s) follows an append-pop routine which will traverse to the deepest then back.
+
+
+**III). Pair-wise BFS**
+| O(t): O(n) | O(m): O(n) | Rt: 32ms | 
+```python
+    def levelOrderBottom(self, root: TreeNode) -> List[List[int]]:
+        rst, de, q = [], 0, collections.deque([(root, 0)]) if root else None
+        while q:
+            node, de = q.popleft()
+            if not node: continue
+            if len(rst) <= de: rst.append([])
+            rst[de].append(node.val)
+            q.append((node.left, de+1))
+            q.append((node.right, de+1))
+        rst.reverse()
+        return rst
+```
+
+
+**IV). Recursion DFS**
+| O(t): O(n) | O(m): O(n) | Rt: 32ms | 
+```python
+    def levelOrderBottom(self, root: TreeNode) -> List[List[int]]:
+        def dfs(node, de):
+            if not node: return 
+            if de >= len(self.rst): self.rst.append([])
+            self.rst[de].append(node.val) 
+            dfs(node.left, de + 1)
+            dfs(node.right, de + 1)
+        self.rst = []
+        dfs(root, 0)
+        self.rst.reverse()
+        return self.rst
+```
+Comments: I don't think recursion is a good choice for this problem. Theoretically, every iteration solution has its couple recursion solution. We can simply rearrange the **solution II** into a recursion (each recursion solution must be DFS by its nature). It is just unnecessary to do that, no benefits to either efficiency or memory overhead at all (actually bring significantly more computing and memory overhead).

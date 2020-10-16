@@ -1,0 +1,22 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def numMovesStones(self, a: int, b: int, c: int) -> List[int]:
+        a, b, c = sorted([a, b, c])
+        gapl, gapr, maxv = b-a, c-b, c-a-2
+        if gapl == gapr == 1: return (0, 0)
+        elif min(gapl, gapr) < 3: return (1, maxv)
+        return (2, maxv)
+```
+Alternative: | Rt: 28ms |
+```python
+    def numMovesStones(self, a: int, b: int, c: int) -> List[int]:
+        if a > b: a, b = b, a
+        if a > c: a, c = c, a
+        if b > c: b, c = c, b
+        gapl, gapr, maxv = b-a, c-b, c-a-2
+        if gapl == gapr == 1: return (0, 0)
+        elif min(gapl, gapr) < 3: return (1, maxv)
+        return (2, maxv)
+```

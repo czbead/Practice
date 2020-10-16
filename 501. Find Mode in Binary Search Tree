@@ -1,0 +1,128 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Dict**
+| O(T): O(n) | O(S): O(n) | Rt: 48ms | 
+```python
+    def findMode(self, root: TreeNode) -> List[int]:
+        def dfs(node):
+            if not node: return 
+            self.dt[node.val] = self.dt.get(node.val, 0) + 1
+            dfs(node.left)
+            dfs(node.right)
+        if not root: return 
+        self.dt = {}
+        dfs(root)
+        maxval = max(self.dt.values())
+        return [i for i in self.dt if self.dt[i] == maxval]
+```
+Alternative: | Rt: 52ms |
+```python
+    def findMode(self, root: TreeNode) -> List[int]:
+        def dfs(node, dt):
+            if not node: return 
+            dt[node.val] = dt.get(node.val, 0) + 1
+            dfs(node.left, dt)
+            dfs(node.right, dt)
+            return dt
+        if not root: return 
+        rst = dfs(root, {})
+        maxval = max(rst.values())
+        return [i for i in rst if rst[i] == maxval]
+```
+Comment: you can use collections.Counter() here to replace the dict as well.
+
+
+**II). Repeat Update In-order Traverse**
+| O(T): O(n) | O(S): O(n) | Rt: 56ms | 
+```python
+    def findMode(self, root: TreeNode) -> List[int]:
+        self.rst, self.cur, self.ct, self.maxct = [], None, 0, 0
+        def dfs(node):
+            if not node: return
+            dfs(node.left)
+            if self.cur is not None and node.val == self.cur: self.ct += 1
+            else: self.cur, self.ct = node.val, 1
+            #this update process make it fake, for example [1, 2, 2], in the process, there is a moment the rst = [1, 2], because the count grows one by one
+            #this make the solution actually takes O(n) space. and the update is so frequent (each round) making it less efficient.
+            if self.ct > self.maxct: 
+                self.rst = [self.cur]
+                self.maxct = self.ct
+            elif self.ct == self.maxct:
+                self.rst.append(self.cur)
+            dfs(node.right)
+        if not root: return
+        dfs(root)
+        return self.rst
+```
+Comment: think the BST as a sorted array, then everything will be clear. When you traverse a BST in an in-order manner, it truely is a sorted array. 
+Analysis: two things. One, solution II is far inefficient comparing to solution III although they share the same time complexity and space complexity. This solution will do the update result check for every single node and there are a lot of redundant updates which is absolutely unnecessary. Two, why this is of O(n) space? In the worst senario, the BST (sorted array) looks like: [2, 2, 2, 3, ...], that makes it still O(n)
+
+
+**III). No Repeat In-order Traverse**
+| O(T): O(n) | O(S): O(1) | Rt: 44ms | 
+```python
+class Solution:
+    def findMode(self, root: TreeNode) -> List[int]:
+        self.rst, self.cur, self.ct, self.maxct = [], None, 0, 0
+        def dfs(node):
+            if not node: return
+            dfs(node.left)
+            if self.cur is not None and node.val == self.cur: self.ct += 1
+            else:
+            	#only when a new val comes, it starts to check how it should treat the last val
+            	#as we have a final check, no worry for condition like [1, 1, 1, ... ] 
+                if self.ct > self.maxct: 
+                    self.rst = [self.cur]
+                    self.maxct = self.ct
+                elif self.ct == self.maxct:
+                    self.rst.append(self.cur)
+                self.cur, self.ct = node.val, 1
+            dfs(node.right)
+        if not root: return
+        dfs(root)
+        #check the last round
+        if self.ct > self.maxct: self.rst = [self.cur]
+        elif self.ct == self.maxct: self.rst.append(self.cur)
+        return self.rst
+```
+Analysis: why the O(1) solution is so difficult on this BST problem while a sorted array senario is very simple? Well, a BST almost has no difference with a sorted array if you traverse it in an in-order manner. However, there does exist difference -- you cannot manipulate the state in between because of tree's nature (the real excution process is so deeply nested, you can easily get lost). To overcome it, we simply just stand out of the inner states and take advantage of global variables. By using global variables, everything is as simple as a sorted array. 
+Question: I tried to pass the global variables into the recursion function, it failed. I think the parameter passing method won't work on this problem because a branch's influence may not apply to other branches (those have no parent-child relationship with the branch) because it is bounded by parent-child relationship. Correct me if I am wrong. 
+
+
+**IV). Two Pass O(1) Space**
+| O(T): O(n) | O(S): O(1) | Rt: 68ms | 
+```python
+    def findMode(self, root: TreeNode) -> List[int]:
+        def find_max(node):
+            if not node: return
+            find_max(node.left)
+            if self.cur is not None and node.val == self.cur: self.ct += 1
+            else: 
+                self.maxct = max(self.ct, self.maxct)
+                self.cur, self.ct = node.val, 1
+            find_max(node.right)
+            
+        def collect(node):    
+            if not node: return
+            collect(node.left)
+            if self.cur is not None and node.val == self.cur: self.ct += 1
+            else:
+                if self.ct == self.maxct: self.rst.append(self.cur)
+                self.cur, self.ct = node.val, 1
+            collect(node.right)
+            
+        if not root: return
+        self.cur, self.ct, self.maxct = None, 0, 0
+        find_max(root)
+        #last round check
+        self.maxct = max(self.ct, self.maxct)
+
+        self.rst, self.cur, self.ct = [], None, 0
+        collect(root)
+        #last round check
+        if self.ct == self.maxct: self.rst.append(self.cur)
+        return self.rst
+```
+Comment: One Pass O(1) space is theoretically impossible even over a sorted list because you never what comes after you. Solution III is the best one pass solution I have seen in all posts. 
+
+Others: two pass O(1) solution by https://leetcode.com/problems/find-mode-in-binary-search-tree/discuss/98101/Proper-O(1)-space
+

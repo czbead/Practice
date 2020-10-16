@@ -1,0 +1,12 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy: Index Range**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def maxChunksToSorted(self, arr: List[int]) -> int:
+        rst, l, mx = 1, len(arr), 0
+        for i in range(l-1):
+            mx = max(mx, arr[i])
+            if i == mx: rst += 1
+        return rst
+```
+Comment: find a index range that all number within the range will not appear in another index range. There is a similar problem "763. Partition Labels" -- slightly harder than this one. 

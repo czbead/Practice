@@ -1,0 +1,32 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat by Counter**
+| O(T): O(n) | O(S): O(n) | Rt: 60ms | 
+```python
+    def singleNumber(self, nums: List[int]) -> int:
+        ct = collections.Counter(nums)
+        return next(k for k in ct if ct[k] == 1)
+```
+
+
+**II). Sum -- Two Pass**
+| O(T): O(n) | O(S): O(n) | Rt: 56ms | 
+```python
+    def singleNumber(self, nums: List[int]) -> int:
+        return (3 * sum(set(nums)) - sum(nums)) // 2
+```
+
+
+**III). Bit Manipulation**
+| O(T): O(n) | O(S): O(1) | Rt: 80ms | 
+```python
+    def singleNumber(self, nums: List[int]) -> int:
+        rst = 0
+        for i in range(32):
+            mask = 1 << i
+            ct = sum(1 for n in nums if n&mask)
+            if ct % 3: rst |= mask
+        if rst >= 2 ** 31: rst -= 2 ** 32
+        return rst
+```
+Referrence: https://leetcode.com/problems/single-number-ii/discuss/43297/Java-O(n)-easy-to-understand-solution-easily-extended-to-any-times-of-occurance
+Comment: I couldn't understand top-voted solutions, this is the only bit manipulation I can manage so far. 

@@ -1,0 +1,33 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Lost Direction**
+| O(T): O(n) | O(S): O(1) | Rt: 52ms | 
+```python
+    def isRobotBounded(self, instructions: str) -> bool:
+        i, j, di, dj = 0, 0, 0, 1
+        for c in instructions:
+            if c == 'G': i, j = i+di, j+dj
+            elif c == 'L': di, dj = -dj, di
+            else: di, dj = dj, -di
+        return i == j == 0 or (di, dj) != (0, 1)
+```
+Referrence: https://leetcode.com/problems/robot-bounded-in-circle/discuss/290856/JavaC%2B%2BPython-Let-Chopper-Help-Explain
+Comment: why when the final direction is not as it begins, it will be caught in a circle? Let me explain it for you. Say the four directions are {north: 0, west: 1, south, 2, east: 3}, if the end direction is not north(0), it should be the other 3. Let's brute force it since it is not a lot variations. a), the final direction is 1, after another 3 rounds, the direction will return to 0 because (1 + 1 * 3) % 4 == 0; b), the final direction is 2, after another 1 round, the direction will return to 0 because (2 + 2*1) % 4 == 0; c), the final direction is 3, after another 3 rounds, the direction will return to 0 because 3 + (3 * 3) % 4 == 0. We proved that the direction will return to north in a few rounds if the final direction is not north. since the route is fixed in every single round, it will finally form a circle due to symmetry. Anyway, this is a tricky problem.
+
+
+**II). Converge within 4 Rounds**
+| O(T): O(n) | O(S): O(1) | Rt: 48ms | 
+```python
+    def isRobotBounded(self, instructions: str) -> bool:
+        i, j, di, dj = 0, 0, 0, 1
+        for _ in range(4):
+            for c in instructions:
+                if c == 'G': i, j = i+di, j+dj
+                elif c == 'L': di, dj = -dj, di
+                else: di, dj = dj, -di
+            if i == j == 0: return True
+        return False
+```
+Referrence: https://leetcode.com/problems/robot-bounded-in-circle/discuss/290915/Python-Concise-%2B-Explanation
+Comment: As I explained on above, the robot will return to (0, 0) in 1 round or 2 rounds or 3 rounds. I think most people may guess this out but cannot prove it. 
+
+

@@ -1,0 +1,75 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS with Memory**
+| O(T): O() | O(S): O(n) | Rt: 308ms | 
+```python
+    def numRollsToTarget(self, d: int, f: int, target: int) -> int:
+        def dfs(d, F, tar, mod, dt):
+            if d == 0 and tar == 0: return 1
+            if d == 0 or tar == 0: return 0
+            if (d, tar) in dt: return dt[(d, tar)]
+            ct = 0
+            for i in range(1, F+1):
+                if tar >= i:
+                    ct = (ct + dfs(d-1, F, tar-i, mod, dt)) % mod
+                else: break
+            dt[(d, tar)] = ct
+            return ct
+                
+        if d * f < target or target < d: return 0
+        if d * f == target or target == d: return 1
+        mod, dt = 10 ** 9 + 7, {}
+        return dfs(d, f, target, mod, dt) 
+```
+
+Alternative: | Rt: 224ms |
+```python
+    def numRollsToTarget(self, d: int, f: int, target: int) -> int:
+        def dfs(d, F, tar, mod, dt):
+            if d == 0 and tar == 0: return 1
+            if tar < d or d*F < tar: return 0
+            if (d, tar) in dt: return dt[(d, tar)]
+            ct = 0
+            for i in range(1, F+1):
+                if tar >= i:
+                    ct = (ct + dfs(d-1, F, tar-i, mod, dt)) % mod
+                else: break
+            dt[(d, tar)] = ct
+            return ct
+                
+        mod, dt = 10 ** 9 + 7, {}
+        return dfs(d, f, target, mod, dt) 
+```
+Referrence: https://leetcode.com/problems/number-of-dice-rolls-with-target-sum/discuss/355841/Java-Memo-DFS
+
+
+**II). DP**
+| O(T): O(mn) | O(S): O(mn) | Rt: 1456ms | 
+```python
+    def numRollsToTarget(self, d: int, f: int, target: int) -> int:
+        m = 10 ** 9 + 7
+        dp = [[0] * (target+1) for _ in range(d+1)]
+        dp[-1][-1] = 1
+        for i in range(d, 0, -1):
+            for j in range(target, 0, -1):
+                for k in range(1, f+1):
+                    if j - k >= 0:
+                        dp[i-1][j-k] = (dp[i-1][j-k] + dp[i][j]) % m
+                    else: break
+        return dp[0][0]
+```
+
+Alternative: | Rt: 1136ms |
+```python
+    def numRollsToTarget(self, d: int, f: int, target: int) -> int:
+        m = 10 ** 9 + 7
+        dp = [[0] * (target+1) for _ in range(d+1)]
+        dp[0][0] = 1
+        for i in range(1, d+1):
+            for j in range(target+1):
+                for k in range(1, f+1):
+                    if j >= k:
+                        dp[i][j] = (dp[i][j] + dp[i-1][j-k]) % m
+                    else: break
+        return dp[-1][-1]
+```
+Referrence: https://leetcode.com/problems/number-of-dice-rolls-with-target-sum/discuss/355841/Java-Memo-DFS

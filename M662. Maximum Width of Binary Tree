@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS: Code Each Node**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def widthOfBinaryTree(self, root: TreeNode) -> int:
+        maxw, stack = 0, [(root, 1)] if root else None
+        while stack:
+            maxw, nxt = max(maxw, stack[-1][1] - stack[0][1] + 1), []
+            for node, code in stack:
+                if node.left: nxt.append((node.left, (code << 1) + 0))
+                if node.right: nxt.append((node.right, (code << 1) + 1))
+            stack = nxt
+        return maxw
+```
+Comment: code the root node as 1, the left child of each node get the code = 2 * (node's code) + 0 while the the right child of each node get the code = 2 * (node's code) + 1; Get the node of each row, let the right-most node's code - left-most ndoe's code the + 1 is the width of current row, traverse all rows and maximize the global result. 
+
+Alternative: using bitwise operation. | Rt: 32ms |
+```python
+    def widthOfBinaryTree(self, root: TreeNode) -> int:
+        maxw, stack = 0, [(root, 1)] if root else None
+        while stack:
+            maxw, nxt = max(maxw, stack[-1][1]-stack[0][1]+1), []
+            for node, code in stack:
+                if node.left: nxt.append((node.left, code<<1))
+                if node.right: nxt.append((node.right, (code<<1)|1))
+            stack = nxt
+        return maxw
+```
+
+Others: there are a lot of DFS solution in discussion board which I think is not a good choice for this problem - https://leetcode.com/problems/maximum-width-of-binary-tree/discuss/106654/JavaC%2B%2B-Very-simple-dfs-solution;
+

@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Resolve Digit**
+| O(T): O(n*n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def getPermutation(self, n: int, k: int) -> str:
+        #k - 1 because number is 0-indexed
+        nums, fac, rst, k = [], 1, '', k-1
+        for i in range(1, n+1): 
+            nums.append(i)
+            fac *= i
+        for i in range(n, 0, -1):
+            fac //= i
+            ind, k = k // fac, k % fac
+            rst += str(nums[ind])
+            del nums[ind]
+        return rst
+```
+Alternative: concise version. | Rt: 28ms |
+```python
+    def getPermutation(self, n: int, k: int) -> str:
+        rst, k, nums = '', k-1, list(range(1, n+1))
+        for i in range(n, 0, -1):
+            ind, k = divmod(k, math.factorial(i-1))
+            rst += str(nums[ind])
+            del nums[ind]
+        return rst
+```
+Referrence: https://leetcode.com/problems/permutation-sequence/discuss/22507/%22Explain-like-I'm-five%22-Java-Solution-in-O(n); https://leetcode.com/problems/permutation-sequence/discuss/22508/An-iterative-solution-for-reference;
+Comment: k could be n!, and the n! // (n-1)! = n; index overflow because the nums list of of length n. Therefore every k should subtract by 1 to keep it within boundary. 

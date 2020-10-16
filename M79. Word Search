@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking**
+| O(T): O(m*n*L^3) | O(S): O(1) | Rt: 332ms | 
+```python
+    def exist(self, board: List[List[str]], word: str) -> bool:
+        def backtrack(board, r, c, x, y, i, l):
+            if i == l: return True
+            if x < 0 or y < 0 or x >= r or y >= c: return False
+            if board[x][y] != word[i]: return False
+            board[x][y] = ord(board[x][y])  #remove the letter
+            if backtrack(board, r, c, x-1, y, i+1, l) or \
+            backtrack(board, r, c, x+1, y, i+1, l) or \
+            backtrack(board, r, c, x, y-1, i+1, l) or \
+            backtrack(board, r, c, x, y+1, i+1, l): return True
+            board[x][y] = chr(board[x][y])  #backtrack
+            return False
+        
+        r, c, l = len(board), len(board[0]), len(word)
+        for i in range(r):
+            for j in range(c):
+                if backtrack(board, r, c, i, j, 0, l): return True
+        return False
+```
+Alternative: using black list rather than modifying the input. | Rt: 340ms |
+```python
+    def exist(self, board: List[List[str]], word: str) -> bool:
+        def backtrack(used, board, r, c, x, y, i, l):
+            if i == l: return True
+            if x < 0 or y < 0 or x >= r or y >= c or (x, y) in used: return False
+            if board[x][y] != word[i]: return False
+            used.add((x, y))   #black list
+            if backtrack(used, board, r, c, x-1, y, i+1, l) or \
+            backtrack(used, board, r, c, x+1, y, i+1, l) or \
+            backtrack(used, board, r, c, x, y-1, i+1, l) or \
+            backtrack(used, board, r, c, x, y+1, i+1, l): return True
+            used.remove((x, y))   #backtrack
+            return False
+        
+        used, r, c, l = set(), len(board), len(board[0]), len(word)
+        for i in range(r):
+            for j in range(c):
+                if backtrack(used, board, r, c, i, j, 0, l): return True
+        return False
+```
+

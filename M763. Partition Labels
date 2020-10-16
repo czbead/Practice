@@ -1,0 +1,30 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy: Index Range**
+| O(T): O(n) | O(S): O(n) | Rt: 40ms | 
+```python
+    def partitionLabels(self, S: str) -> List[int]:
+        rst, l = [], len(S)
+        dt = {S[i]:i for i in range(l)}
+        pre = cur = 0
+        for i in range(l):
+            cur = max(cur, dt[S[i]])
+            if i == cur: 
+                rst.append(cur - pre + 1)
+                pre = cur + 1
+        return rst
+```
+
+Alternative: | Rt: 40ms |
+```python
+    def partitionLabels(self, S: str) -> List[int]:
+        rst, l = [], len(S)
+        m = [0] * 26
+        for i in range(l): m[ord(S[i]) - ord('a')] = i
+        pre = cur = 0
+        for i in range(l):
+            cur = max(cur, m[ord(S[i]) - ord('a')])
+            if i == cur: 
+                rst.append(cur - pre + 1)
+                pre = cur + 1
+        return rst
+```

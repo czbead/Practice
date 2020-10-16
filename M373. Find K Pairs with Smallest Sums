@@ -1,0 +1,23 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Heap: Candidate Pipeline**
+| O(T): O(klgk) | O(S): O(k) | Rt: 40ms | 
+```python
+    def kSmallestPairs(self, nums1: List[int], nums2: List[int], k: int) -> List[List[int]]:
+        if not nums1 or not nums2 or not k: return []
+        l1, l2 = len(nums1), len(nums2)
+        rst, heap = [], []
+        #the item beyond index k-1 never used
+        #we choose a list as base, and iterate the other
+        for i in range(min(k, l1)): heap.append((nums1[i]+nums2[0], i, 0))
+        heapq.heapify(heap)
+        while k and heap:
+            curval, curi, curj = heapq.heappop(heap)
+            rst.append([nums1[curi], nums2[curj]])
+            if curj + 1 < l2:
+                curj += 1
+                heapq.heappush(heap, (nums1[curi]+nums2[curj], curi, curj))
+            k -= 1
+        return rst
+```
+Comment: if you are caught by this problem, solve problem 378 first and then go back solving this one, it is be crystal clear at that time. 
+

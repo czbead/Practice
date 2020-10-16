@@ -1,0 +1,21 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive**
+| O(T): O() | O(S): O() | Rt: 28ms | 
+```python
+    def numberToWords(self, num: int) -> str:
+        def helper(n):
+            if n < 20: r = ones[n]
+            elif n < 100: r = tens[n//10] + ' ' + helper(n%10)
+            elif n < 1000: r = ones[n//100] + ' Hundred ' + helper(n%100)
+            elif n < 1000000: r = helper(n//1000) + ' Thousand ' + helper(n%1000)
+            elif n < 1000000000: r = helper(n//1000000) + ' Million ' + helper(n%1000000)
+            else: r = helper(n//1000000000) + ' Billion ' + helper(n%1000000000)
+            return r.strip()
+        
+        ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen']
+        tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety']
+        
+        if num == 0: return 'Zero'
+        return helper(num)
+```
+Referrence: https://leetcode.com/problems/integer-to-english-words/discuss/70627/Short-clean-Java-solution

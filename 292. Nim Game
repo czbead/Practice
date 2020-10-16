@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Induction**
+| O(t): O() | O(m): O(1) | Rt: 28ms | 
+```python
+    def canWinNim(self, n: int) -> bool:
+        return n % 4
+```
+Analysis: 1, 2, 3 must win; 4 must lose; 5, 6, 7 must win; step your feet in others shoes. 
+
+
+**II). N * (N-1)**
+| O(t): O() | O(m): O() | Rt: ms | 
+```python
+    def canWinNim(self, n: int) -> bool:
+        return n & 3 != 0
+```
+Analysis: if the num is 4 * n (n >= 1), the last 3 digits must be 100, using N & (N-1) bit wise trick to tackle it. 
+
+
+**III). Recursion-DP**
+| O(t): O(n) | O(m): O(1) | Rt: ms | TLE
+```python
+    def canWinNim(self, n: int) -> bool:
+        if n <= 0: return False
+        elif n < 4: return True
+        win = self.canWinNim
+        return not (win(n - 1) & win(n - 2) & win(n - 3))
+```
+

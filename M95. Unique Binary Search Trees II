@@ -1,0 +1,23 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive Build Both Left and Right SubTree**
+| O(T): O() | O(S): O() | Rt: 52ms | 
+```python
+    def generateTrees(self, n: int) -> List[TreeNode]:
+        def genTreeList(l, r):
+            if l > r: return [None]
+            if l == r: return [TreeNode(l)]
+            treeList = []
+            for i in range(l, r+1):
+                for left in genTreeList(l, i-1):
+                    for right in genTreeList(i+1, r):
+                        root = TreeNode(i)
+                        root.left, root.right = left, right
+                        treeList.append(root)
+            return treeList
+        rst = genTreeList(1, n)
+        if rst[0] is None: return []
+        return rst
+```
+Referrence: https://leetcode.com/problems/unique-binary-search-trees-ii/discuss/31494/A-simple-recursive-solution
+
+Others: iterative dp solution - https://leetcode.com/problems/unique-binary-search-trees-ii/discuss/31493/Java-Solution-with-DP

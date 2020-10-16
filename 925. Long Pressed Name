@@ -1,0 +1,96 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def isLongPressedName(self, name: str, typed: str) -> bool:
+        lenn, lent = len(name), len(typed)
+        prei = prej = i = j = 0
+        while i < lenn and j < lent:
+            if name[i] != typed[j]: return False
+            prei, prej = i, j
+            while i + 1 < lenn and name[i+1] == name[i]: i += 1
+            while j + 1 < lent and typed[j+1] == typed[j]: j += 1
+            if j - prej < i - prei: return False
+            i, j = i + 1, j + 1
+        return i == lenn and j == lent
+```
+Comment: two pointer with previous state. They should hit the end at the same time to make it a true case. 
+
+
+**II). Pop**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def isLongPressedName(self, name: str, typed: str) -> bool:
+        name, typed = list(name), list(typed)
+        ctn = ctt = 0
+        while name and typed: 
+            curn, curt = name.pop(), typed.pop()
+            if curn != curt: return False
+            ctn = ctt = 0
+            while name and name[-1] == curn:
+                name.pop()
+                ctn += 1
+            while typed and typed[-1] == curt: 
+                typed.pop()
+                ctt += 1
+            if ctt < ctn: return False
+        #hit the end at the same time
+        return not name and not typed
+```
+Comment: pop is easy-composing while two pointer are fast and space efficient. 
+
+
+**III). Two Pointer Match Most**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def isLongPressedName(self, name: str, typed: str) -> bool:
+        i, l = 0, len(name)
+        for j in range(len(typed)):
+            if i < l and name[i] == typed[j]: i += 1
+            elif i > 0 and typed[j] != name[i - 1]: return False
+        return i == l
+```
+Referrence: https://leetcode.com/problems/long-pressed-name/discuss/183994/C%2B%2BJavaPython-Two-Pointers
+Comment: one pointer controled by range. Match name and typed as much as possible, if typed has more, compare with the previous i (or j, actually the same).
+Alternative:  two naive pointer.  | Rt: 32ms |
+```python
+    def isLongPressedName(self, name: str, typed: str) -> bool:
+        la, lt = len(name), len(typed)
+        i = j = 0
+        while i < la and j < lt:
+            if name[i] == typed[j]: i, j = i + 1, j + 1
+            elif i > 0 and typed[j] == name[i-1]: j += 1
+            else: return False
+        return i == la and all(typed[i] == name[-1] for i in range(j, lt))
+``` 
+
+
+**IV). Profile with Groupby**
+| O(T): O(n) | O(S): O(n) | Rt: 44ms | 
+```python
+    def isLongPressedName(self, name: str, typed: str) -> bool:
+        def profile(s):
+            rst = []
+            for k, group in itertools.groupby(s):
+                rst.append((k, len(list(group))))
+            return rst
+        
+        nameProfile, typeProfile = profile(name), profile(typed)
+        for i, j in itertools.zip_longest(nameProfile, typeProfile):
+            if not i or not j: return False
+            elif i[0] != j[0]: return False
+            elif j[1] < i[1]: return False
+        return True
+```
+Comment: when the data is huge (cannot process in memory, or heavy duplication), I think the profile solution is a better choice. 
+Alternative:  | Rt: 32ms |
+```python
+    def isLongPressedName(self, name: str, typed: str) -> bool:
+        ngroup, tgroup = itertools.groupby(name), itertools.groupby(typed)
+        for i, j in itertools.zip_longest(ngroup, tgroup):
+            if not i or not j: return False
+            elif i[0] != j[0]: return False
+            elif len(list(i[1])) > len(list(j[1])): return False
+        return True
+```
+

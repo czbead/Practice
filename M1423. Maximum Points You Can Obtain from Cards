@@ -1,0 +1,32 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive Take Ends**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def maxScore(self, cards: List[int], k: int) -> int:
+        def dfs(cards, k, l, r, dt):
+            if (k, l, r) in dt: return dt[(k, l, r)]
+            if k == 0: return 0
+            dt[(k, l, r)] = max(cards[l] + dfs(cards, k-1, l+1, r, dt), cards[r] + dfs(cards, k-1, l, r-1, dt))
+            return dt[(k, l, r)]
+            
+        return dfs(cards, k, 0, len(cards)-1, {})
+```
+
+
+**II). Reverse Thinking: Min Sub Array Sum - Sliding Window**
+| O(T): O(n) | O(S): O(1) | Rt: 764ms | 
+```python
+    def maxScore(self, cards: List[int], k: int) -> int:
+        l = len(cards)
+        if k == l: return sum(cards)
+        window, st = l - k, 0
+        total, runsum, minsum = 0, 0, float('inf')
+        for i in range(l):
+            total += cards[i]
+            runsum += cards[i]
+            if i - st + 1 == window:
+                minsum = min(minsum, runsum)
+                runsum -= cards[st]
+                st += 1
+        return total - minsum
+```

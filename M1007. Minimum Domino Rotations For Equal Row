@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Joint Counter**
+| O(T): O(n) | O(S): O(1) | Rt: 1212ms | 
+```python
+    def minDominoRotations(self, A: List[int], B: List[int]) -> int:
+        m, a, b, l = [0] * 7, [0] * 7, [0] * 7, len(A)
+        for i, j in zip(A, B):
+            a[i] += 1
+            b[j] += 1
+            m[i] += 1
+            if j != i: m[j] += 1
+        
+        for i in range(7):
+            if m[i] == l: return l - max(a[i], b[i])
+        return -1
+```
+
+Alternative: | Rt: 1212ms |
+```python
+    def minDominoRotations(self, A: List[int], B: List[int]) -> int:
+        a, b, l = [[] for _ in range(7)], [[] for _ in range(7)], len(A)
+        for i in range(l):
+            a[A[i]].append(i)
+            b[B[i]].append(i)
+        
+        for i in range(7):
+        	#i is the number, no other choice
+            if len(set(a[i] + b[i])) == l: 
+                return l - max(len(a[i]), len(b[i]))
+        return -1
+```
+Referrence: https://leetcode.com/problems/minimum-domino-rotations-for-equal-row/discuss/252633/JavaPython-3-one-pass-counting-O(A-%2B-B)
+
+
+**II). Check Head**
+| O(T): O(n) | O(S): O(n) | Rt: 1140ms | 
+```python
+    def minDominoRotations(self, A: List[int], B: List[int]) -> int:
+        rst, l = float('inf'), len(A)
+        cta, ctb = collections.Counter(A), collections.Counter(B)
+        if all(A[0] in tu for tu in zip(A, B)): rst = min(rst, l - max(cta[A[0]], ctb[A[0]]))
+        if all(B[0] in tu for tu in zip(A, B)): rst = min(rst, l - max(cta[B[0]], ctb[B[0]]))
+        return -1 if rst == float('inf') else rst
+```
+Referrence: https://leetcode.com/problems/minimum-domino-rotations-for-equal-row/discuss/252242/JavaC%2B%2BPython-Different-Ideas

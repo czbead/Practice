@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Matrix Square PrefixSum with Binary Search**
+| O(T): O(mn) | O(S): O(mn) | Rt: 1136ms | 
+```python
+    def maxSideLength(self, mat: List[List[int]], threshold: int) -> int:
+        m, n = len(mat), len(mat[0])
+        presum = [[0] * (n+1) for _ in range(m+1)]
+        for i in range(1, m+1):
+            for j in range(1, n+1):
+                presum[i][j] = presum[i-1][j] + presum[i][j-1] - presum[i-1][j-1] + mat[i-1][j-1]
+        l, r = 0, min(m, n)
+        while l < r:
+            #tilt toward right side, because floor devision never arrive at r
+            mid = (l + r + 1) // 2   #square of size mid
+            if any(presum[i][j] + presum[i-mid][j-mid] - presum[i-mid][j] - presum[i][j-mid] <= threshold for i in range(mid, m+1) for j in range(mid, n+1)):
+                l = mid
+            else: r = mid-1
+        return l
+```
+Referrence: https://leetcode.com/problems/maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-threshold/discuss/451871/Java-sum%2Bbinary-O(m*n*log(min(mn)))-or-sum%2Bsliding-window-O(m*n);
+
+
+**II). Matrix Square PrefixSum with Slide Window**
+| O(T): O(mn) | O(S): O(mn) | Rt: 808ms | 
+```python
+    def maxSideLength(self, mat: List[List[int]], threshold: int) -> int:
+        mx, m, n = 1, len(mat), len(mat[0])
+        presum = [[0] * (n+1) for _ in range(m+1)]
+        for i in range(1, m+1):
+            for j in range(1, n+1):
+                presum[i][j] = presum[i-1][j] + presum[i][j-1] - presum[i-1][j-1] + mat[i-1][j-1]
+                if i >= mx and j >= mx and presum[i][j] + presum[i-mx][j-mx] - presum[i-mx][j] - presum[i][j-mx] <= threshold: mx += 1
+        return mx-1
+```
+Referrence: https://leetcode.com/problems/maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-threshold/discuss/451871/Java-sum+binary-O(m*n*log(min(mn)))-or-sum+sliding-window-O(m*n)/406905

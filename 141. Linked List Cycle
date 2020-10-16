@@ -1,0 +1,38 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Slow Fast Runner**
+| O(t): O(n) | O(m): O(1) | Rt: 44ms | 
+```python
+    def hasCycle(self, head: ListNode) -> bool:
+        fast = slow = head
+        #check slow is unnecessary, see comment
+        while slow and fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            #slow == fast work the same
+            if slow is fast: return True
+        return False
+```
+Comment: 'is' operator return whether two referrences point to the same object (node), therefore is applicable here.
+the slow is not the bound, fast will always touch the end no slower than slow even they never meet each other. If they meet in between, fast is the real bound. Therefore, 
+```python
+while fast and fast.next 
+```
+is all good. Anyway, safe coding, ez life~
+
+
+**II). Except Boost**
+| O(t): O(n) | O(m): O(1) | Rt: 40ms | 
+```python
+    def hasCycle(self, head: ListNode) -> bool:
+        if not head: return False
+        slow, fast = head, head.next
+        try:
+            while slow is not fast:
+                slow = slow.next
+                fast = fast.next.next
+            return True
+        except:
+            return False
+```
+Comment: the "except" doesn't help where there is a cycle, two runners still need to meet each other which means run the same length distance. Neither will it help in no cycle trips. However, it avoids the "check before move" step therefore saves time.
+Referrence: https://leetcode.com/problems/linked-list-cycle/discuss/44494/Except-ionally-fast-Python

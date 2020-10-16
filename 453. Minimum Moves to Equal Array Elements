@@ -1,0 +1,17 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Decrease 1 Num By 1**
+| O(T): O(n) | O(S): O(1) | Rt: 280ms | 
+```python
+    def minMoves(self, nums: List[int]) -> int:
+        minval = min(nums)
+        return sum(i - minval for i in nums)
+```
+Comment: reverse thinking.
+Alternative: | Rt: 268ms |
+```python
+    def minMoves(self, nums: List[int]) -> int:
+        minval = min(nums)
+        return sum(nums) - minval * len(nums)
+```
+
+

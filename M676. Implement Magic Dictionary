@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DefaultDict with Set: Hash Word Len**
+| O(T): O() | O(S): O(n) | Rt: 20ms | 
+```python
+class MagicDictionary:
+
+    def __init__(self):
+        self.dt = collections.defaultdict(set)
+
+    def buildDict(self, dict: List[str]) -> None:
+        for word in dict:
+            self.dt[len(word)].add(word)
+
+    def search(self, word: str) -> bool:
+        l = len(word)
+        if l not in self.dt: return False
+        for dword in self.dt[l]:
+            ct = 0
+            for i in range(l):
+                if dword[i] != word[i]: ct += 1
+                if ct > 1: break
+            if ct == 1: return True
+        return False
+```
+Referrence: https://leetcode.com/problems/implement-magic-dictionary/discuss/107446/Easy-14-lines-Java-solution-HashMap/167416
+Comment: the valid modified input should have the same length of its corresponding word if it exists. This is super smart solution. Trie is really not a good choice for this prolem, Trie is good at preicse word match rather than this vague match. 
+
+

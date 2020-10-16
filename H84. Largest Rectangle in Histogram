@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP Chainning**
+| O(T): O() | O(S): O() | Rt: ms | TLE, MLE
+```python
+    def largestRectangleArea(self, heights: List[int]) -> int:
+        if not heights: return 0
+        l = len(heights)
+        #l_lower the index of the first height lower than current on the left
+        #r_lower the index of the first height lower than current on the right
+        l_lower, r_lower = [[0] * l for _ in range(l)], [[0] * l for _ in range(l)]
+        # l_lower[0], r_lower[-1] = -1, l
+        for i in range(l):
+            j = i-1
+            while j >= 0 and heights[j] >= heights[i]:
+                j = l_lower[j]
+            l_lower[i] = j
+            
+        for i in range(l-1, -1, -1):
+            j = i+1
+            while j < l and heights[j] >= heights[i]:
+                j = r_lower[j]
+            r_lower[i] = j
+        return max((r_lower[i] - l_lower[i] - 1) * heights[i] for i in range(l))
+```
+Referrence: https://leetcode.com/problems/largest-rectangle-in-histogram/discuss/28902/5ms-O(n)-Java-solution-explained-(beats-96)
+
+
+**II). Stack ASC**
+| O(T): O(n) | O(S): O(n) | Rt: 108ms | 
+```python
+    def largestRectangleArea(self, heights: List[int]) -> int:
+        heights.append(-1)
+        #this is ASC stack, I tried DESC stack several times, heart-breaking
+        mx, stack = 0, [-1]
+        for i in range(len(heights)):
+            while heights[i] < heights[stack[-1]]:  #stack will never empty
+            	#i-th height is the first height lower than h on his right
+            	#stack[-1]'s height is the first height lower than h on his left
+                h = heights[stack.pop()]
+                mx = max(mx, h*(i-stack[-1]-1))
+            stack.append(i)
+        return mx
+```
+Referrence: https://leetcode.com/problems/largest-rectangle-in-histogram/discuss/28917/AC-Python-clean-solution-using-stack-76ms
+

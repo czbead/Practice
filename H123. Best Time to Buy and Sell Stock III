@@ -1,0 +1,33 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def maxProfit(self, prices: List[int]) -> int:
+        def maxPro(prices, st, end):
+            if end <= st+1: return 0
+            lowPrice, profit = float('inf'), 0
+            for i in range(st, end):
+                lowPrice = min(lowPrice, prices[i])
+                profit = max(profit, prices[i]-lowPrice)
+            return profit
+        
+        if not prices: return 0
+        l = len(prices)
+        return max(maxPro(prices, 0, i) + maxPro(prices, i, l) for i in range(l))
+```
+
+
+**II). State Machine**
+| O(T): O() | O(S): O() | Rt: 88ms | 
+```python
+    def maxProfit(self, prices: List[int]) -> int:
+        buy1 = buy2 = -float('inf')
+        sell1 = sell2 = 0
+        for i in prices:
+            sell2 = max(sell2, buy2 + i)
+            sell1 = max(sell1, buy1 + i)
+            buy2 = max(buy2, sell1 - i)
+            buy1 = max(buy1, -i)
+        return sell2
+```
+Referrence: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/discuss/39611/Is-it-Best-Solution-with-O(n)-O(1).

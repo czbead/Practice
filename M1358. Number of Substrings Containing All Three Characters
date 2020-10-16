@@ -1,0 +1,73 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sliding Window**
+| O(T): O(n) | O(S): O(1) | Rt: 212ms | 
+```python
+    def numberOfSubstrings(self, s: str) -> int:
+        rst, m, st, l = 0, [0] * 3, 0, len(s)
+        for i in range(l):
+            m[ord(s[i]) - 97] += 1
+            if all(m): 
+                deli = 0
+                while m[deli]:
+                    rst += l-i
+                    deli = ord(s[st]) - 97
+                    m[deli] -= 1
+                    st += 1
+        return rst
+```
+
+Alternative: | Rt: 344ms |
+```python
+    def numberOfSubstrings(self, s: str) -> int:
+        rst, st, l, ct = 0, 0, len(s), collections.Counter()
+        for i in range(l):
+            ct[s[i]] += 1
+            if len(ct) == 3: 
+                deli = 'a'
+                while ct[deli]:
+                    rst += l-i
+                    deli = s[st]
+                    ct[deli] -= 1
+                    st += 1
+                del ct[deli]
+        return rst
+```
+
+Triple: | Rt: 220ms |
+```python
+    def numberOfSubstrings(self, s: str) -> int:
+        rst, m, st, l = 0, [0] * 3, 0, len(s)
+        for i in range(l):
+            m[ord(s[i]) - 97] += 1
+            while all(m):
+                rst += l-i
+                m[ord(s[st]) - 97] -= 1
+                st += 1
+        return rst
+```
+
+Forth: | Rt: 204ms |
+```python
+    def numberOfSubstrings(self, s: str) -> int:
+        rst, st, m = 0, 0, [0] * 3
+        for i in range(len(s)):
+            m[ord(s[i]) - 97] += 1
+            while all(m):
+                m[ord(s[st]) - 97] -= 1
+                st += 1
+            rst += st
+        return rst
+```
+Referrence: https://leetcode.com/problems/number-of-substrings-containing-all-three-characters/discuss/516977/JavaC%2B%2BPython-Easy-and-Concise
+
+Fifth: | Rt: 140ms |
+```python
+    def numberOfSubstrings(self, s: str) -> int:
+        rst, last = 0, [-1] * 3
+        for i in range(len(s)):
+            last[ord(s[i]) - 97] = i
+            rst += min(last) + 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/number-of-substrings-containing-all-three-characters/discuss/516977/JavaC%2B%2BPython-Easy-and-Concise
+

@@ -1,0 +1,67 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). In-place Reverse**
+| O(t): O(n) | O(m): O(1) | Rt: 200ms | 
+```python
+    def reverseString(self, s: List[str]) -> None:
+        s.reverse()
+```
+
+
+**II). Half Swap**
+| O(t): O(n) | O(m): O(1) | Rt: 208ms | 
+```python
+    def reverseString(self, s: List[str]) -> None:
+        for i in range(len(s) // 2):
+            s[i], s[-1 - i] = s[-1 - i], s[i]
+```
+Alternative: | Rt: 216ms |
+```python
+    def reverseString(self, s: List[str]) -> None:
+        l = len(s)
+        for i in range(l // 2):
+            s[i], s[l - 1 - i] = s[l - 1 - i], s[i]
+```
+
+
+**III). Two Pointer**
+| O(t): O(n) | O(m): O(1) | Rt: 220ms | 
+```python
+    def reverseString(self, s: List[str]) -> None:
+        l, r = 0, len(s) - 1
+        while l < r:
+            s[l], s[r] = s[r], s[l]
+            l, r = l+1, r-1
+```
+
+
+**IV). ~ Operator**
+| O(t): O(n) | O(m): O(1) | Rt: 216ms | 
+```python
+    def reverseString(self, s: List[str]) -> None:
+        for i in range(len(s) // 2):
+            s[i], s[~i] = s[~i], s[i]
+```
+Referrence: https://leetcode.com/problems/reverse-string/discuss/80946/Python2.7-(3-solutions:-Recursive-Classic-Pythonic)/154540
+Comment: it is similar to **Half Swap** solution, I just find so clean and concise. Full of treasures in LeetCode discussion board and comments.
+
+
+**V). Recursion**
+| O(t): O(n) | O(m): O(1) | Rt: ms | 
+```python
+    def reverseString(self, s: List[str]) -> None:
+        l = len(s)
+        if l < 2: return s
+        return self.reverseString(s[l//2:]) + self.reverseString(s[:l//2])
+```
+Comment: this solution won't pass OJ because return is not allowed. 
+Alternative: | Rt: 216ms |
+```python
+    def reverseString(self, s: List[str]) -> None:
+        def recur(s, l, r):
+            if l == r or l > r: return
+            s[l], s[r] = s[r], s[l]
+            recur(s, l+1, r-1)
+        recur(s, 0, len(s)-1)
+```
+Comment: this can pass the OJ but it is not a typical recursion, it just look like recursion. Recursion returns from the core and upper layer's return is based on the inner layer.
+

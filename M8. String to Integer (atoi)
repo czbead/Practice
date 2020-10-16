@@ -1,0 +1,57 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive with Exception**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def myAtoi(self, str: str) -> int:
+        s = ''
+        for i in str.strip():
+            if not i.isdigit() and i != '+' and i != "-": break
+            elif s != '' and not i.isdigit(): break
+            elif i.isdigit() or i == '+' or i == '-': s += i
+        try: 
+            n = int(s)  #for other languages, use double instead
+        except:
+            return 0
+        minint = -(2 << 30); maxint = -minint - 1
+        if n < minint: return minint
+        if n > maxint: return maxint
+        return n
+```
+
+
+**II). No Build-in**
+| O(T): O(n) | O(S): O(1) | Rt: 36ms | 
+```python
+    def myAtoi(self, str: str) -> int:
+        isdigit = lambda x: ord('0') <= ord(x) <= ord('9')
+        strip = lambda x: strip(x[1:]) if x[0] == ' ' else x
+        # def strip(s):
+        #     for i in range(len(s)):
+        #         if s[i] != ' ': break
+        #     return s[i:len(s)]
+        def s2n(ns):
+            r = 0
+            l = [ord(i) - ord('0') for i in ns]
+            for i in l: r = r * 10 + i
+            return r
+        def getnum(nstr):
+            if not nstr: return 0
+            if len(nstr) == 1 and not nstr[0].isdigit(): return 0
+            if nstr[0].isdigit(): return s2n(nstr)
+            else: 
+                n = s2n(nstr[1:])
+                if nstr[0] == "-": n = -n
+                return n
+            
+        s = ''
+        for i in str.strip():
+            if not i.isdigit() and i != '+' and i != "-": break
+            elif s != '' and not i.isdigit(): break
+            elif i.isdigit() or i == '+' or i == '-': s += i
+        n = getnum(s)
+        minint = -(2 << 30); maxint = -minint - 1
+        if n < minint: return minint
+        if n > maxint: return maxint
+        return n
+```
+

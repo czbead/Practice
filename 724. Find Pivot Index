@@ -1,0 +1,47 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(1) | Rt: 156ms | 
+```python
+    def pivotIndex(self, nums: List[int]) -> int:
+        su, summ = 0, sum(nums)
+        for i, v in enumerate(nums):
+            if su == (summ - v) / 2: return i
+            su += v
+        return -1
+```
+Alternative: better using multiply. | Rt: 156ms |
+```python
+    def pivotIndex(self, nums: List[int]) -> int:
+        suml, summ = 0, sum(nums)
+        for i, v in enumerate(nums):
+            if summ == suml * 2 + v: return i
+            suml += v
+        return -1
+```
+Triple: subtract is more efficient than multiply. | Rt: 156ms |
+```python
+    def pivotIndex(self, nums: List[int]) -> int:
+        suml, sumr = 0, sum(nums)
+        for i, v in enumerate(nums):
+            sumr -= v
+            if suml == sumr: return i
+            suml += v
+        return -1
+```
+Referrence: https://leetcode.com/problems/find-pivot-index/discuss/109255/Short-Python-O(n)-time-O(1)-space-with-Explanation
+
+
+**II). Prefix Sum**
+| O(T): O(n) | O(S): O(n) | Rt: 160ms | 
+```python
+    def pivotIndex(self, nums: List[int]) -> int:
+        sums = [0] + nums
+        l = len(sums)
+        for i in range(1, l): sums[i] += sums[i-1]
+        for i in range(l-1):
+            if sums[i] == sums[l-1] - sums[i+1]: return i
+        return -1
+```
+Referrence: https://leetcode.com/problems/find-pivot-index/discuss/109255/Short-Python-O(n)-time-O(1)-space-with-Explanation/205711
+Comment: not the best idea, worth practice. 
+

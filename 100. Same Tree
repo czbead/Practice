@@ -1,0 +1,53 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(t): O(n) | O(m): O(1) | Rt: 28ms | 
+note: n is decided by the smaller amount of nodes in two trees
+```python
+    def isSameTree(self, p: TreeNode, q: TreeNode) -> bool:
+        if not p and not q: return True
+        if not p or not q: return False
+        same = self.isSameTree
+        return p.val == q.val and same(p.left, q.left) and same(p.right, q.right)
+```
+Alternative: | Rt: 24ms |
+```python
+    def isSameTree(self, p: TreeNode, q: TreeNode) -> bool:
+        if p and q:
+            same = self.isSameTree
+            return p.val == q.val and same(p.left, q.left) and same(p.right, q.right)
+        else: return p is q
+```
+referrence: https://leetcode.com/problems/same-tree/discuss/32729/Shortest%2Bsimplest-Python
+**Python "is" vs "=="**: "is" always returns True if it compares the same object instance (two variables point to the same object) Whereas "==" is ultimately determined by the __eq__() method. **"None" is a singleton so "None is None" is always True.** 
+https://stackoverflow.com/questions/132988/is-there-a-difference-between-and-is; 
+https://stackoverflow.com/questions/26595/is-there-any-difference-between-foo-is-none-and-foo-none
+
+**II). DFS Iteration**
+| O(t): O(n) | O(m): O(m+n) | Rt: 36ms | 
+```python
+    def isSameTree(self, p: TreeNode, q: TreeNode) -> bool:
+        stack = [(p, q)]
+        while stack:
+            n1, n2 = stack.pop()
+            if not n1 and not n2: continue
+            if not n1 or not n2: return False
+            if n1.val != n2.val: return False
+            stack.append((n1.right, n2.right))
+            stack.append((n1.left, n2.left))
+        return True
+```
+
+**III). BFS Iteration**
+| O(t): O(n) | O(m): O(1) | Rt: 32ms | 
+```python
+    def isSameTree(self, p: TreeNode, q: TreeNode) -> bool:
+        que = collections.deque([(p, q)])
+        while que:
+            n1, n2 = que.popleft()
+            if not n1 and not n2: continue
+            if not n1 or not n2: return False
+            if n1.val != n2.val: return False
+            que.append((n1.left, n2.left))
+            que.append((n1.right, n2.right))
+        return True
+```

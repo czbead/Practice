@@ -1,0 +1,72 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Exhausive Offsets**
+| O(T): O(mn) | O(S): O(1) | Rt: 728ms | 
+```python
+    def imageSmoother(self, M: List[List[int]]) -> List[List[int]]:
+        xlen, ylen = len(M), len(M[0])
+        m = [[0] * ylen for _ in range(xlen)]
+        offset = list(itertools.product((-1, 0, 1), (-1, 0, 1)))
+        for i in range(xlen):
+            for j in range(ylen):
+                surs = [M[i + x][j + y] for x, y in offset if 0 <= i + x < xlen and 0 <= j + y < ylen]
+                m[i][j] = sum(surs) // len(surs)
+        return m
+```
+Comment: do not update value in place, it will cover the original values and you will lose them forever.
+
+
+**II). Exhausive Surrounds**
+| O(T): O(mn) | O(S): O(1) | Rt: 860ms | 
+```python
+    def imageSmoother(self, M: List[List[int]]) -> List[List[int]]:
+        r, c = len(M), len(M[0])
+        m = copy.deepcopy(M)
+        for i in range(r):
+            for j in range(c):
+                surs = [
+                    M[x][y]
+                    for x in (i - 1, i, i + 1)
+                    for y in (j - 1, j, j + 1)
+                    if 0 <= x < r and 0 <= y < c
+                ]
+                m[i][j] = sum(surs) // len(surs)
+        return m
+```
+Alternative: Initialization instead of deepcopy. | Rt: 656ms |
+```python
+    def imageSmoother(self, M: List[List[int]]) -> List[List[int]]:
+        r, c = len(M), len(M[0])
+        m = [[0] * c for _ in range(r)]
+        for i in range(r):
+            for j in range(c):
+                surs = [
+                    M[x][y]
+                    for x in (i - 1, i, i + 1)
+                    for y in (j - 1, j, j + 1)
+                    if 0 <= x < r and 0 <= y < c
+                ]
+                m[i][j] = sum(surs) // len(surs)
+        return m
+```
+Comment: It seems deepcopy is of much more overhead than normal initialization.
+
+
+**III). Basic Game**
+| O(T): O(mn) | O(S): O(1) | Rt: 632ms | 
+```python
+    def imageSmoother(self, M: List[List[int]]) -> List[List[int]]:
+        r, c = len(M), len(M[0])
+        m = [[0] * c for _ in range(r)]
+        for i in range(r):
+            for j in range(c):
+                sursum = surcnt = 0
+                for x  in (i - 1, i, i + 1):
+                    for y in (j - 1, j, j + 1):
+                        if 0 <= x < r and 0 <= y < c: 
+                            sursum += M[x][y]
+                            surcnt += 1
+                
+                m[i][j] = sursum // surcnt
+        return m
+```
+

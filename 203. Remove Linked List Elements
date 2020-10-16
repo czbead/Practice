@@ -1,0 +1,22 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(t): O(n) | O(m): O(1) | Rt: 68ms | 
+```python
+    def removeElements(self, head: ListNode, val: int) -> ListNode:
+        hh = h = ListNode(None)
+        h.next = head
+        while h.next:
+            if h.next.val == val: h.next = h.next.next
+            else: h = h.next
+        return hh.next
+```
+
+**II). Recursion**
+| O(t): O(n) | O(m): O(1) | Rt: 72ms | 
+```python
+    def removeElements(self, head: ListNode, val: int) -> ListNode:
+        if not head: return
+        if head.val == val: return self.removeElements(head.next, val)
+        head.next = self.removeElements(head.next, val)
+        return head
+```

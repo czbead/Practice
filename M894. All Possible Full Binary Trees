@@ -1,0 +1,61 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive Build**
+| O(T): O() | O(S): O() | Rt: 288ms | 
+```python
+    def allPossibleFBT(self, N: int) -> List[TreeNode]:
+        if N == 1: return [TreeNode(0)]
+        rst, N = [], N-1
+        for i in range(1, N, 2):
+            left = self.allPossibleFBT(i)
+            right = self.allPossibleFBT(N-i)
+            for l in left:
+                for r in right:
+                    #I created the root node outside, it is wrong
+                    root = TreeNode(0)
+                    root.left, root.right = l, r
+                    rst.append(root)
+        return rst
+```
+
+Alternative: with a cache, dont compute duplicate. | Rt: 192ms |
+```python
+    def allPossibleFBT(self, N: int) -> List[TreeNode]:
+        def allpossible(N, dt):
+            if N % 2 == 0: return None
+            if N in dt: return dt[N]
+            rst, N = [], N-1
+            for i in range(1, N, 2):
+                left = allpossible(i, dt)
+                right = allpossible(N-i, dt)
+                for l in left:
+                    for r in right:
+                        #I created the root node outside, it is wrong
+                        root = TreeNode(0)
+                        root.left, root.right = l, r
+                        rst.append(root)
+            dt[N+1] = rst
+            return rst
+        
+        dt = {1: [TreeNode(0)]}
+        allpossible(N, dt)
+        return dt.get(N, None)
+```
+Referrence: https://leetcode.com/problems/all-possible-full-binary-trees/discuss/163433/Java-Recursive-Solution-with-Explanation
+
+
+**II). Iterative Solution**
+| O(T): O() | O(S): O(n) | Rt: 200ms | 
+```python
+    def allPossibleFBT(self, N: int) -> List[TreeNode]:
+        dt = {1: [TreeNode(0)]}
+        for i in range(3, N+1, 2):
+            arr = []
+            for j in range(1, i, 2):
+                for m in dt[j]:
+                    for n in dt[i-1-j]:
+                        root = TreeNode(0)
+                        root.left, root.right = m, n
+                        arr.append(root)
+            dt[i] = arr        
+        return dt.get(N, None)
+```

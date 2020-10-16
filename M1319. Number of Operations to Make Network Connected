@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Union Find Count Component**
+| O(T): O(n) | O(S): O() | Rt: 1032ms | 
+```python
+    def makeConnected(self, n: int, connections: List[List[int]]) -> int:
+        def find(m, i):
+            if i != m[i]: m[i] = find(m, m[i])
+            return m[i]
+            
+        def union(m, i, j):
+            m[find(m, i)] = find(m, j)
+        
+        l = len(connections)
+        if n > l+1: return -1
+        m, component = list(range(n)), set()
+        for i, j in connections: union(m, i, j)
+        for i in range(n): component.add(find(m, i))
+        return len(component) - 1
+```
+
+Alternative: | Rt: 912ms |
+```python
+    def makeConnected(self, n: int, connections: List[List[int]]) -> int:
+        def find(m, i):
+            if i != m[i]: m[i] = find(m, m[i])
+            return m[i]
+            
+        def union(m, i, j):
+            m[find(m, i)] = find(m, j)
+        
+        l = len(connections)
+        if n > l+1: return -1
+        m = list(range(n))
+        for i, j in connections: union(m, i, j)
+        return sum(find(m, i) == i for i in range(n)) - 1
+```
+

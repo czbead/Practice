@@ -1,0 +1,113 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS: Convert Binary Tree to Undirected Graph**
+| O(T): O() | O(S): O() | Rt: 36ms | 
+```python
+    def distanceK(self, root: TreeNode, target: TreeNode, K: int) -> List[int]:
+        #construct a undirected graph from the tree
+        def buildGraph(par, node, graph):
+            if not node: return
+            if par:
+                #using treenode referrence (a list actually) is ok, will cost much more
+                graph[par.val].append(node.val)
+                graph[node.val].append(par.val)
+            buildGraph(node, node.left, graph)
+            buildGraph(node, node.right, graph)
+            
+        graph = collections.defaultdict(list)
+        buildGraph(None, root, graph)
+        q, visited = [target.val], set([target.val])
+        for _ in range(K):
+            q = [j for i in q for j in graph[i] if j not in visited]
+            #visited |= set(q)
+            visited.update(q)
+        return q
+```
+Referrence: https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/discuss/143729/Python-DFS-and-BFS; https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/discuss/236534/I-Made-A-Video-To-Explain-The-Breadth-First-Search;
+
+Alternative: partly tree, partly graph. | Rt: 36ms |
+```python
+    def distanceK(self, root: TreeNode, target: TreeNode, K: int) -> List[int]:
+        def buildGraph(par, node, graph, target):
+            #stop building graph when we hit the traget node
+            if not node or par == target: return
+            #only connect child to parent, no need to connect parent to child
+            if par: graph[node] = par
+            buildGraph(node, node.left, graph, target)
+            buildGraph(node, node.right, graph, target)
+            
+        graph = {}
+        buildGraph(None, root, graph, target)
+        q, visited = [target], set([target])
+        for _ in range(K):
+            q = [j for i in q for j in [i.left, i.right] + [graph.get(i, None)] if j and j not in visited]
+            visited |= set(q)
+        return [i.val for i in q]
+```
+
+Triple: a naive BFS. | Rt: 28ms |
+```python
+class Solution:
+    def distanceK(self, root: TreeNode, target: TreeNode, K: int) -> List[int]:  
+        dtpar, q = collections.defaultdict(list), collections.deque([root])
+        while q:
+            node = q.popleft()
+            if node.left: 
+                dtpar[node.left] = node
+                if node.left == target: break
+                q.append(node.left)
+            if node.right:
+                dtpar[node.right] = node
+                if node.right == target: break
+                q.append(node.right)
+        
+        q.clear(); q.append(target)
+        visited = set([target])
+        for _ in range(K):
+            if not q: return []
+            size = len(q)
+            for _ in range(size):
+                node = q.popleft()
+                if node.left and node.left not in visited: 
+                	q.append(node.left); visited.add(node.left)
+                if node.right and node.right not in visited: 
+                	q.append(node.right); visited.add(node.right)
+                if node in dtpar and dtpar[node] not in visited: 
+                	q.append(dtpar[node]); visited.add(dtpar[node])
+        return [i.val for i in q]
+```
+Referrence: https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/discuss/143752/JAVA-Graph-%2B-BFS
+
+
+**II). Recursive Solution: Build Distance**
+| O(T): O() | O(S): O() | Rt: 28ms | 
+```python
+    def distanceK(self, root: TreeNode, target: TreeNode, K: int) -> List[int]:  
+        #build the distance hashmap until hit the target
+        def find(target, node, dt):
+            if not node: return -1
+            if node == target: dt[node] = 0; return 0
+            l = find(target, node.left, dt)
+            #means the target is in the left subtree
+            if l != -1: 
+                dt[node] = l + 1
+                return l+1
+            r = find(target, node.right, dt)
+            if r != -1:
+                dt[node] = r + 1
+                return r + 1
+            return -1
+            
+        def findK(dt, k, node, distance, rst):
+            if not node: return
+            if node in dt: distance = dt[node]
+            if distance == k: rst.append(node.val)
+            findK(dt, k, node.left, distance+1, rst)
+            findK(dt, k, node.right, distance+1, rst)
+        
+        dt, rst = {}, []
+        find(target, root, dt)
+        #the default distance can be any value, it will be update in the process
+        findK(dt, K, root, 0, rst)
+        return rst
+```
+Referrence: https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/discuss/143798/1ms-beat-100-simple-Java-dfs-with(without)-hashmap-including-explanation

@@ -1,0 +1,115 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Binary Search**
+| O(T): O(lgn) | O(S): O(1) | Rt: 52ms | 
+```python
+    def search(self, nums: List[int], target: int) -> int:
+        if not nums: return -1
+        leng = len(nums)
+        l, r = 0, leng - 1
+        while l < r: 
+            m = l + (r-l) // 2
+            if nums[r] < nums[m]: l = m+1
+            else: r = m
+        pivot = l
+        #when there is no rotate, the pivot == 0
+        if pivot == 0: l, r = 0, leng-1
+        elif nums[0] <= target <= nums[pivot-1]: l, r = 0, pivot - 1
+        elif nums[pivot] <= target <= nums[-1]:  l, r = pivot, leng - 1
+        else: return -1
+        while l < r:
+            m = l + (r-l) // 2
+            if nums[m] < target: l = m + 1
+            else: r = m
+        return l if nums[l] == target else -1
+```
+Alternative: | Rt: 40ms |
+```python
+    def search(self, nums: List[int], target: int) -> int:
+        if not nums: return -1
+        leng = len(nums)
+        l, r = 0, leng - 1
+        while l < r: 
+            m = l + (r-l) // 2
+            if nums[m] > nums[r]: l = m+1
+            else: r = m
+        pivot = l
+        if target > nums[-1]: l, r = 0, pivot - 1
+        else: l, r = pivot, leng - 1
+        while l < r:
+            m = l + (r-l) // 2
+            if nums[m] < target: l = m + 1
+            else: r = m
+        return l if nums[l] == target else -1
+```
+Triple: rotate back. | Rt: 40ms |
+```python
+    def search(self, nums: List[int], target: int) -> int:
+        if not nums: return -1
+        leng = len(nums)
+        l, r = 0, leng - 1
+        while l < r: 
+            m = l + (r-l) // 2
+            if nums[m] > nums[r]: l = m+1
+            else: r = m
+        offset, l, r = l, 0, leng - 1
+        while l < r:
+            fake = l + (r-l) // 2
+            real = (fake + offset) % leng
+            if nums[real] < target: l = fake + 1
+            else: r = fake
+        ind = (l + offset) % leng
+        return ind if nums[ind] == target else -1
+```
+Referrence: idea from https://leetcode.com/problems/search-in-rotated-sorted-array/discuss/14425/Concise-O(log-N)-Binary-search-solution
+Comment: first binary search find the pivot point; second binary search find the index; 
+
+
+**II). Drop Half at Once**
+| O(T): O(lgn) | O(S): O(1) | Rt: 36ms | 
+```python
+    def search(self, nums: List[int], target: int) -> int:
+        if not nums: return -1
+        leng = len(nums)
+        l, r = 0, leng - 1
+        while l < r: 
+            m = l + (r-l) // 2
+            if (nums[m] >= nums[l]):    #left half is sorted asc sequence
+                if nums[l] <= target <= nums[m]:  #target is right in the left half
+                    r = m
+                else:  #target is not in the left half
+                    l = m + 1
+            else:   #right half is sorted asc sequence;  
+                if nums[m] < target <= nums[-1]:  # target is right in right half
+                    l = m + 1
+                else:    #target is not in right half
+                    r = m
+        return l if nums[l] == target else -1
+```
+Alternative: | Rt: 40ms |
+```python
+    def search(self, nums: List[int], target: int) -> int:
+        if not nums: return -1
+        leng = len(nums)
+        l, r = 0, leng - 1
+        while l <= r: 
+            m = l + (r-l) // 2
+            if nums[m] == target: return m
+            if (nums[m] >= nums[l]):    #left half is sorted asc sequence
+                if nums[l] <= target < nums[m]:  #target is right in the left half
+                    r = m - 1
+                else:  #target is not in the left half
+                    l = m + 1
+            else:   #right half is sorted asc sequence;  
+                if nums[m] < target <= nums[-1]:  # target is right in right half
+                    l = m + 1
+                else:    #target is not in right half
+                    r = m - 1
+        return -1
+```
+Referrence: great explannation https://leetcode.com/problems/search-in-rotated-sorted-array/discuss/14436/Revised-Binary-Search/191339
+Comment: at each round of binary search, we can make decision to choose a half to go for the next round.
+
+
+
+Others: decide whether mid and target are on the same side (INF, -INF) solution -- https://leetcode.com/problems/search-in-rotated-sorted-array/discuss/14435/Clever-idea-making-it-simple; https://leetcode.com/problems/search-in-rotated-sorted-array/discuss/154836/The-INF-and-INF-method-but-with-a-better-explanation-for-dummies-like-me; https://leetcode.com/problems/search-in-rotated-sorted-array/discuss/14419/Pretty-short-C%2B%2BJavaRubyPython
+

@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking**
+| O(T): O(2^n) | O(S): O(n*n) | Rt: 44ms |
+note:  the time complexity of backtracking is always not trivial; for each num, choose it or drop it
+```python
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+        def backtrack(cand, tar, path, st, end, rst):
+            if tar == 0: rst.append(path); return
+            for i in range(st, end+1):
+                if i == st or cand[i] != cand[i-1]: 
+                    if cand[i] > tar: return  #this make tar never < 0
+                    backtrack(cand, tar-cand[i], path+[cand[i]], i+1, end, rst)
+        
+        candidates.sort(); rst = []
+        backtrack(candidates, target, [], 0, len(candidates)-1, rst)
+        return rst
+```
+
+
+**II). **
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+Others: DP solution, I still cannot understand it yet, will revisit soon. https://leetcode.com/problems/combination-sum-ii/discuss/16870/DP-solution-in-Python
+

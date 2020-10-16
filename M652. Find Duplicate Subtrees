@@ -1,0 +1,54 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Post-Order Tree Serialization**
+| O(T): O(n) | O(S): O(n) | Rt: 64ms | 
+```python
+    def findDuplicateSubtrees(self, root: TreeNode) -> List[TreeNode]:
+        def postorder(node, subtree, rst):
+            if not node: return '#'  #placeholder
+            key = str(node.val) + postorder(node.left, subtree, rst) + postorder(node.right, subtree, rst)
+            #only count once for duplicate subtree (like 4 in the example)
+            #if we use hashset, we need other machanism to remove duplicates
+            if subtree.get(key, 0) == 1: rst.append(node)
+            subtree[key] = subtree.get(key, 0) + 1
+            return key
+        
+        rst, subtree, = [], {}
+        postorder(root, subtree, rst)
+        return rst
+```
+Referrence: https://leetcode.com/problems/find-duplicate-subtrees/discuss/106011/Java-Concise-Postorder-Traversal-Solution
+Comment: if we want to deserialize a tree from root to leaves, we must serialize in reverse order which means "postorder traverse". It ensure us that we know nothing of a parent node (subtree) before we know everything under this parent node. "Post-Order" or "Pre-Order" is not the order we coded in program, it is the order of program execution, when we have a sub-program (function) in a statement, the statement will never be executed before all the sub-programs finished. But the 'key' format is pre-order, that is for sure. This solution is a "post-order traverse program" with "pre-order serialization format", the alternative solution is "post-order traverse program with post-order serialization format";
+
+Alternative: makes the post-order 100% post-order. | Rt: 56ms |
+```python
+    def findDuplicateSubtrees(self, root: TreeNode) -> List[TreeNode]:
+        def postorder(node, subtree, rst):
+            if not node: return '#'  #place holder
+            key = postorder(node.left, subtree, rst) + postorder(node.right, subtree, rst) + str(node.val)
+            if subtree.get(key, 0) == 1: rst.append(node)
+            subtree[key] = subtree.get(key, 0) + 1
+            return key
+        
+        rst, subtree, = [], {}
+        postorder(root, subtree, rst)
+        return rst
+```
+
+
+**II). In-Order Tree Serialization**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def findDuplicateSubtrees(self, root: TreeNode) -> List[TreeNode]:
+        def inorder(node, subtree, rst):
+            if not node: return '#'  #placeholder
+            key = '(' + inorder(node.left, subtree, rst) + str(node.val) + inorder(node.right, subtree, rst) + ')'
+            if subtree.get(key, 0) == 1: rst.append(node)
+            subtree[key] = subtree.get(key, 0) + 1
+            return key
+        
+        rst, subtree, = [], {}
+        inorder(root, subtree, rst)
+        return rst
+```
+Referrence: https://leetcode.com/problems/find-duplicate-subtrees/discuss/106055/C%2B%2B-Java-Clean-Code
+Comment: Wny in-order traverse works as well? That is because both in-order traverse and post-order traverse starts from leaves, the ciritical point of this problem is: you must know subtree under a node before you judge the current node. That is why I think pre-order won't work (preorder start with root node); Both post-order and in-order works in a DFS manner while pre-order works in a BFS manner.

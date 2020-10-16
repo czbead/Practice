@@ -1,0 +1,27 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Masking**
+| O(T): O(n) | O(S): O(n) | Rt: 176ms | 
+```python
+    def spellchecker(self, wordlist: List[str], queries: List[str]) -> List[str]:
+        words, first, vowdt = set(wordlist), {}, {}
+        vowel, l = set(['a', 'e', 'i', 'o', 'u']), len(queries)
+        genkey = lambda s: ''.join(['*' if i in vowel else i for i in s])
+        for word in wordlist:
+            word_low = word.lower()
+            if word_low not in first:
+                first[word_low] = word
+            key = genkey(word_low)
+            if key not in vowdt:
+                vowdt[key] = word
+        
+        rst = [''] * l
+        for i in range(l):
+            query = queries[i]
+            if query in words: rst[i] = query; continue
+            query_low = query.lower()
+            if query_low in first: rst[i] = first[query_low]; continue
+            key = genkey(query_low)
+            if key in vowdt: rst[i] = vowdt[key]
+        return rst
+```
+

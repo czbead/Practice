@@ -1,0 +1,90 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Merge to L1 (Iterative)**
+| O(t): O(n+m) | O(m): O(1) | Rt: 36ms | in-place
+note: the in-place means every node is reused in the process. However, the next linking is redirecting to make it ordered.
+A None head node is created for convenience which is constant space. Personally, I think it won't make the solution an non-inplace one.
+```python
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        if not l1 or not l2: return l1 or l2
+        #ensure the l1 nodelist starts with smaller val, ease our life
+        if l1.val > l2.val: l1, l2 = l2, l1
+        #dum1 for linking while nxt1 and l2 play as candidates, l1 remains as the final head
+        dum1, nxt1 = l1, l1.next
+        while l2 and nxt1:
+            if l2.val < nxt1.val:
+                dum1.next = l2
+                l2 = l2.next
+            else:
+                dum1.next = nxt1
+                nxt1 = nxt1.next
+            #critical, step forward after appending each new candidate node
+            dum1 = dum1.next
+        #handle the remains from either nodelist
+        dum1.next = l2 or nxt1
+        return l1 
+```
+
+**II). None Head (Iterative)**
+| O(t): O(n+m) | O(m): O(1) | Rt: 32ms | in-place
+```python
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        if not l1 or not l2: return l1 or l2
+        head = h = ListNode(None)
+        while l1 and l2:
+            if l1.val < l2.val:
+                h.next = l1
+                l1 = l1.next
+            else:
+                h.next = l2
+                l2 = l2.next
+            h = h.next
+        h.next = l1 or l2
+        return head.next
+```
+Comment: you have to have a copy of the head to return (another head works as a cursor)
+
+**III). Let It Through (Iterative)**
+| O(t): O(n+m) | O(m): O(1) | Rt: 36ms | in-place
+```python
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        head = h = ListNode(None)
+        while l1 or l2:
+            if l1 and l2 and l1.val < l2.val or not l2:
+                h.next = l1
+                l1 = l1.next
+            else:
+                h.next = l2
+                l2 = l2.next
+            h = h.next
+        return head.next
+```
+
+**IV). Recursion**
+| O(t): O(n+m) | O(m): O(1) | Rt: 36ms | in-place
+```python
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        merge = self.mergeTwoLists
+        if l1 and l2:
+            if l1.val < l2.val:
+                l1.next = merge(l1.next, l2)
+                return l1
+            else:
+                l2.next = merge(l1, l2.next)
+                return l2
+        else:
+            return l1 or l2
+```
+Alternative:
+```python
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        merge = self.mergeTwoLists
+        if l1 and l2:
+            if l1.val > l2.val:
+                l1, l2 = l2, l1
+            l1.next = merge(l1.next, l2)
+        #while l1, l2 both have vals, it only return l1 because of "or"
+        return l1 or l2
+```
+Referrence: https://leetcode.com/problems/merge-two-sorted-lists/discuss/9771/Simple-5-lines-Python
+
+

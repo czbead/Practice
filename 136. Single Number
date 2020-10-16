@@ -1,0 +1,72 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sum Pattern**
+| O(t): O(n) | O(m): O(n) | Rt: 84ms | 
+```python
+    def singleNumber(self, nums: List[int]) -> int:
+        return sum(set(nums)) * 2 - sum(nums)
+```
+Comment: for this kind of strict formatted numbers, think about sum pattern in the first place. 
+
+
+**II). XOR Feature**
+| O(t): O(n) | O(m): O(1) | Rt: 84ms | 
+```python
+    def singleNumber(self, nums: List[int]) -> int:
+        cur = 0
+        for i in nums:
+            cur ^= i
+        return cur
+```
+Comment: better remember this trick, apply a lot in bit manipulation and couple matching problems.
+Alternative: | Rt: 88ms | real in-place
+```python
+    def singleNumber(self, nums: List[int]) -> int:
+        for i in range(len(nums)-1):
+            nums[-1] ^= nums[i]
+        return nums[-1]
+```
+Comment: not faster since list index fetching takes more time.
+
+
+**III). Count**
+| O(t): O(n) | O(m): O(n) | Rt: 88ms | 
+```python
+    def singleNumber(self, nums: List[int]) -> int:
+        ct = collections.Counter(nums)
+        #next function return first item comply to condition
+        return next(i for i in ct if ct[i] == 1)
+```
+Alternative: | Rt: 88ms |
+```python
+    def singleNumber(self, nums: List[int]) -> int:
+        dt = {}
+        for i in nums:
+            if i not in dt: dt[i] = 1
+            else: dt.pop(i)
+        return list(dt.keys())[0]
+```
+Triple: | Rt: 80ms |
+```python
+    def singleNumber(self, nums: List[int]) -> int:
+        dt = {}
+        for i in nums:
+            if i not in dt: dt[i] = 1
+            else: dt.pop(i)
+        return next(iter(dt))
+```
+
+**IV). Reduce & Lambda**
+| O(t): O(n) | O(m): O(1) | Rt: 88ms | 
+```python
+    def singleNumber(self, nums: List[int]) -> int:
+        from functools import reduce
+        return reduce(operator.xor, nums)
+```
+Alternative: | Rt: 88ms |
+```python
+    def singleNumber(self, nums: List[int]) -> int:
+        from functools import reduce
+        return reduce(lambda x, y: x ^ y, nums)
+```
+Referrence: https://leetcode.com/problems/single-number/discuss/43000/Python-different-solutions.
+

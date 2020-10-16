@@ -1,0 +1,48 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force: Robot Walking**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def findDiagonalOrder(self, nums: List[List[int]]) -> List[int]:
+        r, c = len(nums), max(len(i) for i in nums)
+        i = j = 0; rst = []
+        while i < r:
+            x, y = i, j
+            while x >= 0 and y < c:
+                if y < len(nums[x]): rst.append(nums[x][y])
+                x, y = x-1, y+1
+            i, j = i+1, 0
+            
+        i, j = r-1, 1
+        while j < c:
+            x, y = i, j
+            while x >= 0 and y < c:
+                if y < len(nums[x]): rst.append(nums[x][y])
+                x, y = x-1, y+1
+            i, j = r-1, j+1
+        return rst
+```
+
+
+**II). Bucket Collect**
+| O(T): O(mn) | O(S): O(mn) | Rt: 1248ms | 
+```python
+    def findDiagonalOrder(self, nums: List[List[int]]) -> List[int]:
+        dt = collections.defaultdict(list)
+        for i in range(len(nums)):
+            for j in range(len(nums[i])):
+                dt[(i+j, j, i)].append(nums[i][j])
+        return [i for tu in sorted(dt) for i in dt[tu]]
+```
+
+Alternative: no sort. | Rt: 1072ms |
+```python
+    def findDiagonalOrder(self, nums: List[List[int]]) -> List[int]:
+        bucket = []
+        for i in range(len(nums)):
+            for j in range(len(nums[i])):
+                if i+j == len(bucket): bucket.append([])
+                bucket[i+j].append(nums[i][j])
+        for row in bucket: row.reverse()
+        return [i for row in bucket for i in row]
+```
+Referrence: https://leetcode.com/problems/diagonal-traverse-ii/discuss/597794/Python-One-pass

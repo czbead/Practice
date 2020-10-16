@@ -1,0 +1,154 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Iteration**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def reorderList(self, head: ListNode) -> None:
+        if not head or not head.next or not head.next.next: return head
+        cur = head
+        while cur.next and cur.next.next:
+            pretail = tail = cur
+            while tail.next: pretail, tail = tail, tail.next
+            pretail.next = None
+            tail.next = cur.next
+            cur.next = tail
+            cur = cur.next.next
+```
+
+
+**II). Queue**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def reorderList(self, head: ListNode) -> None:
+        if not head or not head.next or not head.next.next: return head
+        que, cur = collections.deque([]), head
+        while cur:
+            que.append(cur)
+            cur = cur.next
+        while len(que) > 2:
+            tail = que.pop()
+            que.popleft().next = tail
+            tail.next = que[0]
+            que[-1].next = None
+```
+
+
+**III). Reverse Later Half**
+| O(T): O(n) | O(S): O(1) | Rt: 104ms | 
+```python
+    def reorderList(self, head: ListNode) -> None:
+        if not head or not head.next or not head.next.next: return head
+        slow = fast = head
+        #find the middle node
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            
+        #reverse the later half, reverse with the help of a prenode
+        st = slow.next
+        while st.next:
+            nxt = st.next
+            st.next = nxt.next
+            nxt.next = slow.next
+            slow.next = nxt
+        midhead = slow.next
+        slow.next = None  #cut off from middle
+        
+        #PPP; AA -> PAPAP
+        while midhead:
+            nxtmidhead = midhead.next
+            midhead.next = head.next
+            head.next = midhead
+            head, midhead = head.next.next, nxtmidhead
+```
+Referrence: https://leetcode.com/problems/reorder-list/discuss/44992/Java-solution-with-3-steps
+Alternative: iterative reverse. | Rt: 100ms |
+```python
+    def reorderList(self, head: ListNode) -> None:
+        def reverse(head):
+            pre, cur = None, head
+            while cur:
+                nxt = cur.next
+                cur.next = pre
+                pre = cur
+                cur = nxt
+            return pre
+                
+        if not head or not head.next or not head.next.next: return head
+        slow = fast = head
+        #find the middle node
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            
+        midhead = slow.next
+        slow.next = None
+        midhead = reverse(midhead)
+        
+        #PPP; AA -> PAPAP
+        while midhead:
+            nxtmidhead = midhead.next
+            midhead.next = head.next
+            head.next = midhead
+            head, midhead = head.next.next, nxtmidhead
+        
+```
+Referrence: https://leetcode.com/problems/reorder-list/discuss/44992/Java-solution-with-3-steps/155674
+Triple: recursive reverse top-down. | Rt: 100ms |
+```python
+    def reorderList(self, head: ListNode) -> None:
+        def reverse(head, pre=None):
+            nxt = head.next
+            head.next = pre
+            if not nxt: return head
+            return reverse(nxt, head)
+                
+        if not head or not head.next or not head.next.next: return head
+        slow = fast = head
+        #find the middle node
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            
+        midhead = slow.next
+        slow.next = None
+        midhead = reverse(midhead)
+        
+        #PPP; AA -> PAPAP
+        while midhead:
+            nxtmidhead = midhead.next
+            midhead.next = head.next
+            head.next = midhead
+            head, midhead = head.next.next, nxtmidhead
+```
+Forth: recursive reverse bottom-up. | Rt: 96ms |
+```python
+    def reorderList(self, head: ListNode) -> None:
+        def reverse(head, pre=None):
+            if not head or not head.next: return head
+            root = reverse(head.next)
+            head.next.next = head
+            head.next = None
+            return root
+                
+        if not head or not head.next or not head.next.next: return head
+        slow = fast = head
+        #find the middle node
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            
+        midhead = slow.next
+        slow.next = None
+        midhead = reverse(midhead)
+        
+        #PPP; AA -> PAPAP
+        while midhead:
+            nxtmidhead = midhead.next
+            midhead.next = head.next
+            head.next = midhead
+            head, midhead = head.next.next, nxtmidhead
+```
+
+
+Others: a recursive solution with info of linkedlist length: https://leetcode.com/problems/reorder-list/discuss/45113/Share-a-consise-recursive-solution-in-C%2B%2B
+

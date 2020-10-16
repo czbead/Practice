@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(lgn) | O(S): O(h) | Rt: 28ms | 
+```python
+    def myPow(self, x: float, n: int) -> float:
+        if n == 0: return 1
+        if n < 0: n, x = -n, 1/x
+        #n is odd condition.
+        if n & 1: return x * self.myPow(x*x, n//2)
+        return self.myPow(x*x, n//2)
+```
+Referrence: https://leetcode.com/problems/powx-n/discuss/19546/Short-and-easy-to-understand-solution
+
+
+**II). Iterative**
+| O(T): O(lgn) | O(S): O(1) | Rt: 28ms | 
+```python
+    def myPow(self, x: float, n: int) -> float:
+        if n == 0: return 1
+        if n < 0: n, x = -n, 1/x
+        rst = 1
+        while n:
+            if n & 1: rst = rst * x
+            x, n = x * x, n >> 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/powx-n/discuss/19544/5-different-choices-when-talk-with-interviewers
+

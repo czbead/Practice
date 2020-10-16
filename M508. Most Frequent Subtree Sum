@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Dict all Subtree Sum**
+| O(T): O(n) | O(S): O(n) | Rt: 48ms | 
+```python
+    def findFrequentTreeSum(self, root: TreeNode) -> List[int]:
+        def dfs(node, dt):
+            if not node.left and not node.right: dt[node.val] += 1; return node.val
+            sumval = node.val
+            if node.left: sumval += dfs(node.left, dt)
+            if node.right: sumval += dfs(node.right, dt)
+            dt[sumval] += 1
+            return sumval
+            
+        if not root: return
+        dt = collections.defaultdict(int)
+        dfs(root, dt)
+        maxcnt = max(dt.values())
+        return [k for k in dt if dt[k] == maxcnt]
+```
+Alternative: | Rt: 36ms |
+```python
+    def findFrequentTreeSum(self, root: TreeNode) -> List[int]:
+        def dfs(node, dt):
+            if not node: return 0
+            s = node.val + dfs(node.left, dt) + dfs(node.right, dt)
+            dt[s] = dt.get(s, 0) + 1
+            return s
+            
+        if not root: return
+        dt = {}
+        dfs(root, dt)
+        maxcnt = max(dt.values())
+        return [k for k in dt if dt[k] == maxcnt]
+```
+

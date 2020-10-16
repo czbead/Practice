@@ -1,0 +1,32 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Diagonal as Key**
+| O(T): O(n^3) | O(S): O(n) | Rt: 76ms | 
+```python
+    def minAreaFreeRect(self, points: List[List[int]]) -> float:
+        rst, l = float('inf'), len(points)
+        if l < 4: return 0
+        dt = {}
+        for i in range(l-1):
+            x1, y1 = points[i]
+            for j in range(i+1, l):
+                x2, y2 = points[j]
+                x, y = (x1 + x2) / 2, (y1 + y2) / 2
+                distance = (x2-x1) * (x2-x1) + (y2-y1) * (y2-y1)
+                key = (x, y, distance)
+                if key not in dt: dt[key] = []
+                dt[key].append((i, j))
+                
+        for k in dt:
+            if len(dt[k]) > 1:
+                arr, le = dt[k], len(dt[k])
+                for i in range(le-1):
+                    a, b = arr[i]
+                    x1, y1, x2, y2 = *points[a], *points[b]
+                    for j in range(i+1, le):
+                        x3, y3 = points[arr[j][0]]
+                        m, n = ((x3-x1)**2 + (y3-y1)**2)**0.5, ((x3-x2)**2 + (y3-y2)**2)**0.5
+                        rst = min(rst, m*n)
+        return 0 if rst == float('inf') else rst
+```
+Referrence: https://leetcode.com/problems/minimum-area-rectangle-ii/discuss/208361/JAVA-O(n2)-using-Map
+

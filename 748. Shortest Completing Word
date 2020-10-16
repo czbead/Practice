@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter Compare**
+| O(T): O(mn) | O(S): O(mn) | Rt: 124ms | 
+```python
+    def shortestCompletingWord(self, licensePlate: str, words: List[str]) -> str:
+        base = collections.Counter([i for i in licensePlate.lower() if i.isalpha()])
+        ct = collections.Counter
+        return min((word for word in words if ct(word) & base == base), key=len)
+```
+Alternative: | Rt: 128ms |
+```python
+    def shortestCompletingWord(self, licensePlate: str, words: List[str]) -> str:
+        base = collections.Counter([i for i in licensePlate.lower() if i.isalpha()])
+        ct = collections.Counter
+        return min((word for word in words if not base - ct(word)), key=len)
+```
+
+
+**II). Iterator with Sort**
+| O(T): O(mnlgn) | O(S): O(mn) | Rt: 80ms | 
+```python
+    def shortestCompletingWord(self, licensePlate: str, words: List[str]) -> str:
+        base = collections.Counter([i for i in licensePlate.lower() if i.isalpha()])
+        words.sort(key=len)
+        #guaranteed an answer existed
+        ct = collections.Counter
+        return next(word for word in words if ct(word) & base == base)
+```
+
+
+**III). Prime Product**
+| O(T): O(mn) | O(S): O(n) | Rt: 76ms | 
+```python
+from functools import reduce
+from operator import mul
+class Solution:
+    def shortestCompletingWord(self, licensePlate: str, words: List[str]) -> str:
+        primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101]
+        dt = dict(zip('abcdefghijklmnopqrstuvwxyz', primes))
+        product = lambda x: reduce(mul, x, 1)
+        base = product([dt[i] for i in licensePlate.lower() if i.isalpha()])
+        return min((word for word in words if product([dt[w] for w in word]) % base == 0), key=len)
+```
+Referrence: https://leetcode.com/problems/shortest-completing-word/discuss/158110/Java-6ms-beats-100-PRIME-NUMBERS
+

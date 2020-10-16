@@ -1,0 +1,14 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Row Max and Column Max**
+| O(T): O(mn) | O(S): O(1) | Rt: 72ms | 
+```python
+    def maxIncreaseKeepingSkyline(self, grid: List[List[int]]) -> int:
+        n = len(grid)
+        rmx, cmx = [0] * n, [0] * n
+        for i in range(n):
+            for j in range(n):
+                rmx[i] = max(rmx[i], grid[i][j])
+                cmx[j] = max(cmx[j], grid[i][j])
+                
+        return sum(min(rmx[i], cmx[j]) - grid[i][j] for i in range(n) for j in range(n))
+```

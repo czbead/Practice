@@ -1,0 +1,59 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Set: Fail to Pass**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+class RandomizedSet:
+
+    def __init__(self):
+        self.num = set()
+
+    def insert(self, val: int) -> bool:
+        if val in self.num: return
+        self.num.add(val)
+        return True
+
+    def remove(self, val: int) -> bool:
+        if not self.num: return
+        elif val not in self.num: return
+        self.num.remove(val)
+        return True
+
+    def getRandom(self) -> int:
+        if not self.num: return
+        cur = self.num.pop()
+        self.num.add(cur)
+        return cur
+```
+Comment: 17/ 18 test cases passed. I don't know why this intuitive solution is wrong.
+
+
+**II). Array with Dictionary**
+| O(T): O(1) | O(S): O() | Rt: 92ms | 
+```python
+class RandomizedSet:
+
+    def __init__(self):
+        self.arr = []
+        self.dt = {}
+
+    def insert(self, val: int) -> bool:
+        if val in self.dt: return
+        self.dt[val] = len(self.arr)
+        self.arr.append(val)
+        return True
+
+    def remove(self, val: int) -> bool:
+        if val not in self.dt: return
+        index = self.dt[val]
+        last = self.arr[-1]
+        self.arr[index], self.dt[last] = last, index
+        self.arr.pop(); del self.dt[val]
+        return True
+
+    def getRandom(self) -> int:
+        if not self.arr: return
+        return random.choice(self.arr)
+```
+Referrence: https://leetcode.com/problems/insert-delete-getrandom-o1/discuss/85397/Simple-solution-in-Python
+Comment: the critical part of this solution is regarding the "remove function", the hard part is to make it O(1). Pop is of O(1), therefore we can swap the item with the last one and then do a single pop to achieve that. 
+

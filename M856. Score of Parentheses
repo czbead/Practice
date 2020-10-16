@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def scoreOfParentheses(self, S: str) -> int:
+        if not S: return 
+        stack = []
+        for i in S:
+            if i == '(': stack.append('(')
+            else: 
+                top = stack.pop()
+                if top == '(': 
+                    cur = 1
+                    while stack and stack[-1] != '(': cur += stack.pop()
+                    stack.append(cur)
+                else: 
+                    stack.pop()
+                    cur = top << 1
+                    while stack and stack[-1] != '(': cur += stack.pop()
+                    stack.append(cur)
+        return stack.pop()
+```
+
+Alternative: | Rt: 28ms |
+```python
+    def scoreOfParentheses(self, S: str) -> int:
+        if not S: return 
+        stack = []
+        for i in S:
+            if i == '(': stack.append(-1)
+            else: 
+                top = stack.pop()
+                if top == -1: stack.append(1)
+                else: 
+                    cur = top
+                    while stack and stack[-1] != -1: cur += stack.pop()
+                    stack.pop()
+                    stack.append(cur << 1)
+        return sum(stack)
+```
+

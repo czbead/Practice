@@ -1,0 +1,40 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Flat First then Rebuild a Balanced BST**
+| O(T): O(n) | O(S): O() | Rt: 380ms | 
+```python
+    def balanceBST(self, root: TreeNode) -> TreeNode:
+        def inorder(node):
+            if not node: return []
+            return inorder(node.left) + [node.val] + inorder(node.right)
+        
+        def build(arr):
+            if not arr: return
+            m = len(arr) // 2
+            root = TreeNode(arr[m])
+            root.left, root.right = build(arr[:m]), build(arr[m+1:])
+            return root
+        
+        arr = inorder(root)
+        return build(arr)
+```
+
+Alternative: | Rt: 364ms |
+```python
+    def balanceBST(self, root: TreeNode) -> TreeNode:
+        def inorder(node, arr):
+            if not node: return 
+            inorder(node.left, arr)
+            arr.append(node.val)
+            inorder(node.right, arr)
+        
+        def build(arr, st, end):
+            if st > end: return
+            m = (st + end) // 2
+            root = TreeNode(arr[m])
+            root.left, root.right = build(arr, st, m-1), build(arr, m+1, end)
+            return root
+        
+        arr = []
+        inorder(root, arr)
+        return build(arr, 0, len(arr)-1)
+```

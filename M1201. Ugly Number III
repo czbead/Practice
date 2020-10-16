@@ -1,0 +1,38 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Math LCM: Binary Search**
+| O(T): O(lgn) | O(S): O(1) | Rt: 28ms | 
+```python
+    def nthUglyNumber(self, n: int, a: int, b: int, c: int) -> int:
+        lcm = lambda x, y: x * y // math.gcd(x, y)
+        ab, bc, ac = lcm(a, b), lcm(b, c), lcm(a, c)
+        abc = lcm(ab, c)
+        l, r = 0, 2 * (10 ** 9)
+        while l < r:
+            m = l + (r - l) // 2
+            ct = m//a + m//b + m//c - m//ab - m//bc - m//ac + m//abc
+            if ct < n: l = m+1
+            else: r = m
+        return l
+```
+Referrence: https://leetcode.com/problems/ugly-number-iii/discuss/387539/cpp-Binary-Search-with-picture-and-Binary-Search-Template
+
+Alternative: | Rt: 28ms |
+```python
+    def nthUglyNumber(self, n: int, a: int, b: int, c: int) -> int:
+        def gcd(a, b):
+            while b:
+                a, b = b, a%b
+            return a
+        
+        lcm = lambda x, y: x * y // gcd(x, y)
+        ab, bc, ac = lcm(a, b), lcm(b, c), lcm(a, c)
+        abc = lcm(ab, c)
+        l, r = 0, 2 * (10 ** 9)
+        while l < r:
+            m = l + (r - l) // 2
+            ct = m//a + m//b + m//c - m//ab - m//bc - m//ac + m//abc
+            if ct < n: l = m+1
+            else: r = m
+        return l
+```
+

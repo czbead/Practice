@@ -1,0 +1,10 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(1) | O(S): O(1) | Rt: 16ms | 
+```python
+    def complexNumberMultiply(self, a: str, b: str) -> str:
+        (m, n), (p, q) = a[:-1].split('+'), b[:-1].split("+")
+        m, n, p, q = int(m), int(n), int(p), int(q)
+        aa, bb = m * p - n * q, m * q + n * p
+        return str(aa) + '+' + str(bb) + 'i'
+```

@@ -1,0 +1,78 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bin**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def findComplement(self, num: int) -> int:
+        s = bin(num)[2:]
+        ss = ''.join([str(1 - int(i)) for i in s])
+        return int(ss, 2)
+```
+Alternative: | Rt: 24ms |
+```python
+    def findComplement(self, num: int) -> int:
+        dt = {'1': '0', '0': '1'}
+        return int(''.join([dt[i] for i in bin(num)[2:]]), 2)
+```
+
+
+**II). Mask by Bin Length**
+| O(T): O(n) | O(S): O(1) | Rt: 20ms | 
+```python
+    def findComplement(self, num: int) -> int:
+        l = len(bin(num)) - 2
+        mask = (1 << l) - 1
+        return mask ^ num
+```
+
+
+**III). From Low to High**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def findComplement(self, num: int) -> int:
+        rst = []
+        while num:
+            cur = num & 1
+            rst.append(str(cur ^ 1))
+            num >>= 1
+        rst.reverse()
+        return int(''.join(rst), 2)
+```
+Alternative: dynamic mask. | Rt: 28ms |
+```python
+    def findComplement(self, num: int) -> int:
+        mask = 1
+        while mask <= num:
+        	#other 0s in mask won't update other bits in num because 0 ^ 0 = 0, 0 ^ 1 = 1
+        	#this solution is a little bit "dangerous", not typical bit by bit separately.
+            num ^= mask
+            mask <<= 1
+        return num
+``` 
+Referrence: https://leetcode.com/problems/number-complement/discuss/96026/Python-4-ways
+If not modify the original input:
+```python
+    def findComplement(self, num: int) -> int:
+        rst, mask = 0, 1
+        while mask <= num:
+        	#& get the bit, and ^ get the complement, this solution is much safer comparing to the above one.
+            rst |= num & mask ^ mask
+            mask <<= 1
+        return rst
+```
+
+
+**IV). Mask by Find the High**
+| O(T): O(n) | O(S): O(1) | Rt: 20ms | 
+```python
+    def findComplement(self, num: int) -> int:
+        mask = 1
+        while mask <= num: mask <<= 1
+        return (mask - 1) ^ num
+```
+Comment: understand it by solution II, they share the same idea. 
+```python
+	(mask - 1) - num 
+```
+works as well. Take a look at the example. 100110, its complement is 011001, the sum is 111111. Idea from https://leetcode.com/problems/number-complement/discuss/96018/Java-very-simple-code-and-self-evident-explanation
+
+

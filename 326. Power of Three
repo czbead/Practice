@@ -1,0 +1,74 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Loop**
+| O(t): O(lgn) | O(m): O(1) | Rt: 60ms | 
+```python
+    def isPowerOfThree(self, n: int) -> bool:
+        while n > 0 and n % 3 == 0:
+            n //= 3
+        return n == 1
+```
+
+
+**II). Recursion**
+| O(t): O(lgn) | O(m): O(1) | Rt: 68ms | 
+```python
+    def isPowerOfThree(self, n: int) -> bool:
+        if n < 1: return False
+        if n == 1: return True
+        return self.isPowerOfThree(n // 3) if n % 3 == 0 else False
+```
+
+
+**III). Biggest**
+| O(t): O(1) | O(m): O(1) | Rt: 80ms | 
+```python
+    def isPowerOfThree(self, n: int) -> bool:
+        mx = math.log(0x7fffffff) // math.log(3)
+        return n > 0 and 3 ** mx % n == 0
+```
+Comment: 3 ** 20 will overflow. We can do this simply becaause 3 is a prime number. For non-prime number, may not apply this. 
+
+
+**IV). Log**
+| O(t): O(1) | O(m): O(1) | Rt: 92ms | 
+```python
+    def isPowerOfThree(self, n: int) -> bool:
+        return n > 0 and (math.log10(n) / math.log10(3)) % 1 == 0 
+```
+Comment: log(n) is not safe because of round off. And, log(n, 10) / log(3, 10) doesn't work here as well. 
+Referrence: https://leetcode.com/problems/power-of-three/discuss/77876/**-A-summary-of-all-solutions-(new-method-included-at-15%3A30pm-Jan-8th)
+Alternative: | Rt: 76ms |
+```python
+    def isPowerOfThree(self, n: int) -> bool:
+        return n > 0 and n == 3 ** round(math.log(n) / math.log(3))
+```
+
+
+**V). Base 3**
+| O(t): O(lgn) | O(m): O(lgn) | Rt: 132ms | 
+```python
+    def isPowerOfThree(self, n: int) -> bool:
+        def base3(n):
+            rst = []
+            while n:
+                rst.append(n % 3) 
+                n //= 3
+            return rst[::-1]
+        if n <= 0: return False
+        new = base3(n)
+        #a leading 1 with all 0s
+        return new[0] == 1 and not any(new[1:])
+```
+
+
+**VI). Exhaustive Method**
+| O(t): O(lgn) | O(m): O(lgn) | Rt: 128ms | 
+```python
+    def isPowerOfThree(self, n: int) -> bool:
+        if n < 1: return False
+        st, s = 1, set()
+        while st < 0x80000000:
+            s.add(st)
+            st = st * 3
+        return n in s
+```

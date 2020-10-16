@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS: Paint and Contradiction**
+| O(T): O() | O(S): O() | Rt: 724ms | 
+```python
+    def possibleBipartition(self, N: int, dislikes: List[List[int]]) -> bool:
+        def contradict(node, dis, color, val):
+            color[node] = val
+            for i in dis[node]:
+                if color[i] == 0 and contradict(i, dis, color, -val): return True
+                if color[i] == val: return True
+            return False
+
+        dis = collections.defaultdict(list)
+        for i, j in dislikes:
+            dis[i].append(j); dis[j].append(i)
+        color = [0] * (N+1)
+        for i in range(1, N+1):
+            if color[i] == 0 and contradict(i, dis, color, 1): return False
+        return True
+```
+Referrence: https://leetcode.com/problems/possible-bipartition/discuss/158957/Java-DFS-solution;
+
+Alternative: iterative DFS. | Rt: 748ms |
+```python
+    def possibleBipartition(self, N: int, dislikes: List[List[int]]) -> bool:
+        dis = collections.defaultdict(list)
+        for i, j in dislikes:
+            dis[i].append(j); dis[j].append(i)
+        color = [None] * (N+1)
+        for i in range(1, N+1):
+            if color[i] is None:
+                color[i] = 0
+                stack = [i]
+                while stack:
+                    node = stack.pop()
+                    for j in dis[node]:
+                        if color[j] is None:
+                            color[j] = color[node] ^ 1
+                            stack.append(j)
+                        elif color[j] == color[node]: return False
+        return True
+```
+Referrence: https://leetcode.com/problems/possible-bipartition/discuss/159085/java-graph
+
+Others: detect odd cycle solution - https://leetcode.com/problems/possible-bipartition/discuss/160371/Python-Decide-if-a-graph-is-bipartite-by-checking-the-existence-of-odd-cycles.

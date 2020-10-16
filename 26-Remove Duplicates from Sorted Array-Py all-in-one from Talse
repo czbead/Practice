@@ -1,0 +1,27 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer**
+note: one for current save index, the other for probing (get different)
+| O(t): O(n) | O(m): O(1) | Rt: 76ms | in-place
+```python
+    def removeDuplicates(self, nums: List[int]) -> int:
+        if not nums: return 0
+        j = 1
+        for i in range(1, len(nums)):
+            if nums[i] != nums[j-1]:
+                nums[j] = nums[i]
+                j += 1
+        return j
+```
+
+**II). OrderedDict**
+| O(t): O(n) | O(m): O(1) | Rt: 76ms | in-place
+```python
+    def removeDuplicates(self, nums: List[int]) -> int:
+        nums[:] = collections.OrderedDict.fromkeys(nums)
+        return len(nums)
+```
+Explanation: Using nums[:] will not allocate new memory, it will rearrange the values of nums instead.
+Referrence: https://leetcode.com/problems/remove-duplicates-from-sorted-array/discuss/11880/Python-2-liner-O(N)
+
+
+

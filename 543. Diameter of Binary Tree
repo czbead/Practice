@@ -1,0 +1,64 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 40ms | 
+```python
+    def diameterOfBinaryTree(self, root: TreeNode) -> int:
+        def lfs(node, rst):
+        	#none node of path -1, leaf node of path 0, ...
+            if not node: return -1
+            l = lfs(node.left, rst)
+            r = lfs(node.right, rst)
+            curmax = 0
+            if node.left: curmax += l + 1
+            if node.right: curmax += r + 1
+            rst[0] = max(rst[0], curmax)
+            return max(l, r) + 1
+        rst = [0]
+        lfs(root, rst)
+        return rst[0]
+```
+Comment: two states need be maintained: current max path length, cur max path passed to parent node (be careful they are totally different). Therefore, at least one variable needed (global variable or inner parameters) -- the other state can be passed through return statement (return statement can always work as an extra state container). If you don't return anthing in the process, two states need two variables to pass through the whole process. The best practice is: use inner parameter instead of global variable; use as less inner parameter as possible (utilize return statement). However, global variable way is the easest while utilizing return statement to reduce one variable is the hardest. It seems you can pass both states by returning a tuple or a list as well.
+Alternative: | Rt: 56ms |
+```python
+    rst = 0
+    def diameterOfBinaryTree(self, root: TreeNode) -> int:
+        def lfs(node):
+            if not node: return 0
+            l = lfs(node.left)
+            r = lfs(node.right)
+            self.rst = max(self.rst, l + r)
+            return max(l, r) + 1
+        lfs(root)
+        return self.rst
+```
+Triple: | Rt: 48ms |
+```python
+    def diameterOfBinaryTree(self, root: TreeNode) -> int:
+        def lfs(node, rst):
+            if not node: return 0
+            l = lfs(node.left, rst)
+            r = lfs(node.right, rst)
+            rst[0] = max(rst[0], l + r)
+            return max(l, r) + 1
+        rst = [0]
+        lfs(root, rst)
+        return rst[0]
+```
+Comment: one step ahead solution, leaf node get path value 1. Why can you do this? Because every path need to go through the parent (root) node.
+
+
+**II). Iterative**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def diameterOfBinaryTree(self, root: TreeNode) -> int:
+        rst, dt, s = 0, {}, [(root, 0)]
+        while s: 
+            node, visited = s.pop()
+            if not node: continue
+            if not visited: s.extend([(node, 1), (node.left, 0), (node.right, 0)])
+            l_depth = dt.get(node.left, -1) + 1
+            r_depth = dt.get(node.right, -1) + 1
+            rst = max(rst, l_depth + r_depth)
+            dt[node] = max(l_depth, r_depth) 
+        return rst
+```

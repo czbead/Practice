@@ -1,0 +1,57 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cmp**
+| O(T): O(knlgn) | O(S): O(n) | Rt: 40ms | 
+```python
+	import functools
+    def largestNumber(self, nums: List[int]) -> str:
+        if not any(nums): return '0'
+        nums = [str(i) for i in nums]
+        nums.sort(key=functools.cmp_to_key(lambda x, y: 1 if x+y < y+x else -1))
+        return ''.join(nums)
+```
+Comment: not quite sure about the time complexity. 
+
+
+**II). Bubble Sort**
+| O(T): O(kn*n) | O(S): O(n) | Rt: 104ms | 
+```python
+    def largestNumber(self, nums: List[int]) -> str:
+        if not any(nums): return '0'
+        nums = [str(i) for i in nums]
+        less_than = lambda x, y: x+y < y+x
+        for i in range(len(nums)-1, 0, -1):
+            for j in range(i):
+                if less_than(nums[j], nums[j+1]):
+                    nums[j+1], nums[j] = nums[j], nums[j+1]
+        return ''.join(nums)
+```
+Referrence: https://leetcode.com/problems/largest-number/discuss/53298/Python-different-solutions-(bubble-insertion-selection-merge-quick-sorts).
+
+
+**III). Select Sort**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+**IV). Insert Sort**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+**V). Merge Sort**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+**VI). Quick Sort**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+

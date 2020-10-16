@@ -1,0 +1,17 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Simulate the Game**
+| O(t): O(n*n) | O(m): O(n) | Rt: 24ms | 
+note: exclude the memory for saving the result, the O(m) only count the extra computing space required
+```python
+    def generate(self, numRows: int) -> List[List[int]]:
+        rst = []
+        for i in range(numRows):
+            row = [1] * (i + 1)
+            if i > 1: row[1:-1] = [x+y for x, y in zip(rst[i-1], rst[i-1][1:])]
+            rst.append(row)
+        return rst
+```
+
+Others: too many solutions, similar thinking pattern. The underlying posts may help if you are interested.
+https://leetcode.com/problems/pascals-triangle/discuss/38128/Python-4-lines-short-solution-using-map.
+https://leetcode.com/problems/pascals-triangle/discuss/38277/Simple-Python-4-lines

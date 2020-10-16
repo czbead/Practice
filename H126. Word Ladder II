@@ -1,0 +1,53 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS**
+| O(T): O() | O(S): O() | Rt: 1456ms | 
+```python
+    def findLadders(self, beginWord: str, endWord: str, wordList: List[str]) -> List[List[str]]:
+        rst, q, found, words = [], collections.deque([[beginWord]]), False, set(wordList)
+        if beginWord in words: words.remove(beginWord)
+        if endWord not in words: return []
+        while not found and q:
+            size, levelUsed = len(q), set()
+            for _ in range(size):
+                path = q.popleft()
+                word = path[-1]
+                if word == endWord:
+                    found = True
+                    rst.append(path)
+                if found: continue
+                for i in range(len(word)):
+                    front, rear = word[:i], word[i+1:]
+                    for c in 'abcdefghijklmnopqrstuvwxyz':
+                        new = front + c + rear
+                        if new in words:
+                            levelUsed.add(new)
+                            q.append(path + [new])
+            words -= levelUsed
+        return rst
+```
+Comment: the key of this solution is that we cannot add a new word to visited right away when we add it to the queue because it prevent other path use it in the same level round (takes same steps). Instead, we add a group of words used in this round together after this round ends.
+
+
+**II). BFS with HashMap**
+| O(T): O() | O(S): O() | Rt: 412ms | 
+```python
+    def findLadders(self, st: str, end: str, words: List[str]) -> List[List[str]]:
+        dt, words = {st: [[st]]}, set(words)
+        if st in words: words.remove(st)
+        if end not in words: return []
+        while dt:
+            dt_nxt = collections.defaultdict(list)
+            for word in dt:
+                #all paths end with k are collected in last round, no worry
+                if word == end: return dt[word]
+                for i in range(len(word)):
+                    front, rear = word[:i], word[i+1:]
+                    for c in 'abcdefghijklmnopqrstuvwxyz':
+                        new = front + c + rear
+                        if new in words:
+                            dt_nxt[new] += [path + [new] for path in dt[word]]
+            words -= dt_nxt.keys()
+            dt = dt_nxt
+        return []
+```
+Referrence: https://leetcode.com/problems/word-ladder-ii/discuss/40482/Python-simple-BFS-layer-by-layer

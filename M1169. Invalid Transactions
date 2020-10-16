@@ -1,0 +1,16 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O(n) | O(S): O(n) | Rt: 84ms | 
+```python
+    def invalidTransactions(self, transactions: List[str]) -> List[str]:
+        rst, dt = set(), collections.defaultdict(dict)
+        for i in transactions:
+            name, time, amt, city = i.split(',')
+            t = int(time)
+            if int(amt) > 1000: rst.add(i)
+            for k in dt[name]:
+                if abs(k - t) <= 60 and dt[name][k].split(',')[-1] != city:
+                    rst.add(i); rst.add(dt[name][k])
+            dt[name][t] = i
+        return rst
+```

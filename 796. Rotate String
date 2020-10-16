@@ -1,0 +1,67 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Trick**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def rotateString(self, A: str, B: str) -> bool:
+        return len(A) == len(B) and B in A + A
+```
+Comment: if B is a rotated version of A, it should comply with B in A*2. To make sure B is not a substring of A, we check the length in case. 
+Alternative:  A and B are totatedly equal, bidirection compare works the same.   | Rt: 28ms |
+```python
+    def rotateString(self, A: str, B: str) -> bool:
+        return len(A) == len(B) and A in B + B
+```
+Comment: you could use A * 2 as well, simple + probably faster than multiply. 
+
+
+**II). Brute Force**
+| O(T): O(n ^ 2) | O(S): O(n) | Rt: 20ms | 
+```python
+    def rotateString(self, A: str, B: str) -> bool:
+        if A == B: return True
+        for _ in range(len(A)):
+            if A == B: return True
+            A = A[1:] + A[0]
+        return False
+```
+Alternative: actually we can save one more rotate operation by after check.  | Rt: 28ms |
+```python
+    def rotateString(self, A: str, B: str) -> bool:
+        if A == B: return True
+        for _ in range(len(A) - 1):
+            A = A[1:] + A[0]
+            if A == B: return True
+        return False
+```
+Comment: because rotate len(A) times gets back to the original A again. It really depends on the check you conduct before (will miss a check, therefore one more time rotate) or after.
+
+
+**III). Pair Up with Set**
+| O(T): O(n) | O(S): O(n) | Rt: 20ms | 
+```python
+    def rotateString(self, A: str, B: str) -> bool:
+        if A == B: return True
+        if len(A) != len(B): return False
+        sa = set([(i, j) for i, j in zip(A, A[1:])] + [(A[-1], A[0])])
+        sb = set([(i, j) for i, j in zip(B, B[1:])] + [(B[-1], B[0])])
+        return sa == sb
+```
+Comment: if there is one thing equals to rotated equality, it should be neighborhood relationship. The length check is essential since a set will lose its original length info. 
+Alternative:  | Rt: 24ms |
+```python
+    def rotateString(self, A: str, B: str) -> bool:
+        if A == B: return True
+        if len(A) != len(B): return False
+        la, lb = len(A), len(B)
+        sa = set([(A[i], A[i+1]) for i in range(la - 1)] + [(A[-1], A[0])])
+        sb = set([(B[i], B[i+1]) for i in range(lb - 1)] + [(B[-1], B[0])])
+        return sa == sb
+```
+
+
+**IV). Probing**
+| O(T): O(n ^ 2) | O(S): O(n) | Rt: 28ms | 
+```python
+    def rotateString(self, A: str, B: str) -> bool:
+        return A == B or any(A[i:] + A[:i] == B for i, v in enumerate(A) if v == B[0])
+```

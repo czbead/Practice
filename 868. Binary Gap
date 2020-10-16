@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stringify**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 28ms | 
+```python
+    def binaryGap(self, N: int) -> int:
+        index = [i for i, v in enumerate(bin(N)) if v == '1']
+        return max([j - i for i, j in zip(index, index[1:])] or [0])
+```
+Alternative: | Rt: 20ms |
+```python
+    def binaryGap(self, N: int) -> int:
+        rst, pre, s = 0, 0, bin(N)[2:]
+        for i in range(len(s)):
+            if s[i] == '1': pre, rst = i, max(rst, i - pre)
+        return rst
+```
+Triple: Split.  | Rt: 36ms |
+```python
+    def binaryGap(self, N: int) -> int:
+        s = bin(N)[2:].strip('0')
+        lens = [len(i) for i in s.split('1')]
+        return max(lens) + 1 if len(lens) > 2 else 0
+```
+Comment: '1'.split('1') == ['', '']
+
+
+**II). Bit by Bit**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 20ms | 
+```python
+    def binaryGap(self, N: int) -> int:
+        i, rst = 0, []
+        while N:
+            if N & 1: rst.append(i)
+            N >>= 1
+            i += 1
+        return max([j - i for i, j in zip(rst, rst[1:])] or [0])
+```

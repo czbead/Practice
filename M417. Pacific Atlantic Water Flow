@@ -1,0 +1,85 @@
+Comment: recursion is actually function stack
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS**
+| O(T): O(mn) | O(S): O(mn) | Rt: 292ms | 
+```python
+    def pacificAtlantic(self, matrix: List[List[int]]) -> List[List[int]]:
+        def bfs(matirx, r, c, cando, que):
+            while que:
+                i, j = que.pop()
+                for x, y in [(i+1, j), (i-1, j), (i, j+1), (i, j-1)]:
+                    if 0<=x<r and 0<=y<c and cando[x][y]==0 and matrix[x][y]>=matrix[i][j]:
+                        cando[x][y] = 1; que.appendleft((x, y))
+        
+        if not matrix or not matrix[0]: return 
+        r, c = len(matrix), len(matrix[0])
+        p, a = [[0] * c for _ in range(r)], [[0] * c for _ in range(r)]
+        pq, aq = collections.deque([]), collections.deque([])
+        for i in range(r): 
+            p[i][0], a[i][c-1] = 1, 1
+            pq.append((i,0)); aq.append((i, c-1))
+        for j in range(c): 
+            p[0][j], a[r-1][j] = 1, 1
+            pq.append((0, j)); aq.append((r-1, j))
+        
+        bfs(matrix, r, c, p, pq)
+        bfs(matrix, r, c, a, aq)
+     
+        return [(i, j) for i in range(r) for j in range(c) if p[i][j] and a[i][j]]
+```
+Referrence: https://leetcode.com/problems/pacific-atlantic-water-flow/discuss/90733/Java-BFS-and-DFS-from-Ocean
+
+
+**II). DFS**
+| O(T): O(mn) | O(S): O(mn) | Rt: 288ms | 
+```python
+    def pacificAtlantic(self, matrix: List[List[int]]) -> List[List[int]]:
+        def dfs(matirx, r, c, cando, stack):
+            while stack:
+                i, j = stack.pop()
+                for x, y in [(i+1, j), (i-1, j), (i, j+1), (i, j-1)]:
+                    if 0<=x<r and 0<=y<c and cando[x][y]==0 and matrix[x][y]>=matrix[i][j]:
+                        cando[x][y] = 1; stack.append((x, y))
+        
+        if not matrix or not matrix[0]: return 
+        r, c = len(matrix), len(matrix[0])
+        p, a = [[0] * c for _ in range(r)], [[0] * c for _ in range(r)]
+        pq, aq = [], []
+        for i in range(r): 
+            p[i][0], a[i][c-1] = 1, 1
+            pq.append((i,0)); aq.append((i, c-1))
+        for j in range(c): 
+            p[0][j], a[r-1][j] = 1, 1
+            pq.append((0, j)); aq.append((r-1, j))
+        
+        dfs(matrix, r, c, p, pq)
+        dfs(matrix, r, c, a, aq)
+     
+        return [(i, j) for i in range(r) for j in range(c) if p[i][j] and a[i][j]]
+```
+Referrence: https://leetcode.com/problems/pacific-atlantic-water-flow/discuss/90733/Java-BFS-and-DFS-from-Ocean
+Alternative: recursive version. 
+```python
+    def pacificAtlantic(self, matrix: List[List[int]]) -> List[List[int]]:
+        def dfs(matirx, r, c, i, j, cando):
+            for x, y in [(i+1, j), (i-1, j), (i, j+1), (i, j-1)]:
+                if 0<=x<r and 0<=y<c and cando[x][y]==0 and matrix[x][y]>=matrix[i][j]:
+                    cando[x][y] = 1
+                    dfs(matrix, r, c, x, y, cando)
+        
+        if not matrix or not matrix[0]: return 
+        r, c = len(matrix), len(matrix[0])
+        p, a = [[0] * c for _ in range(r)], [[0] * c for _ in range(r)]
+        pq, aq = [], []
+        for i in range(r): 
+            p[i][0], a[i][c-1] = 1, 1
+            dfs(matrix, r, c, i, 0, p)
+            dfs(matrix, r, c, i, c-1, a)
+        for j in range(c): 
+            p[0][j], a[r-1][j] = 1, 1
+            dfs(matrix, r, c, 0, j, p)
+            dfs(matrix, r, c, r-1, j, a)
+    
+        return [(i, j) for i in range(r) for j in range(c) if p[i][j] and a[i][j]]
+```
+Referrence: https://leetcode.com/problems/pacific-atlantic-water-flow/discuss/90739/Python-DFS-bests-85.-Tips-for-all-DFS-in-matrix-question.

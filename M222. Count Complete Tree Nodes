@@ -1,0 +1,14 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Compute Height**
+| O(T): O(lgn * lgn) | O(S): O(h) | Rt: 72ms | 
+```python
+    def countNodes(self, root: TreeNode) -> int:
+        if not root: return 0
+        lh = rh = 0; ln = rn = root
+        while ln: lh, ln = lh + 1, ln.left
+        while rn: rh, rn = rh + 1, rn.right
+        if lh == rh: return (1 << lh) - 1. #a perfect tree
+        return 1 + self.countNodes(root.left) + self.countNodes(root.right)
+```
+Referrence: https://leetcode.com/problems/count-complete-tree-nodes/discuss/61953/Easy-short-c%2B%2B-recursive-solution
+

@@ -1,0 +1,33 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive Equivalent**
+| O(T): O() | O(S): O() | Rt: 32ms | 
+```python
+    def flipEquiv(self, root1: TreeNode, root2: TreeNode) -> bool:
+        if not root1 and not root2: return True
+        if root1 and root2:
+            if root1.val == root2.val and (self.flipEquiv(root1.left, root2.left) and self.flipEquiv(root1.right, root2.right) or self.flipEquiv(root1.left, root2.right) and self.flipEquiv(root1.right, root2.left)): return True
+        return False
+```
+
+Alternative: | Rt: 24ms |
+```python
+    def flipEquiv(self, root1: TreeNode, root2: TreeNode) -> bool:
+        if not root1 or not root2: return root1 == root2
+        return root1.val == root2.val and (self.flipEquiv(root1.left, root2.left) and self.flipEquiv(root1.right, root2.right) or self.flipEquiv(root1.left, root2.right) and self.flipEquiv(root1.right, root2.left))
+```
+
+Triple: iterative dfs. | Rt: 28ms |
+```python
+    def flipEquiv(self, root1: TreeNode, root2: TreeNode) -> bool:
+        stack1, stack2 = [root1], [root2]
+        while stack1 and stack2:
+            node1, node2 = stack1.pop(), stack2.pop()
+            if node1 == node2 == None: continue
+            if not node1 or not node2 or node1.val != node2.val: return False
+            if node1.left == node2.left == None or node1.left and node2.left and node1.left.val == node2.left.val:
+                stack1.append(node1.right); stack1.append(node1.left)
+            else: stack1.append(node1.left); stack1.append(node1.right)
+            stack2.append(node2.right); stack2.append(node2.left)
+        return not stack1 and not stack2
+```
+Referrence: https://leetcode.com/problems/flip-equivalent-binary-trees/discuss/200514/JavaPython-3-DFS-3-liners-and-BFS-with-explanation-time-and-space%3A-O(n).

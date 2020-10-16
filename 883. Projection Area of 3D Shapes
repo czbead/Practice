@@ -1,0 +1,15 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(mn) | O(S): O(mn) | Rt: 72ms | 
+```python
+    def projectionArea(self, grid: List[List[int]]) -> int:
+        down = sum(i != 0 for row in grid for i in row)
+        face = sum(max(col) for col in zip(*grid))
+        side = sum(max(row) for row in grid)
+        return down + face + side
+```
+Alternative: One-liner.  | Rt: 84ms |
+```python
+    def projectionArea(self, grid: List[List[int]]) -> int:
+        return sum(map(max, grid)) + sum(map(max, zip(*grid))) + sum(i > 0 for row in grid for i in row)
+```

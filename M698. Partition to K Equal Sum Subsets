@@ -1,0 +1,136 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). **
+| O(T): O() | O(S): O() | Rt: 56ms | 
+```python
+    def canPartitionKSubsets(self, nums: List[int], k: int) -> bool:
+        def backtrack(nums, used, kk, val, target, st, ct):
+            if kk == 1: return True
+            if val > target: return False
+            if val == target and ct: return backtrack(nums, used, kk-1, 0, target, 0, 0)
+            for i in range(st, len(nums)):
+                if used[i]: continue
+                used[i] = 1
+                if backtrack(nums, used, kk, val+nums[i], target, i+1, ct+1): return True
+                used[i] = 0
+            return False
+        
+        summ = mx = 0
+        l = len(nums)
+        for i in nums:
+            summ += i
+            mx = max(mx, i)
+        if summ % k != 0: return False
+        target = summ // k
+        if mx > target: return False
+        used = [0] * l
+        return backtrack(nums, used, k, 0, target, 0, 0)
+```
+Referrence: https://leetcode.com/problems/partition-to-k-equal-sum-subsets/discuss/108730/JavaC%2B%2BStraightforward-dfs-solution
+
+Alternative: without the max edge case check, much more concise but slower. | Rt: 64ms |
+```python
+    def canPartitionKSubsets(self, nums: List[int], k: int) -> bool:
+        def backtrack(nums, used, kk, val, target, st, ct):
+            if kk == 1: return True
+            if val > target: return False
+            if val == target and ct: return backtrack(nums, used, kk-1, 0, target, 0, 0)
+            for i in range(st, len(nums)):
+                if used[i]: continue
+                used[i] = 1
+                if backtrack(nums, used, kk, val+nums[i], target, i+1, ct+1): return True
+                used[i] = 0
+            return False
+        
+        summ = sum(nums)
+        if summ % k != 0: return False
+        used = [0] * len(nums)
+        return backtrack(nums, used, k, 0, summ//k, 0, 0)
+```
+
+Triple: | Rt: 64ms |
+```python
+    def canPartitionKSubsets(self, nums: List[int], k: int) -> bool:
+        def backtrack(nums, used, kk, target, cur, st):
+            if kk == 1: return True
+            if cur < 0: return False
+            if cur == 0: return backtrack(nums, used, kk-1, target, target, 0)
+            for i in range(st, len(nums)):
+                if used[i]: continue
+                used[i] = 1
+                if backtrack(nums, used, kk, target, cur-nums[i], i+1): return True
+                used[i] = 0
+            return False
+        
+        summ = sum(nums)
+        if summ % k != 0: return False
+        used = [0] * len(nums)
+        return backtrack(nums, used, k, summ//k, summ//k, 0)
+```
+
+Forth: sort the nums in desc order, start with big nums, will converge faster (False case immediately returned). | Rt: 32ms |
+```python
+    def canPartitionKSubsets(self, nums: List[int], k: int) -> bool:
+        def backtrack(nums, used, kk, target, cur, st):
+            if kk == 1: return True
+            if cur < 0: return False
+            if cur == 0: return backtrack(nums, used, kk-1, target, target, 0)
+            for i in range(st, len(nums)):
+                if used[i]: continue
+                used[i] = 1
+                if backtrack(nums, used, kk, target, cur-nums[i], i+1): return True
+                used[i] = 0
+            return False
+        
+        summ = sum(nums)
+        if summ % k != 0: return False
+        used = [0] * len(nums)
+        nums.sort(reverse=True)
+        return backtrack(nums, used, k, summ//k, summ//k, 0)
+```
+Referrence: idea from https://leetcode.com/problems/partition-to-k-equal-sum-subsets/discuss/108741/Solution-with-Reference
+Comment: if everytime the backtrack scan from the 0 index to the end (it will cause dead loop), it will cause TLE; It seems we cannot cache a certain state for this problem.
+
+
+**II). Subset Bucket Sum**
+| O(T): O() | O(S): O() | Rt: 2824ms | 
+```python
+    def canPartitionKSubsets(self, nums: List[int], k: int) -> bool:
+        def put(nums, bucket, i, kk):
+            if i == len(nums): return True
+            for j in range(kk):
+                bucket[j] -= nums[i]
+                if bucket[j] >= 0 and put(nums, bucket, i+1, kk): return True
+                bucket[j] += nums[i]
+            return False
+        
+        nums.sort(reverse=True)
+        summ = sum(nums)
+        if summ % k != 0: return False
+        if nums[0] > summ // k: return False
+        bucket = [summ // k] * k
+        return put(nums, bucket, 0, k)
+```
+
+Alternative: | Rt: 36ms |
+```python
+    def canPartitionKSubsets(self, nums: List[int], k: int) -> bool:
+        def put(nums, bucket, i, kk, target):
+            if i == len(nums): return True
+            for j in range(kk):
+                bucket[j] += nums[i]
+                if bucket[j] <= target and put(nums, bucket, i+1, kk, target): return True
+                bucket[j] -= nums[i]
+                if bucket[j] == 0: break
+            return False
+        
+        nums.sort(reverse=True)
+        summ = sum(nums)
+        if summ % k != 0: return False
+        if nums[0] > summ // k: return False
+        bucket = [0] * k
+        return put(nums, bucket, 0, k, summ // k)
+```
+Referrence: https://leetcode.com/problems/partition-to-k-equal-sum-subsets/discuss/146579/Easy-python-28-ms-beats-99.5
+
+
+Others: here is a bit masking solution - https://leetcode.com/problems/partition-to-k-equal-sum-subsets/discuss/335668/DP-with-Bit-Masking-Solution-%3A-Best-for-Interviews

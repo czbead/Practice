@@ -1,0 +1,70 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Backtrack**
+| O(T): O(2^n) | O(S): O() | Rt: ms | TLE 
+```python
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        def backtrack(s, wordset):
+            if not s: return True
+            for i in range(len(s)+1):
+                if s[:i] in wordset: 
+                    if backtrack(s[i:], wordset): return True
+            return False
+        
+        return backtrack(s, set(wordDict)) 
+```
+
+
+**II). DP**
+| O(T): O(n^2) | O(S): O(n) | Rt: 40ms | 
+```python
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        l = len(s)
+        dp = [0] * (l + 1)
+        dp[0] = 1
+        for i in range(l+1):
+            for j in range(i):
+                if dp[j] and s[j:i] in wordDict: dp[i] = 1; break
+        return dp[-1]
+```
+Referrence: https://leetcode.com/problems/word-break/discuss/43790/Java-implementation-using-DP-in-two-ways
+Comment: it really remind me of the dp solution of Palindome Partition. I am such a dumb ...
+Alternative: | Rt: 44ms |
+```python
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        l = len(s)
+        dp = [0] * (l + 1)
+        dp[0] = 1
+        for i in range(1, l+1):
+            for j in range(i-1, -1, -1):
+                #give priority to dp check, because it is much efficient than a slice substring contain check
+                if dp[j] and s[j:i] in wordDict: dp[i] = 1; break
+        return dp[-1]
+```
+Referrence: https://leetcode.com/problems/word-break/discuss/43814/C%2B%2B-Dynamic-Programming-simple-and-fast-solution-(4ms)-with-optimization
+Triple: improved by set | Rt: 32ms |
+```python
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        l, wordset = len(s), set(wordDict)
+        dp = [0] * (l + 1)
+        dp[0] = 1
+        for i in range(1, l+1):
+            for j in range(i-1, -1, -1):
+                if dp[j] and s[j:i] in wordset: dp[i] = 1; break
+        return dp[-1]
+``` 
+
+
+**III). DP: in angle of WordDict**
+| O(T): O(nm) | O(S): O(n) | Rt: 24ms | 
+```python
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        l = len(s)
+        dp = [0] * (l + 1)
+        dp[0] = 1
+        for i in range(1, l+1):
+            for word in wordDict:
+                if dp[i - len(word)] and s[i-len(word):i] == word: dp[i] = 1; break
+        return dp[-1]
+```
+Referrence: https://leetcode.com/problems/word-break/discuss/43808/Simple-DP-solution-in-Python-with-description
+

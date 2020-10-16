@@ -1,0 +1,19 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Max Diff -- Pair Up**
+| O(T): O(n) | O(S): O(n) | Rt: 60ms | 
+```python
+    def minTimeToVisitAllPoints(self, points: List[List[int]]) -> int:
+        return sum(max(abs(j[0]-i[0]), abs(j[1]-i[1])) for i, j in zip(points, points[1:]))
+```
+
+
+**II). Max Diff -- Step By Step**
+| O(T): O(n) | O(S): O(1) | Rt: 56ms | 
+```python
+    def minTimeToVisitAllPoints(self, points: List[List[int]]) -> int:
+        rst, (m, n) = 0, points[0]
+        for i, j in points: 
+            rst += max(abs(j-n), abs(i-m))
+            m, n = i, j
+        return rst
+```

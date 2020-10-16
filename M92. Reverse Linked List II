@@ -1,0 +1,25 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Iteration**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def reverseBetween(self, head: ListNode, m: int, n: int) -> ListNode:
+        if not head or m == n: return head
+        rst = pre = ListNode(None); 
+        pre.next = head
+        for _ in range(m-1): pre = pre.next
+        st = pre.next; nxt = st.next
+        #each round insert the nxt node into the position next to pre: pre -> st -> nxt -> node1
+        #before reverse: pre -> st -> nxt -> ...
+        for _ in range(n-m):
+            st.next = nxt.next
+            nxt.next = pre.next
+            pre.next = nxt  #so far, reverse done: pre -> nxt -> st -> ...
+            #step forward the nxt pointer (st is already one step forward, no need to move)
+            nxt = st.next
+        return rst.next
+```
+Referrence: https://leetcode.com/problems/reverse-linked-list-ii/discuss/30666/Simple-Java-solution-with-clear-explanation; https://leetcode.com/problems/reverse-linked-list-ii/discuss/30709/Talk-is-cheap-show-me-the-code-(and-DRAWING);
+Comment: for example: ... -> pre -> st -> nxt -> node1 -> node2 -> ...
+Round1: [reverse operation] ... -> pre -> nxt -> st -> node1 -> node2 -> ...; [forward operation] ... -> pre -> nodea -> st -> nxt (node1) -> node2 -> ... 
+Round2: [reverse operation] ... -> pre -> nxt -> nodea -> st -> node2 -> ...; [forward operation] ... -> pre -> nodeb -> nodea -> st -> nxt (node2) -> ...
+The point is for each round put the nxt node into the position right next to pre, you can understand it as insert nxt node after pre node and concat the rest of list.

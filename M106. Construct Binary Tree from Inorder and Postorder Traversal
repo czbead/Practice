@@ -1,0 +1,66 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion - Pop Postorder as Root**
+| O(T): O(n) | O(S): O(1) | Rt: 52ms | 
+```python
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> TreeNode:
+        def build(st, end, dt, postorder):
+            if st > end: return
+            rootval = postorder.pop()
+            rootind = dt[rootval]
+            root = TreeNode(rootval)
+            root.right = build(rootind+1, end, dt, postorder)
+            root.left = build(st, rootind-1, dt, postorder)
+            return root
+        
+        if not inorder: return 
+        dt = {v: i for i, v in enumerate(inorder)}
+        return build(0, len(inorder)-1, dt, postorder)
+```
+Comment: this solution modified the input postorder in the process. 
+
+
+**II). Recursion - without Change Input**
+| O(T): O(n) | O(S): O(1) | Rt: 60ms | 
+```python
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> TreeNode:
+        def build(pst, pend, ist, iend, dt, postorder):
+            if pst > pend: return
+            rootval = postorder[pend]
+            rootind = dt[rootval]
+            root = TreeNode(rootval)
+            offset = rootind - ist
+            root.left = build(pst, pst+offset-1, ist, rootind-1, dt, postorder)
+            root.right = build(pst+offset, pend-1, rootind+1, iend, dt, postorder)
+            return root
+        
+        if not inorder: return 
+        dt = {v: i for i, v in enumerate(inorder)}
+        return build(0, len(postorder)-1, 0, len(inorder)-1, dt, postorder)
+```
+
+
+**III). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 56ms | 
+```python
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> TreeNode:
+        if not postorder: return
+        #ind is the index of inorder
+        stack, root = [], TreeNode(postorder[-1]), 
+        stack.append(root)
+        i, j = len(inorder)-1, len(postorder)-2
+        while j >= 0:
+        	#establish right sub tree before hitting the common root
+            if stack[-1].val != inorder[i]:
+                stack[-1].right = TreeNode(postorder[j])
+                stack.append(stack[-1].right)
+            else: 
+            #right subtree is established, pop all right subtree node out but keep the last one as the root of the comming left node.
+                while stack and stack[-1].val == inorder[i]:
+                    node = stack.pop(); i -= 1
+                node.left = TreeNode(postorder[j])
+                stack.append(node.left)
+            j-= 1
+        return root
+```
+Referrence: https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/discuss/34807/Java-iterative-solution-with-explanation
+

@@ -1,0 +1,33 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS**
+| O(T): O(n) | O(S): O(h) | Rt: 164ms | 
+```python
+    def maxPathSum(self, root: TreeNode) -> int:
+        def subMax(root):
+            if not root: return -float('inf'), -float('inf')
+            lmax, l_premax = subMax(root.left)
+            rmax, r_premax = subMax(root.right)
+            return max(root.val, lmax+root.val, rmax+root.val), max(l_premax, r_premax, lmax, rmax, lmax+rmax+root.val)
+        
+        mx, pre_mx = subMax(root)
+        return max(mx, pre_mx)
+```
+Referrence: https://leetcode.com/problems/binary-tree-maximum-path-sum/discuss/39811/What-is-the-meaning-of-path-in-this-problem
+Comment: if you cannot pass test case [5,4,8,11,null,13,4,7,2,null,null,null,1], take a look at the referrence. The definition of path: a single straight line without any forks. 
+
+
+**II). Return Relevant**
+| O(T): O(n) | O(S): O(h) | Rt: 168ms | 
+```python
+    def maxPathSum(self, root: TreeNode) -> int:
+        def subMax(root):
+            if not root: return 0
+            lmax = max(0, subMax(root.left))
+            rmax = max(0, subMax(root.right))
+            self.mx = max(self.mx, lmax+rmax+root.val)
+            return max(lmax, rmax) + root.val
+        
+        self.mx = -float('inf')
+        subMax(root)
+        return self.mx
+```

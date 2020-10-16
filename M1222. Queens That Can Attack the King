@@ -1,0 +1,16 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: 44ms | 
+```python
+    def queensAttacktheKing(self, queens: List[List[int]], king: List[int]) -> List[List[int]]:
+        s, rst = set(tuple(i) for i in queens), []
+        x, y = king
+        for di, dj in [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]:
+            i, j = x, y
+            while 0 <= i < 8 and 0 <= j < 8:
+                i, j = i + di, j + dj
+                if (i, j) in s: 
+                    rst.append([i, j]); break
+        return rst
+```
+

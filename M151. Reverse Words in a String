@@ -1,0 +1,84 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Split**
+| O(T): O(n) | O(S): O(n) | Rt: 76ms | 
+```python
+    def reverseWords(self, s: str) -> str:
+        return ' '.join(reversed(s.split()))
+```
+Comment: it seems that you don't need to do the strip before split. 
+
+
+**II). Mimic In Place**
+| O(T): O(n) | O(S): O(n) | Rt: 128ms | 
+```python
+    def reverseWords(self, s: str) -> str:
+        def reverse(lst, l, r):
+            while l < r:
+                lst[l], lst[r] = lst[r], lst[l]
+                l, r = l+1, r-1
+        
+        leng, lst = len(s), list(s)
+        #step1: clean all space
+        #consecutive space only keep one (including start and end position)
+        for i in range(leng - 1):
+            if lst[i] == lst[i+1] == ' ': lst[i] = ''
+        l, r = 0, leng-1
+        
+        while l < leng and lst[l] == '': l += 1
+        if l >= leng: return ''  #edge case
+        while r >= 0 and lst[r] == '': r -= 1
+        #reduce the possible leading space, only one space at most
+        if lst[l] == ' ': lst[l], l = '', l+1
+        #reduce the possible ending space, only one space at most
+        if lst[r] == ' ': lst[r], r = '', r-1
+        #the l, r is now the start and end index of real content
+            
+        #step2: reverse all content
+        reverse(lst, l, r)
+        
+        #step3: reverse all words
+        st, end = l, r
+        i = st   #rotate pointer
+        while i < end:
+            if lst[i] != ' ': i += 1
+            else:
+                reverse(lst, st, i-1)
+                st = i = i+1
+        reverse(lst, st, end)  #last round reverse won't be covered by the loop
+
+        return ''.join(lst)
+```
+Comment: for python, string is immutable, therefore I convert the string to list and do the in place word reverse. The idea is double reverse: overall reverse and each word reverse, the order doesn't matter, you can choose to do whatever first. And to remove the extra space involves a lot of edge cases, just be careful. The word reversing step take use of rotate pointer trick. And, do the space removal step first can save you a lot of unnecessary reverse. 
+Referrence: idea from https://leetcode.com/problems/reverse-words-in-a-string/discuss/47720/Clean-Java-two-pointers-solution-(no-trim(-)-no-split(-)-no-StringBuilder)
+Alterantive: if we allow a list to collect item from s, that will be much clear.  | Rt: 104ms |
+```python
+    def reverseWords(self, s: str) -> str:
+        def reverse(lst, l, r):
+            while l < r:
+                lst[l], lst[r] = lst[r], lst[l]
+                l, r = l+1, r-1
+        
+        if not s: return ''
+        lst = []
+        for i in s:
+            if i == ' ': 
+                if lst and lst[-1] != ' ': lst.append(' ')
+            else: lst.append(i)
+        if lst and lst[-1] == ' ': lst.pop()
+        l, r = 0, len(lst)-1
+            
+        #step2: reverse all content
+        reverse(lst, l, r)
+        
+        #step3: reverse all words
+        st, end = l, r; i = st   #rotate pointer
+        while i < end:
+            if lst[i] != ' ': i += 1
+            else:
+                reverse(lst, st, i-1)
+                st = i = i+1
+        reverse(lst, st, end)  #last round reverse won't be covered by the loop
+
+        return ''.join(lst)
+```
+

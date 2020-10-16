@@ -1,0 +1,30 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS Island**
+| O(T): O() | O(S): O() | Rt: 164ms | 
+```python
+    def removeStones(self, stones: List[List[int]]) -> int:
+        def dfs(row, col, visited, i, j):
+            visited.add((i, j))
+            for a, b in row[i] + col[j]:
+                if (a, b) not in visited: dfs(row, col, visited, a, b)
+        
+        dt = collections.defaultdict
+        visited, row, col = set(), dt(list), dt(list)
+        for i, j in stones:
+            row[i].append((i, j))
+            col[j].append((i, j))
+            
+        #island is a collection of points connected by row or col
+        island = 0
+        for i, j in stones:
+            if (i, j) not in visited:
+                dfs(row, col, visited, i, j)
+                island += 1
+        #each island can leave one point (unremovable)
+        return len(stones) - island
+```
+Referrence: https://leetcode.com/problems/most-stones-removed-with-same-row-or-column/discuss/198141/Python-concise-DFS
+Comment: the solution is easy while the thinking of island is not easy to come up with. Easy coding hard logical thinking. 
+
+Others: union find solution - https://leetcode.com/problems/most-stones-removed-with-same-row-or-column/discuss/197668/Count-the-Number-of-Islands-O(N)
+

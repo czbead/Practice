@@ -1,0 +1,19 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy**
+| O(T): O(lgn) | O(S): O(1) | Rt: 28ms | 
+```python
+    def integerReplacement(self, n: int) -> int:
+        rst = 0
+        while n > 1:
+            #even number
+            if not n & 1: n >>= 1
+            #odd num, last digit is '1', check second last digit
+            #end with "..11", add 1, reduce both 1s
+            elif n != 3 and (n >> 1) & 1: n += 1
+            #end with '..01', deduct 1, make both 0s
+            else: n -= 1
+            rst += 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/integer-replacement/discuss/87920/A-couple-of-Java-solutions-with-explanations
+Comment: when n is even, trivial. When n is odd, add 1 or minus 1? it depends on how many 0s in the next number's binary representation, more 0s means it can reduce faster by >> (devide by 2). An edge case with 3. 

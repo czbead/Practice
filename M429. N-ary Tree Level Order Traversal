@@ -1,0 +1,27 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 48ms | 
+```python
+    def levelOrder(self, root: 'Node') -> List[List[int]]:
+        rst, stack = [], [root] if root else None
+        while stack:
+            rst.append([node.val for node in stack])
+            stack = [child for node in stack for child in node.children if child]
+        return rst
+```
+
+
+**II). Recursion DFS**
+| O(T): O(n) | O(S): O(h) | Rt: 56ms | 
+```python
+    def levelOrder(self, root: 'Node') -> List[List[int]]:
+        def dfs(node, level, rst):
+            if not root: return
+            if level >= len(rst): rst.append([])
+            rst[level].append(node.val)
+            for n in node.children: dfs(n, level+1, rst)
+               
+        rst = []
+        dfs(root, 0, rst)
+        return rst
+```

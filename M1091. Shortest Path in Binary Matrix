@@ -1,0 +1,19 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 596ms | 
+```python
+    def shortestPathBinaryMatrix(self, grid: List[List[int]]) -> int:
+        if grid[0][0] == 1 or grid[-1][-1] == 1: return -1
+        grid[0][0] = 1
+        step, l, q = 0, len(grid), collections.deque([(0, 0)])
+        while q:
+            size, step = len(q), step+1
+            for _ in range(size):
+                i, j = q.popleft()
+                if i == j == l-1: return step
+                for x, y in [(i-1, j), (i+1, j), (i, j-1), (i, j+1), (i-1, j-1), (i+1, j+1), (i-1, j+1), (i+1, j-1)]:
+                    if 0<=x<l and 0<=y<l and grid[x][y] == 0: 
+                        grid[x][y] = 1; q.append((x, y))
+        return -1
+```
+

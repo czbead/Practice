@@ -1,0 +1,54 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Fixed Size Heap**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 100ms | 
+```python
+    def __init__(self, k: int, nums: List[int]):
+        heapq.heapify(nums)
+        while len(nums) > k: heapq.heappop(nums)
+        self.k, self.lst = k, nums
+
+    def add(self, val: int) -> int:
+        heapq.heappush(self.lst, val)
+        if len(self.lst) > self.k: heapq.heappop(self.lst)
+        return self.lst[0]
+```
+Alternative: heappushpop. | Rt: 96ms |
+```python
+    def __init__(self, k: int, nums: List[int]):
+        heapq.heapify(nums)
+        while len(nums) > k: heapq.heappop(nums)
+        self.k, self.lst = k, nums
+
+    def add(self, val: int) -> int:
+        if len(self.lst) < self.k: heapq.heappush(self.lst, val)
+        else: heapq.heappushpop(self.lst, val)
+        return self.lst[0]
+```
+Triple: heapreplace. | Rt: 96ms |
+```python
+    def __init__(self, k: int, nums: List[int]):
+        heapq.heapify(nums)
+        while len(nums) > k: heapq.heappop(nums)
+        self.k, self.lst = k, nums
+
+    def add(self, val: int) -> int:
+        if len(self.lst) < self.k: heapq.heappush(self.lst, val)
+        elif val > self.lst[0]: heapq.heapreplace(self.lst, val)
+        return self.lst[0]
+```
+
+
+**II). Bisect Sort**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 136ms | 
+```python
+    def __init__(self, k: int, nums: List[int]):
+        self.k, self.lst = k, sorted(nums)[-k:]
+
+    def add(self, val: int) -> int:
+        bisect.insort(self.lst, val)
+        if len(self.lst) > self.k: del self.lst[0]
+        return self.lst[0]
+```
+Referrence: idea from https://leetcode.com/problems/kth-largest-element-in-a-stream/discuss/148866/Python-simple-heapq-solution-beats-100/296767
+
+

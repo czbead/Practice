@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Buildin Datetime**
+| O(T): O(1) | O(S): O(1) | Rt: 20ms | 
+```python
+from datetime import datetime
+class Solution:
+    def dayOfTheWeek(self, day: int, month: int, year: int) -> str:
+        return ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][datetime(year, month, day).weekday()]
+```
+Referrence: https://leetcode.com/problems/day-of-the-week/discuss/377384/JavaC%2B%2BPython-Zeller-Formula
+Alternative: | Rt: 20ms |
+```python
+from datetime import date
+class Solution:
+    def dayOfTheWeek(self, day: int, month: int, year: int) -> str:
+        return date(year, month, day).strftime('%A')
+```
+Referrence: https://leetcode.com/problems/day-of-the-week/discuss/377384/JavaC++Python-Zeller-Formula/339228
+
+
+**II). Brute Force**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def dayOfTheWeek(self, day: int, month: int, year: int) -> str:
+        isleap = lambda x: x % 400 == 0 or (x % 4 == 0 and x % 100 != 0) 
+        mons = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        days = -1  # start from 1971-01-01, remove that day
+        for i in range(1971, year): day += 366 if isleap(i) else 365
+        if month > 2 and isleap(year): mons[1] = 29
+        days += sum(mons[:month-1]) + day
+        #based on the fact: 1971-01-01 is friday (of index 5)
+        return week[(5 + days) % 7]
+```
+
+Others: there are some formula based solutions available (You will never come up with them in interviews and You definitely won't remember them as well). 
+

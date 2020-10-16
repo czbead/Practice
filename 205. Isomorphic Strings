@@ -1,0 +1,76 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Dict**
+| O(t): O(n) | O(m): O(n) | Rt: 24ms | 
+```python
+    def isIsomorphic(self, s: str, t: str) -> bool:
+        ds, dt = {}, {}
+        for i, j in zip(s, t):
+            if i not in ds: ds[i] = j
+            elif ds[i] != j: return False
+                
+            if j not in dt: dt[j] = i
+            elif dt[j] != i: return False   
+        return True
+```
+Comment: first, bidirection check is necessary, because no two characters may map to the same character. For example, "ab", "aa". Two strings share the same dict is problemistic, because the same character may map to two different characters in different direction. For example "ab", "ca"
+
+
+**II). Find**
+| O(t): O(n*n) | O(m): O(1) | Rt: 44ms | 
+```python
+    def isIsomorphic(self, s: str, t: str) -> bool:
+        return [s.find(i) for i in s] == [t.find(i) for i in t]
+```
+Alternative: | Rt: 36ms |
+```python
+    def isIsomorphic(self, s: str, t: str) -> bool:
+        return list(map(s.find, s)) == list(map(t.find, t))
+```
+Referrence: https://leetcode.com/problems/isomorphic-strings/discuss/57892/1-liner-in-Python
+Comment: the critical thinking behind this solution is: each pair of mapped t-character and s-character should share the same position pattern. The charm of this solution is that instead of comparing index pattern of each mapped pair,  it reduces the problem scale from pattern list comparion to a single node comparison, all the following same charaters are represented by its first occurrence ("find" without index parameter returns the first index of the character). Well, I admit I am not clever enough to reach this level in any interviews unless I sum it up like this thorough.
+
+
+**III). Set Scale**
+| O(t): O(n) | O(m): O(1) | Rt: 32ms | 
+```python
+    def isIsomorphic(self, s: str, t: str) -> bool:
+        return len(set(s)) == len(set(zip(s, t))) == len(set(t))
+```
+Referrence: https://leetcode.com/problems/isomorphic-strings/discuss/57861/1-line-Python-Solution-95
+Alternative: | Rt: 36ms |
+```python
+    def isIsomorphic(self, s: str, t: str) -> bool:
+        return len(set(s)) == len(set(zip(s, t))) and len(set(zip(t, s))) == len(set(t))
+```
+Referrence: https://leetcode.com/problems/isomorphic-strings/discuss/57838/1-line-in-Python
+Comment: another "Giant's Shoulder". This solution is amazing because it simplify this problem to a **"dimension comparison".** I have to say, it is really a good example of "think out of box". While coders are keeping complicate this problem, it make it done so elegant and easy. 
+Analysis: there are three entities we need to take care of in this problem domain: t-character, s-character, and t-s mapping rules. Well, we have a list of t-characters, a list of s-characters, and a list of t-s mappling rules. The answer we need is actually **"whether all these 3 dimension all consistent". A common thinking pattern is: consider each node of each dimension. This solution provides alternative elegant thingking: consider 3-d as a whole.** Why it is possible because **any possible "inconsistency" between any two dimensions will definitely leads to a "Set Size Increasement". In conclusion, set scale equality means 3 dimensions are all consistent.** To achieve this, you can do d-d twice or d-d-d once which are exactly the difference of **solution III** and its alternative choice.
+
+
+**IV). Position Pattern**
+| O(t): O(n) | O(m): O(n) | Rt: 60ms | 
+```python
+    def isIsomorphic(self, s: str, t: str) -> bool:
+        ds, dt = {}, {}
+        for i, v in enumerate(s): ds[v] = ds.get(v, "") + str(i)
+        for i, v in enumerate(t): dt[v] = dt.get(v, "") + str(i)
+        return set(ds.values()) == set(dt.values())
+```
+
+
+**V). Limited States Induction (Seesaw Balance)**
+| O(t): O(n) | O(m): O(1) | Rt: 48ms | 
+```python
+    def isIsomorphic(self, s: str, t: str) -> bool:
+        #ASCII codes have at most 256 states
+        ss, tt = [0] * 256, [0] * 256
+        st = [(ord(i), ord(j)) for i, j in zip(s, t)]
+        for ind, (i, j) in enumerate(st):
+            if ss[i] != tt[j]: return False
+            #ind + 1 rather than ind to avoid 0 index conflict with the initial value
+            ss[i], tt[j] = ind+1, ind+1
+        return True
+```
+Referrence: https://leetcode.com/problems/isomorphic-strings/discuss/57796/My-6-lines-solution
+Analysis: record the last mapping of a specific t-s character pair using two ASCII-indexed lists, if the pair comes again, their last mapping should be consistent which means equal to each other. **The equality can only remain unchanged when the pair of value is not updated at all or update together, each inconsistent mapping will change only one side of an existed value pair which will lead to inequality next time.** I would rather compare this process to a **"seesaw balance senario"**.
+

@@ -1,0 +1,82 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Have a Copy**
+| O(T): O(n) | O(S): O(n) | Rt: 64ms | 
+```python
+    def duplicateZeros(self, arr: List[int]) -> None:
+        it = iter(arr[:])
+        i, l = 0, len(arr)
+        while i < l:
+            cur = next(it)
+            if cur == 0: 
+                arr[i] = 0
+                i += 1
+                if i < l: arr[i] = 0
+            else: arr[i] = cur
+            i += 1
+```
+Alternative: using an extra list to collect.  | Rt: 68ms |
+```python
+    def duplicateZeros(self, arr: List[int]) -> None:
+        rst, l = [], len(arr)
+        for i in arr:
+            if i: rst.append(i)
+            else: 
+                rst.append(i)
+                if len(rst) == l: break
+                rst.append(i)
+            if len(rst) == l: break
+        arr[:] = rst
+```
+
+
+**II). Shift Count from End**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+    def duplicateZeros(self, arr: List[int]) -> None:
+        shift = arr.count(0)
+        l = len(arr)
+        for i in range(l-1, -1, -1):
+            if i + shift < l: arr[i+shift] = arr[i]
+            if arr[i] == 0: 
+                shift -= 1
+                if i + shift < l: arr[i+shift] = arr[i]
+```
+
+
+**III). Turn Around Immediately**
+| O(T): O(n) | O(S): O(1) | Rt: 64ms | 
+```python
+    def duplicateZeros(self, arr: List[int]) -> None:
+        l, ct = len(arr), 0
+        #find the turn around point (index)
+        for i in range(l): 
+            if arr[i] == 0: ct += 1
+            if i + ct >= l - 1: break
+
+        #edge case, the last is 0, and it should not be duplicated
+        if i + ct == l: arr[-1], i, ct = arr[i], i-1, ct-1
+
+        #safe shifting, because we already took care of the edge case
+        for j in range(i, -1, -1):
+            arr[j+ct] = arr[j]
+            if arr[j] == 0:
+                ct -= 1
+                arr[j+ct] = 0
+```
+Analysis: there is an edge case. Not all 0s should be duplicated because the list size may not allowed. And only when the last element is 0, there may exist this edge case. For example. [1, 2, 0, 3, 0, 1], the result is: [1, 2, 0, 0, 3, 0]. Take a serious look at he last 0 in the result. 
+
+
+**IV). Deque**
+| O(T): O(n) | O(S): O(n) | Rt: 60ms | 
+```python
+    def duplicateZeros(self, arr: List[int]) -> None:
+        q = collections.deque(arr)
+        move, l = 0, len(arr)
+        while move < l:
+            q.append(q.popleft())
+            move += 1
+            if q[-1] == 0 and move < l:
+                q.append(0)
+                move += 1
+        arr[:] = list(q)[-l:]
+```

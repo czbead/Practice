@@ -1,0 +1,50 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP**
+| O(T): O(nt) | O(S): O(n) | Rt: 40ms | 
+```python
+    def combinationSum4(self, nums: List[int], target: int) -> int:
+        dp = [0] * (target+1)
+        dp[0] = 1
+        for i in range(1, target + 1):
+            for j in nums:
+                if j <= i: dp[i] += dp[i-j]
+        return dp[-1]
+```
+Referrence: https://leetcode.com/problems/combination-sum-iv/discuss/85036/1ms-Java-DP-Solution-with-Detailed-Explanation
+Alternative: | Rt: 32ms |
+```python
+    def combinationSum4(self, nums: List[int], target: int) -> int:
+        dp = [0] * (target+1)
+        dp[0] = 1; nums.sort()
+        for i in range(1, target + 1):
+            for j in nums:
+                if j > i: break
+                dp[i] += dp[i-j]
+        return dp[-1]
+```
+
+
+**II). Recursion**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def combinationSum4(self, nums: List[int], target: int) -> int:
+        if target == 0: return 1
+        rst = 0
+        for i in nums: 
+            if i <= target: rst += self.combinationSum4(nums, target-i)
+        return rst
+```
+Alternative: with cache. | Rt: 32ms |
+```python
+    def combinationSum4(self, nums: List[int], target: int) -> int:
+        def recur(nums, target, dt):
+            if target in dt: return dt[target]
+            rst = 0
+            for i in nums:
+                if i <= target: rst += recur(nums, target - i, dt)
+            dt[target] = rst
+            return rst
+            
+        dt = {0: 1}
+        return recur(nums, target, dt)
+```

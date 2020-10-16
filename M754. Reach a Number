@@ -1,0 +1,23 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Math with Greedy**
+| O(T): O() | O(S): O(1) | Rt: 124ms | 
+```python
+    def reachNumber(self, target: int) -> int:
+        tar, summ, step = abs(target), 0, 0
+        while summ < tar or (summ - tar) % 2 != 0:
+            step += 1
+            summ += step
+        return step
+```
+Referrence: https://leetcode.com/problems/reach-a-number/discuss/112968/Short-JAVA-Solution-with-Explanation
+
+Alternative: math further improvement. | Rt: 28ms |
+```python
+    def reachNumber(self, target: int) -> int:
+        tar = abs(target)
+        #1 + 2 + ... + n = 0.5 * n * (n+1) = tar => n * (n+1) = 2 * tar
+        i = int((2 * tar) ** 0.5)
+        while i * (i+1) < 2 * tar or (i * (i+1) // 2 - tar) % 2 != 0:
+            i += 1
+        return i
+``` 

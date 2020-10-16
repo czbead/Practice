@@ -1,0 +1,73 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Heap: Column-based Candidate Pipeline**
+| O(T): O(n+klgn) | O(S): O(n) | Rt: 228ms | 
+```python
+    def kthSmallest(self, matrix: List[List[int]], k: int) -> int:
+        if not matrix or not matrix[0]: return
+        r, c = len(matrix), len(matrix[0])
+        arr = []
+        for i in range(c): arr.append((matrix[0][i], 0, i))
+        heapq.heapify(arr)
+        while k-1:
+            cur = heapq.heappop(arr)
+            x, y = cur[1], cur[2]
+            if x + 1 < r:
+                heapq.heappush(arr, (matrix[x+1][y], x+1, y))
+            k = k-1
+        return heapq.heappop(arr)[0]
+```
+Referrence: https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/discuss/85173/Share-my-thoughts-and-Clean-Java-Code
+Comment: imagine the heap as a pipeline, once a item is taken, the next one in the same column will pop up and replace the taken one.
+Alternative: row-based version. | Rt: 216ms |
+```python
+    def kthSmallest(self, matrix: List[List[int]], k: int) -> int:
+        if not matrix or not matrix[0]: return
+        r, c = len(matrix), len(matrix[0])
+        arr = []
+        for i in range(r): arr.append((matrix[i][0], i, 0))
+        heapq.heapify(arr)
+        while k-1:
+            cur = heapq.heappop(arr)
+            x, y = cur[1], cur[2]
+            if y + 1 < c:
+                heapq.heappush(arr, (matrix[x][y+1], x, y+1))
+            k = k-1
+        return heapq.heappop(arr)[0]
+```
+Triple: best by time complexity. p = min(k, n); O(p + klgp). | Rt: 228ms |
+```python
+    def kthSmallest(self, matrix: List[List[int]], k: int) -> int:
+        if not matrix or not matrix[0]: return
+        r, c = len(matrix), len(matrix[0])
+        arr = []
+        for i in range(min(k,r)): arr.append((matrix[i][0], i, 0))
+        heapq.heapify(arr)
+        while k-1:
+            cur = heapq.heappop(arr)
+            x, y = cur[1], cur[2]
+            if y + 1 < c:
+                heapq.heappush(arr, (matrix[x][y+1], x, y+1))
+            k = k-1
+        return heapq.heappop(arr)[0]
+```
+Comment: the triple version is the best especially when the row is very long and k is far smaller.
+
+
+**II). Binary Search by Value**
+| O(T): O(mnlg(max - min)) | O(S): O(1) | Rt: 308ms | 
+```python
+    def kthSmallest(self, matrix: List[List[int]], k: int) -> int:
+        if not matrix or not matrix[0]: return
+        r, c = len(matrix), len(matrix[0])
+        l, r = matrix[0][0], matrix[-1][-1]
+        while l < r:
+            m = l + (r - l) // 2
+            ct = sum(i <= m for row in matrix for i in row)
+            if ct < k: l = m + 1
+            else: r = m
+        return l
+```
+Referrence: https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/discuss/85173/Share-my-thoughts-and-Clean-Java-Code
+Comment: usually we apply binary search to a sorted list by half forwarding the "index", this solution half forward 'val' instead of 'index'. In a sorted list, bigger index means bigger value. The only thing we are sure about the matrix is: the first top-left corner item is global smallest while the down-right corner item is the global maxinum one. 
+
+

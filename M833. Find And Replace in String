@@ -1,0 +1,55 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). HashMap and Replace**
+| O(T): O(n) | O(S): O(n) | Rt: 36ms | 
+```python
+    def findReplaceString(self, S: str, indexes: List[int], sources: List[str], targets: List[str]) -> str:
+        dt = {i: (j, k) for i, j, k in zip(indexes, sources, targets)}
+        arr, i, l = [], 0, len(S)
+        while i < l:
+            if i in dt and S[i:i+len(dt[i][0])] == dt[i][0]:
+                    arr.append(dt[i][1])
+                    i += len(dt[i][0])
+            else: arr.append(S[i]); i += 1
+        return ''.join(arr)
+```
+
+
+**II). Bucket Collect**
+| O(T): O(n) | O(S): O(n) | Rt: 40ms | 
+```python
+    def findReplaceString(self, S: str, indexes: List[int], sources: List[str], targets: List[str]) -> str:
+        l = len(S)
+        m = [None] * l
+        for i in range(len(indexes)):
+            m[indexes[i]] = (sources[i], targets[i])
+        arr, i = [], 0
+        while i < l:
+            if m[i] is not None and S[i:i+len(m[i][0])] == m[i][0]:
+                    arr.append(m[i][1])
+                    i += len(m[i][0])
+            else: arr.append(S[i]); i += 1
+        return ''.join(arr)
+```
+
+Alternative: | Rt: 36ms |
+```python
+    def findReplaceString(self, S: str, indexes: List[int], sources: List[str], targets: List[str]) -> str:
+        def match(s, st, source):
+            i, l = st, len(s)
+            for j in source:
+                if i >= l or j != s[i]: return False
+                i += 1
+            return True
+        
+        l = len(S)
+        m = [None] * l
+        for i in range(len(indexes)):
+            m[indexes[i]] = (sources[i], targets[i])
+        arr, i = [], 0
+        while i < l:
+            if m[i] is not None and match(S, i, m[i][0]):
+                    arr.append(m[i][1])
+                    i += len(m[i][0])
+            else: arr.append(S[i]); i += 1
+        return ''.join(arr)
+```

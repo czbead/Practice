@@ -1,0 +1,67 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat - Convert to Num**
+| O(T): O(n+m) | O(S): O(n+m) | Rt: 44ms | 
+```python
+    def addStrings(self, num1: str, num2: str) -> str:
+        n1, n2, base = 0, 0, ord('0')
+        convert = lambda x: ord(x) - base
+        for i in num1: n1 = n1 * 10 + convert(i)
+        for i in num2: n2 = n2 * 10 + convert(i)
+        return str(n1 + n2)
+```
+
+
+**II). Naive**
+| O(T): O(n+m) | O(S): O(n+m) | Rt: 40ms | 
+```python
+    def addStrings(self, num1: str, num2: str) -> str:
+        rst, carry, n1, n2, base =[], 0, list(num1), list(num2), ord('0')
+        while n1 or n2 or carry:
+            c1 = ord(n1.pop()) - base if n1 else 0
+            c2 = ord(n2.pop()) - base if n2 else 0
+            c = c1 + c2 + carry
+            rst.append(str(c % 10))
+            carry = c // 10
+        rst.reverse()
+        return ''.join(rst)
+```
+
+
+**III). Adaptive**
+| O(T): O(n+m) | O(S): O(n+m) | Rt: 32ms | 
+```python
+    def addStrings(self, num1: str, num2: str) -> str:
+        rst, carry, n1, n2, base = [], 0, list(num1), list(num2), ord('0')
+        while n1 and n2:
+            c1, c2 = n1.pop(), n2.pop()
+            c = ord(c1) + ord(c2) - base * 2 + carry
+            rst.append(str(c % 10))
+            carry = c // 10
+        n = n1 or n2
+        while carry and n:
+            c = carry + ord(n.pop()) - base
+            rst.append(str(c % 10) )
+            carry = c // 10
+        if carry: rst.append("1")
+        rst.reverse()
+        return ''.join(n + rst) 
+```
+Comment: this solution can return earlier if two nums vary in length without carry.
+
+
+**IV). Completion**
+| O(T): O(n+m) | O(S): O(n+m) | Rt: 36ms | 
+```python
+    def addStrings(self, num1: str, num2: str) -> str:
+        if len(num1) < len(num2): num1, num2 = num2, num1
+        num2 = (len(num1) - len(num2)) * '0' + num2
+        carry, rst, base = 0, [], 2 * ord('0')
+        for i, j in zip(num1[::-1], num2[::-1]):
+            c = ord(i) + ord(j) - base + carry
+            rst.append(str(c % 10))
+            carry = c // 10
+        if carry: rst.append('1')
+        rst.reverse()
+        return ''.join(rst)
+```
+Comment: the ord(n) - ord('0') seems to be a little bit faster.

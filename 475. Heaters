@@ -1,0 +1,77 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search**
+| O(T): O(mlgm + nlgm) | O(S): O(n) | Rt: 284ms | 
+```python
+    def findRadius(self, houses: List[int], heaters: List[int]) -> int:
+        houses.sort(); heaters.sort()
+        dis, hl = [], len(heaters)
+        for h in houses:
+            ind = bisect.bisect(heaters, h)
+            if ind == hl: cur = h - heaters[-1]
+            elif ind == 0: cur = heaters[0] - h
+            else: cur = min(heaters[ind] - h, h - heaters[ind - 1])
+            dis.append(cur)
+        return max(dis)
+```
+Alternative: cleaner version. | Rt: 292ms |
+```python
+    def findRadius(self, houses: List[int], heaters: List[int]) -> int:
+        heaters.sort()
+        heaters = [-float('inf')] + heaters + [float('inf')]
+        dis = []
+        for h in houses:
+            ind = bisect.bisect(heaters, h)
+            cur = min(heaters[ind] - h, h - heaters[ind - 1])
+            dis.append(cur)
+        return max(dis)
+```
+Comment: binary search the radius every house needed, then get the max of them.
+
+
+**II). Two Pointer**
+| O(T): O(nlgn + mlgm) | O(S): O(1) | Rt: 304ms | 
+```python
+    def findRadius(self, houses: List[int], heaters: List[int]) -> int:
+        houses.sort(); heaters.sort()
+        i, j, rad = 0, 0, 0
+        while i < len(houses):
+            while j < len(heaters) and heaters[j] < houses[i]: j += 1
+            if j == len(heaters): dis = houses[i] - heaters[-1]
+            elif j == 0: dis = heaters[0] - houses[i]
+            else: dis = min(heaters[j] - houses[i], houses[i] - heaters[j-1])
+            rad = max(rad, dis)
+            i += 1
+        return rad
+```
+Alternative: cleaner version. | Rt: 296ms |
+```python
+    def findRadius(self, houses: List[int], heaters: List[int]) -> int:
+        houses.sort(); heaters.sort()
+        heaters = [-float('inf')] + heaters + [float('inf')]
+        i, j, rad = 0, 0, 0
+        while i < len(houses):
+            if heaters[j] >= houses[i]: 
+                dis = min(heaters[j] - houses[i], houses[i] - heaters[j-1])
+                i += 1
+                rad = max(rad, dis)
+            else: j += 1
+        return rad
+```
+
+
+**III). Heater Oriented**
+| O(T): O(nlgn + mlgm) | O(S): O(1) | Rt: 316ms | 
+```python
+    def findRadius(self, houses: List[int], heaters: List[int]) -> int:
+        houses.sort(); heaters.sort()
+        heaters = heaters + [float('inf')]
+        i, j, rad = 0, 0, 0
+        while i < len(houses):
+            if houses[i] <= (heaters[j] + heaters[j+1]) / 2.0: 
+                rad = max(rad, abs(heaters[j] - houses[i]))
+                i += 1
+            else: j += 1
+        return rad
+```
+Referrence: idea from https://leetcode.com/problems/heaters/discuss/95875/Short-Python
+

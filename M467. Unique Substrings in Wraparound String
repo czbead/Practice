@@ -1,0 +1,18 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP**
+| O(T): O(n) | O(S): O(1) | Rt: 100ms | 
+```python
+    def findSubstringInWraproundString(self, p: str) -> int:
+        if not p: return 0
+        #m saves the longest valid substring length end with a specific alpha letter.
+        m, curmax = [0] * 26, 1
+        m[ord(p[0]) - ord('a')] = 1
+        for i in range(1, len(p)):
+            index = ord(p[i]) - ord('a')
+            if (ord(p[i-1]) - ord('a') + 1) % 26 == index: curmax += 1
+            else: curmax = 1
+            m[index] = max(m[index], curmax)
+        return sum(m)
+```
+Referrence: https://leetcode.com/problems/unique-substrings-in-wraparound-string/discuss/95439/Concise-Java-solution-using-DP
+Comment: this is a genius solution, it help avoid of so many duplication edge cases.

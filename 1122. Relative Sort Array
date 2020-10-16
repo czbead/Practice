@@ -1,0 +1,66 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counting Sort**
+| O(T): O(n) | O(S): O(n) | Rt: 40ms | 
+```python
+    def relativeSortArray(self, arr1: List[int], arr2: List[int]) -> List[int]:
+        rst, m = [], [0] * 1001
+        for i in arr1: m[i] += 1
+        for i in arr2:
+            if m[i]: 
+                rst += [i] * m[i]
+                m[i] = 0
+        for i, v in enumerate(m):
+            if v: rst += [i] * v
+        return rst
+```
+Alternative: make it O(1) space.  | Rt: 52ms |
+```python
+    def relativeSortArray(self, arr1: List[int], arr2: List[int]) -> List[int]:
+        ind, rst, m = 0, [None] * len(arr1), [0] * 1001
+        for i in arr1: m[i] += 1
+        for i in arr2: 
+            while m[i]: rst[ind], m[i], ind = i, m[i]-1, ind+1 
+        for i in range(1001): 
+            while m[i]: rst[ind], ind, m[i] = i, ind+1, m[i]-1 
+        return rst
+```
+Referrence: idea from https://leetcode.com/problems/relative-sort-array/discuss/334570/JavaPython-3-O(1001)-code-similar-to-791-Custom-Sort-String.
+
+
+**II). Sort By Key**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 36ms | 
+```python
+    def relativeSortArray(self, arr1: List[int], arr2: List[int]) -> List[int]:
+        s, l = set(arr2), len(arr1)
+        arr1.sort(key=lambda x: arr2.index(x) if x in s else x + l)
+        return arr1
+```
+Alternative: | Rt: 36ms |
+```python
+    def relativeSortArray(self, arr1: List[int], arr2: List[int]) -> List[int]:
+        l, dt = len(arr1), {v: i for i, v in enumerate(arr2)}
+        arr1.sort(key=lambda x: dt.get(x, x + l))
+        return arr1
+```
+
+
+**III). Counter + Sort**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 32ms | 
+```python
+    def relativeSortArray(self, arr1: List[int], arr2: List[int]) -> List[int]:
+        rst, s, ct = [], set(arr2), collections.Counter(arr1)
+        for i in arr2: rst += [i] * ct[i]
+        return rst + sorted([i for i in arr1 if i not in s])
+```
+Alternative: counter O(n) solution. | Rt: 36ms |
+```python
+    def relativeSortArray(self, arr1: List[int], arr2: List[int]) -> List[int]:
+        rst, ct = [], collections.Counter(arr1)
+        for i in arr2: rst += [i] * ct.pop(i)
+        for i in range(1001): 
+            if ct[i]: rst += [i] * ct[i]
+        return rst
+```
+Referrence: https://leetcode.com/problems/relative-sort-array/discuss/334570/JavaPython-3-O(1001)-code-similar-to-791-Custom-Sort-String.
+Comment: I learned collections.Counter().pop() from this post, it is really cool. 
+

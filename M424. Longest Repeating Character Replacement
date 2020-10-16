@@ -1,0 +1,27 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer with Slide Window**
+| O(T): O(n) | O(S): O(1) | Rt: 100ms | 
+```python
+    def characterReplacement(self, s: str, k: int) -> int:
+        m = [0] * 26
+        #most_frequent_cnt is the number of most frequent character in so-far visited sequence
+        #st is the start index (pointer) of the sliding window
+        #the size of sliding window is so-far the largest available window bounded by k value
+        rst = st = most_frequent_cnt = 0
+        for i in range(len(s)):
+            index = ord(s[i]) - ord('A')
+            m[index] += 1
+            most_frequent_cnt = max(most_frequent_cnt, m[index])
+            #end (i) - st + 1 is the number of characters been traversed so far
+            #total_cnt - most_frequent_cnt is the number of character that need to be changed
+            #since the i pointer moves step by step, k at most exceed by 1, if is good
+            #the window have two actions: 1. grow; 2. slide; when we have enough k, just grow the window (st stays while i grows); when we exceed k, cannot grow anymore, window slides instead (st and i both move to next, here doesn't shrink the window size)
+            if i - st + 1 - most_frequent_cnt > k:  #slide window   
+                m[ord(s[st]) - ord('A')] -= 1   
+                st += 1
+            #the substring wrapped by the window is a "all-repeated letters" candidate allowing k letters changed within the window. only need to update rst when the window grows
+            else: rst = max(rst, i-st+1)   #grow window
+        return rst
+```
+Referrence: https://leetcode.com/problems/longest-repeating-character-replacement/discuss/181382/Java-Sliding-Window-with-Explanation
+

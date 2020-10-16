@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Mapping Index**
+| O(T): O() | O(S): O() | Rt: 52ms | 
+```python
+    def __init__(self, n_rows: int, n_cols: int):
+        self.row = n_rows
+        self.col = n_cols
+        #take the matrix as a flat list
+        self.len = self.row * self.col
+        self.dt = {}
+
+    def flip(self) -> List[int]:
+        self.len -= 1
+        rand = random.randint(0, self.len)
+        #the random index may redirect to another index, find it if existed
+        index = self.dt.get(rand, rand)
+        #the most important part: redirct current index to an tail item  
+        #each item is just a placeholder, to find its real val, need to check the dict
+        self.dt[rand] = self.dt.get(self.len, self.len)
+        return [index // self.col, index % self.col]
+
+    def reset(self) -> None:
+        self.dt.clear()
+        self.len = self.row * self.col
+```
+Referrence: https://leetcode.com/problems/random-flip-matrix/discuss/154053/Java-AC-Solution-call-Least-times-of-Random.nextInt()-function
+
+

@@ -1,0 +1,59 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: 1584ms | 
+```python
+    def largest1BorderedSquare(self, grid: List[List[int]]) -> int:
+        r, c = len(grid), len(grid[0])
+        l = min(r, c)
+        while l:
+            for i in range(r-l+1):
+                for j in range(c-l+1):
+                    if all(grid[i+k][j] for k in range(l)) and all(grid[i][j+k] for k in range(l)) and all(grid[i+k][j+l-1] for k in range(l)) and all(grid[i+l-1][j+k] for k in range(l)):
+                        return l*l
+            l -= 1
+        return 0
+```
+
+
+**II). DP Up and Left Arms and Probing Square**
+| O(T): O(N^3) | O(S): O(N^2) | Rt: 296ms | 
+```python
+    def largest1BorderedSquare(self, grid: List[List[int]]) -> int:
+        row, col = len(grid), len(grid[0])
+        r, c = row+1, col+1
+        up, left = [[0] * c for _ in range(r)], [[0] * c for _ in range(r)]
+        mx = 0
+        for i in range(1, r):
+            for j in range(1, c):
+                if grid[i-1][j-1]:
+                    up[i][j] = 1 + up[i-1][j]
+                    left[i][j] = 1 + left[i][j-1]
+                    l = min(up[i][j], left[i][j])
+                    for k in range(l, 0, -1):
+                        diag_i, diag_j = i-k, j-k
+                        if all(grid[diag_i][diag_j+a] for a in range(k)) and all(grid[diag_i+a][diag_j] for a in range(k)): 
+                        	mx = max(mx, k); break
+        return mx * mx
+```
+
+Alternative: | Rt: 144ms |
+```python
+    def largest1BorderedSquare(self, grid: List[List[int]]) -> int:
+        row, col = len(grid), len(grid[0])
+        r, c = row+1, col+1
+        up, left = [[0] * c for _ in range(r)], [[0] * c for _ in range(r)]
+        mx = 0
+        for i in range(1, r):
+            for j in range(1, c):
+                if grid[i-1][j-1]:
+                    up[i][j] = 1 + up[i-1][j]
+                    left[i][j] = 1 + left[i][j-1]
+                    l = min(up[i][j], left[i][j])
+                    while l > mx:
+                        if left[i-l+1][j] >= l and up[i][j-l+1] >= l:
+                            mx = l; break
+                        l -= 1
+        return mx * mx
+```
+Referrence: https://leetcode.com/problems/largest-1-bordered-square/discuss/345265/c%2B%2B-beats-100-(both-time-and-memory)-concise-with-algorithm-and-image
+

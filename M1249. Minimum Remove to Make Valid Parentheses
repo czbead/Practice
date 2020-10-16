@@ -1,0 +1,15 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack: Update List**
+| O(T): O(n) | O(S): O(n) | Rt: 92ms | 
+```python
+    def minRemoveToMakeValid(self, s: str) -> str:
+        sl, stack = list(s), []
+        for i, c in enumerate(s):
+            if c == '(': stack.append(i)
+            elif c == ')': 
+                if stack: stack.pop()
+                else: sl[i] = ''
+        for i in stack: sl[i] = ''
+        return ''.join(sl)
+```
+

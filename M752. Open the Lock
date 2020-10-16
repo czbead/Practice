@@ -1,0 +1,26 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS Level Traverse**
+| O(T): O() | O(S): O() | Rt: 684ms | 
+```python
+    def openLock(self, deadends: List[str], target: str) -> int:
+        def genNext(code):
+            arr = []
+            for i in range(4):
+                cur = int(code[i])
+                arr.append(code[:i] + str((cur + 1) % 10) + code[i+1:])
+                arr.append(code[:i] + str((cur - 1) % 10) + code[i+1:])
+            return arr
+        
+        visited, q, step = set(deadends), collections.deque(['0000']), -1
+        while q:
+            #great trick to avoid another shuffle container
+            size, step = len(q), step+1
+            for _ in range(size):
+                cur = q.popleft()
+                if cur == target: return step
+                if cur in visited: continue
+                visited.add(cur)
+                q.extend(genNext(cur))
+        return -1
+```
+Referrence: https://leetcode.com/problems/open-the-lock/discuss/110232/Accepted-PythonJava-BFS-%2B-how-to-avoid-TLE

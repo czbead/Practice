@@ -1,0 +1,98 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack**
+| O(T): O(n) | O(S): O(k) | Rt: 56ms | 
+```python
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        def reverse(arr):
+            dummy = ListNode(-1)
+            cur = dummy
+            while stack:
+                cur.next = stack.pop()
+                cur = cur.next
+            #critical, avoid cycle
+            cur.next = None
+            return dummy.next, cur
+        
+        if not head: return
+        if k == 1: return head
+        dummy = ListNode(-1)
+        tail, cur = dummy, head
+        while True:
+            stack, ct = [], k
+            while cur and ct:
+                stack.append(cur)
+                cur, ct = cur.next, ct-1
+            if ct: 
+                if stack: tail.next = stack[0]
+                break
+            revHead, revTail = reverse(stack)
+            tail.next, tail = revHead, revTail
+        return dummy.next
+```
+
+
+**II). Recursive Reverse**
+| O(T): O(n) | O(S): O(h) | Rt: 48ms | 
+```python
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        if not head or k == 1: return head
+        cur, ct = head, 0
+        while cur and ct < k:
+            cur = cur.next
+            ct += 1
+        if ct < k: return head
+        tail = self.reverseKGroup(cur, k)
+        for _ in range(k):
+            tmp = head.next
+            head.next, tail = tail, head
+            head = tmp
+        return tail
+```
+Referrence: https://leetcode.com/problems/reverse-nodes-in-k-group/discuss/11423/Short-but-recursive-Java-code-with-comments/12134
+
+
+**III). Iterative Reverse**
+| O(T): O(n) | O(S): O(1) | Rt: 56ms | 
+```python
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        if not head or k == 1: return head
+        #get list length
+        cur, ct = head, 0
+        while cur:
+            cur = cur.next
+            ct += 1
+            
+        dummy = ListNode(-1)
+        dummy.next = head
+        tail, cur = dummy, head
+        while ct >= k:
+            for _ in range(k-1):
+                nxt = cur.next
+                cur.next = cur.next.next
+                nxt.next = tail.next
+                tail.next = nxt
+            ct -= k
+            tail, cur = cur, cur.next
+        return dummy.next
+```
+Referrence: https://leetcode.com/problems/reverse-nodes-in-k-group/discuss/11423/Short-but-recursive-Java-code-with-comments/12145
+
+Alternative: | Rt: 48ms |
+```python
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        if not head or k == 1 or not head.next: return head
+        dummy = ListNode(-1)
+        tail, l, r = dummy, head, head
+        while True:
+            ct = 0
+            while r and ct < k:
+                r, ct = r.next, ct+1
+            if ct < k: break
+            st, end = l, r
+            for _ in range(k):
+                nxt = st.next
+                st.next, end, st = end, st, nxt
+            tail.next, tail, l = end, l, r
+        return dummy.next
+```
+Referrence: https://leetcode.com/problems/reverse-nodes-in-k-group/discuss/11491/Succinct-iterative-Python-O(n)-time-O(1)-space

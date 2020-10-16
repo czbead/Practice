@@ -1,0 +1,78 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Deque**
+| O(t): O(n) | O(m): O(n) | Rt: 28ms | 
+```python
+class MyQueue:
+    def __init__(self):
+        self.q = collections.deque([])
+        self.qq = collections.deque([])
+    def push(self, x: int) -> None:
+        self.qq.clear
+        while self.q:
+            self.qq.appendleft(self.q.popleft())
+        self.q.appendleft(x)
+        while self.qq:
+            self.q.appendleft(self.qq.popleft())
+        
+    def pop(self) -> int:
+        return self.q.popleft()
+
+    def peek(self) -> int:
+        return self.q[0]
+
+    def empty(self) -> bool:
+        return False if self.q else True
+```
+
+
+**II). Two Lists**
+| O(t): O(n) | O(m): O(n) | Rt: 28ms | 
+```python
+class MyQueue:
+    def __init__(self):
+        self.l = []
+        self.ll = []
+    def push(self, x: int) -> None:
+        self.ll.clear
+        while self.l:
+            self.ll.append(self.l.pop())
+        self.l.append(x)
+        while self.ll:
+            self.l.append(self.ll.pop())
+        
+    def pop(self) -> int:
+        return self.l.pop()
+
+    def peek(self) -> int:
+        return self.l[-1]
+
+    def empty(self) -> bool:
+        return False if self.l else True
+```
+
+
+**III). One for Read, One for Write**
+| O(t): O(n) | O(m): O(n) | Rt: 24ms | 
+```python
+class MyQueue:
+    def __init__(self):
+        self.inn = []
+        self.out = []
+    def push(self, x: int) -> None:
+        self.inn.append(x)
+        
+    def pop(self) -> int:
+        self.peek()
+        return self.out.pop()
+
+    def peek(self) -> int:
+        if not self.out:
+            while self.inn:
+                self.out.append(self.inn.pop())
+        return self.out[-1]
+
+    def empty(self) -> bool:
+        return not self.inn and not self.out
+```
+Referrence: https://leetcode.com/problems/implement-queue-using-stacks/discuss/64198/Share-my-python-solution-(32ms)
+Comment: imagine you have two cups - inn and out, any water comes in pours into inn cup. When you want to fetch water, you can only fetch water from out cup. Inn cur pour all its water into out cup whenever out cup runs out of water and there is demand for fetching water. Be careful, you can only use up the water in out cup first.

@@ -1,0 +1,16 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Slide Window**
+| O(T): O(n) | O(S): O(1) | Rt: 340ms | 
+```python
+    def numSubarrayBoundedMax(self, A: List[int], L: int, R: int) -> int:
+        rst = count = st = 0; 
+        for i in range(len(A)):
+            if L <= A[i] <= R: 
+                count = i - st + 1
+                rst += count
+            elif A[i] < L: rst += count
+            else: count, st = 0, i+1
+        return rst
+```
+Referrence: https://leetcode.com/problems/number-of-subarrays-with-bounded-maximum/discuss/117595/Short-Java-O(n)-Solution
+

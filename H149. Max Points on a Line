@@ -1,0 +1,64 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Diviation**
+| O(T): O() | O(S): O() | Rt: ms | Wrong
+```python
+    def maxPoints(self, points: List[List[int]]) -> int:
+        if not points: return 0
+        mx, ct = 0, collections.Counter(map(tuple, points))
+        if len(ct) == 1: return len(points)
+        for i, j in ct:
+            tan = {}
+            for x, y in ct:
+                if x == i and y == j: continue
+                if x == i: tan['x'] = tan.get('x', 0) + ct[(x, y)]
+                else: tan[(y-j)/(x-i)] = tan.get((y-j)/(x-i), 0) + ct[(x, y)]
+            mx = max(mx, max(tan.values()) + ct[(i, j)])
+        return mx
+```
+Comment: wrong due to float number precision, cannot pass the last test case [[0,0],[94911151,94911150],[94911152,94911151]]
+
+Alternative: | Rt: 90ms |
+```python
+    def maxPoints(self, points: List[List[int]]) -> int:
+        if not points: return 0
+        mx, ct = 0, collections.Counter(map(tuple, points))
+        if len(ct) == 1: return len(points)
+        for i, j in ct:
+            tan = {}
+            for x, y in ct:
+                if x == i and y == j: continue
+                if x == i: tan['x'] = tan.get('x', 0) + ct[(x, y)]
+                else: 
+                    a, b = y-j, x-i
+                    gcd = math.gcd(a, b)
+                    a, b = a/gcd, b/gcd
+                    tan[(a, b)] = tan.get((a, b), 0) + ct[(x, y)]
+            mx = max(mx, max(tan.values()) + ct[(i, j)])
+        return mx
+```
+
+Triple: with gcd function. | Rt: 116ms |
+```python
+    def maxPoints(self, points: List[List[int]]) -> int:
+        def GCD(a, b):
+            while b:
+                a, b = b, a%b
+            return a
+        
+        if not points: return 0
+        #list item is unhashable, therefore cannot be counted by Counter (dict in nature)
+        mx, ct = 0, collections.Counter(map(tuple, points))
+        if len(ct) == 1: return len(points)
+        for i, j in ct:
+            tan = {}
+            for x, y in ct:
+                if x == i and y == j: continue
+                if x == i: tan['x'] = tan.get('x', 0) + ct[(x, y)]
+                else: 
+                    a, b = y-j, x-i
+                    gcd = GCD(a, b)
+                    a, b = a/gcd, b/gcd
+                    tan[(a, b)] = tan.get((a, b), 0) + ct[(x, y)]
+            mx = max(mx, max(tan.values()) + ct[(i, j)])
+        return mx
+```

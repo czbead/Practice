@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). In Order Traverse**
+| O(T): O(n) | O(S): O(h) | Rt: 108ms | 
+```python
+    def recoverTree(self, root: TreeNode) -> None:
+        def inorder(node):
+            if not node: return
+            inorder(node.left)
+            #spot node which is out of order
+            #the first appearing swaped node must be greater than the next node 
+            if not self.first and node.val < self.pre.val: self.first = self.pre
+            #the second appearing swaped node must be smaller than the pre node
+            if self.first and node.val < self.pre.val: self.second = node
+            self.pre = node
+            inorder(node.right)
+            
+        self.pre, self.first, self.second = TreeNode(-float('inf')), None, None
+        inorder(root)
+        # print(swaps)
+        tmpv = self.first.val
+        self.first.val = self.second.val
+        self.second.val = tmpv
+```
+Referrence: https://leetcode.com/problems/recover-binary-search-tree/discuss/32535/No-Fancy-Algorithm-just-Simple-and-Powerful-In-Order-Traversal
+Comment: I don't quite understand this solution actually. Take a careful look at the two conditions, once we got the first node, the next one is natually the second which means the two nodes appear altogether next to each other. But the second condition may keep updating afterwards.
+
+Others: iterative solution based on this idea - https://leetcode.com/problems/recover-binary-search-tree/discuss/32535/No-Fancy-Algorithm-just-Simple-and-Powerful-In-Order-Traversal/154315
+

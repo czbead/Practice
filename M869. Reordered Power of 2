@@ -1,0 +1,27 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: 32ms | 
+```python
+    def reorderedPowerOf2(self, N: int) -> bool:
+        if not N & (N-1): return True
+        base, nstr = [0] * 10, str(N)
+        for i in nstr: base[ord(i) - ord('0')] += 1 
+        l = len(nstr)
+        l, r = int(math.log(10**(l-1), 2))+1, int(math.log(10**l - 1, 2))
+        
+        for i in range(l, r+1):
+            candidate = str(1 << i)
+            tmp, valid = base[:], True
+            for i in candidate:
+                index = ord(i) - ord('0')
+                tmp[index] -= 1
+                if tmp[index] < 0: valid = False; break
+            if valid: return True
+        return False
+```
+
+Alternative: | Rt: 28ms |
+```python
+    def reorderedPowerOf2(self, N: int) -> bool:
+        return sorted(str(N)) in [sorted(str(1 << i)) for i in range(30)]
+```

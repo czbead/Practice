@@ -1,0 +1,150 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Collect Then Redirect**
+| O(T): O(n) | O(S): O(n) | Rt: 84ms | 
+```python
+    def increasingBST(self, root: TreeNode) -> TreeNode:
+        def inorder(node, rst):
+            if not node: return
+            inorder(node.left, rst)
+            rst.append(node)
+            inorder(node.right, rst)
+            
+        lst = []
+        inorder(root, lst)
+        for i in range(len(lst)-1): 
+            lst[i].left, lst[i].right = None, lst[i+1]
+        #critical, or may lead to dead lock TLE
+        lst[-1].left = lst[-1].right = None
+        return lst[0] if lst else None
+```
+Comment: if you plan to redirect the node in a tree, please remember redirect all of them altogether explicitly. If you just redirect the right child, the new flow and original flow will mess up each other (cross referrence and easily get stuck in dead lock). If you forget redirct the last node, same problem. 
+
+
+**II). Generator with Recursion**
+| O(T): O(n) | O(S): O(lgn) | Rt: 92ms | 
+```python
+    def increasingBST(self, root: TreeNode) -> TreeNode:
+        def inorder(node):
+            if node.left: yield from inorder(node.left)
+            yield node
+            if node.right: yield from inorder(node.right)
+            
+        genNode = inorder(root)
+        head = a = next(genNode)
+        for b in genNode:
+            a.left, a.right, a = None, b, b
+        a.left = a.right = None
+        return head
+```
+
+
+**III). Generator with Stack**
+| O(T): O(n) | O(S): O(1) | Rt: 84ms | 
+```python
+    def increasingBST(self, root: TreeNode) -> TreeNode:
+        def stackL(node):
+            stack = []
+            while node or stack:
+                while node: 
+                    stack.append(node)
+                    node = node.left
+                node = stack.pop()
+                yield node
+                node = node.right
+            
+        genNode = stackL(root)
+        head = a = next(genNode)
+        for b in genNode:
+            a.left, a.right, a = None, b, b
+        a.left = a.right = None
+        return head
+```
+
+
+**IV). Recursion**
+| O(T): O(n) | O(S): O(lgn) | Rt: 84ms | 
+```python
+    def increasingBST(self, root: TreeNode) -> TreeNode:
+        def dfs(node, pre):
+            if not node: return pre
+            rst = dfs(node.left, node)
+            #this pre is not given a value in current round, means it remains the value of last round -- the root of upper level
+            node.left, node.right = None, dfs(node.right, pre)
+            #we want to return the first node while it is in the deepest level of the recursion stack, therefore we need to pass it to the top of the stack.
+            return rst
+        
+        return dfs(root, None)
+```
+Comment: two things extremely hard to understand. First, how the pre node work? Second, how the return work? 
+
+First: if the current node is left child, the pre node is its parent (extremely easy to understand); if the current node is a parent node, a parent node is a left child or right child to some other parent node (fairly easy to understand), therefore we skip this case; The hard point is when the current node is a right child, the pre node is actually not updated in current round (no pre = XXX statement in the recursion); Therefore the pre node remains what it is in the last round -- the pre node is the parent of the parent of current right child. The key point here is: there are two kinds of nodes in a tree: left and right (parent is left child or right child of other parent node). The pre node update every single round for left nodes. However, the pre node update every two rounds for the right nodes. Therefore, the pre of left node if the parent while the pre of the right node is the parent of the parent. 
+
+Second: I translate the return as: node.right = dfs(rest of the tree), node = node.right, return node. There is only one true return statement: if not node: return pre. So, for the left node it return the parent and for the right node it returns the parent of its parent. In the process, the recursion function cut off the left-most node each at a time, the node being cut off will be concate to a right-extending tree. Keep one thing in your mind: Think it as it has two trees -- the old one retrieves while the new one grows. The current node is the gorwing-edge of the new tree while the pre is the left-most waitting-to-be-cut edge of the original tree. Each time we return the edge of the original tree because we need to traverse it, we cannot lose track of it. Why we can return pre as the finally result? The final result is in the deepest level of the stack, a recursion is a onion-peel process, we get the deepest core and then return. Therefore we will return the first not-None pre, it is the left-most node in the original tree. Could we not return this pre node? this is a recursion function, if you don't save it in a variable or not return (they are the same), you will forever lose it. If not return, you need one more variable to keep track of it 
+
+Alternative: compress in one function.  | Rt: 76ms |
+```python
+    def increasingBST(self, root: TreeNode, pre=None) -> TreeNode:
+        if not root: return pre
+        rst = self.increasingBST(root.left, root)
+        root.left, root.right = None, self.increasingBST(root.right, pre)
+        return rst
+
+```
+Referrence: https://leetcode.com/problems/increasing-order-search-tree/discuss/165885/C%2B%2BJavaPython-Self-Explained-5-line-O(N)
+
+
+**V). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 92ms | 
+```python
+    def increasingBST(self, root: TreeNode, pre=None) -> TreeNode:
+        def dfs(node, pre, head):
+            if not node: return
+            dfs(node.left, pre, head)
+            if head[0] is None: head[0] = node
+            if pre[0] is not None: pre[0].right = node
+            node.left, pre[0] = None, node
+            dfs(node.right, pre, head)
+            
+        head = [None]
+        dfs(root, [None], head)
+        return head[0]
+```
+Referrence: https://leetcode.com/problems/increasing-order-search-tree/discuss/165870/Java-Simple-InOrder-Traversal-with-Explanation
+Comment: in this solution, the pre and current node reversed order comparing the last solution. 
+
+
+**VI). Pure Stack Iteration**
+| O(T): O(n) | O(S): O(1) | Rt: 84ms | 
+```python
+    def increasingBST(self, root: TreeNode) -> TreeNode:
+        pre, head, stack = None, None, []
+        while root or stack:
+            while root: 
+                stack.append(root)
+                root = root.left
+            root = stack.pop()
+            if head is None: head = root
+            if pre is not None: pre.right = root
+            root.left, pre, root = None, root, root.right
+        return head
+```
+
+
+**VII). Visit State Iteration**
+| O(T): O(n) | O(S): O(1) | Rt: 88ms | 
+```python
+    def increasingBST(self, root: TreeNode, pre=None) -> TreeNode:
+        head, rst, s = None, None, [(root, 0)]
+        while s:
+            node, visited = s.pop()
+            if not node: continue
+            if not visited: s.extend([(node.right, 0), (node, 1), (node.left, 0)])
+            else: 
+                if head is None: head = node
+                if pre is not None: pre.right = node
+                pre, node.left = node, None
+        return head
+```
+
+
+

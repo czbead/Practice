@@ -1,0 +1,84 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter**
+| O(T): O(n) | O(S): O(n) | Rt: 92ms | 
+```python
+    def firstUniqChar(self, s: str) -> int:
+        ct = collections.Counter(s)
+        for i, v in enumerate(s):
+            if ct[v] == 1: return i
+        return -1
+```
+Alternative:  | O(S): O(1) | Rt: 172ms |
+```python
+    def firstUniqChar(self, s: str) -> int:
+        base, a = ord('a'), [0] * 26
+        for i in s: a[ord(i) - base] += 1
+        for i, v in enumerate(s): 
+            if a[ord(v) - base] == 1: return i
+        return -1
+```
+
+
+**II). Limited State**
+| O(T): O(n*n) | O(S): O(n) | Rt: 40ms | 
+```python
+    def firstUniqChar(self, s: str) -> int:
+        a = 'abcdefghijklmnopqrstuvwxyz'
+        b = [s.find(i) for i in a if s.count(i) == 1]
+        return min(b) if b else -1
+```
+Alternative: | O(T): O(n) | O(S): O(n) | Rt: 52ms |
+```python
+    def firstUniqChar(self, s: str) -> int:
+        a = 'abcdefghijklmnopqrstuvwxyz'
+        ct = collections.Counter(s)
+        b = [s.find(i) for i in a if ct[i] == 1]
+        return min(b) if b else -1
+```
+
+
+**III). Find**
+| O(T): O(n*n) | O(S): O(1) | Rt: 120ms | 
+```python
+    def firstUniqChar(self, s: str) -> int:
+        for i, v in enumerate(s):
+            if s.find(v) == s.rfind(v): return i
+        return -1
+```
+
+
+**IV). Set Find**
+| O(T): O(n * n) | O(S): O(n) | Rt: 44ms | 
+```python
+    def firstUniqChar(self, s: str) -> int:
+        rst = float('inf')
+        for i in set(s):
+            if s.count(i) == 1:
+                rst = min(rst, s.find(i))
+        return -1 if rst == float('inf') else rst
+```
+Alternative: | Rt: 68ms |
+```python
+    def firstUniqChar(self, s: str) -> int:
+        rst, ct = float('inf'), collections.Counter(s)
+        for i in set(s):
+            if ct[i] == 1:
+                rst = min(rst, s.find(i))
+        return -1 if rst == float('inf') else rst
+```
+
+**V). One Pass**
+| O(T): O(n) | O(S): O(n) | Rt: 92ms | 
+```python
+    def firstUniqChar(self, s: str) -> int:
+        dt, seen = {}, set()
+        for i, v in enumerate(s):
+            if v not in seen: 
+                seen.add(v)
+                dt[v] = i
+            elif v in dt: del dt[v]
+        return min(dt.values()) if dt else -1
+```
+Referrence: https://leetcode.com/problems/first-unique-character-in-a-string/discuss/169270/Simple-Python
+Comment: smart and clean 1 pass solution, I modified the del with dt[v] = float('inf'), however seem brings no improvement. Maybe del is not as slow as I thought. 
+

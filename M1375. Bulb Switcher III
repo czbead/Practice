@@ -1,0 +1,13 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cover Range by Record Max**
+| O(T): O(n) | O(S): O(1) | Rt: 452ms | 
+```python
+    def numTimesAllBlue(self, light: List[int]) -> int:
+        rst, curmx = 0, 1
+        for i in range(len(light)):
+            curmx = max(curmx, light[i])
+            if curmx <= i+1: rst += 1
+        return rst
+```
+
+

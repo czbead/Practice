@@ -1,0 +1,17 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Tree Partition 3 Group**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def btreeGameWinningMove(self, root: TreeNode, n: int, x: int) -> bool:
+        def count(node, lr, X):
+            if not node: return 0
+            l, r = count(node.left, lr, X), count(node.right, lr, X)
+            if node.val == X: lr[0], lr[1] = l, r
+            return l + r + 1
+        
+        lr = [0, 0]
+        count(root, lr, x)
+        a, b, c = lr[0], lr[1], n-sum(lr)-1
+        return max(a, b, c) > n / 2
+```
+Referrence: https://leetcode.com/problems/binary-tree-coloring-game/discuss/350570/JavaC%2B%2BPython-Simple-recursion-and-Follow-Up

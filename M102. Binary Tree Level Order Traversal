@@ -1,0 +1,56 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Row Wise BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def levelOrder(self, root: TreeNode) -> List[List[int]]:
+        rst, s = [], [root] if root else None
+        while s:
+            rst.append([node.val for node in s])
+            s = [child for node in s for child in (node.left, node.right) if child]
+        return rst
+```
+Alternative: pair wise BFS. | Rt: 36ms |
+```python
+    def levelOrder(self, root: TreeNode) -> List[List[int]]:
+        rst, s = [], [(root, 0)]
+        while s:
+            node, level = s.pop()
+            if not node: continue
+            if len(rst) <= level: rst.append([])
+            rst[level].append(node.val)
+            #the order matters
+            s.append((node.right, level+1))
+            s.append((node.left, level+1))
+        return rst
+```
+Triple: using queue. | Rt: 48ms |
+```python
+    def levelOrder(self, root: TreeNode) -> List[List[int]]:
+        rst, q = [], collections.deque([root]) if root else None
+        while q:
+            row, size = [], len(q)
+            for _ in range(size):
+                cur = q.popleft()
+                row.append(cur.val)
+                if cur.left: q.append(cur.left) 
+                if cur.right: q.append(cur.right)
+            rst.append(row)
+        return rst
+```
+
+
+**II). Recursion DFS**
+| O(T): O(n) | O(S): O(h) | Rt: 20ms | 
+```python
+    def levelOrder(self, root: TreeNode) -> List[List[int]]:
+        def dfs(node, depth, rst):
+            if not node: return
+            if len(rst) <= depth: rst.append([])
+            rst[depth].append(node.val)
+            dfs(node.left, depth+1, rst)
+            dfs(node.right, depth+1, rst)
+            
+        rst = []
+        dfs(root, 0, rst)
+        return rst
+```

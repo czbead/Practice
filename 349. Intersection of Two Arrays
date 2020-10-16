@@ -1,0 +1,48 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Set Intersection**
+| O(t): O(n+m) | O(m): O(n+m) | Rt: 28ms | 
+```python
+    def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        return set(nums1) & set(nums2)
+```
+Alternative: | Rt: 44ms |
+```python
+    def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        return set(nums1).intersection(set(nums2))
+```
+
+
+**II). Counter Intersection**
+| O(t): O(n+m) | O(m): O(n+m) | Rt: 48ms | 
+```python
+    def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        ct = collections.Counter
+        return (ct(nums1) & ct(nums2)).keys()
+```
+
+
+**III). Naive**
+| O(t): O(n+m) | O(m): O(n) | Rt: 36ms | 
+```python
+    def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        rst, n2 = set(), set(nums2)
+        for i in nums1:
+            if i in n2: rst.add(i)
+        return rst
+```
+
+
+**IV). Brute Force**
+| O(t): O(n*m) | O(m): O(1) | Rt: 68ms | 
+```python
+    def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        rst = []
+        for i in nums1:
+            if i in nums2 and i not in rst:
+                rst.append(i)
+        return rst
+```
+
+
+Others: sort-based solution, even with binary search. I think is unnecessary for this problem.
+

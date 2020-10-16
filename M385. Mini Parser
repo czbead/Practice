@@ -1,0 +1,21 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cannot Pass**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+    def deserialize(self, s: str) -> NestedInteger: 
+        rst, v, stack, s = None, 0, [], s.replace(',', '')
+        for i in s:
+            if i.isdigit(): v = v * 10 + int(i)
+            else:
+                if stack and v: 
+                    stack[-1].setInteger(v)
+                    v = 0
+                if i == '[':
+                    new = NestedInteger()
+                    if stack: stack[-1].add(new)
+                    stack.append(new)
+                else: rst = stack.pop()    
+        return rst if rst else NestedInteger(v)
+```
+Comment: the setInteger method seems fake, it doesn't work. All solution use the constructor to set the integer. 
+

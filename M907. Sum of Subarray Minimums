@@ -1,0 +1,18 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Monotone Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 468ms | 
+```python
+    def sumSubarrayMins(self, A: List[int]) -> int:
+        rst, stack = 0, []  #stack is non-desc sequence
+        A, M = [0] + A + [0], 10 ** 9 + 7
+        for i, v in enumerate(A):
+            while stack and A[stack[-1]] > v:
+            	#j item as the minimum of the longest consecutive range 
+                j = stack.pop()
+                #how many subarray variations in total? left_amount * right_amount
+                rst = (rst + A[j] * (i - j) * (j - stack[-1])) % M
+            stack.append(i)
+        return rst
+```
+Referrence: https://leetcode.com/problems/sum-of-subarray-minimums/discuss/170776/Python-Simple-Stack-O(n)-Solution-10-lines
+

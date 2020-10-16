@@ -1,0 +1,16 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O() | O(S): O() | Rt: 28ms | 
+```python
+    def toLowerCase(self, str: str) -> str:
+        tolower = lambda x: chr(ord(x) + 32) if 65 <= ord(x) <= 90 else x
+        return ''.join([tolower(i) for i in str])
+```
+Alternative: | Rt: 28ms |
+```python
+    def toLowerCase(self, str: str) -> str:
+        tolower = lambda x: chr(x + 32) if 65 <= x <= 90 else chr(x)
+        return ''.join([tolower(ord(i)) for i in str])
+```
+
+

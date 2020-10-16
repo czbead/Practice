@@ -1,0 +1,59 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Double Linked List with HashMap**
+| O(T): O() | O(S): O() | Rt: 232ms | 
+```python
+class Node:
+    def __init__(self, k, v, pre=None, nxt=None):
+        self.key = k
+        self.val = v
+        self.pre = pre
+        self.next = nxt
+        
+class DLinkedList:
+    def __init__(self):
+        self.head = Node(0, 0)
+        self.tail = Node(0, 0)
+        self.head.next, self.tail.pre = self.tail, self.head
+        
+    def addHead(self, node):
+        self.head.next.pre = node
+        node.pre, node.next = self.head, self.head.next
+        self.head.next = node
+        
+    def remove(self, node):
+        node.pre.next = node.next
+        node.next.pre = node.pre
+        
+    def moveToHead(self, node):
+        self.remove(node)
+        self.addHead(node)
+        
+    def popTail(self):
+        tailNode = self.tail.pre
+        self.remove(self.tail.pre)
+        return tailNode
+
+class LRUCache:
+
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.dt = {}
+        self.dLinkedList = DLinkedList()
+
+    def get(self, key: int) -> int:
+        if key not in self.dt: return -1
+        node = self.dt[key]
+        self.dLinkedList.moveToHead(node)
+        return node.val
+
+    def put(self, key: int, value: int) -> None:
+        if key in self.dt: self.dLinkedList.remove(self.dt[key])
+        node = Node(key, value)
+        self.dt[key] = node
+        self.dLinkedList.addHead(node)
+        if len(self.dt) > self.capacity:
+            tail = self.dLinkedList.popTail()
+            del self.dt[tail.key]
+```
+Referrence: https://leetcode.com/problems/lru-cache/discuss/45911/Java-Hashtable-%2B-Double-linked-list-(with-a-touch-of-pseudo-nodes)
+Comment: O(1) time delete and add (remove node; pop tail; add to head; should be double linked list); O(1) time find and get (should be hashMap); 

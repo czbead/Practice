@@ -1,0 +1,152 @@
+def bubbleSort(arr):
+    l = len(arr)
+    for i in range(l):
+        for j in range(l-1-i):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+    return arr
+
+def selectionSort(arr):
+    l = len(arr)
+    for i in range(l):
+        min_index = i
+        for j in range(i, l):
+            if arr[j] < arr[min_index]:
+                min_index = j
+        if min_index != i:
+            arr[i], arr[min_index] = arr[min_index], arr[i]
+    return arr
+
+def insertSort(arr):
+    for i in range(1, len(arr)):
+        cur, j = arr[i], i-1
+        while j >= 0 and arr[j] > cur:
+            arr[j+1], j = arr[j], j-1
+        arr[j+1] = cur
+    return arr
+
+def quickSortRight(arr):
+    def quickSelect(arr, l, r):
+        if l >= r: return
+        m = partition(arr, l, r)
+        quickSelect(arr, l, m-1)
+        quickSelect(arr, m+1, r)
+
+    def partition(arr, l, r):
+        left, right = l, r-1
+        while left <= right:
+            if arr[left] <= arr[r]: left += 1
+            elif arr[right] >= arr[r]: right -= 1
+            else:
+                arr[left], arr[right] = arr[right], arr[left]
+                left, right = left+1, right-1
+        arr[left], arr[r] = arr[r], arr[left]
+        return left
+
+    quickSelect(arr, 0, len(arr)-1)
+    return arr
+
+import random
+def quickSortRandom(arr):
+    def quickSelect(arr, l, r):
+        if l >= r: return
+        m = partition(arr, l, r)
+        quickSelect(arr, l, m-1)
+        quickSelect(arr, m+1, r)
+
+    def partition(arr, l, r):
+        ra = random.randint(l, r)
+        arr[ra], arr[r] = arr[r], arr[ra]
+        left, right = l, r-1
+        while left <= right:
+            if arr[left] <= arr[r]: left += 1
+            elif arr[right] >= arr[r]: right -= 1
+            else:
+                arr[left], arr[right] = arr[right], arr[left]
+                left, right = left+1, right-1
+        arr[left], arr[r] = arr[r], arr[left]
+        return left
+
+    quickSelect(arr, 0, len(arr)-1)
+    return arr 
+
+import random
+def quickSortLomuto(arr):
+    def quickSelect(arr, l, r):
+        if l >= r: return
+        m = partition(arr, l, r)
+        quickSelect(arr, l, m-1)
+        quickSelect(arr, m+1, r)
+
+    def partition(arr, l, r):
+        ra = random.randint(l, r)
+        arr[ra], arr[r] = arr[r], arr[ra]
+        left = l
+        for right in range(l, r):
+            if arr[right] < arr[r]:
+                arr[left], arr[right] = arr[right], arr[left]
+                left += 1
+        arr[left], arr[r] = arr[r], arr[left]
+        return left
+
+    quickSelect(arr, 0, len(arr)-1)
+    return arr
+
+def mergeSort(arr):
+    def merge(a, b):
+        rst, la, lb = [], len(a), len(b)
+        i = j = 0
+        while i < la and j < lb:
+            if a[i] <= b[j]:
+                rst.append(a[i])
+                i += 1
+            else:
+                rst.append(b[j])
+                j += 1
+        if i < la: rst += a[i:]
+        if j < lb: rst += b[j:]
+        return rst
+
+    l = len(arr)
+    if l <= 1: return arr
+    m = l // 2
+    left = mergeSort(arr[:m])
+    right = mergeSort(arr[m:])
+    return merge(left, right)
+
+def iterMergeSort(arr):
+    def merge(a, b):
+        rst, la, lb = [], len(a), len(b)
+        i = j = 0
+        while i < la and j < lb:
+            if a[i] <= b[j]:
+                rst.append(a[i])
+                i += 1
+            else:
+                rst.append(b[j])
+                j += 1
+        if i < la: rst += a[i:]
+        if j < lb: rst += b[j:]
+        return rst
+
+    step, l = 1, len(arr)
+    while step < l:
+        left = 0
+        while left < l:
+            mid = left + step
+            right = min(left + step*2, l)
+            arr[left: right] = merge(arr[left: mid], arr[mid: right])
+            left = right
+        step *= 2
+    return arr
+
+
+a = [83, 2, 12, 0, 23, 12, 76, 28, 45, 92, 61, 54, 47, 36, 7]
+print(bubbleSort(a))
+print(selectionSort(a))
+print(insertSort(a))
+print(quickSortRight(a))
+print(quickSortRandom(a))
+print(quickSortLomuto(a))
+print(mergeSort(a))
+print(iterMergeSort(a))

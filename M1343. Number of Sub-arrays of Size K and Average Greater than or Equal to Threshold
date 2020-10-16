@@ -1,0 +1,25 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sliding Window**
+| O(T): O(n) | O(S): O(1) | Rt: 692ms | 
+```python
+    def numOfSubarrays(self, arr: List[int], k: int, threshold: int) -> int:
+        rst = summ = st = 0
+        for i in range(len(arr)):
+            summ += arr[i]
+            if i - st + 1 == k: 
+                if summ / k >= threshold: rst += 1
+                summ -= arr[st]
+                st += 1
+        return rst
+```
+
+
+**II). Prefix Sum**
+| O(T): O(n) | O(S): O(n) | Rt: 692ms | 
+```python
+        l = len(arr)
+        presum = [0] * (l+1)
+        for i in range(l): presum[i+1] = presum[i] + arr[i]
+        return sum(presum[i] - presum[i-k] >= k * threshold for i in range(k, l+1))
+```
+

@@ -1,0 +1,42 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Balance Move in Both Direction**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def judgeCircle(self, moves: str) -> bool:
+        ct = collections.Counter(moves)
+        return ct['U'] == ct['D'] and ct['R'] == ct['L']
+```
+Alternative: | Rt: 32ms |
+```python
+    def judgeCircle(self, moves: str) -> bool:
+        return moves.count('L') == moves.count('R') and moves.count('U') == moves.count('D')
+```
+Alternative: | Rt: 52ms |
+```python
+    def judgeCircle(self, moves: str) -> bool:
+        dt = collections.defaultdict(int)
+        for i in moves: dt[i] += 1
+        return dt['U'] == dt['D'] and dt['L'] == dt['R']
+```
+
+
+**II). Count in Both Direction**
+| O(T): O(n) | O(S): O(1) | Rt: 56ms | 
+```python
+    def judgeCircle(self, moves: str) -> bool:
+        ud = lr = 0
+        for i in moves:
+            if i == 'U': ud += 1
+            elif i == 'D': ud -= 1
+            elif i == 'L': lr += 1
+            elif i == 'R': lr -= 1
+        return ud == lr == 0
+```
+Alternative: with the help of complex number. | Rt: 56ms |
+```python
+    def judgeCircle(self, moves: str) -> bool:
+        dt = {"U": 1, 'D': -1, "L": 1j, "R": -1j}
+        return sum(dt[i] for i in moves) == 0
+```
+Referrence: https://leetcode.com/problems/robot-return-to-origin/discuss/106393/2-Lines-Python/108728
+

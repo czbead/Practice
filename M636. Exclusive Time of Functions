@@ -1,0 +1,22 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 64ms | 
+```python
+    def exclusiveTime(self, n: int, logs: List[str]) -> List[int]:
+        rst, stack, pre = [0] * n, [], 0
+        for i in logs:
+            arr = i.split(':')
+            fid, time = int(arr[0]), int(arr[-1])
+            if arr[1] == "start":
+                #nested case
+                if stack: rst[stack[-1]] += time - pre
+                stack.append(fid)
+                pre = time
+            else:
+                rst[stack.pop()] += time - pre + 1
+                pre = time + 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/exclusive-time-of-functions/discuss/105062/Java-Stack-Solution-O(n)-Time-O(n)-Space
+
+

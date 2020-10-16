@@ -1,0 +1,34 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n ^ 3) | O(S): O(1) | Rt: 168ms | 
+```python
+    def largestTriangleArea(self, points: List[List[int]]) -> float:
+        rst, l = 0, len(points)
+        for i in range(l - 2):
+            for j in range(i + 1, l - 1):
+                for k in range(j + 1, l):
+                    ax, ay, bx, by, cx, cy = *points[i], *points[j], *points[k]
+                    area = 0.5 * abs(ax*by + bx*cy  + cx*ay -  ax*cy - bx*ay - cx*by)
+                    rst = max(rst, area)
+        return rst
+```
+Alternative: lambda fashion.  | Rt: 180ms |
+```python
+    def largestTriangleArea(self, points: List[List[int]]) -> float:
+        getArea = lambda a, b, c: 0.5 * abs(a[0]*b[1] + b[0]*c[1] + c[0]*a[1] - a[0]*c[1] - b[0]*a[1] - c[0]*b[1])
+        rst, l = 0, len(points)
+        for i in range(l - 2):
+            for j in range(i + 1, l - 1):
+                for k in range(j + 1, l):
+                    rst = max(rst, getArea(points[i], points[j], points[k]))
+        return rst
+```
+Triple: itertools.combinations().  | Rt: 148ms |
+```python
+    def largestTriangleArea(self, points: List[List[int]]) -> float:
+        getArea = lambda a, b, c: 0.5 * abs(a[0]*b[1] + b[0]*c[1] + c[0]*a[1] - a[0]*c[1] - b[0]*a[1] - c[0]*b[1])
+        return max(getArea(a, b, c) for a, b, c in itertools.combinations(points, 3))
+```
+
+Others: Boundary check solution - https://leetcode.com/problems/largest-triangle-area/discuss/122711/C++JavaPython-Solution-with-Explanation-and-Prove/121668 
+

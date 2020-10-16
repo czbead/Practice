@@ -1,0 +1,59 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). All Dimension Equality**
+| O(t): O(n) | O(m): O(n) | Rt: 32ms | 
+```python
+    def wordPattern(self, pattern: str, str: str) -> bool:
+        words = str.split()
+        return len(words) == len(pattern) and len(set(pattern)) == len(set(words)) == len(set(zip(pattern, words)))
+```
+
+
+**II). Two Dict**
+| O(t): O(n) | O(m): O(n) | Rt: 24ms | 
+```python
+    def wordPattern(self, pattern: str, str: str) -> bool:
+        words = str.split()
+        if len(words) != len(pattern): return False
+        dt, ds = {}, {}	
+        for i, j in zip(pattern, words):
+            if i not in dt: dt[i] = j
+            elif dt[i] != j: return False
+            if j not in ds: ds[j] = i
+            elif ds[j] != i: return False
+        return True
+```
+Alternative: | Rt: 28ms |
+```python
+    def wordPattern(self, pattern: str, str: str) -> bool:
+        lst = str.split()
+        if len(lst) != len(pattern): return False
+        dt, ds = {}, {}
+        for ind, (i, j) in enumerate(zip(pattern, lst)):
+            if dt.get(i, -1) != ds.get(j, -1): return False
+            dt[i] = ds[j] = ind
+        return True
+```
+
+
+**III). Find**
+| O(t): O(n*n) | O(m): O(n) | Rt: 28ms | 
+```python
+    def wordPattern(self, pattern: str, str: str) -> bool:
+        lst = str.split()
+        return list(map(lst.index, lst)) == list(map(pattern.find, pattern))		
+```
+
+
+**IV). One Dict**
+| O(t): O(n) | O(m): O(n) | Rt: 28ms | 
+```python
+    def wordPattern(self, pattern: str, str: str) -> bool:
+        lst = str.split()
+        if len(lst) != len(pattern) or len(set(lst)) != len(set(pattern)): return False
+        dt = {}
+        for i, j in zip(lst, pattern):
+            if i not in dt: dt[i] = j
+            elif dt[i] != j: return False
+        return True
+```
+

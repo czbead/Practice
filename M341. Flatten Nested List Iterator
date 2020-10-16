@@ -1,0 +1,22 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack Nested List and Pop**
+| O(T): O(n) | O(S): O(n) | Rt: 68ms | 
+```python
+class NestedIterator:
+    def __init__(self, nestedList: [NestedInteger]):
+        self.lst = []
+        while nestedList:
+            self.lst.append(nestedList.pop())
+    
+    def next(self) -> int:
+        return self.lst.pop().getInteger()
+    
+    def hasNext(self) -> bool:
+        while self.lst and not self.lst[-1].isInteger():
+            cur = self.lst.pop().getList()
+            while cur: self.lst.append(cur.pop())
+        if self.lst and self.lst[-1].isInteger(): return True
+        return False
+```
+https://leetcode.com/problems/flatten-nested-list-iterator/discuss/80147/Simple-Java-solution-using-a-stack-with-explanation
+Comment: bottom-up DFS solution.

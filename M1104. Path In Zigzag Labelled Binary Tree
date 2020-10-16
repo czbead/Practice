@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Flip the Index on each Level**
+| O(T): O(lgn) | O(S): O(1) | Rt: 32ms | 
+```python
+    def pathInZigZagTree(self, label: int) -> List[int]:
+        rst, level = [label], int(math.log(label, 2)) + 1 
+        while level - 1: 
+            level -= 1
+            nxt = rst[-1] // 2
+            #start index of level is (1 << (level-1))
+            #ending index of level is (1 << level) - 1
+            nxt = (1 << (level-1)) + (1 << level) - 1 - nxt
+            rst.append(nxt)
+        rst.reverse()
+        return rst
+```
+
+Alternative: | Rt: 24ms |
+```python
+    def pathInZigZagTree(self, label: int) -> List[int]:
+        rst, mx = [label], 1
+        #find the min index of next row
+        while mx <= label: mx <<= 1
+        while rst[-1] != 1: 
+            indsum =  mx-1 + mx//2
+            rst.append((indsum - rst[-1]) >> 1)
+            mx >>= 1
+        rst.reverse()
+        return rst
+```
+Referrence: https://leetcode.com/problems/path-in-zigzag-labelled-binary-tree/discuss/323293/C%2B%2B-O(log-n)

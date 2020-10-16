@@ -1,0 +1,106 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking**
+| O(T): O() | O(S): O(h) | Rt: 32ms | 
+```python
+    def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+        def backtrack(nums, path, st, end, rst):
+            rst.append(path[:])
+            for i in range(st, end):
+                #avoid duplicate, do not iterate duplicate st element, only go with the first
+                if i == st or nums[i] != nums[i-1]:
+                    backtrack(nums, path + [nums[i]], i+1, end, rst)
+        
+        nums.sort()
+        rst = []
+        backtrack(nums, [], 0, len(nums), rst)
+        return rst
+```
+
+
+**II). Iterative Append**
+| O(T): O() | O(S): O() | Rt: 24ms | 
+```python
+    def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+        rst, row = [[]], []
+        nums.sort()
+        for i in range(len(nums)):
+            if i == 0 or nums[i] != nums[i-1]:
+                row = [j + [nums[i]] for j in rst]
+            else:  #duplicate situation, only traverse the last same duplicate row result
+                row = [j + [nums[i]] for j in row]
+            rst += row
+        return rst
+```
+Referrence: https://leetcode.com/problems/subsets-ii/discuss/30166/Simple-python-solution-without-extra-space./172501
+Alternative: | Rt: 20ms |
+```python
+    def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+        rst, size = [[]], 0
+        nums.sort()
+        for i in range(len(nums)):
+            if i == 0 or nums[i] != nums[i-1]: st = 0
+            else: st = end  #end is the length of last round
+            end = len(rst)
+            for j in range(st, end): rst.append(rst[j] + [nums[i]])
+        return rst
+```
+Referrence: https://leetcode.com/problems/subsets-ii/discuss/30137/Simple-iterative-solution
+Triple: | Rt: 28ms |
+```python
+    def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+        nums.sort()
+        rst, dt = [[]], {}
+        for i in nums:
+            st, l = dt.get(i, 0), len(rst)
+            rst += [j + [i] for j in rst[st:]]
+            dt[i] = l
+        return rst
+```
+Referrence: https://leetcode.com/problems/subsets-ii/discuss/30305/Simple-python-solution-(DFS)./252621
+Forth: | Rt: 36ms |
+```python
+    def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+        nums.sort()
+        rst, dt = [[]], {}
+        for i in nums:
+            st, l = dt.get(i, 0), len(rst)
+            rst += [rst[j] + [i] for j in range(st, l)]
+            dt[i] = l
+        return rst
+```
+
+
+**III). No Sort Iteration**
+| O(T): O() | O(S): O() | Rt: 24ms | 
+```python
+    def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+        ct = collections.Counter(nums)
+        rst = [[]]
+        for k in ct:
+            tmp = rst[:]  #deep copy
+            for i in range(ct[k]):
+                rst += [j + [k]*(i+1) for j in tmp]
+        return rst
+```
+Referrence: https://leetcode.com/problems/subsets-ii/discuss/30168/C%2B%2B-solution-and-explanation
+Alternative: without extra space. | Rt: 32ms |
+```python
+    def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+        ct = collections.Counter(nums)
+        rst = [[]]
+        for k in ct:
+            l = len(rst)
+            for i in range(ct[k]):
+                for j in range(l):
+                    rst.append(rst[j] + [k] * (i+1))
+        return rst
+```
+
+
+**IV). Bit Manipulation**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+Referrence: https://leetcode.com/problems/subsets-ii/discuss/30325/Java-solution-using-bit-manipulation
+

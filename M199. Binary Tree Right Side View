@@ -1,0 +1,58 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def rightSideView(self, root: TreeNode) -> List[int]:
+        rst, s = [], [root] if root else None
+        while s:
+            rst.append(s[-1].val)
+            s = [child for node in s for child in (node.left, node.right) if child]
+        return rst
+```
+
+
+**II). Recursive DFS**
+| O(T): O(n) | O(S): O(h) | Rt: 44ms | 
+```python
+    def rightSideView(self, root: TreeNode) -> List[int]:
+        def dfs(node, dep, deps, rst):
+            if not node: return
+            if not deps or dep > deps[-1]: 
+                rst.append(node.val)
+                deps.append(dep)
+            dfs(node.right, dep+1, deps, rst)
+            dfs(node.left, dep+1, deps, rst)
+        
+        rst = []
+        dfs(root, 0, [], rst)
+        return rst 
+```
+Alternative: improved version. | Rt: 32ms |
+```python
+    def rightSideView(self, root: TreeNode) -> List[int]:
+        def dfs(node, dep, rst):
+            if not node: return
+            if dep == len(rst): rst.append(node.val)
+            dfs(node.right, dep+1, rst)
+            dfs(node.left, dep+1, rst)
+        
+        rst = []
+        dfs(root, 0, rst)
+        return rst
+```
+Referrence: https://leetcode.com/problems/binary-tree-right-side-view/discuss/56012/My-simple-accepted-solution(JAVA)
+
+
+**III). Iterative BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def rightSideView(self, root: TreeNode) -> List[int]:
+        pre, rst, stack = -1, [], [(root, 0)]
+        while stack:
+            node, cur = stack.pop()
+            if not node: continue
+            if cur > pre: rst.append(node.val); pre = cur
+            stack.append((node.left, cur+1))
+            stack.append((node.right, cur+1))
+        return rst
+```

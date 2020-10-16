@@ -1,0 +1,36 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | TLE 
+```python
+    def findMaximumXOR(self, nums: List[int]) -> int:
+        if not nums or len(nums) < 2: return 0
+        rst, lst = -float('inf'), [nums[0]]
+        for i in range(1, len(nums)):
+            for j in lst:
+                rst = max(rst, j ^ nums[i])
+            lst.append(nums[i])
+        return rst
+```
+
+
+**II). Bit Manipulation: a^b = c => a^c = b**
+| O(T): O(n) | O(S): O(n) | Rt: 160ms | 
+```python
+    def findMaximumXOR(self, nums: List[int]) -> int:
+        mx = mask = 0
+        for i in range(31, -1, -1):
+            mask |= 1 << i
+            prefix = set()
+            for n in nums: prefix.add(n & mask)
+            
+            #critical part: iterate the result from highest bit to less significant bit
+            #each round, make an greedy assumption: the final result has this bit (currently highest), candidate is the assumption
+            #validate the greedy candidate reversely by rule: prefixa ^ prefixb = candidate => prefixa ^ candidate = prefixb
+            candidate = mx | (1 << i)
+            if any(p ^ candidate in prefix for p in prefix): mx = candidate
+        return mx
+```
+Referrence: https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/discuss/91049/Java-O(n)-solution-using-bit-manipulation-and-HashMap
+
+Others: trie - https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/discuss/91059/Java-O(n)-solution-using-Trie
+

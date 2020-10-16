@@ -1,0 +1,56 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Three State**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def fib(self, N: int) -> int:
+        a , b = 0, 1
+        for _ in range(N):
+        	#state0, state1 = state1, state2, 3 states step forward
+            a, b = b, a + b
+        return a
+```
+Comment: F(N) = F(N - 1) + F(N - 2), only three state in any round.
+
+
+**II). DP**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def fib(self, N: int) -> int:
+        if N < 2: return N
+        dp = [0] * (N + 1)
+        dp[0], dp[1] = 0, 1
+        for i in range(2, N + 1): dp[i] = dp[i-1] + dp[i-2]
+        return dp[-1]
+```
+
+
+**III). Recursion**
+| O(T): O(n) | O(S): O(1) | Rt: 860ms | 
+```python
+    def fib(self, N: int) -> int:
+        if N < 2: return N
+        return self.fib(N-1) + self.fib(N-2)
+```
+Alternative: recursion with cache. | Rt: 28ms |
+```python
+    cache = {0: 0, 1: 1}
+    def fib(self, N: int) -> int:
+        if N not in self.cache: 
+            fn = self.fib(N-1) + self.fib(N-2)
+            self.cache[N] = fn
+        return self.cache[N]
+```
+Question: it runs 2k + ms if I put the cache inside as: self.cache = {...}, I doubt it will reinitialize it for every single round.
+Triple: shallow indented version. | Rt: 24ms |
+```python
+    cache = {0: 0, 1: 1}
+    def fib(self, N: int) -> int:
+        if N in self.cache: return self.cache[N]
+        fn = self.fib(N-1) + self.fib(N-2)
+        self.cache[N] = fn
+        return fn
+
+``` 
+
+Others: math solution please find https://en.wikipedia.org/wiki/Fibonacci_number#Relation_to_the_golden_ratio
+

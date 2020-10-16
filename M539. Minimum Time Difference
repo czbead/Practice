@@ -1,0 +1,55 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort Time**
+| O(T): O(mnlgn) | O(S): O(n) | Rt: 84ms | 
+```python
+    def findMinDifference(self, timePoints: List[str]) -> int:
+        times = [[int(i) for i in point.split(':')] for point in timePoints]
+        times.sort()
+        rst = (23 - times[-1][0] + times[0][0]) * 60 + 60 - times[-1][1] + times[0][1]
+        for i in range(len(times)-1):
+            rst = min(rst, (times[i+1][0] - times[i][0]) * 60 + times[i+1][1] - times[i][1])
+        return rst
+```
+
+
+**II). Nested Bucket Sort**
+| O(T): O(mn) | O(S): O(1) | Rt: 68ms | 
+```python
+    def findMinDifference(self, timePoints: List[str]) -> int:
+        m = [[0] * 60 for _ in range(24)]
+        for point in timePoints:
+            (hour, minute) = [int(i) for i in point.split(':')]
+            if m[hour][minute]: return 0
+            m[hour][minute] = 1
+            
+        rst, ct, before = float('inf'), 0, None 
+        for i in range(24):
+            for j in range(60):
+                if m[i][j]: 
+                    if before is None: before = ct
+                    else: rst = min(rst, ct)
+                    ct = 0
+                ct += 1
+        return min(rst, before + ct)
+```
+
+Alternative: flat bucket sort version. | Rt: 56ms |
+```python
+    def findMinDifference(self, timePoints: List[str]) -> int:
+        m = [0] * (24*60)
+        for point in timePoints:
+            time = point.split(':')
+            index = int(time[0]) * 60 + int(time[1])
+            if m[index]: return 0
+            m[index] = 1
+            
+        rst, pre, before = float('inf'), 0, None 
+        for i in range(24 * 60):
+            if m[i]: 
+                if before is None: before = i - pre
+                else: rst = min(rst, i - pre)
+                pre = i
+        after = i + 1 - pre
+        return min(rst, before + after)
+```
+Referrence: https://leetcode.com/problems/minimum-time-difference/discuss/100640/Verbose-Java-Solution-Bucket

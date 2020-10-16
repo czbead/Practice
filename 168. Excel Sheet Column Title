@@ -1,0 +1,36 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive with List**
+| O(t): O(lgn) | O(m): O(lgn) | Rt: 20ms | 
+```python
+    def convertToTitle(self, n: int) -> str:
+        als = 'abcdefghijklmnopqrstuvwxyz'.upper()
+        rst = []
+        while n:
+            rst.append(als[(n-1) % 26])
+            n = (n-1) // 26
+        rst.reverse()
+        return ''.join(rst)
+```
+Alternative: | Rt: 24ms |
+```python
+    def convertToTitle(self, n: int) -> str:
+        base = ord('A')
+        rst = ''
+        while n:
+            rst = chr(base + (n-1) % 26) + rst
+            n = (n-1) // 26
+        return rst
+```
+Comment: the pain of the problem comes from the fact that we tend to treat it as how we treat binary or decimal. Well, both binary and decimal start with 0 while this number system is 1-based. Therefore, the minus 1 is the deepest trick.
+
+
+**II). Recursion**
+| O(t): O(n) | O(m): O(1) | Rt: 32ms | 
+```python
+    def convertToTitle(self, n: int) -> str:
+        cur = chr(ord('A') + (n-1) % 26)
+        if n < 27: return cur
+        return self.convertToTitle((n-1)//26) + cur
+```
+
+

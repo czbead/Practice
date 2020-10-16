@@ -1,0 +1,128 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def connect(self, root: 'Node') -> 'Node':
+        if not root: return
+        if not root.left and not root.right: return root
+        if root.left and root.right: 
+            root.left.next = root.right
+            node = root.right
+        else: node = root.left or root.right
+            
+        start = root
+        while start.next:
+            start = start.next
+            if start.left or start.right:
+                node.next = start.left or start.right
+                break;
+                
+        if root.next: self.connect(root.next)
+        if root.left: self.connect(root.left)
+        if root.right: self.connect(root.right)
+        return root
+```
+Alternative: half recursive, half iterative.  | Rt: 52ms |
+```python
+    def connect(self, root: 'Node') -> 'Node':
+        if not root: return
+        pre, cur = None, root
+        while cur:
+            if cur.left: 
+                if pre: pre.next = cur.left
+                pre = cur.left
+            if cur.right: 
+                if pre: pre.next = cur.right
+                pre = cur.right
+            cur = cur.next
+        self.connect(root.left or root.right or root.next)
+        return root
+```
+Triple: all recursive. | Rt: TLE |
+```python
+    def connect(self, root: 'Node', pre=None) -> 'Node':
+        if not root: return
+        if root.left: 
+            if pre: pre.next = root.left
+            pre = root.left
+        if root.right: 
+            if pre: pre.next = root.right
+            pre = root.right
+        self.connect(root.next, pre)
+        self.connect(root.left or root.right or root.next, None)
+        return root
+```
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(1) | Rt: 56ms | 
+```python
+    def connect(self, root: 'Node') -> 'Node':
+        head = root
+        while root:
+            cur, pre = root, None
+            while cur:
+                for node in (cur.left, cur.right):
+                    if not node: continue
+                    if pre: pre.next = node
+                    pre = node
+                cur = cur.next
+            root = root.left or root.right or root.next
+        return head
+```
+Alternative: readable intuitive version. | Rt: 44ms |
+```python
+    def connect(self, root: 'Node') -> 'Node':
+        head = root
+        while root:
+            cur, pre = root, None
+            while cur:
+                if cur.left: 
+                    if pre: pre.next = cur.left
+                    pre = cur.left
+                if cur.right:
+                    if pre: pre.next = cur.right
+                    pre = cur.right
+                cur = cur.next
+            root = root.left or root.right or root.next
+        return head
+```
+Alternative: one loop. | Rt: 56ms |
+```python
+    def connect(self, root: 'Node') -> 'Node':
+        if not root: return
+        pre, cur, nxtrow = None, root, root.left or root.right or root.next
+        while nxtrow:
+            if cur.left: 
+                if pre: pre.next = cur.left
+                pre = cur.left
+            if cur.right:
+                if pre: pre.next = cur.right
+                pre = cur.right
+            if cur.next: cur = cur.next
+            else:
+                pre, cur, nxtrow = None, nxtrow, nxtrow.left or nxtrow.right or nxtrow.next
+        return root
+```
+Referrence: https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii/discuss/37828/O(1)-space-O(n)-complexity-Iterative-Solution/153962
+
+
+**III). Dummy Head**
+| O(T): O(n) | O(S): O(1) | Rt: 48ms | 
+```python
+    def connect(self, root: 'Node') -> 'Node':
+        pre = dummy = Node()
+        cur = root
+        while cur:
+            pre.next = cur.left
+            if pre.next: pre = pre.next
+            pre.next = cur.right
+            if pre.next: pre = pre.next
+            if cur.next: cur = cur.next
+            else:
+                cur, pre = dummy.next, dummy
+        return root
+```
+Referrence: https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii/discuss/37824/AC-Python-O(1)-space-solution-12-lines-and-easy-to-understand
+Comment: the use of a dumy head of next row is very clever. Took me a while to understand the charm. 
+

@@ -1,0 +1,70 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS: Global Visited State**
+| O(T): O() | O(S): O() | Rt: 68ms | 
+```python
+    def canVisitAllRooms(self, rooms: List[List[int]]) -> bool:
+        def dfs(rooms, visited, cur):
+            count = 1
+            for i in rooms[cur]:
+                if visited[i]: continue
+                visited[i] = 1
+                count += dfs(rooms, visited, i)
+            return count
+        
+        l = len(rooms)
+        visited = [0] * l; visited[0] = 1
+        return dfs(rooms, visited, 0) == l
+```
+Comment: this solution kind of like greedy as well, whenever you can visited a new room from current room, go visit it and no need to backtrack from there.
+
+Alternative: add a cache. | Rt: 68ms |
+```python
+    def canVisitAllRooms(self, rooms: List[List[int]]) -> bool:
+        def dfs(rooms, visited, mem, cur):
+            if mem[cur] is not None: mem[cur]
+            count = 1
+            for i in rooms[cur]:
+                if visited[i]: continue
+                visited[i] = 1
+                count += dfs(rooms, visited, mem, i)
+            mem[cur] = count
+            return count
+        
+        l = len(rooms)
+        visited = [0] * l; visited[0] = 1
+        m = [None] * l
+        return dfs(rooms, visited, m, 0) == l
+```
+
+
+**II). Iterative DFS and BFS**
+| O(T): O() | O(S): O() | Rt: 60ms | 
+```python
+    def canVisitAllRooms(self, rooms: List[List[int]]) -> bool:
+        visited, stack, l = set([0]), [0], len(rooms)
+        while stack:
+            room = stack.pop()
+            for i in rooms[room]:
+                if i not in visited:
+                    visited.add(i)
+                    if len(visited) == l: return True
+                    stack.append(i)
+        return len(visited) == l
+```
+
+Alternative: | Rt: 68ms |
+```python
+    def canVisitAllRooms(self, rooms: List[List[int]]) -> bool:
+        l = len(rooms)
+        visited, q = [0] * l, collections.deque([0])
+        visited[0], ct = 1, 1
+        while q:
+            room = q.popleft()
+            for i in rooms[room]:
+                if not visited[i]:
+                    visited[i], ct = 1, ct+1
+                    if ct == l: return True
+                    q.append(i)
+        return ct == l
+```
+

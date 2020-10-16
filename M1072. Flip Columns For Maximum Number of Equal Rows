@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). HashMap Each Row**
+| O(T): O(n) | O(S): O(n) | Rt: 1872ms | 
+```python
+    def maxEqualRowsAfterFlips(self, matrix: List[List[int]]) -> int:
+        dt, rst = {}, 0
+        for row in matrix:
+            key1 = ''.join(map(str, row))
+            key2 = ''.join(map(str, [1 ^ i for i in row]))
+            if key1 in dt or key2 in dt: 
+                dt[key1] = dt[key2] = max(dt.get(key1, 0), dt.get(key2, 0)) + 1
+            else: dt[key1] = 1
+            rst = max(rst, dt[key1])
+        return rst
+```
+Referrence: https://leetcode.com/problems/flip-columns-for-maximum-number-of-equal-rows/discuss/303897/Java-easy-solution-%2B-explanation
+
+Alternative: | Rt: 2008ms |
+```python
+    def maxEqualRowsAfterFlips(self, matrix: List[List[int]]) -> int:
+        dt = {}
+        for row in matrix:
+            k1, k2 = [], []
+            for i in row:
+                k1.append(i); k2.append(1^i)
+            k1, k2 = ''.join(map(str, k1)), ''.join(map(str, k2))
+            dt[k1], dt[k2] = dt.get(k1, 0) + 1, dt.get(k2, 0) + 1
+        return max(dt.values())
+```
+Referrence: https://leetcode.com/problems/flip-columns-for-maximum-number-of-equal-rows/discuss/303752/Python-1-Line
+

@@ -1,0 +1,107 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O(1) | Rt: ms | TLE
+```python
+    def mergeKLists(self, lists: List[ListNode]) -> ListNode:
+        rst, l = ListNode(0), len(lists)
+        cur = rst
+        while True:
+            minIdx, minVal = 0, float('inf')
+            for i in range(l):
+                if lists[i] and lists[i].val < minVal: minIdx, minVal = i, lists[i].val
+            if minVal == float('inf'): break
+            cur.next = ListNode(minVal)
+            lists[minIdx], cur = lists[minIdx].next, cur.next
+        return rst.next
+```
+
+
+**II). Heap**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 96ms | 
+note: n denotes the amount of nodes in all linked lists.
+```python
+    def mergeKLists(self, lists: List[ListNode]) -> ListNode:
+        rst, l = ListNode(0), len(lists)
+        cur, hp = rst, []
+        for i, ll in enumerate(lists): 
+            if ll: hp.append((ll.val, i))
+        heapq.heapify(hp)
+        while hp:
+            v, i = heapq.heappop(hp)
+            cur.next = ListNode(v)
+            cur = cur.next
+            lists[i] = lists[i].next
+            if lists[i]: heapq.heappush(hp, (lists[i].val, i))
+        return rst.next
+```
+
+
+**III). Recursive Merge Two, Double Recursive**
+| O(T): O(nlgn) | O(S): O() | Rt: 200ms | 
+```python
+    def mergeKLists(self, lists: List[ListNode]) -> ListNode:
+        def mergeTwo(a, b):
+            if not a or not b: return a or b
+            if a.val <= b.val: 
+                a.next = mergeTwo(a.next, b)
+                return a
+            else:
+                b.next = mergeTwo(a, b.next)
+                return b
+            
+        if not lists: return 
+        if len(lists) == 1: return lists[0]
+        l = len(lists)
+        return mergeTwo(self.mergeKLists(lists[:l//2]), self.mergeKLists(lists[l//2:]))
+```
+Referrence: https://leetcode.com/problems/merge-k-sorted-lists/discuss/10528/A-java-solution-based-on-Priority-Queue/11411
+
+Alternative: | Rt: 184ms |
+```python
+    def mergeKLists(self, lists: List[ListNode]) -> ListNode:
+        def mergeTwo(a, b):
+            if not a or not b: return a or b
+            rst = ListNode(-1)
+            cur = rst
+            while a and b:
+                if a.val < b.val: cur.next, a = a, a.next
+                else: cur.next, b = b, b.next
+                cur = cur.next
+            if a: cur.next = a
+            if b: cur.next = b
+            return rst.next
+            
+        if not lists: return 
+        if len(lists) == 1: return lists[0]
+        l = len(lists)
+        return mergeTwo(self.mergeKLists(lists[:l//2]), self.mergeKLists(lists[l//2:]))
+```
+
+
+**IV). Divide and Conquer: Merge Sort Similar Pattern**
+| O(T): O(nlgn) | O(S): O() | Rt: 196ms | 
+```python
+    def mergeKLists(self, lists: List[ListNode]) -> ListNode:
+        def divide(lists, l, r):
+            if l > r: return None
+            if l == r: return lists[l]
+            m = l + (r - l) // 2
+            left, right = divide(lists, l, m), divide(lists, m+1, r)
+            return merge(left, right)
+        
+        def merge(a, b):
+            if not a or not b: return a or b
+            rst = ListNode(-1)
+            cur = rst
+            while a and b:
+                if a.val < b.val: cur.next, a = a, a.next
+                else: cur.next, b = b, b.next
+                cur = cur.next
+            if a: cur.next = a
+            if b: cur.next = b
+            return rst.next
+            
+        return divide(lists, 0, len(lists)-1)
+```
+Referrence: https://leetcode.com/problems/merge-k-sorted-lists/discuss/10522/My-simple-java-Solution-use-recursion
+Comment: this solution is actually pretty much the same as solution III, but it uses the style of Merge Sort which we are more familar.

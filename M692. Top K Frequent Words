@@ -1,0 +1,118 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Trie with Heap**
+| O(T): O() | O(S): O() | Rt: 80ms | 
+```python
+class Node:
+     
+    def __init__(self):
+        self.sub = collections.defaultdict(Node)
+        self.count = 0
+        self.word = None
+        
+class Trie:
+    
+    def __init__(self):
+        self.root = Node()
+        self.heap = []
+        heapq.heapify(self.heap)
+        
+    def insert(self, word):
+        cur = self.root
+        for i in word: cur = cur.sub[i]
+        if cur.word is None: cur.word = word
+        cur.count += 1
+        # heapq.heappush(self.heap, (-cur.count, word))
+        
+    def pushall(self):
+        self.push(self.root)
+        
+    def push(self, node):
+        for i in node.sub:
+            cur = node.sub[i]
+            if cur.word is not None: heapq.heappush(self.heap, (-cur.count, cur.word))
+            self.push(cur)
+
+class Solution:
+    def topKFrequent(self, words: List[str], k: int) -> List[str]:
+        trie = Trie()
+        for word in words: trie.insert(word)
+        trie.pushall()
+        return [heapq.heappop(trie.heap)[1] for _ in range(k)]
+```
+
+Alternative: using a hashmap instead of traverse all trie items. | Rt: 80ms |
+```python
+class Node:
+     
+    def __init__(self):
+        self.sub = collections.defaultdict(Node)
+        self.count = 0
+        
+class Trie:
+    
+    def __init__(self):
+        self.root = Node()
+        self.heap = []
+        self.dt = {}
+        heapq.heapify(self.heap)
+        
+    def insert(self, word):
+        cur = self.root
+        for i in word: cur = cur.sub[i]
+        cur.count += 1
+        self.dt[word] = cur.count
+        
+    def pushall(self):
+        for k in self.dt:
+            heapq.heappush(self.heap, (-self.dt[k], k))
+
+class Solution:
+    def topKFrequent(self, words: List[str], k: int) -> List[str]:
+        trie = Trie()
+        for word in words: trie.insert(word)
+        trie.pushall()
+        return [heapq.heappop(trie.heap)[1] for _ in range(k)]
+```
+Comment: I found Trie seems like has no advantage on this problem. 
+
+
+**II). Counter with Heap**
+| O(T): O() | O(S): O() | Rt: 52ms | 
+```python
+    def topKFrequent(self, words: List[str], k: int) -> List[str]:
+        heap = []
+        heapq.heapify(heap)
+        ct = collections.Counter(words)
+        for key in ct:
+            heapq.heappush(heap, (-ct[key], key))
+        return [heapq.heappop(heap)[1] for _ in range(k)]  
+```
+Comment: actually heap has no advantage to list sort (push all and sort all has same time complexity while list sort is probably lighter and faster than heap push) if not using the nlargest function. 
+
+Alternative: Dict with Bucket Sort. | Rt: 56ms |
+```python
+    def topKFrequent(self, words: List[str], k: int) -> List[str]:
+        rst, dt, mx = [], {}, 0
+        for word in words: 
+            dt[word] = dt.get(word, 0) + 1
+            mx = max(mx, dt[word])
+            
+        m = [None] * (mx + 1)
+        for key in dt:
+            val = dt[key]
+            if m[val] is None: m[val] = [key]
+            else: m[val].append(key)
+                
+        for i in range(mx, -1, -1):
+            if m[i] is None: continue
+            l = len(m[i])
+            if l <= k: 
+                rst.extend(sorted(m[i]))
+                k -= l
+                if k == 0: return rst
+            else:
+                rst.extend(sorted(m[i])[:k])
+                return rst
+```
+Referrence: https://leetcode.com/problems/top-k-frequent-words/discuss/108346/My-simple-Java-solution-using-HashMap-and-PriorityQueue-O(nlogk)-time-and-O(n)-space/110559
+

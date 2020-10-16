@@ -1,0 +1,26 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Word by Word Grow**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def numberOfLines(self, widths: List[int], S: str) -> List[int]:
+        cnt, width, base = 0, 0, ord('a')
+        for s in S:
+            cur = widths[ord(s) - base]
+            width += cur 
+            if width > 100: cnt, width = cnt + 1, cur
+        if width: cnt += 1
+        return (cnt, width)
+```
+Alternative:   | Rt: 32ms |
+```python
+    def numberOfLines(self, widths: List[int], S: str) -> List[int]:
+        wids = [widths[ord(i) - ord('a')] for i in S]
+        cnt = cur = 0
+        for i in wids:
+            cur += i
+            if cur > 100: cnt, cur = cnt + 1, i
+        if cur: cnt += 1
+        return (cnt, cur)
+```
+Comment: access word width by index probably runs faster than an extra dict. 
+

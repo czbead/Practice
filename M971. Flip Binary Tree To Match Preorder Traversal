@@ -1,0 +1,38 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS: Pre-Order Traverse**
+| O(T): O() | O(S): O() | Rt: 36ms | 
+```python
+    def flipMatchVoyage(self, root: TreeNode, voyage: List[int]) -> List[int]:
+        def dfs(voyage, node, i, rst):
+            if not node: return True
+            if node.val != voyage[i[0]]: return False
+            i[0] += 1
+            if node.left and node.left.val != voyage[i[0]]:
+                rst.append(node.val)
+                node.left, node.right = node.right, node.left
+            return dfs(voyage, node.left, i, rst) and dfs(voyage, node.right, i, rst)
+        
+        rst = []
+        if dfs(voyage, root, [0], rst): return rst
+        return [-1]
+```
+Referrence: https://leetcode.com/problems/flip-binary-tree-to-match-preorder-traversal/discuss/214216/JavaC%2B%2BPython-DFS-Solution
+
+Alternative: iterative version. | Rt: 32ms |
+```python
+    def flipMatchVoyage(self, root: TreeNode, voyage: List[int]) -> List[int]:
+        i, stack, rst = 0, [root], []
+        while stack:
+            node = stack.pop()
+            if not node: continue
+            if node.val != voyage[i]: return [-1]
+            i += 1
+            #this is the most critical part, apply "least flip", this is the only senario where a flip is necessary
+            if node.left and node.right and node.left.val != voyage[i]:
+                rst.append(node.val)
+                stack.append(node.left); stack.append(node.right); 
+            else: stack.append(node.right); stack.append(node.left)
+        return rst
+```
+Referrence: https://leetcode.com/problems/flip-binary-tree-to-match-preorder-traversal/discuss/214384/JavaC%2B%2BPython-Iterative-Solution-Using-Stack
+Comment: How to understand "least"? we truly need to add this limitation. When the parent node has only one child and the value of the child fits the preorder sequence, you can flip the only child and you can leave it as well. This the critical meaning of "least". If you miss this point, you easily flip more nodes or make a true voyage false. 

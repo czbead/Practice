@@ -1,0 +1,39 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort Odd and Even**
+| O(T): O(mnlgn) | O(S): O(mn) | Rt: 32ms | 
+```python
+    def numSpecialEquivGroups(self, A: List[str]) -> int:
+        seta = set()
+        for word in A:
+            code = sorted(word[0::2]) + sorted(word[1::2])
+            seta.add(''.join(code))
+        return len(seta)
+```
+Comment: originally I want to put the odds and evens into set which is O(n). However, we cannot put set into set. Set is unhashable. 
+Alternative: tuple is hashable.  | Rt: 40ms |
+```python
+    def numSpecialEquivGroups(self, A: List[str]) -> int:
+        return len({tuple(sorted(word[0::2]) + sorted(word[1::2])) for word in A})
+```
+Triple: hash string will be faster.  | Rt: 36ms |
+```python
+    def numSpecialEquivGroups(self, A: List[str]) -> int:
+        return len({''.join(sorted(word[0::2]) + sorted(word[1::2])) for word in A})
+```
+
+
+**II). Representation**
+| O(T): O(mn) | O(S): O(1) | Rt: 76ms | 
+```python
+    def numSpecialEquivGroups(self, A: List[str]) -> int:
+        s = set()
+        for word in A:
+            odd, eve = [0]*26, [0]*26
+            for i, v in enumerate(word):
+                if i % 2: odd[ord(v) - ord('a')] += 1
+                else: eve[ord(v) - ord('a')] += 1
+            s.add(''.join(map(str, odd+eve)))
+        return len(s)
+```
+Referrence: https://leetcode.com/problems/groups-of-special-equivalent-strings/discuss/163413/Java-Concise-Set-Solution
+Comment: the alpha list is really a great idea. It works like a bucket which will automatically collect letters in each word. By using this alpha list, we saved up a sorting process which is pretty expensive. 

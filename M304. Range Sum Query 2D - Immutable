@@ -1,0 +1,36 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Row Based Prefix Sum**
+| O(T): O(mn) | O(S): O(mn) | Rt: 228ms | 
+```python
+    def __init__(self, matrix: List[List[int]]):
+        if not matrix or not matrix[0]: return 
+        self.r, self.c = len(matrix), len(matrix[0])
+        self.sums = [[0] * (self.c+1) for _ in range(self.r)]
+        for i in range(self.r):
+            for j in range(1, self.c+1):
+                self.sums[i][j] += self.sums[i][j-1] + matrix[i][j-1]
+
+    def sumRegion(self, row1: int, col1: int, row2: int, col2: int) -> int:
+        rst = 0
+        for i in range(row1, row2+1):
+            rst += self.sums[i][col2+1] - self.sums[i][col1]
+        return rst
+```
+
+
+**II). DP**
+| O(T): O(mn) | O(S): O(mn) | Rt: 112ms | 
+```python
+    def __init__(self, matrix: List[List[int]]):
+        if not matrix or not matrix[0]: return 
+        self.r, self.c = len(matrix), len(matrix[0])
+        self.sums = [[0] * (self.c+1) for _ in range(self.r+1)]
+        for i in range(1, self.r+1):
+            for j in range(1, self.c+1):
+                self.sums[i][j] = self.sums[i][j-1] + self.sums[i-1][j] + matrix[i-1][j-1] - self.sums[i-1][j-1]
+
+    def sumRegion(self, row1: int, col1: int, row2: int, col2: int) -> int:
+        return self.sums[row2+1][col2+1] - self.sums[row1][col2+1] - self.sums[row2+1][col1] + self.sums[row1][col1]
+```
+Referrence: https://leetcode.com/problems/range-sum-query-2d-immutable/discuss/75350/Clean-C%2B%2B-Solution-and-Explaination-O(mn)-space-with-O(1)-time; the video helps. 
+Commeng: dp[i][j](self.sums) means the sums of rectangle {[0][0], [i-1][j-1]}. The pointer of this dp solution is: decompose a off-bound rectangle into three touch-bound rectangles. 

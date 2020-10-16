@@ -1,0 +1,57 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Dict**
+| O(T): O(n*gap) | O(S): O(n) | Rt: 296ms | 
+```python
+    def findRightInterval(self, intervals: List[List[int]]) -> List[int]:
+        dt, mint, maxt = {}, float('inf'), -float('inf')
+        for i, (st, end) in enumerate(intervals):
+            dt[st] = i
+            mint, maxt = min(mint, st), max(maxt, st)
+        return [-1 if j > maxt else next(dt[k] for k in range(j, maxt+1) if k in dt) for i, j in intervals]
+```
+Alternative: readable version. | Rt: 288ms |
+```python
+    def findRightInterval(self, intervals: List[List[int]]) -> List[int]:
+        dt, mint, maxt = {}, float('inf'), -float('inf')
+        for i in range(len(intervals)):
+            dt[intervals[i][0]] = i
+            mint, maxt = min(mint, intervals[i][0]), max(maxt, intervals[i][0])
+        rst = []
+        for i, j in intervals:
+            if j > maxt: rst.append(-1)
+            else:
+                for k in range(j, maxt+1):
+                    if k in dt:
+                        rst.append(dt[k])
+                        break
+        return rst
+```
+
+
+**II). Dict: Binary Search Key**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 276ms | 
+```python
+    def findRightInterval(self, intervals: List[List[int]]) -> List[int]:
+        dt, lst = {}, []
+        for i in range(len(intervals)):
+            lst.append(intervals[i][0])
+            dt[intervals[i][0]] = i
+        lst.sort()
+        return [-1 if j > lst[-1] else dt[lst[bisect.bisect_left(lst, j)]] for i, j in intervals]
+```
+Alternative: readable version. | Rt: 280ms |
+```python
+    def findRightInterval(self, intervals: List[List[int]]) -> List[int]:
+        rst, dt, lst = [], {}, []
+        for i in range(len(intervals)):
+            lst.append(intervals[i][0])
+            dt[intervals[i][0]] = i
+        lst.sort()
+        for i, j in intervals:
+            if j > lst[-1]: rst.append(-1)
+            else: 
+                ind = bisect.bisect_left(lst, j)
+                rst.append(dt[lst[ind]])
+        return rst
+```
+Referrence: https://leetcode.com/problems/find-right-interval/discuss/91793/Java-Concise-Binary-Search

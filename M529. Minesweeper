@@ -1,0 +1,96 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS**
+| O(T): O(n) | O(S): O(1) | Rt: 172ms | 
+```python
+    def updateBoard(self, board: List[List[str]], click: List[int]) -> List[List[str]]:
+        def countAdj(board, dijs, r, c, i, j):
+            count = 0
+            for di, dj in dijs:
+                x, y = i + di, j + dj
+                if 0<=x<r and 0<=y<c and board[x][y] == 'M': count += 1
+            return count
+            
+        def dfs(board, dijs, r, c, i, j):
+            count = countAdj(board, dijs, r, c, i, j)
+            if count: board[i][j] = str(count)
+            else:
+                board[i][j] = 'B'
+                for di, dj in dijs: 
+                    x, y = i+di, j+dj
+                    if 0<=x<r and 0<=y<c and board[x][y] == 'E':
+                        dfs(board, dijs, r, c, i+di, j+dj)
+            
+        if not board or not board[0]: return
+        r, c, (i, j) = len(board), len(board[0]), click
+        dijs = [(-1,0), (-1,1), (-1,-1), (0,1), (0,-1), (1,-1), (1,0), (1,1)]
+        if board[i][j] == 'M': board[i][j] = 'X'; return board
+        #means board[i][j] == 'E'
+        dfs(board, dijs, r, c, i, j)
+        return board
+```
+Referrence: https://leetcode.com/problems/minesweeper/discuss/99841/Straight-forward-Java-solution/104051
+
+
+**II). BFS**
+| O(T): O() | O(S): O() | Rt: 88ms | 
+```python
+    def updateBoard(self, board: List[List[str]], click: List[int]) -> List[List[str]]:
+        def countAdj(board, dijs, r, c, i, j):
+            count = 0
+            for di, dj in dijs:
+                x, y = i + di, j + dj
+                if 0<=x<r and 0<=y<c and board[x][y] == 'M': count += 1
+            return count
+            
+        if not board or not board[0]: return
+        r, c, (i, j) = len(board), len(board[0]), click
+        dijs = [(-1,0), (-1,1), (-1,-1), (0,1), (0,-1), (1,-1), (1,0), (1,1)]
+        if board[i][j] == 'M': board[i][j] = 'X'; return board
+        que = collections.deque([(i, j)])
+        while que: 
+            i, j = que.pop()
+            count = countAdj(board, dijs, r, c, i, j)
+            if count: board[i][j] = str(count)
+            else:
+                board[i][j] = 'B'
+                for di, dj in dijs: 
+                    x, y = i+di, j+dj
+                    if 0<=x<r and 0<=y<c and board[x][y] == 'E':
+                        que.appendleft((x, y))
+                        #this is critical, avoid be added in current bfs round
+                        board[x][y] = 'B'  
+        return board
+```
+Referrence: https://leetcode.com/problems/minesweeper/discuss/99826/Java-Solution-DFS-%2B-BFS
+Comment: BFS has great risk with duplicates, therefore most of time we need an extra "visited set" or update the state immediately when we push current state into the que (sometimes may not plausible). Why BFS has this problem while DFS never has this trouble? That is because DFS handle a state when it comes and never move forward when the current state is not done yet. Therefore, DFS handle states one by one. How about BFS? BFS doesn't process every state immediatly as it comes, instead, it save states need to be processed in a container and handle the state popped from the other end of the container one by one, most of time, handle one state brings multiple new states which need to be pushed into the queue. Therefore, there is great risk that a comming new state is duplicated with a 'queued' state which is not yet processed (that may cause dead loop). 
+
+Alternative: with visited set to monitor state.  | Rt: 188ms |
+```python
+    def updateBoard(self, board: List[List[str]], click: List[int]) -> List[List[str]]:
+        def countAdj(board, dijs, r, c, i, j):
+            count = 0
+            for di, dj in dijs:
+                x, y = i + di, j + dj
+                if 0<=x<r and 0<=y<c and board[x][y] == 'M': count += 1
+            return count
+            
+        if not board or not board[0]: return
+        r, c, (i, j) = len(board), len(board[0]), click
+        dijs = [(-1,0), (-1,1), (-1,-1), (0,1), (0,-1), (1,-1), (1,0), (1,1)]
+        if board[i][j] == 'M': board[i][j] = 'X'; return board
+        que, visited = collections.deque([(i, j)]), set([(i, j)])
+        while que: 
+            i, j = que.pop()
+            count = countAdj(board, dijs, r, c, i, j)
+            if count: board[i][j] = str(count)
+            else:
+                board[i][j] = 'B'
+                for di, dj in dijs: 
+                    x, y = i+di, j+dj
+                    if 0<=x<r and 0<=y<c and board[x][y] == 'E'and (x, y) not in visited: 
+                        que.appendleft((x, y))
+                        visited.add((x, y))
+                        
+        return board
+```
+Referrence: https://leetcode.com/problems/minesweeper/discuss/99841/Straight-forward-Java-solution

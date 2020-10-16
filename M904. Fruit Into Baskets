@@ -1,0 +1,73 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Slide Window with Counter**
+| O(T): O() | O(S): O() | Rt: 1128ms | 
+```python
+    def totalFruit(self, tree: List[int]) -> int:
+        rst = st = 0; ct = collections.Counter()
+        for i in range(len(tree)):
+            ct[tree[i]] += 1
+            while len(ct) > 2:
+                ct[tree[st]] -= 1
+                if ct[tree[st]] == 0: del ct[tree[st]]
+                st += 1
+            rst = max(rst, sum(ct.values()))
+        return rst
+```
+
+Alternative: | Rt: 1068ms |
+```python
+    def totalFruit(self, tree: List[int]) -> int:
+        rst = st = 0; ct = collections.Counter()
+        for i in range(len(tree)):
+            ct[tree[i]] += 1
+            while len(ct) > 2:
+                ct[tree[st]] -= 1
+                if ct[tree[st]] == 0: del ct[tree[st]]
+                st += 1
+            rst = max(rst, i - st + 1)
+        return rst
+```
+Reference: https://leetcode.com/problems/fruit-into-baskets/discuss/170737/Python-sliding-window
+
+
+**II). Iterate Two Item**
+| O(T): O() | O(S): O() | Rt: 752ms | 
+```python
+    def totalFruit(self, tree: List[int]) -> int:
+        rst = st = 0
+        a, b, cta, ctb = None, None, 0, 0
+        for i in range(len(tree)):
+            if a is None: a, cta = tree[i], 1
+            elif tree[i] == a: cta += 1
+            elif b is None: b, ctb = tree[i], 1
+            elif tree[i] == b: ctb += 1
+            else:
+                rst = max(rst, cta + ctb)
+                while cta > 0 and ctb > 0:
+                    if tree[st] == a: cta -= 1
+                    else: ctb -= 1
+                    st += 1
+                if cta == 0: a, cta = tree[i], 1
+                else: b, ctb = tree[i], 1
+        rst = max(cta + ctb, rst)
+        return rst
+```
+
+
+**III). Count Last Two**
+| O(T): O() | O(S): O() | Rt: 732ms | 
+```python
+    def totalFruit(self, tree: List[int]) -> int:
+        rst = curct = ct = 0
+        pre = cur = -1
+        for i in tree:
+            if i == cur or i == pre: ct += 1
+            else: ct = curct + 1
+                
+            if i == cur: curct += 1
+            else: pre, cur, curct = cur, i, 1
+                
+            rst = max(rst, ct)
+        return rst
+```
+Referrence: https://leetcode.com/problems/fruit-into-baskets/discuss/170745/Problem%3A-Longest-Subarray-With-2-Elements

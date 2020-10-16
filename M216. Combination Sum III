@@ -1,0 +1,49 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Backtracking**
+| O(T): O() | O(S): O(k) | Rt: 24ms | 
+```python
+    def combinationSum3(self, k: int, n: int) -> List[List[int]]:
+        def backtrack(st, k, target, path, curs, rst):
+            if len(path) == k:
+                if curs == target: rst.append(path)
+                return
+            for i in range(st, 10):
+                backtrack(i+1, k, target, path+[i], curs+i, rst)
+                
+        rst = []
+        backtrack(1, k, n, [], 0, rst)
+        return rst
+```
+Alternative: break out earlier. | Rt: 32ms |
+```python
+    def combinationSum3(self, k: int, n: int) -> List[List[int]]:
+        def backtrack(st, k, target, path, curs, rst):
+            if len(path) == k:
+                if curs == target: rst.append(path)
+                return
+            for i in range(st, 10):
+                if curs + i > target: break
+                backtrack(i+1, k, target, path+[i], curs+i, rst)
+                
+        rst = []
+        backtrack(1, k, n, [], 0, rst)
+        return rst
+```
+Triple: avoid copy path too frequently.  | Rt: 32ms |
+```python
+    def combinationSum3(self, k: int, n: int) -> List[List[int]]:
+        def backtrack(st, k, target, path, rst):
+            if len(path) == k:
+                if target == 0: rst.append(path[:])
+                return
+            for i in range(st, 10):
+                if target - i < 0: break
+                path.append(i)    
+                backtrack(i+1, k, target - i, path, rst)
+                path.pop()
+                
+        rst = []
+        backtrack(1, k, n, [], rst)
+        return rst
+```
+

@@ -1,0 +1,38 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sliding Window with Counter**
+| O(T): O(mn) | O(S): O() | Rt: 544ms | 
+```python
+    def minWindow(self, s: str, t: str) -> str:
+        ctt = collections.Counter(t)
+        rst, st = '', 0
+        for i in range(len(s)):
+            if s[i] in ctt: ctt[s[i]] -= 1
+            if all(ctt[k] <= 0 for k in ctt):
+                while all(ctt[k] <= 0 for k in ctt):
+                    if s[st] in ctt: ctt[s[st]] += 1
+                    st += 1
+                if not rst or i - st + 2 < len(rst): 
+                    rst = s[st-1: i+1]
+        return rst
+```
+
+Alternative: | Rt: 116ms |
+```python
+    def minWindow(self, s: str, t: str) -> str:
+        ctt, ct = collections.Counter(t), len(t)
+        st = start = end = 0
+        for i in range(len(s)):
+            if s[i] in ctt: 
+                if ctt[s[i]] > 0: ct -= 1
+                ctt[s[i]] -= 1
+            if ct == 0:
+                while ct == 0:
+                    if s[st] in ctt: 
+                        ctt[s[st]] += 1
+                        if ctt[s[st]] > 0: ct += 1
+                    st += 1
+                if end == 0 or i - st + 2 < end - start + 1: 
+                    start, end = st-1, i+1
+        return s[start: end]
+```
+Referrence: https://leetcode.com/problems/minimum-window-substring/discuss/26804/12-lines-Python/155450

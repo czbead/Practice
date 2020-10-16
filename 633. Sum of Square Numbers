@@ -1,0 +1,96 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(sqrt(n)) | O(S): O(1) | Rt: 164ms | 
+```python
+    def judgeSquareSum(self, c: int) -> bool:
+        if c ** 0.5 % 1 == 0 or (c-1) ** 0.5 % 1 == 0: return True 
+        top = int(c ** 0.5) + 1
+        for i in range(2, top):
+            if (c - i * i) ** 0.5 % 1 == 0: return True
+        return False
+```
+Alternative: improved version. | Rt: 116ms |
+```python
+    def judgeSquareSum(self, c: int) -> bool: 
+        top = int((c // 2) ** 0.5) + 1
+        for i in range(top):
+            if (c - i * i) ** 0.5 % 1 == 0: return True
+        return False
+```
+Comment: pay attention to the upper bound, try to make upper bound as tight as possible can boost the runtime.  
+
+
+**II). Two Sum Transform**
+| O(T): O(sqrt(n)) | O(S): O(sqrt(n)) | Rt: 160ms | 
+```python
+    def judgeSquareSum(self, c: int) -> bool: 
+        s = {i * i for i in range(int(c ** 0.5) + 1)}
+        return any(c - i in s for i in s)
+```
+Alternative: immediate return. | Rt: 136ms |
+```python
+    def judgeSquareSum(self, c: int) -> bool: 
+        s = {i * i for i in range(int(c ** 0.5) + 1)}
+        for i in s:
+            if c - i in s: return True
+        return False
+```
+Triple: one pass. | Rt: 168ms |
+```python
+    def judgeSquareSum(self, c: int) -> bool: 
+        s = set()
+        for i in range(int(c ** 0.5) + 1):
+            cur = i * i
+            #the two numbers could be same
+            s.add(cur)
+            if c - cur in s: return True
+        return False
+``` 
+
+
+**III). Two Pointer**
+| O(T): O(sqrt(n)) | O(S): O(1) | Rt: 124ms | 
+```python
+    def judgeSquareSum(self, c: int) -> bool: 
+        l, r = 0, int(c ** 0.5)
+        #equal is critical since two num could be the same
+        while l <= r: 
+            cursum = l * l + r * r
+            if cursum < c: l += 1
+            elif cursum > c: r -= 1
+            else: return True
+        return False
+```
+
+
+**IV). Binary Search**
+| O(T): O(sqrt(n)lg(sqrt(n))) | O(S): O(1) | Rt: 1856ms | 
+```python
+    def judgeSquareSum(self, c: int) -> bool: 
+        top = int(c ** 0.5)
+        for i in range(top + 1):
+            l, r = i, top
+            while l <= r:
+                mid = l + (r - l) // 2
+                cur = mid * mid + i * i 
+                if cur == c: return True
+                if cur < c: l = mid + 1
+                else: r = mid - 1
+        return False
+```
+Alternative: my favorite binary search style. | Rt: 1660ms |
+```python
+    def judgeSquareSum(self, c: int) -> bool: 
+        top = int(c ** 0.5)
+        for i in range(top + 1):
+            l, r = i, top
+            while l < r:
+                mid = l + (r - l) // 2
+                cur = mid * mid + i * i 
+                if cur < c: l = mid + 1
+                else: r = mid
+            if l * l + i * i == c: return True
+        return False
+```
+Comment: of course, binary search is not a good choice for this problem. However, Could you code out the right binary search solution at your will in your first try? Engineer should be very confortable with binary search even when the problem domain is not comfortable for binary search.
+

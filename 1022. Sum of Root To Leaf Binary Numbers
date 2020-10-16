@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 24ms | 
+```python
+    def sumRootToLeaf(self, root: TreeNode) -> int:
+        def dfs(node, pre, summ):
+            if not node: return
+            pre = (pre << 1) + node.val
+            if not node.left and not node.right: summ[0] += pre
+            else: 
+                dfs(node.left, pre, summ); 
+                dfs(node.right, pre, summ)
+            return summ[0]
+            
+        return dfs(root, 0, [0])
+```
+Comment: I got the wrong solution because I used "pass by referrence" for the pre variable. If you want to pass different value for each branch, you should use "pass by value". when you want a global consistant value, using "pass by referrence". If you use "reference" for pre variable, it will cause a mess in the value of "pre value".
+Alternative:  | Rt: 44ms |
+```python
+    def sumRootToLeaf(self, root: TreeNode, pre = 0) -> int:
+        if not root: return 0
+        val = (pre << 1) + root.val
+        if not root.left and not root.right: return val
+        return self.sumRootToLeaf(root.left, val) + self.sumRootToLeaf(root.right, val)
+```
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def sumRootToLeaf(self, root: TreeNode, pre = 0) -> int:
+        rst, s = 0, [(0, root)]
+        while s: 
+            pre, node = s.pop()
+            if not node: continue
+            val = (pre << 1) + node.val
+            if not node.left and not node.right: rst += val
+            else: 
+            	s.append((val, node.right))
+            	s.append((val, node.left))
+        return rst
+```
+

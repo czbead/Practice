@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS & BFS**
+| O(T): O() | O(S): O() | Rt: 428ms | 
+```python
+    def shortestBridge(self, A: List[List[int]]) -> int:
+        l = len(A)
+        #find the head of the first island
+        i, j = next((i, j) for i in range(l) for j in range(l) if A[i][j])
+              
+        #DFS: build the island
+        island, stack = [], [(i, j)]
+        visited = set([(i, j)])
+        while stack:
+            i, j = stack.pop(); island.append((i, j))
+            for x, y in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]:
+                if 0<=x<l and 0<=y<l and A[x][y] and (x, y) not in visited:
+                    visited.add((x, y)); stack.append((x, y))
+            
+        #BFS: reach the other island by bridge
+        q, step = collections.deque(island), 0
+        while q:
+            size, step = len(q), step+1
+            for _ in range(size):
+                i, j = q.popleft()
+                for x, y in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]:
+                    if 0<=x<l and 0<=y<l and (x, y) not in visited:
+                        if A[x][y] == 1: return step - 1
+                        visited.add((x, y))
+                        q.append((x, y))
+```
+

@@ -1,0 +1,39 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Save Peek Val**
+| O(T): O() | O(S): O(1) | Rt: 48ms | 
+```python
+class PeekingIterator:
+    def __init__(self, iterator):
+        self.it = iterator
+        self.val = None
+
+    def peek(self):
+        if self.val is None: self.val = self.it.next()
+        return self.val
+
+    def next(self):
+        if self.val: 
+            tmp, self.val = self.val, None
+            return tmp
+        return self.it.next()
+
+    def hasNext(self):
+        return self.val is not None or self.it.hasNext()
+```
+Alternative: be ready all the time. | Rt: 52ms |
+```python
+class PeekingIterator:
+    def __init__(self, iterator):
+        self.it = iterator
+        self.val = iterator.next() if iterator.hasNext() else None
+
+    def peek(self):
+        return self.val
+
+    def next(self):
+        val, self.val = self.val, self.it.next() if self.it.hasNext() else None
+        return val
+
+    def hasNext(self):
+        return self.val is not None or self.it.hasNext()
+```

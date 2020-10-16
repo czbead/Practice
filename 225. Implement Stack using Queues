@@ -1,0 +1,50 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). List**
+| O(t): O(n) | O(m): O(n) | Rt: 24ms | 
+```python
+class MyStack:
+    def __init__(self):
+        self.lst = []
+
+    #O(n)
+    def push(self, x: int) -> None:
+        self.lst.insert(0, x)
+
+    #O(n)
+    def pop(self) -> int:
+        val = self.lst[0]
+        del self.lst[0]
+        return val
+
+    def top(self) -> int:
+        return self.lst[0]
+
+    def empty(self) -> bool:
+        return False if self.lst else True
+```
+
+
+**II). Deque**
+| O(t): O(n) | O(m): O(n) | Rt: 20ms | 
+```python
+class MyStack:
+    def __init__(self):
+        self.q = collections.deque([])
+        
+     #O(n)
+    def push(self, x: int) -> None:
+        self.q.append(x)
+        for _ in range(len(self.q) - 1):
+            self.q.append(self.q.popleft())
+
+    def pop(self) -> int:
+        return self.q.popleft()
+
+    def top(self) -> int:
+        return self.q[0]
+
+    def empty(self) -> bool:
+        return False if self.q else True
+```
+Referrence: https://leetcode.com/problems/implement-stack-using-queues/discuss/62516/Concise-1-Queue-Java-C%2B%2B-Python
+

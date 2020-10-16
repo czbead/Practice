@@ -1,0 +1,75 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Chain the next Grater**
+| O(T): O(n * n) | O(S): O(1) | Rt: 272ms | 
+```python
+    def nextGreaterElements(self, nums: List[int]) -> List[int]:
+        if not nums: return
+        l = len(nums)
+        maxv, maxi = -float('inf'), None
+        for i in range(l):
+            if nums[i] > maxv: maxv, maxi = nums[i], i
+        rst, i = [None] * l, maxi
+        for _ in range(l):
+            if nums[i] < nums[(i+1) % l]: rst[i] = nums[(i+1) % l]
+            else: 
+                j = i
+                while rst[(j+1)%l] is not None and nums[i] >= rst[(j+1)%l]: j += 1
+                rst[i] = rst[(j+1) % l]
+            i = (i-1) % l
+        for i in range(l):
+            if rst[i] is None: rst[i] = -1
+        return rst
+```
+Comment: why we use 'None' instead of '-1' which can save us tons of effort? Because the input may contain '-1' as a valid item, that will stop us traverse items after that. Let me share the previous wrong solution here. 
+```python
+    def nextGreaterElements(self, nums: List[int]) -> List[int]:
+        if not nums: return
+        l = len(nums)
+        maxv, maxi = -float('inf'), None
+        for i in range(l):
+            if nums[i] > maxv: maxv, maxi = nums[i], i
+        rst, i = [-1] * l, maxi
+        for _ in range(l):
+            if nums[i] < nums[(i+1) % l]: rst[i] = nums[(i+1) % l]
+            else: 
+                j = i
+                while rst[(j+1)%l] != -1 and nums[i] >= rst[(j+1)%l]: j += 1
+                rst[i] = rst[(j+1) % l]
+            i = (i-1) % l
+        return rst
+```
+
+
+**II). Stack Index**
+| O(T): O(n) | O(S): O(n) | Rt: 216ms | 
+```python
+    def nextGreaterElements(self, nums: List[int]) -> List[int]:
+        if not nums: return
+        l, stack = len(nums), []
+        rst = [-1] * l
+        for i in range(2 * l):
+            num = nums[i % l]
+            while stack and nums[stack[-1]] < num:
+                rst[stack.pop()] = num
+            if i < l: stack.append(i)
+        return rst
+```
+Referrence: https://leetcode.com/problems/next-greater-element-ii/discuss/98273/Java-10-lines-and-C%2B%2B-12-lines-linear-time-complexity-O(n)-with-explanation
+
+Alternative: | Rt: 212ms |
+```python
+    def nextGreaterElements(self, nums: List[int]) -> List[int]:
+        if not nums: return
+        l, stack = len(nums), []
+        rst = [None] * l
+        for i in range(2 * l):
+            num = nums[i % l]
+            while stack and nums[stack[-1]] < num:
+                rst[stack.pop()] = num
+            if i < l: stack.append(i)
+        # for i in range(l):
+        #     if rst[i] is None: rst[i] = -1
+        while stack: rst[stack.pop()] = -1
+        return rst
+```
+Comment: the clever part of this solution is "stack index" instead of "stack value", most of time, we stack values while it won't work for this problem.

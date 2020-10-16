@@ -1,0 +1,13 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Distance Rule**
+| O(T): O() | O(S): O(1) | Rt: 28ms | 
+```python
+    def validSquare(self, p1: List[int], p2: List[int], p3: List[int], p4: List[int]) -> bool:
+        def distance(a, b):
+            return (a[1]-b[1])**2 + (a[0]-b[0])**2
+        s = set([distance(p1, p2), distance(p1, p3), distance(p1, p4), distance(p2, p3), distance(p2, p4), distance(p3, p4)])
+        return len(s) == 2 and 0 not in s
+```
+Referrence: https://leetcode.com/problems/valid-square/discuss/103442/C%2B%2B-3-lines-(unordered_set)
+
+

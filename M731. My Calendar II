@@ -1,0 +1,19 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Classify Singly Booking and Doubly Booking**
+| O(T): O() | O(S): O() | Rt: 568ms | 
+```python
+class MyCalendarTwo:
+
+    def __init__(self):
+        self.single = []
+        self.double = []
+
+    def book(self, start: int, end: int) -> bool:
+        if any(start < j and end > i for i, j in self.double): return False
+        for i, j in self.single:
+            if start < j and end > i: 
+                self.double.append((max(start, i), min(end, j)))
+        self.single.append((start, end))
+        return True 
+```
+Referrence: https://leetcode.com/problems/my-calendar-ii/discuss/109530/N2-Python-Short-and-Elegant

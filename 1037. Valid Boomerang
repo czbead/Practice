@@ -1,0 +1,34 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def isBoomerang(self, points: List[List[int]]) -> bool:
+        a, b, c = points
+        return a!=b and b!=c and c!=a and (b[1] - a[1]) * (c[0] - a[0]) != (c[1] - a[1]) * (b[0] - a[0])
+```
+
+
+**II). Set**
+| O(T): O(n) | O(S): O(n) | Rt: 20ms | 
+```python
+    def isBoomerang(self, points: List[List[int]]) -> bool:
+        a, b, c = points
+        return len(set(map(tuple, points))) == 3 and (b[1] - a[1]) * (c[0] - a[0]) != (c[1] - a[1]) * (b[0] - a[0])
+```
+Comment: using the length of set to decide distinctness. List is not hashable, therefore the conversion is essential 
+
+
+**III). Triangle**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def isBoomerang(self, points: List[List[int]]) -> bool:
+        a, b, c = points
+        ab = ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
+        bc = ((c[0] - b[0]) ** 2 + (c[1] - b[1]) ** 2) ** 0.5
+        ac = ((a[0] - c[0]) ** 2 + (a[1] - c[1]) ** 2) ** 0.5
+        return ab != bc + ac and bc != ab + ac and ac != ab + bc
+```
+
+
+Others: triangle area solution if you could remember the formula: https://leetcode.com/problems/valid-boomerang/discuss/286656/C%2B%2B-1-liner%3A-Triangle-Area
+

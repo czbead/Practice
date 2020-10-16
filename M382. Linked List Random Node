@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). With Length Known**
+| O(T): O(n) | O(S): O() | Rt: 88ms | 
+```python
+class Solution:
+
+    def __init__(self, head: ListNode):
+        self.lst = head
+        self.len = 0
+        while head: 
+            self.len += 1
+            head = head.next
+
+    def getRandom(self) -> int:
+        pos = random.randint(0, self.len - 1)
+        rst = self.lst
+        while pos:
+            rst = rst.next
+            pos -= 1
+        return rst.val
+```
+
+
+**II). Reservoir Sampling**
+| O(T): O() | O(S): O() | Rt: 220ms | 
+```python
+class Solution:
+
+    def __init__(self, head: ListNode):
+        self.lst = head
+
+    def getRandom(self) -> int:
+        i = candidate = self.lst
+        ct = 0
+        while i:
+            if random.randint(1, ct+1) == ct: candidate = i
+            i, ct = i.next, ct+1
+        return candidate.val
+```
+Referrence: https://leetcode.com/problems/linked-list-random-node/discuss/85662/Java-Solution-with-cases-explain
+

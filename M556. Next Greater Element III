@@ -1,0 +1,40 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Find next Minimum Greater Digit and Swap then Sort Tail**
+| O(T): O(n * n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def nextGreaterElement(self, n: int) -> int:
+        digits = [int(i) for i in str(n)]
+        l = len(digits)
+        for i in range(l-2, -1, -1):
+            mingreaterindex = None
+            for j in range(i+1, l):
+                if digits[j] > digits[i]:
+                    if mingreaterindex is None: mingreaterindex = j
+                    elif digits[j] < digits[mingreaterindex]: mingreaterindex = j
+            if mingreaterindex is not None:
+                digits[i], digits[mingreaterindex] = digits[mingreaterindex], digits[i]
+                digits[i+1:] = sorted(digits[i+1:])
+                newnum = int(''.join(map(str, digits)))
+                if newnum > (2 << 31 - 1): return -1
+                return newnum
+        return -1
+```
+
+Alternative: | Rt: 24ms |
+```python
+    def nextGreaterElement(self, n: int) -> int:
+        digits = [int(i) for i in str(n)]
+        l = len(digits)
+        for i in range(l-2, -1, -1):
+            mingreater, index = float('inf'), None
+            for j in range(i+1, l):
+                if digits[j] > digits[i] and digits[j] < mingreater:
+                    mingreater, index = digits[j], j
+            if index is not None:
+                digits[i], digits[index] = digits[index], digits[i]
+                digits[i+1:] = sorted(digits[i+1:])
+                newnum = int(''.join(map(str, digits)))
+                if newnum > (2 << 31 - 1): return -1
+                return newnum
+        return -1
+```

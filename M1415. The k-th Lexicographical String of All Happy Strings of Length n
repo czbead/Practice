@@ -1,0 +1,64 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking**
+| O(T): O() | O(S): O() | Rt: 136ms | 
+```python
+    def getHappyString(self, n: int, k: int) -> str:
+        def dfs(path, n, rst):
+            if len(path) == n: rst.append(path); return 
+            for i in 'abc':
+                if path and i == path[-1]: continue
+                dfs(path+i, n, rst)
+                    
+        arr = []
+        dfs('', n, arr)
+        if len(arr) < k: return ''
+        return arr[k-1]
+```
+
+
+**II). Iterative**
+| O(T): O() | O(S): O() | Rt: 92ms | 
+```python
+    def getHappyString(self, n: int, k: int) -> str:
+        stack = ['']
+        for _ in range(n):
+            stack = [i+j for i in stack for j in 'abc' if not i or j != i[-1]]
+        if len(stack) < k: return ''
+        return stack[k-1]
+```
+
+Alternative: no need to generate all happy strings. | Rt: 72ms |
+```python
+    def getHappyString(self, n: int, k: int) -> str:
+        q = collections.deque([''])
+        for i in range(n):
+            size = len(q)
+            for _ in range(size):
+                s = q.popleft()
+                for c in 'abc':
+                    if s and s[-1] == c: continue
+                    q.append(s+c)
+                    if i == n-1: 
+                        k -= 1
+                        if k == 0: return s+c
+        return ''
+```
+
+
+**III). Generator**
+| O(T): O() | O(S): O() | Rt: 36ms | 
+```python
+    def getHappyString(self, n: int, k: int) -> str:
+        def gen(path, n):
+            if len(path) == n: yield path; return
+            for c in 'abc':
+                if path and path[-1] == c: continue
+                yield from gen(path+c, n)
+                
+        for happy in gen('', n):
+            k -= 1
+            if k == 0: return happy
+        return ''
+```
+Referrence: using generator - https://leetcode.com/problems/the-k-th-lexicographical-string-of-all-happy-strings-of-length-n/discuss/585561/Python-7-line-DFS-with-yield
+

@@ -1,0 +1,12 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Dict Running Sum**
+| O(T): O(n) | O(S): O(n) | Rt: 116ms | 
+```python
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        rst, runsum, dt = 0, 0, {0:1}
+        for i in nums:
+            runsum += i
+            rst += dt.get(runsum - k, 0)
+            dt[runsum] = dt.get(runsum, 0) + 1
+        return rst
+```

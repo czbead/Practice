@@ -1,0 +1,26 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Set**
+| O(T): O(n) | O(S): O(1) | Rt: 100ms | 
+```python
+    def numComponents(self, head: ListNode, G: List[int]) -> int:
+        gset, st, rst = set(G), False, 0
+        while head:
+            if head.val in gset:
+                if not st: st, rst = True, rst + 1
+            elif st: st = False
+            head = head.next
+        return rst
+```
+
+Alternative: add a count in case we found all G item earlier. | Rt: 112ms |
+```python
+    def numComponents(self, head: ListNode, G: List[int]) -> int:
+        l, gset, st, ct, rst = len(G), set(G), False, 0, 0
+        while head and ct < l:
+            if head.val in gset:
+                ct += 1
+                if not st: st, rst = True, rst + 1
+            elif st: st = False
+            head = head.next
+        return rst
+```

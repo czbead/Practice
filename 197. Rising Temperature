@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**TO_DAYS()** | Rt: 600ms |
+```sql
+select w1.Id from Weather w1, Weather w2 
+    where w1.Temperature > w2.Temperature 
+        and to_days(w1.RecordDate) - to_days(w2.RecordDate) = 1
+```
+
+**DATEDIFF** | Rt: 400ms |
+```sql
+select w1.Id from Weather w1, Weather w2 
+    where w1.Temperature > w2.Temperature 
+        and datediff(w1.RecordDate, w2.RecordDate) = 1
+```
+
+**SUBDATE** | Rt: 1037ms |
+```sql
+select w1.Id from Weather w1, Weather w2 
+    where w1.Temperature > w2.Temperature 
+        and subdate(w1.RecordDate, 1) = w2.RecordDate
+```
+
+**JOIN** | Rt: 556ms |
+```sql
+select w1.Id from Weather w1 join Weather w2 
+    on to_days(w1.RecordDate) = to_days(w2.RecordDate) + 1
+        where w1.Temperature > w2.Temperature
+```

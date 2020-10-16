@@ -1,0 +1,16 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Carry Backward**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def monotoneIncreasingDigits(self, N: int) -> int:
+        if N < 10: return N
+        digit = [int(i) for i in str(N)]
+        index, l = None, len(digit)
+        for i in range(l-1, 0, -1):
+            if digit[i] < digit[i-1]: 
+                index, digit[i-1] = i, digit[i-1]-1
+        if digit[0] == 0: return int('9' * (l-1))
+        if index is not None:
+            for i in range(index, l): digit[i] = 9
+        return int(''.join(map(str, digit)))
+```

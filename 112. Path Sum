@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(t): O(n) | O(m): O(1) | Rt: 44ms | 
+```python
+    def hasPathSum(self, root: TreeNode, sum: int) -> bool:
+        if not root: return False
+        if not root.left and not root.right: return root.val == sum
+        return self.hasPathSum(root.left, sum - root.val) or self.hasPathSum(root.right, sum - root.val)
+```
+
+
+**II). Pair Wise DFS Iteration**
+| O(t): O(n) | O(m): O(n) | Rt: 52ms | 
+```python
+    def hasPathSum(self, root: TreeNode, sum: int) -> bool:
+        s = [(root, sum)] if root else []
+        while s:
+            node, su = s.pop()
+            if not node.left and not node.right and node.val == su: return True
+            if node.right:
+                s.append((node.right, su - node.val))
+            if node.left:
+                s.append((node.left, su - node.val))
+        return False
+```
+
+
+**III). Pair Wise BFS Iteration**
+| O(t): O(n) | O(m): O(n) | Rt: 40ms | 
+```python
+    def hasPathSum(self, root: TreeNode, sum: int) -> bool:
+        q = collections.deque([(root, sum)]) if root else None
+        while q:
+            node, su = q.popleft()
+            if not node.left and not node.right and node.val == su: return True
+            if node.right:
+                q.append((node.right, su - node.val))
+            if node.left:
+                q.append((node.left, su - node.val))
+        return False
+```

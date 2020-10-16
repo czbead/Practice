@@ -1,0 +1,36 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Heap**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 264ms | 
+```python
+    def candy(self, ratings: List[int]) -> int:
+        arr, l = [], len(ratings)
+        candy = [0] * l
+        for i in range(l): arr.append((ratings[i], i))
+        heapq.heapify(arr)
+        while arr:
+            rate, i = heapq.heappop(arr)
+            cur = 1
+            if i > 0 and rate > ratings[i-1]: cur = max(cur, candy[i-1]+1)
+            if i+1 < l and rate > ratings[i+1]: cur = max(cur, candy[i+1]+1)
+            candy[i] = cur
+        return sum(candy)
+```
+
+
+**II). Bidirection Scan**
+| O(T): O(n) | O(S): O(n) | Rt: 172ms | 
+```python
+    def candy(self, ratings: List[int]) -> int:
+        l = len(ratings)
+        candy = [1] * l
+        for i in range(1, l):
+            if ratings[i] > ratings[i-1]:
+                candy[i] = candy[i-1]+1
+        for i in range(l-1, 0, -1):
+            if ratings[i-1] > ratings[i]:
+                candy[i-1] = max(candy[i-1], candy[i]+1)
+        return sum(candy)
+```
+Referrence: https://leetcode.com/problems/candy/discuss/42769/A-simple-solution
+
+Others: https://leetcode.com/problems/candy/discuss/135698/Simple-solution-with-one-pass-using-O(1)-space; https://leetcode.com/problems/candy/discuss/42770/One-pass-constant-space-Java-solution;

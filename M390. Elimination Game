@@ -1,0 +1,12 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | MLE
+```python
+    def lastRemaining(self, n: int) -> int:
+        arr = list(range(1, n+1))
+        while len(arr) > 1:
+            arr = arr[1::2]
+            arr.reverse()
+        return arr[0]
+```
+Others: here is a tricky solution. https://leetcode.com/problems/elimination-game/discuss/87121/O(logN)-solution.-clear-break-down; All solutions for this problem is not as good because you hardly learn anything from them that you can apply in real interviews. 

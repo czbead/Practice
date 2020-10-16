@@ -1,0 +1,33 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Safe Choice**
+| O(t): O(n) | O(m): O(1) | Rt: 28ms | 
+note: robust code working well with non-space delimiter
+```python
+    def lengthOfLastWord(self, s: str) -> int:
+        st = False
+        ct = 0
+        for i in s[::-1]:
+            if i.isalpha(): 
+                st = True   
+                ct += 1
+            if st and not i.isalpha():
+                return ct
+        return ct
+```
+
+**II). Naive for Space**
+| O(t): O(n) | O(m): O(1) | Rt: 24ms | 
+note: only cope with space delimiter
+```python
+    def lengthOfLastWord(self, s: str) -> int:
+        ct = 0
+        for i in reversed(s.strip()):
+            if not i.isalpha(): return ct
+            ct += 1
+        return ct
+```
+Alternative: same idea one-liner. | Rt: 28ms |
+```python
+    def lengthOfLastWord(self, s: str) -> int:
+        return len(s.strip().split()[-1]) if s.strip() else 0
+```

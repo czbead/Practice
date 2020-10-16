@@ -1,0 +1,32 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 532ms | 
+```python
+    def circularArrayLoop(self, nums: List[int]) -> bool:
+        l = len(nums)
+        for i in range(l):
+            #one step cycle or step too big or dead loop item
+            if nums[i] == 0 or abs(nums[i]) >= l: continue
+            dire, j, step = bool(nums[i] > 0), i, 0
+            while nums[j] != 0 and bool(nums[j] > 0) == dire: 
+                j, step = (nums[j] + j) % l, step + 1
+                if j == i: return True
+                if step > l: break
+        return False
+```
+Alternative: slightly improved; | Rt: 548ms |
+```python
+    def circularArrayLoop(self, nums: List[int]) -> bool:
+        l = len(nums)
+        for i in range(l):
+            #one step cycle or step too big or visited item
+            if nums[i] == 0 or abs(nums[i]) >= l: continue
+            dire, j, step = bool(nums[i] > 0), i, 0
+            while nums[j] != 0 and bool(nums[j] > 0) == dire: 
+                j, step = (nums[j] + j) % l, step + 1
+                if j == i: return True
+                if step > l: break
+            nums[i] = 0
+        return False
+```
+

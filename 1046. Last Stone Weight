@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Max Heap**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 20ms | 
+```python
+    def lastStoneWeight(self, stones: List[int]) -> int:
+        s = [-i for i in stones]
+        heapq.heapify(s)
+        while len(s) > 1: heapq.heappush(s, heapq.heappop(s) - heapq.heappop(s))
+        return -s[0]
+```
+
+
+**II). Collect Sort**
+| O(T): O(n) | O(S): O(1) | Rt: 36ms | 
+```python
+    def lastStoneWeight(self, stones: List[int]) -> int:
+        m = [0] * 1000
+        for i in stones: m[i-1] += 1
+        slow = 999
+        while slow >= 0:
+            if m[slow] % 2: 
+                fast = slow - 1
+                while fast >= 0 and m[fast] == 0: fast -= 1
+                if fast < 0: break
+                m[fast] -= 1
+                m[slow - fast - 1] += 1
+            slow -= 1
+        return slow + 1
+```
+
+
+**III). Bisect Insort**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 28ms | 
+```python
+    def lastStoneWeight(self, stones: List[int]) -> int:
+        stones.sort()
+        while len(stones) > 1: bisect.insort(stones, stones.pop() - stones.pop())
+        return stones[0]
+```
+Referrence: https://leetcode.com/problems/last-stone-weight/discuss/294956/JavaPython-O(nlogn)
+
+
+

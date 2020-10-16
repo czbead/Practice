@@ -1,0 +1,21 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search Timeline**
+| O(T): O() | O(S): O() | Rt: 356ms | 
+```python
+class TweetCounts:
+
+    def __init__(self):
+        self.dt = collections.defaultdict(list)
+
+    def recordTweet(self, tweetName: str, time: int) -> None:
+        bisect.insort(self.dt[tweetName], time)
+
+    def getTweetCountsPerFrequency(self, freq: str, tweetName: str, startTime: int, endTime: int) -> List[int]:
+        dt = 1 * 60 if freq == 'minute' else 60 * 60 if freq == 'hour' else 3600 * 60
+        rst, timeline = [], self.dt[tweetName]
+        for i in range(startTime, endTime+1, dt): 
+            rst.append(bisect.bisect_left(timeline, min(i+dt, endTime+1)) - bisect.bisect_left(timeline, i))
+        return rst
+```
+Referrence: https://leetcode.com/problems/tweet-counts-per-frequency/discuss/503447/Python-binary-search
+

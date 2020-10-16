@@ -1,0 +1,26 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort with Greedy**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 144ms | 
+```python
+    def largestValsFromLabels(self, values: List[int], labels: List[int], num_wanted: int, use_limit: int) -> int:
+        rst = ct = 0
+        tu, dt = sorted(zip(values, labels)), {}
+        while tu and ct < num_wanted:
+            v, l = tu.pop()
+            if dt.get(l, 0) < use_limit:
+                rst, ct = rst+v, ct+1
+                dt[l] = dt.get(l, 0) + 1
+        return rst
+```
+
+Alternative: | Rt: 132ms |
+```python
+    def largestValsFromLabels(self, values: List[int], labels: List[int], num_wanted: int, use_limit: int) -> int:
+        rst, dt = 0, {}
+        for v, l in sorted(zip(values, labels), reverse=True):
+            if dt.get(l, 0) < use_limit:
+                rst, num_wanted = rst+v, num_wanted-1
+                if num_wanted <= 0: break
+                dt[l] = dt.get(l, 0) + 1
+        return rst
+```

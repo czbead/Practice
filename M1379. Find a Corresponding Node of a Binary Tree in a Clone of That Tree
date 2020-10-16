@@ -1,0 +1,24 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Wrong Try**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+    def getTargetCopy(self, original: TreeNode, cloned: TreeNode, target: TreeNode) -> TreeNode:
+        def isSameTree(rt1, rt2):
+            if not rt1 or not rt2: return rt1 is rt2
+            return rt1.val == rt2.val and isSameTree(rt1.left, rt2.left) and isSameTree(rt1.right, rt2.right)
+        
+        if isSameTree(cloned, target): return cloned
+        return self.getTargetCopy(original, cloned.left, target) or self.getTargetCopy(original, cloned.right, target)
+```
+Comment: it is ambiguous that the description doesn't say we cannot access clone tree.
+
+
+**II). Synchronize Original and Copy**
+| O(T): O(n) | O(S): O(1) | Rt: 640ms | 
+```python
+    def getTargetCopy(self, ori: TreeNode, cloned: TreeNode, target: TreeNode) -> TreeNode:
+        if not ori or ori is target: return cloned
+        return self.getTargetCopy(ori.left, cloned.left, target) or self.getTargetCopy(ori.right, cloned.right, target)
+```
+Referrence: https://leetcode.com/problems/find-a-corresponding-node-of-a-binary-tree-in-a-clone-of-that-tree/discuss/537728/Java-Simple-Solution
+

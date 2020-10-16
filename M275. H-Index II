@@ -1,0 +1,14 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search**
+| O(T): O(lgn) | O(S): O(1) | Rt: 156ms | 
+```python
+    def hIndex(self, citations: List[int]) -> int:
+        if not citations or citations[-1] <= 0: return 0
+        le = len(citations)
+        l, r = 0, le - 1
+        while l < r:
+            m = l + (r - l) // 2
+            if citations[m] < le - m: l = m + 1
+            else: r = m
+        return le - l
+```

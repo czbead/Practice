@@ -1,0 +1,16 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). IF-Else**
+| O(T): O() | O(S): O() | Rt: 28ms | 
+```python
+    def maskPII(self, S: str) -> str:
+        if not S[0].isalpha():
+            arr = []
+            for i in S:
+                if i.isdigit(): arr.append(i)
+            rst = '***-***-' + ''.join(arr[-4:])
+            if len(arr) > 10: rst = '+' + '*'*(len(arr)-10) + '-' + rst
+            return rst
+        else:
+            a, b = S.split('@', 1)
+            return a[0].lower() + '*****' + a[-1].lower() + '@' + b.lower()
+```

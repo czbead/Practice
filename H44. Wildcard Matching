@@ -1,0 +1,54 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). **
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def isMatch(self, s: str, p: str) -> bool:
+        if not p: return not s
+        if not s: return all(i=='*' for i in p)
+        if p[0] == '?': return self.isMatch(s[1:], p[1:])
+        #a). match multiple; b). match single; c). match zero;
+        if p[0] == '*': return (s and (self.isMatch(s[1:], p) or self.isMatch(s[1:], p[1:]))) or self.isMatch(s, p[1:])
+        return s[0] == p[0] and self.isMatch(s[1:], p[1:])
+```
+
+
+**II). Two Pointer Check Back Match**
+| O(T): O(mn) | O(S): O(1) | Rt: 52ms | 
+```python
+    def isMatch(self, s: str, p: str) -> bool:
+        ls, lp, i, j, starInd, matchInd = len(s), len(p), 0, 0, -1, -1
+        while i < ls:
+            if j < lp and (s[i] == p[j] or p[j] == '?'): i, j = i+1, j+1
+            #greedy, once met star, could match all so far
+            elif j < lp and p[j] == '*': starInd, matchInd, j = j, i, j+1
+            #check back when non-match, step backward
+            elif starInd != -1: 
+                j, matchInd = starInd+1, matchInd+1
+                i = matchInd
+            else: return False
+        return all(p[k] == '*' for k in range(j, lp))
+```
+
+
+**III). DP**
+| O(T): O(mn) | O(S): O(mn) | Rt: 800ms | 
+```python
+    def isMatch(self, s: str, p: str) -> bool:
+        ls, lp = len(s), len(p)
+        dp = [[False] * (lp+1) for _ in range(ls+1)]
+        #initilize dp array, while s = '', dp can only be: '** ... *'
+        dp[0][0] = True
+        for j in range(1, lp+1):
+            if p[j-1] != '*': break
+            dp[0][j] = True
+                
+        for i in range(1, ls+1):
+            for j in range(1, lp+1):
+                if p[j-1] == '*':
+                    dp[i][j] = dp[i-1][j] or dp[i][j-1]
+                else: 
+                    dp[i][j] = dp[i-1][j-1] and (p[j-1] == '?' or p[j-1] == s[i-1])
+        return dp[-1][-1]
+```
+Referrence: https://leetcode.com/problems/wildcard-matching/discuss/17812/My-java-DP-solution-using-2D-table/17714
+

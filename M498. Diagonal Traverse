@@ -1,0 +1,87 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(mn) | O(S): O(1) | Rt: 200ms | 
+```python
+    def findDiagonalOrder(self, matrix: List[List[int]]) -> List[int]:
+        if not matrix or not matrix[0]: return 
+        r, c = len(matrix), len(matrix[0])
+        rst, godown, x, y = [], 0, 0, 0
+        while x < r and y < c:
+            rst.append(matrix[x][y])
+            dx, dy = -1, 1
+            if godown: dx, dy = dy, dx
+            while 0<=x+dx<r and 0<=y+dy<c:
+                x, y = x+dx, y+dy
+                rst.append(matrix[x][y])
+                
+            if godown:
+                if x+1 < r: x += 1
+                else: y += 1
+            else:
+                if y+1 < c: y += 1
+                else: x += 1
+            godown ^= 1
+        return rst
+```
+
+
+**II). Direct the Walk**
+| O(T): O(n) | O(S): O(1) | Rt: 200ms | 
+```python
+    def findDiagonalOrder(self, matrix: List[List[int]]) -> List[int]:
+        if not matrix or not matrix[0]: return 
+        r, c = len(matrix), len(matrix[0])
+        rst, i, j = [0] * (r*c), 0, 0
+        for index in range(r*c):
+            rst[index] = matrix[i][j]
+            if (i + j) % 2 == 0:  #go up-right
+                if j == c-1: i += 1   #go forward (down, right) when hit bound
+                elif i == 0: j += 1   
+                else: i, j = i-1, j+1
+            else:  #go down-left
+                if i == r-1: j += 1  ##go forward when hit bound
+                elif j == 0: i += 1
+                else: i, j = i+1, j-1
+        return rst
+```
+Referrence: https://leetcode.com/problems/diagonal-traverse/discuss/97711/Java-15-lines-without-using-boolean
+
+
+**III). Group Up Diagnals**
+| O(T): O(mn) | O(S): O(mn) | Rt: 204ms | 
+```python
+    def findDiagonalOrder(self, matrix: List[List[int]]) -> List[int]:
+        if not matrix or not matrix[0]: return 
+        r, c = len(matrix), len(matrix[0])
+        diagnal = collections.defaultdict(list)
+        for i in range(r):
+            for j in range(c):
+                diagnal[i+j].append(matrix[i][j])
+        rst = []
+        for i in range(r + c - 1):
+            if i & 1: rst += diagnal[i]   #index sum is odd
+            else: rst += diagnal[i][::-1]
+        return rst
+```
+Referrence: https://leetcode.com/problems/diagonal-traverse/discuss/97767/Simply-Python-Solution
+
+
+**IV). Traverse Diagnal Sum**
+| O(T): O(mn) | O(S): O(1) | Rt: 3008ms | 
+```python
+    def findDiagonalOrder(self, matrix: List[List[int]]) -> List[int]:
+        if not matrix or not matrix[0]: return 
+        r, c = len(matrix), len(matrix[0])
+        rst = []
+        for s in range(r + c - 1):
+            if s % 2 == 0:
+                for i in range(min(r-1, s), -1, -1): 
+                    if s-i >= c: continue
+                    rst.append(matrix[i][s-i])
+            else:
+                for i in range(min(r, s+1)): 
+                    if s-i >= c: continue
+                    rst.append(matrix[i][s-i])
+        return rst
+```
+Referrence: https://leetcode.com/problems/diagonal-traverse/discuss/136365/C%2B%2B-O((N%2BM)2)-with-O(1)-extra-memory-explained

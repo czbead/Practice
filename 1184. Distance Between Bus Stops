@@ -1,0 +1,65 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(1) | Rt: 64ms | 
+```python
+    def distanceBetweenBusStops(self, distance: List[int], start: int, destination: int) -> int:    
+        if start > destination: start, destination = destination, start
+        total, a = sum(distance), sum(distance[start: destination])
+        return min(a, total - a)
+```
+
+
+**II). Prefix Sum - One Pass**
+| O(T): O(n) | O(S): O(1) | Rt: 48ms | 
+```python
+    def distanceBetweenBusStops(self, distance: List[int], start: int, destination: int) -> int:    
+        if start > destination: start, destination = destination, start
+        for i in range(len(distance)-1): distance[i+1] += distance[i]
+        a = distance[destination-1] if start == 0 else distance[destination-1] - distance[start-1]
+        return min(a, distance[-1] - a)
+```
+Alternative: accumulate.  | Rt: 48ms |
+```python
+    def distanceBetweenBusStops(self, distance: List[int], start: int, destination: int) -> int:    
+        if start > destination: start, destination = destination, start
+        accumulate = list(itertools.accumulate(distance))
+        a = accumulate[destination-1] if start == 0 else accumulate[destination-1] - accumulate[start-1]
+        return min(a, accumulate[-1] - a)
+```
+
+
+**III). Claim Distance**
+| O(T): O(n) | O(S): O(1) | Rt: 48ms | 
+```python
+    def distanceBetweenBusStops(self, distance: List[int], start: int, destination: int) -> int:    
+        if start > destination: start, destination = destination, start
+        a = total = 0
+        for i in range(len(distance)): 
+            total += distance[i]
+            if start <= i < destination: a += distance[i]
+        return min(a, total - a)
+```
+Referrence: https://leetcode.com/problems/distance-between-bus-stops/discuss/377444/Java-O(n)-solution-Easy-to-understand
+
+
+**IV). Bidiretion Walk**
+| O(T): O(n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def distanceBetweenBusStops(self, distance: List[int], start: int, destination: int) -> int:    
+        a, b, i, l = 0, 0, start, len(distance)
+        while i != destination: a, i = a + distance[i], (i + 1) % l
+        i = destination
+        while i != start: b, i = b + distance[i], (i + 1) % l
+        return min(a, b)
+```
+Referrence: idea from https://leetcode.com/problems/distance-between-bus-stops/discuss/410131/Java-Beats-100-Easy-Solution
+Alternative: | Rt: 44ms |
+```python
+    def distanceBetweenBusStops(self, distance: List[int], start: int, destination: int) -> int:    
+        def walk(lst, st, end):
+            dis, l = 0, len(lst)
+            while st != end: dis, st = dis + lst[st], (st + 1) % l
+            return dis
+        return min(walk(distance, start, destination), walk(distance, destination, start))
+```
+Referrence: https://leetcode.com/problems/distance-between-bus-stops/discuss/377444/Java-O(n)-solution-Easy-to-understand/343962

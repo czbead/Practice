@@ -1,0 +1,47 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search**
+| O(T): O(lgn) | O(S): O(n) | Rt: 228ms | 
+```python
+    def __init__(self, w: List[int]):
+        l = len(w)
+        self.prefixsum = [0] * (l + 1)
+        for i in range(1, l+1):
+            self.prefixsum[i] = self.prefixsum[i-1] + w[i-1]
+
+    def pickIndex(self) -> int:
+        rand = random.randint(0, self.prefixsum[-1]-1)
+        return bisect.bisect(self.prefixsum, rand)-1
+```
+
+Alternative: bisect_left version. | Rt: 240ms |
+```python
+    def __init__(self, w: List[int]):
+        l = len(w)
+        self.prefixsum = [0] * (l + 1)
+        for i in range(1, l+1):
+            self.prefixsum[i] = self.prefixsum[i-1] + w[i-1]
+
+    def pickIndex(self) -> int:
+        rand = random.randint(1, self.prefixsum[-1])
+        return bisect.bisect_left(self.prefixsum, rand)-1
+```
+
+Triple: self-implement binary search. | Rt: 296ms |
+```python
+    def __init__(self, w: List[int]):
+        l = len(w)
+        self.prefixsum = [0] * (l + 1)
+        for i in range(1, l+1):
+            self.prefixsum[i] = self.prefixsum[i-1] + w[i-1]
+
+    def pickIndex(self) -> int:
+        target = random.randint(1, self.prefixsum[-1])
+        l, r = 0, len(self.prefixsum)-1
+        while l < r:
+            m = (l + r) // 2
+            if self.prefixsum[m] < target: l = m + 1
+            else: r = m
+        return l-1
+```
+
+Comment: if you don't like the "minus 1" operation in the end, you can reduce the first '0' in the prefixsum list. Just remember that most of time, prefixsum starts with a extra 0 as the initial state. This extra '0' item will make things much easier when you want to compute the "sub continuous sum" or "continuous distance".  

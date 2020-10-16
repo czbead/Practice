@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS: Keep Track of Parent and GrandParent**
+| O(T): O(n) | O(S): O(h) | Rt: 108ms | 
+```python
+    def sumEvenGrandparent(self, root: TreeNode) -> int:
+        def dfs(node, par, grandpar):
+            if not node: return 0
+            l, r = dfs(node.left, node, par), dfs(node.right, node, par)
+            summ = l + r
+            if grandpar and grandpar.val % 2 == 0: summ += node.val
+            return summ
+        
+        return dfs(root, None, None)
+```
+
+Alternative: | Rt: 168ms |
+```python
+    def sumEvenGrandparent(self, root: TreeNode) -> int:
+        def dfs(node, par, grandpar, rst):
+            if not node: return 
+            dfs(node.left, node, par, rst)
+            dfs(node.right, node, par, rst)
+            if grandpar and grandpar.val % 2 == 0: rst[0] += node.val
+        
+        rst = [0]
+        dfs(root, None, None, rst)
+        return rst[0]
+```

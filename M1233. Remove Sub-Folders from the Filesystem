@@ -1,0 +1,81 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Set**
+| O(T): O(n) | O(S): O(n) | Rt: 296ms | 
+```python
+    def removeSubfolders(self, folder: List[str]) -> List[str]:
+        s, rst = set(folder), []
+        for i in folder:
+            arr = i.split('/')
+            l = len(arr)
+            if l <= 2 or all('/'.join(arr[:j]) not in s for j in range(2, l)):
+                rst.append(i)
+        return rst
+```
+
+
+**II). Trie with Sort**
+| O(T): O() | O(S): O() | Rt: 236ms | 
+```python
+    def removeSubfolders(self, folder: List[str]) -> List[str]:
+        def isSub(root, fold):
+            new = False
+            for i in fold.split('/'):
+                if i not in root: new, root[i] = True, {}
+                root = root[i]
+                if not new and '#' in root: return True  
+            root['#'] = '#'
+            return False
+        
+        trie, rst = {}, []
+        return [i for i in sorted(folder) if not isSub(trie, i[1:])]
+```
+
+Alternative: no sort version. | Rt: 328ms |
+```python
+    def removeSubfolders(self, folder: List[str]) -> List[str]:
+        def insert(root, fold):
+            for i in fold.split('/'):
+                if not i: continue
+                if i not in root: root[i] = {}
+                root = root[i]
+            root['#'] = fold
+        
+        def findRoots(node):
+            arr = []
+            if '#' in node: return [node['#']]
+            for k in node:
+                arr += findRoots(node[k])
+            return arr
+        
+        trie = {}
+        for i in folder: insert(trie, i)
+        return findRoots(trie)
+```
+Referrence: https://leetcode.com/problems/remove-sub-folders-from-the-filesystem/discuss/409075/Standard-Python-Trie-solution-(similar-problems-listed)
+
+
+**III). Sort**
+| O(T): O() | O(S): O() | Rt: 300ms | 
+```python
+    def removeSubfolders(self, folder: List[str]) -> List[str]:
+        folder.sort()
+        rst = set()
+        for i in folder:
+            arr = i.split('/')
+            l = len(arr)
+            if all('/'.join(arr[:j]) not in rst for j in range(2, l)):
+                rst.add(i)
+        return rst
+```
+
+Alternative: | Rt: 212ms |
+```python
+    def removeSubfolders(self, folder: List[str]) -> List[str]:
+        folder.sort()
+        rst = []
+        for i in folder:
+            if rst and i.startswith(rst[-1] + '/'): continue
+            rst.append(i)
+        return rst
+```
+Referrence: https://leetcode.com/problems/remove-sub-folders-from-the-filesystem/discuss/408949/C++-Short-sorting-O(nlogn)/370079

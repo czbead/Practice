@@ -1,0 +1,103 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat by Buildin**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 28ms | 
+```python
+    def bitwiseComplement(self, N: int) -> int:
+        return int(''.join(str(1^int(i)) for i in bin(N)[2:]), 2)
+```
+Comment: int(binaryString, 2) convert to decimal.
+
+
+**II). Get All Bits -- from High to Low**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 28ms | 
+```python
+    def bitwiseComplement(self, N: int) -> int:
+        bits, mask = [], 1
+        while mask < N: mask <<= 1
+        #the highest bit 1, no need to collect its complement 0
+        mask >>= 1
+        while mask:
+            bits.append(0 if mask&N else 1)
+            mask >>= 1
+        rst = 0
+        for i in bits: rst = rst * 2 + i
+        return rst if N > 0 else 1
+```
+
+
+**III). Get All Bits -- from Low to High**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 24ms | 
+```python
+    def bitwiseComplement(self, N: int) -> int:
+        if N == 0: return 1
+        bits = []
+        #collect bit from low to high
+        while N:
+            bits.append(1^(N&1))
+            N >>= 1
+        rst, base = 0, 1
+        #calculate binary list to decimal
+        for i in bits:
+            rst += base * i
+            base <<= 1
+        return rst
+```
+Alternative:  | Rt: 20ms |
+```python
+    def bitwiseComplement(self, N: int) -> int:
+        if not N: return 1
+        rst, cur = 0, 1
+        while N:
+            #current bit is 0
+            if not N&1: rst += cur
+            cur <<= 1
+            N >>= 1
+        return rst
+```
+
+
+**IV). Find Sum of N and N's Compliment**
+| O(T): O(lgn) | O(S): O(1) | Rt: 28ms | 
+```python
+    def bitwiseComplement(self, N: int) -> int:
+        if N == 0: return 1
+        n, bitlen = N, 0
+        while N:
+            bitlen += 1
+            N >>= 1
+        return (1 << bitlen) - 1 - n
+```
+Comment; N and it compliment add up to 1 ... 1 (of length of N's binary length). bitlen == len(N binary). (1 << bitlen) -> 10...0 (have bitlen 0s); -1 give you the add-up number.
+Alternative: masking shift trick.  | Rt: 24ms |
+```python
+    def bitwiseComplement(self, N: int) -> int:
+        n, summ = N, 1
+        while summ <= N: summ <<= 1
+        return summ - 1 - n if n else 1
+```
+Triple: using XOR.  | Rt: 20ms |
+```python
+    def bitwiseComplement(self, N: int) -> int:
+        n, summ = N, 1
+        while summ <= N: summ <<= 1
+        return (summ - 1) ^ n if n else 1
+```
+Forth: using bin to get the bitlen.  | Rt: 24ms |
+```python
+    def bitwiseComplement(self, N: int) -> int:
+        return ((1 << (len(bin(N)) - 2)) - 1) ^ N
+```
+
+
+**V). Construct Mask**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 24ms | 
+```python
+    def bitwiseComplement(self, N: int) -> int:
+        mask = 1
+        while mask < N: mask = (mask << 1) + 1
+        return mask ^ N
+```
+Referrence: https://leetcode.com/problems/complement-of-base-10-integer/discuss/256713/C%2B%2B-2-lines-XOR-mask
+Comment: there are two simple way to construct masking for the N, one is as shown in solution IV -- Triple (find the 10...0 one bit higher number first then deduct 1). Second is a direct way like this. (no deduction apply any more). The two ways are the same most of the time but different for 0 situation. One will return 0 for 0 while the direct way returns 1 for 0.
+
+

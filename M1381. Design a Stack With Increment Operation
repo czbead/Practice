@@ -1,0 +1,49 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Simple Instant Update**
+| O(T): O() | O(S): O() | Rt: 136ms | 
+```python
+class CustomStack:
+
+    def __init__(self, maxSize: int):
+        self.stack = []
+        self.size = maxSize
+
+    def push(self, x: int) -> None:
+        if len(self.stack) < self.size: self.stack.append(x)
+
+    def pop(self) -> int:
+        if not self.stack: return -1
+        return self.stack.pop()
+
+    def increment(self, k: int, val: int) -> None:
+        for i in range(min(len(self.stack), k)): self.stack[i] += val
+```
+Comment: I made it too complicated by maintain a increment state arr and applied insort and binary search to address heavy overlapping increment situations. 
+
+
+**II). Lazy Update**
+| O(T): O() | O(S): O() | Rt: 88ms | 
+```python
+class CustomStack:
+
+    def __init__(self, maxSize: int):
+        self.stack = []
+        self.size = maxSize
+        self.inc = []
+
+    def push(self, x: int) -> None:
+        if len(self.stack) < self.size: 
+            self.stack.append(x)
+            self.inc.append(0)
+
+    def pop(self) -> int:
+        if not self.stack: return -1
+        tmp = self.inc.pop()
+        if self.inc: self.inc[-1] += tmp
+        return self.stack.pop() + tmp
+
+    def increment(self, k: int, val: int) -> None:
+        if self.inc:
+            self.inc[min(len(self.inc), k)-1] += val
+```
+Referrence: https://leetcode.com/problems/design-a-stack-with-increment-operation/discuss/539716/JavaC%2B%2BPython-Lazy-increment-O(1)

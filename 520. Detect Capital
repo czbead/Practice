@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def detectCapitalUse(self, word: str) -> bool:
+        return word.upper() == word or word.lower() == word or (word[0].upper() == word[0] and word[1:].lower() == word[1:])
+```
+
+
+**II). Merge 2 and 3**
+| O(T): O(n) | O(S): O(n) | Rt: 20ms | 
+```python
+    def detectCapitalUse(self, word: str) -> bool:
+        return word[1:] == word[1:].lower() or word.upper() == word
+```
+Alternative: | Rt: 24ms |
+```python
+    def detectCapitalUse(self, word: str) -> bool:
+        return len(word) == 1 or word[1:].islower() or word.isupper()
+```
+
+
+**III). Build-in Function Cheat**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def detectCapitalUse(self, word: str) -> bool:
+        return word.isupper() or word.islower() or word.istitle()
+```
+Alternative: | Rt: 28ms |
+```python
+    def detectCapitalUse(self, word: str) -> bool:
+        return word == word.lower() or word == word.upper() or word == word.capitalize()
+```
+
+
+**IV). Count Uppercase**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def detectCapitalUse(self, word: str) -> bool:
+        ct = sum(i == i.upper() for i in word)
+        return ct == 0 or ct == len(word) or (ct == 1 and word[0].isupper())
+```
+

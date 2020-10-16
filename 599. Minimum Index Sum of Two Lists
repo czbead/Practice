@@ -1,0 +1,80 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Dict**
+| O(T): O(n) | O(S): O(n) | Rt: 160ms | 
+```python
+    def findRestaurant(self, list1: List[str], list2: List[str]) -> List[str]:
+        dt1, dt2 = {v: i for i, v in enumerate(list1)}, {v: i for i, v in enumerate(list2)}
+        minsum, rst, both = float('inf'), [], dt1.keys() & dt2.keys()
+        for k in both: 
+            cursum = dt1[k] + dt2[k]
+            if cursum < minsum: rst, minsum = [k], cursum 
+            elif cursum == minsum: rst.append(k)
+        return rst
+```
+Comment: cannot use dt1 & dt2 to get the intersection of keys between dt1 and dt2. Counter can use "&" and get the intersection of keys.
+Alternative: lambda fashion.  | Rt: 156ms |
+```python
+        mapindex = lambda x: {v: i for i, v in enumerate(x)}
+        dt1, dt2 = mapindex(list1), mapindex(list2)
+        ......
+```
+
+
+**II). One Dict**
+| O(T): O(n) | O(S): O(n) | Rt: 144ms | 
+```python
+    def findRestaurant(self, list1: List[str], list2: List[str]) -> List[str]:
+        minsum, rst, dt = float('inf'), [], {v: i for i, v in enumerate(list1)}
+        for i, v in enumerate(list2):
+            if v not in dt: continue
+            cursum = i + dt[v]
+            if cursum < minsum: rst, minsum = [v], cursum
+            elif cursum == minsum: rst.append(v)
+        return rst
+```
+Comment: most two dict solution can be recoded as one dict.
+
+
+**III). Foward Two Dict**
+| O(T): O(n) | O(S): O(n) | Rt: 156ms | 
+```python
+    def findRestaurant(self, list1: List[str], list2: List[str]) -> List[str]:
+        dt = {v: i for i, v in enumerate(list1)}
+        dtt = {v: i + dt[v] for i, v in enumerate(list2) if v in dt}
+        mins = min(dtt.values())
+        return [k for k in dtt if dtt[k] == mins]
+```
+
+
+**IV). Set with Index**
+| O(T): O(n) | O(S): O(n) | Rt: 200ms | 
+```python
+    def findRestaurant(self, list1: List[str], list2: List[str]) -> List[str]:
+        rst, minsum, both = [], float('inf'), set(list1) & set(list2)
+        for i in both:
+            cursum = list1.index(i) + list2.index(i)
+            if cursum < minsum: rst, minsum = [i], cursum
+            elif cursum == minsum: rst.append(i)
+        return rst
+```
+Comment: most dict solution can be recoded as set solution. Most llkely, the set variation is not as competitive as the dict one. Dict can be taken as 2-D set sometimes which makes more powerful then set when a dict solution is applicable in problem domain.  
+
+
+**V). Merge Two List**
+| O(T): O(n) | O(S): O(n) | Rt: 188ms | 
+```python
+    def findRestaurant(self, list1: List[str], list2: List[str]) -> List[str]:
+        lst, dt = list1 + list2, collections.defaultdict(list)
+        for i, v in enumerate(lst): dt[v].append(i)
+        rst, minsum = [], float('inf')
+        for k in dt:
+            if len(dt[k]) < 2: continue
+            cursum = dt[k][0] + dt[k][1]
+            if cursum < minsum: rst, minsum = [k], cursum
+            elif cursum == minsum: rst.append(k)
+        return rst
+```
+
+Others: index sum as key in second dict - https://leetcode.com/problems/minimum-index-sum-of-two-lists/discuss/103745/Python-Straightforward-with-Explanation/113519
+I not recommend this solution because it does no help to space or time, seems to be more unreadable. 
+

@@ -1,0 +1,77 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Count**
+| O(t): O(n) | O(m): O(n) | Rt: 164ms | 
+```python
+    def majorityElement(self, nums: List[int]) -> int:
+        ct = collections.Counter(nums)
+        return next(k for k in ct if ct[k] > len(nums) // 2)
+```
+Alternative: | Rt: 176ms |
+```python
+    def majorityElement(self, nums: List[int]) -> int:
+        dt = collections.defaultdict(int)
+        thres = len(nums) // 2
+        for i in nums:
+            dt[i] += 1
+            if dt[i] > thres: return i
+```
+Triple: | Rt: 172ms |
+```python
+    def majorityElement(self, nums: List[int]) -> int:
+        thres = len(nums) // 2
+        for i in set(nums):
+            if nums.count(i) > thres:
+                return i
+```
+
+**II). Boyer-Moore Majority Vote**
+| O(t): O(n) | O(m): O(1) | Rt: 164ms | 
+```python
+    def majorityElement(self, nums: List[int]) -> int:
+        cand, count = 0, 0
+        for i in nums:
+            if i == cand: count += 1
+            elif count <= 0: cand = i
+            else: count -= 1
+        return cand
+```
+Comment: any pair of different number, remove both should not affect the final result. 
+
+
+**III). Sort**
+| O(t): O(nlgn) | O(m): O(n) | Rt: 164ms | 
+```python
+    def majorityElement(self, nums: List[int]) -> int:
+        return sorted(nums)[len(nums) // 2]
+```
+
+
+**IV). Devide and Conquer**
+| O(t): O(n) | O(m): O(n) | Rt: 236ms | 
+```python
+    def majorityElement(self, nums: List[int]) -> int:
+        if not nums: return
+        if len(nums) == 1: return nums[0]
+        l = self.majorityElement(nums[:len(nums)//2])
+        r = self.majorityElement(nums[len(nums)//2:])
+        if l == r: return l
+        return l if nums.count(l) > len(nums)//2 else r
+```
+
+
+**V). Bit Manipulation**
+| O(t): O(n) | O(m): O(1) | Rt: 648ms | 
+```python
+    def majorityElement(self, nums: List[int]) -> int:
+        bit = [0] * 32
+        for n in nums:
+            for i in range(32):
+                #break down each number into 32 bit states and count each state
+                bit[i] += n >> i & 1
+        thres = len(nums) // 2
+        rst = 0
+        for i, v in enumerate(bit[:-1]):
+            if v > thres: rst |= 1 << i
+        if bit[-1] > thres: rst -= 1 << 31
+        return rst
+```

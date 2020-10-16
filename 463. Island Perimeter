@@ -1,0 +1,66 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Boundary**
+| O(T): O(n) | O(S): O(1) | Rt: 592ms | 
+```python
+    def islandPerimeter(self, grid: List[List[int]]) -> int:
+        if not grid: return
+        rst, xlen, ylen = 0, len(grid), len(grid[0])
+        for i in range(xlen):
+            for j in range(ylen):
+                if grid[i][j]:
+                    for x, y in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]:
+                    	#out of index, should be counted
+                        if x < 0 or x >= xlen or y < 0 or y >= ylen: rst += 1
+                        elif grid[x][y] == 0: rst += 1
+        return rst
+```
+Comment: count all boundary of 1 grid.
+
+
+**II). Consistant Direction Subtract**
+| O(T): O(n) | O(S): O(1) | Rt: 480ms | 
+```python
+    def islandPerimeter(self, grid: List[List[int]]) -> int:
+        if not grid: return
+        rst, xlen, ylen = 0, len(grid), len(grid[0])
+        for i in range(xlen):
+            for j in range(ylen):
+                if grid[i][j]:
+                    rst += 4
+                    #top -> down, check the next
+                    if i < xlen - 1 and grid[i+1][j] == 1: rst -= 2
+                    #left -> right, check the next
+                    if j < ylen - 1 and grid[i][j+1] == 1: rst -= 2
+        return rst
+```
+
+
+**III). All Direction Subtract**
+| O(T): O(n) | O(S): O(1) | Rt: 668ms | 
+```python
+    def islandPerimeter(self, grid: List[List[int]]) -> int:
+        if not grid: return
+        rst, xlen, ylen = 0, len(grid), len(grid[0])
+        for i in range(xlen):
+            for j in range(ylen):
+                if grid[i][j]:
+                    rst += 4
+                    rst -= sum(0<=x<xlen and 0<=y<ylen and grid[x][y] == 1 for x, y in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)])
+        return rst
+```
+
+
+**IV). Row-col Boundary**
+| O(T): O(n) | O(S): O(n) | Rt: 520ms | 
+```python
+    def islandPerimeter(self, grid: List[List[int]]) -> int:
+        rst = 0
+        for row in grid:
+            row = [0] + row + [0]
+            rst += sum(i != j for i, j in zip(row, row[1:]))
+        for col in zip(*grid):
+            col = [0] + list(col) + [0]
+            rst += sum(i != j for i, j in zip(col, col[1:]))
+        return rst
+```
+

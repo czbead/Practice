@@ -1,0 +1,13 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter Match**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 608ms | 
+```python
+    def canReorderDoubled(self, A: List[int]) -> bool:
+        ct = collections.Counter(A)
+        for k in sorted(ct, key=abs):
+            if not ct[k]: continue
+            if ct[2 * k] < ct[k]: return False
+            ct[2*k] -= ct[k]
+        return True
+```
+

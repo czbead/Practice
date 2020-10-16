@@ -1,0 +1,79 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtrack and Trie**
+| O(T): O() | O(S): O() | Rt: 672ms | 
+```python
+class Node:
+    def __init__(self):
+        self.sub = collections.defaultdict(Node)
+        self.word = ''
+        
+class Trie:
+    def __init__(self):
+        self.root = Node()
+        
+    def insert(self, word):
+        cur = self.root
+        for w in word:
+            cur = cur.sub[w]
+        cur.word = word
+        
+class Solution:
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        def backtrack(board, r, c, node, i, j, used, rst):
+            if board[i][j] not in node.sub: return
+            node = node.sub[board[i][j]]
+            if node.word: rst.append(node.word); node.word = ''
+            for x, y in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]:
+                if 0<=x<r and 0<=y<c and (x, y) not in used:
+                    used.add((x, y))
+                    backtrack(board, r, c, node, x, y, used, rst)
+                    used.remove((x, y))
+        
+        if not board or not board[0] or not words: return []
+        rst, t, r, c = [], Trie(), len(board), len(board[0])
+        for word in words: t.insert(word)
+        for i in range(r):
+            for j in range(c):
+                backtrack(board, r, c, t.root, i, j, set([(i, j)]), rst)
+        return rst
+```
+
+Alternative: | Rt: 348ms |
+```python
+class Node:
+    def __init__(self):
+        self.sub = collections.defaultdict(Node)
+        self.word = ''
+        
+class Trie:
+    def __init__(self):
+        self.root = Node()
+        
+    def insert(self, word):
+        cur = self.root
+        for w in word:
+            cur = cur.sub[w]
+        cur.word = word
+        
+class Solution:
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        def backtrack(board, r, c, node, i, j, rst):
+            char = board[i][j]
+            if not char or char not in node.sub: return
+            node, board[i][j] = node.sub[char], ''
+            #there may exist multiple valid appearance of a same word, so once find a word, make it disappear in the trie
+            if node.word: rst.append(node.word); node.word = ''
+            for x, y in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]:
+                if 0<=x<r and 0<=y<c:
+                    backtrack(board, r, c, node, x, y, rst)
+            board[i][j] = char
+        
+        if not board or not board[0] or not words: return []
+        rst, t, r, c = [], Trie(), len(board), len(board[0])
+        for word in words: t.insert(word)
+        for i in range(r):
+            for j in range(c):
+                backtrack(board, r, c, t.root, i, j, rst)
+        return rst
+```
+Referrence: https://leetcode.com/problems/word-search-ii/discuss/59780/Java-15ms-Easiest-Solution-(100.00)

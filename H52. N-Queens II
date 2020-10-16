@@ -1,0 +1,34 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). **
+| O(T): O() | O(S): O() | Rt: 48ms | 
+```python
+    def totalNQueens(self, n: int) -> int:
+        def backtrack(n, rcdif, rcsum, col, r):
+            if r == n: return 1
+            ct = 0
+            for c in range(n):
+                if c not in col and r-c not in rcdif and r+c not in rcsum:
+                    col.add(c); rcdif.add(r-c); rcsum.add(r+c)
+                    ct += backtrack(n, rcdif, rcsum, col, r+1)
+                    col.remove(c); rcdif.remove(r-c); rcsum.remove(r+c)
+            return ct
+            
+        return backtrack(n, set(), set(), set(), 0)
+```
+
+Alternative: | Rt: 32ms |
+```python
+    def totalNQueens(self, n: int) -> int:
+        def backtrack(n, rcdif, rcsum, col, r):
+            if r == n: return 1
+            ct = 0
+            for c in range(n):
+                if col[c] or rcdif[r-c+n] or rcsum[r+c]: continue
+                col[c] = rcdif[r-c+n] = rcsum[r+c] = 1
+                ct += backtrack(n, rcdif, rcsum, col, r+1)
+                col[c] = rcdif[r-c+n] = rcsum[r+c] = 0
+            return ct
+            
+        return backtrack(n, [0]*(2*n), [0]*(2*n), [0]*n, 0)
+```
+Referrence: https://leetcode.com/problems/n-queens-ii/discuss/20048/Easiest-Java-Solution-(1ms-98.22)

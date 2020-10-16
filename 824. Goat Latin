@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def toGoatLatin(self, S: str) -> str:
+        s, vowel = S.split(), {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'}
+        for i, v in enumerate(s):
+            if v[0] not in vowel: s[i] = s[i][1:] + s[i][0]
+            s[i] += 'ma' + 'a' * (i + 1)
+        return ' '.join(s)
+```
+Alternative: | Rt: 12ms |
+```python
+    def toGoatLatin(self, S: str) -> str:
+        s, vowel = S.split(), {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'}
+        for i in range(len(s)):
+            if s[i][0] not in vowel: s[i] = s[i][1:] + s[i][0]
+            s[i] += 'ma' + 'a' * (i + 1)
+        return ' '.join(s)
+```
+Triple: dense version. | Rt: 28ms |
+```python
+    def toGoatLatin(self, S: str) -> str:
+        s, vowel = S.split(), {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'}
+        return ' '.join([(s[i][1:] + s[i][0] if s[i][0] not in vowel else s[i]) + 'm' + 'a' * (i+2) for i in range(len(s))])
+```
+Forth: dense version with enumerator.  | Rt: 28ms |
+```python
+    def toGoatLatin(self, S: str) -> str:
+        s, vowel = S.split(), {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'}
+        return ' '.join([(v[1:] + v[0] if v[0] not in vowel else v) + 'm' + 'a' * (i+2) for i, v in enumerate(s)])
+```
+Fifth: lambda fashion.  | Rt: 32ms |
+```python
+    def toGoatLatin(self, S: str) -> str:
+        s, vowel = S.split(), {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'}
+        convert = lambda w, i: (w[1:] + w[0] if w[0] not in vowel else w) + 'm' + 'a' * (i + 2)
+        return ' '.join([convert(s[i], i) for i in range(len(s))])
+```
+
+

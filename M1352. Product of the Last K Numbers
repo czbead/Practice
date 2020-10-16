@@ -1,0 +1,39 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Prefix Produck**
+| O(T): O(n) | O(S): O() | Rt: 300ms | 
+```python
+class ProductOfNumbers:
+
+    def __init__(self):
+        self.prefixprod = [1]
+        self.zeroi = -1
+
+    def add(self, num: int) -> None:
+        if num == 0: 
+            self.zeroi = len(self.prefixprod)
+            self.prefixprod.append(1)
+        else: self.prefixprod.append(self.prefixprod[-1]*num)
+
+    def getProduct(self, k: int) -> int:
+        if len(self.prefixprod)-1 - k < self.zeroi: return 0
+        return self.prefixprod[-1] // self.prefixprod[-1 - k]
+```
+
+Alternative: | Rt: 296ms |
+```python
+class ProductOfNumbers:
+
+    def __init__(self):
+        self.prefixprod = [1]
+
+    def add(self, num: int) -> None:
+        if num == 0: 
+            self.prefixprod = [1]
+        else: 
+            self.prefixprod.append(self.prefixprod[-1]*num)
+
+    def getProduct(self, k: int) -> int:
+        if len(self.prefixprod) <= k: return 0
+        return self.prefixprod[-1] // self.prefixprod[-1 - k]
+```
+Referrence: https://leetcode.com/problems/product-of-the-last-k-numbers/discuss/510260/JavaC%2B%2BPython-Prefix-Product

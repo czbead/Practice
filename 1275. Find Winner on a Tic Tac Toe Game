@@ -1,0 +1,117 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force with Dict and Set**
+| O(T): O(1) | O(S): O(1) | Rt: 32ms | 
+```python
+    def tictactoe(self, moves: List[List[int]]) -> str:
+        l = len(moves)
+        if l < 5: return "Pending"
+        ax, ay, sa, bx, by, sb = {}, {}, set(), {}, {}, set()
+        dia1, dia2 = {(0, 0), (1, 1), (2, 2)}, {(0, 2), (1, 1), (2, 0)}
+        win = lambda d1, d2, s: max(d1.values()) == 3 or max(d2.values()) == 3 or not (dia1 - s) or not (dia2 - s)
+        for i in range(l):
+            (x, y) = moves[i]
+            #B's play
+            if i & 1:
+                bx[x] = bx.get(x, 0) + 1
+                by[y] = by.get(y, 0) + 1
+                sb.add((x, y))
+                if i > 4 and win(bx, by, sb): return "B"
+            else: 
+                ax[x] = ax.get(x, 0) + 1
+                ay[y] = ay.get(y, 0) + 1
+                sa.add((x, y))
+                if i > 3 and win(ax, ay, sa): return 'A'
+        return 'Draw' if l == 9 else 'Pending' 
+```
+
+
+**II). Bucket Collect**
+| O(T): O(1) | O(S): O(1) | Rt: 32ms | 
+```python
+    def tictactoe(self, moves: List[List[int]]) -> str:
+        l = len(moves)
+        if l < 5: return "Pending"
+        ax, ay, bx, by, sa, sb = [0] * 3, [0] * 3, [0] * 3, [0] * 3, set(), set()
+        dia1, dia2 = {(0, 0), (1, 1), (2, 2)}, {(0, 2), (1, 1), (2, 0)}
+        win = lambda xs, ys, s: not (dia1-s) or not (dia2-s) or max(xs) == 3 or max(ys) == 3
+        for i in range(l):
+            (x, y) = moves[i]
+            #B's play
+            if i & 1:
+                bx[x], by[y] = bx[x] + 1, by[y] + 1
+                sb.add((x, y))
+                if i > 4 and win(bx, by, sb): return "B"
+            else: 
+                ax[x], ay[y] = ax[x] + 1, ay[y] + 1
+                sa.add((x, y))
+                if i > 3 and win(ax, ay, sa): return 'A'
+        return 'Draw' if l == 9 else 'Pending' 
+```
+
+
+**III). Flaten Matrix**
+| O(T): O(1) | O(S): O(1) | Rt: 24ms | 
+```python
+    def tictactoe(self, moves: List[List[int]]) -> str:
+        # 0 1 2
+        # 3 4 5
+        # 6 7 8
+        l = len(moves)
+        if l < 5: return "Pending"
+        triple = [(0,1,2), (3,4,5), (6,7,8), (0,3,6), (1,4,7), (2,5,8), (0,4,8), (2,4,6)]
+        flat, role = [None] * 9, 0
+        for i, (x, y) in enumerate(moves):
+            flat[x*3+y], role = role, role ^ 1
+            if i < 4: continue
+            for i, j, k in triple:
+                if flat[i] == flat[j] == flat[k] != None: return 'B' if flat[i] else 'A'
+        return "Draw" if l == 9 else "Pending"
+```
+Referrence: idea from https://leetcode.com/problems/find-winner-on-a-tic-tac-toe-game/discuss/441319/JavaPython-3-Check-rows-columns-and-two-diagonals-w-brief-explanation-and-analysis./400469
+Comment: if you would like conciseness, you can easily get one by removing the pre-check and continue statement. 
+
+
+**IV). State List**
+| O(T): O(1) | O(S): O(1) | Rt: 32ms | 
+```python
+    def tictactoe(self, moves: List[List[int]]) -> str:
+        l = len(moves)
+        if l < 5: return "Pending"
+        i, state = 0, [[0] * 8 for _ in range(2)]
+        for x, y in moves:
+            state[i][x] += 1           #row counter
+            state[i][y+3] += 1         #col counter
+            state[i][6] += (x == y)       #leading diagonal counter
+            state[i][7] += (x + y == 2)   #counter diagonal counter
+            if any(v == 3 for v in state[i]): return 'B' if i else 'A'
+            i ^= 1
+        return "Draw" if l == 9 else "Pending"
+```
+Referrence: https://leetcode.com/problems/find-winner-on-a-tic-tac-toe-game/discuss/441452/Python3-Reasonably-concise-solution
+
+
+**V). Half and Half**
+| O(T): O(1) | O(S): O(1) | Rt: 28ms | 
+```python
+    def tictactoe(self, moves: List[List[int]]) -> str:
+        def winCheck(st, end):
+            #counters for row, column, leading diagonal, counter diagonal
+            row, col, ld, cd = [0] * 3, [0] * 3, 0, 0
+            for i in range(st, end, 2):
+                (x, y) = moves[i]
+                row[x], col[y] = row[x] + 1, col[y] + 1
+                ld += (x == y); cd += (x + y == 2)
+                if max(row) == 3 or max(col) == 3 or ld == 3 or cd == 3: return True
+            return False   
+                
+        l = len(moves)
+        if l < 5: return "Pending"
+        if winCheck(0, l): return 'A'
+        if winCheck(1, l): return 'B'
+        return "Draw" if l == 9 else 'Pending'
+```
+Referrence: https://leetcode.com/problems/find-winner-on-a-tic-tac-toe-game/discuss/445869/Java-Short-Solution-!!!
+Comment: this is a defective solution. It is not robust. It won't work for following senario: both A and B will win but B wins first. However, this is good solution applying kind of "Devide and Conquer". It is defactive for this problem but probably works for others, Never stop learning more. 
+
+
+

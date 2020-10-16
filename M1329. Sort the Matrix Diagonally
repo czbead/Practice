@@ -1,0 +1,40 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Wrong Try**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+    def diagonalSort(self, mat: List[List[int]]) -> List[List[int]]:
+        arr = [i for row in mat for i in row]
+        arr.sort()
+        it = iter(arr)
+        r, c = len(mat), len(mat[0])
+        for j in range(c-1, 0, -1):
+            i, jj = 0, j
+            while jj < c and i < r:
+                mat[i][jj] = next(it)
+                i, jj = i+1, jj+1
+        for i in range(r):
+            ii, j = i, 0
+            while j < c and ii < r:
+                mat[ii][j] = next(it)
+                ii, j = ii+1, j+1
+        return mat   
+```
+Comment: I wrongly understand the problem this way ... CRYING.
+
+
+**II). Collect and Sort by Index Offset**
+| O(T): O(mnlgmn) | O(S): O(1) | Rt: 164ms | 
+```python
+    def diagonalSort(self, mat: List[List[int]]) -> List[List[int]]:
+        dt, r, c = collections.defaultdict(list), len(mat), len(mat[0])
+        for i in range(r):
+            for j in range(c):
+                dt[i-j].append(mat[i][j])
+        for k in dt: dt[k].sort(reverse=True)
+        for i in range(r):
+            for j in range(c):
+                mat[i][j] = dt[i-j].pop()
+        return mat
+```
+Referrence: https://leetcode.com/problems/sort-the-matrix-diagonally/discuss/489749/JavaPython-Straight-Forward
+

@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP**
+| O(T): O(2 ^ n) | O(S): O(2 ^ n) | Rt: 24ms | 
+```python
+     def grayCode(self, n: int) -> List[int]:
+        rst = [0]
+        for i in range(n):
+            rst += [j | 1 << i for j in rst[::-1]]
+        return rst
+```
+Alternative: O(1) space version. | Rt: 24ms |
+```python
+    def grayCode(self, n: int) -> List[int]:
+        rst = [0]
+        for i in range(n):
+            rst += [rst[~j] | 1 << i for j in range(len(rst))]
+        return rst
+```
+Triple: ez-understanding version of previous code. | Rt: 28ms |
+```python
+    def grayCode(self, n: int) -> List[int]:
+        rst = [0]
+        for i in range(n):
+            rst += [rst[j] | 1 << i for j in range(len(rst)-1, -1, -1)]
+        return rst
+```
+Referrence: https://leetcode.com/problems/gray-code/discuss/29891/Share-my-solution
+Comment: n == 2: [00, 01, 11, 10]; n == 3: [0+00, 0+01, 0+11, 0+10, 1+10, 1+11, 1+01, 1+00]; see the referrenced post for more details. 
+
+
+**II). Iteration**
+| O(T): O(2 ^ n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def grayCode(self, n: int) -> List[int]:
+        rst = []
+        for i in range(1 << n):
+            rst.append(i ^ (i >> 1))
+        return rst
+```
+Referrence: https://leetcode.com/problems/gray-code/discuss/29881/An-accepted-three-line-solution-in-JAVA
+Comment: Gi = Bi xor (Bi >> 1). For instance: n == 2: B(0) == 00 ^ 00 = 00 (0 >> 1 = 0); B(1) = 01 ^ 00 = 01; B(2) = 10 ^ 01 = 11; B(3) = 11 ^ 01 = 10;
+
+
+Others: Backtracking - https://leetcode.com/problems/gray-code/discuss/29880/Backtracking-C%2B%2B-solution
+

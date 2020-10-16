@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy Chaining: Binary Search Index**
+| O(T): O() | O(S): O() | Rt: 828ms | 
+```python
+    def numMatchingSubseq(self, S: str, words: List[str]) -> int:
+        def isValid(word, indexMap):
+            i = -1
+            for c in word:
+                index = ord(c) - ord('a')
+                j = bisect.bisect_left(indexMap[index], i+1)
+                if j == len(indexMap[index]): return False
+                i = indexMap[index][j]
+            return True
+        
+        m = [[] for _ in range(26)]
+        for i in range(len(S)):
+            m[ord(S[i]) - ord('a')].append(i)
+        return sum(isValid(word, m) for word in words)
+```
+
+
+**II). Hash Leading Letter of Words**
+| O(T): O() | O(S): O() | Rt: 584ms | 
+```python
+    def numMatchingSubseq(self, S: str, words: List[str]) -> int:
+        rst, bucket = 0, [[] for _ in range(26)]
+        for word in words:
+            bucket[ord(word[0]) - ord('a')].append(word[1:])
+        for i in S:
+            index = ord(i) - ord('a')
+            tmp, bucket[index] = bucket[index], []
+            for j in tmp:
+                if not j: rst += 1; continue
+                bucket[ord(j[0]) - ord('a')].append(j[1:])
+        return rst
+```
+Referrence: https://leetcode.com/problems/number-of-matching-subsequences/discuss/117598/Java-solution-using-HashMap-and-Queue

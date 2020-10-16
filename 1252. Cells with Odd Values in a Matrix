@@ -1,0 +1,50 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O(mn) | O(S): O(mn) | Rt: 52ms | 
+```python
+    def oddCells(self, n: int, m: int, indices: List[List[int]]) -> int:
+        matrix = [[0] * m for _ in range(n)]
+        for r, c in indices:
+            for j in range(m): matrix[r][j] += 1
+            for i in range(n): matrix[i][c] += 1
+        return sum(i&1 for row in matrix for i in row)
+```
+
+
+**II). Time Apply On**
+| O(T): O(mn) | O(S): O(mn) | Rt: 44ms | 
+```python
+    def oddCells(self, n: int, m: int, indices: List[List[int]]) -> int:
+        (rowind, colind) = zip(*indices)
+        ctrow, ctcol = collections.Counter(rowind), collections.Counter(colind)
+        return sum((ctrow[i] + ctcol[j]) & 1 for i in range(n) for j in range(m))
+```
+Alternative: intuitive version.  | Rt: 44ms |
+```python
+    def oddCells(self, n: int, m: int, indices: List[List[int]]) -> int:
+        dtr, dtc = {}, {}
+        for i, j in indices:
+            dtr[i] = dtr.get(i, 0) + 1
+            dtc[j] = dtc.get(j, 0) + 1
+        return sum((dtr.get(i, 0) + dtc.get(j, 0)) & 1 for i in range(n) for j in range(m))
+```
+
+
+**III). Flip with Xor**
+| O(T): O() | O(S): O() | Rt: 32ms | 
+```python
+    def oddCells(self, n: int, m: int, indices: List[List[int]]) -> int:
+        r, c = [0] * n, [0] * m
+        for i, j in indices: r[i], c[j] = r[i]^1, c[j]^1
+        return sum(r[i] ^ c[j] for i in range(n) for j in range(m))
+```
+Alternative: | Rt: 28ms |
+```python
+    def oddCells(self, n: int, m: int, indices: List[List[int]]) -> int:
+        r, c = [0] * n, [0] * m
+        for i, j in indices: r[i], c[j] = r[i]^1, c[j]^1
+        rodd, codd = sum(r), sum(c)
+        return rodd * (m - codd) + codd * (n - rodd)
+```
+Referrence: https://leetcode.com/problems/cells-with-odd-values-in-a-matrix/discuss/425100/JavaPython-3-2-methods%3A-time-O(m-*-n-%2B-L)-and-O(L)-codes-w-comment-and-analysis.
+

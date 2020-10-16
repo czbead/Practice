@@ -1,0 +1,24 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**Naive** | Rt: 1085ms |
+```sql
+delete p1 from Person p1, Person p2 
+    where p1.Email = p2.Email and p1.Id > p2.Id
+```
+
+**Group By** | Rt: 1019ms |
+```sql
+delete from Person where Id not in(
+    select t.id from (
+        select min(Id) as id from Person group by Email
+        ) t
+    )
+```
+Referrence: https://leetcode.com/problems/delete-duplicate-emails/discuss/55614/A-skillful-mysql-solution-avoid-%22-select-and-update-conflict%22
+Alternative: | Rt: 1412ms |
+```sql
+delete from Person where Id not in(
+    select * from (
+        select min(Id) from Person group by Email
+        ) tmp
+    )
+```

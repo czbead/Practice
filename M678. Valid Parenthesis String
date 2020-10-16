@@ -1,0 +1,103 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtrack: Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def checkValidString(self, s: str) -> bool:
+        def backtrack(s, i, ct):
+            if ct < 0: return False
+            if i == len(s): return ct == 0
+            if s[i] == '(': return backtrack(s, i+1, ct+1)
+            if s[i] == ')': return backtrack(s, i+1, ct-1)
+            return backtrack(s, i+1, ct+1) or backtrack(s, i+1, ct-1) or backtrack(s, i+1, ct)
+            
+        if not s: return True
+        return backtrack(s, 0, 0)
+```
+
+Alternative: | Rt: 2160ms |
+```python
+    def checkValidString(self, s: str) -> bool:
+        def backtrack(s, l, i, ct):
+            if ct < 0 or ct > l - i: return False
+            for i in range(i, l):
+                if s[i] == '(': 
+                    ct += 1
+                    if ct > l - i: return False
+                elif s[i] == ')': 
+                        ct -= 1
+                        if ct < 0: return False
+                else: return backtrack(s, l, i+1, ct+1) or backtrack(s, l, i+1, ct-1) or backtrack(s, l, i+1, ct)
+            return ct == 0
+            
+        if not s: return True
+        return backtrack(s, len(s), 0, 0)
+```
+
+Triple: brute force with state memory. | Rt: 36ms |
+```python
+    def checkValidString(self, s: str) -> bool:
+        def backtrack(s, state, l, i, ct):
+            if ct < 0 or ct > l - i: return False
+            if i == len(s): return ct == 0
+            if state[i][ct] is not None: return state[i][ct]
+            rst = None
+            if s[i] == '(': rst = backtrack(s, state, l, i+1, ct+1)
+            elif s[i] == ')': rst = backtrack(s, state, l, i+1, ct-1)
+            else: rst = backtrack(s, state, l, i+1, ct+1) or backtrack(s, state, l, i+1, ct-1) or backtrack(s, state, l, i+1, ct)
+            state[i][ct] = rst
+            return rst
+            
+        if not s: return True
+        l = len(s)
+        state = [[None] * (l//2+1) for _ in range(l)]
+        return backtrack(s, state, l, 0, 0)
+```
+
+Referrence: https://leetcode.com/problems/valid-parenthesis-string/discuss/107566/Java-12-lines-solution-backtracking
+
+
+**II). Stack Open and Star by Index**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def checkValidString(self, s: str) -> bool:
+        stack_open, stack_star = [], []
+        for i in range(len(s)):
+            if s[i] == '(': stack_open.append(i)
+            elif s[i] == '*': stack_star.append(i)
+            else:
+                if not stack_open and not stack_star: return False
+                if stack_open: stack_open.pop()
+                else: stack_star.pop()
+        
+        while stack_open and stack_star:
+            if stack_open.pop() > stack_star.pop(): return False
+        return not stack_open
+```
+Referrence: https://leetcode.com/problems/valid-parenthesis-string/discuss/107572/Java-using-2-stacks.-O(n)-space-and-time-complexity.
+
+
+**III). Best and Worst**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def checkValidString(self, s: str) -> bool:
+        l = r = 0
+        for i in s:
+            if i == '(': 
+                r += 1
+                l += 1
+            elif i == ')':
+                #if l > 0: keep reducing, else: cancel out a previous '*' (-1) operation
+                #if there is no such previous '*', the r will < 0 in this round
+                if l > 0: l -= 1
+                r -= 1
+            else: 
+                #if reducible, do it; else stay current state
+                if l > 0: l -= 1
+                r += 1
+            if r < 0: return False
+        
+        return l == 0
+```
+Referrence: https://leetcode.com/problems/valid-parenthesis-string/discuss/107577/Short-Java-O(n)-time-O(1)-space-one-pass
+Comment: this solution is very hard to understand, even harder to explain, impossible to prove it correctness. I try very hard to make it reasonable, just still cannot convince myself though. None of the explanation or comment make real sense to me in the discussion board. 
+

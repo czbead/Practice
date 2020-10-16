@@ -1,0 +1,50 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Odd, Even**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def minCostToMoveChips(self, chips: List[int]) -> int:
+        total, odds = len(chips), sum(i & 1 for i in chips)
+        return min(odds, total - odds)
+```
+Alternative: | 28ms |
+```python
+    def minCostToMoveChips(self, chips: List[int]) -> int:
+        odds = even = 0
+        for i in chips:
+            if i & 1: odds += 1
+            else: even += 1
+        return min(odds, even)
+``` 
+
+
+**II). Pair-up Thinking**
+| O(T): O(n) | O(S): O(1) | Rt: 20ms | 
+```python
+    def minCostToMoveChips(self, chips: List[int]) -> int:
+        odds, l = 0, len(chips)
+        for i in chips: odds += 1 if i & 1 else -1 
+        return (l - odds) // 2 if odds > 0 else (l + odds) // 2
+```
+Comment: each odd and even number (chip) form a pair and neutralize each other, the count left is amount of those who cannot pair up with (all even nums or all odd nums)
+
+
+**III). Bit Wise**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def minCostToMoveChips(self, chips: List[int]) -> int:
+        odds, l = 0, len(chips)
+        for i in chips: odds += i & 1
+        return min(odds, l - odds)
+```
+
+
+**IV). Bucket Collect**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def minCostToMoveChips(self, chips: List[int]) -> int:
+        r = [0, 0]
+        for i in chips: r[i & 1] += 1
+        return min(r)
+```
+Referrence: idea from https://leetcode.com/problems/play-with-chips/discuss/398223/JavaPython-3-4-liner%3A-count-odd-and-even-indices-w-brief-explanation-and-analysis.
+

@@ -1,0 +1,38 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def maxNumberOfBalloons(self, text: str) -> int:
+        ct = collections.Counter(text)
+        dt = {'a': 1, 'b': 1, 'l': 2, 'n': 1, 'o': 2}
+        return min(ct[i] // dt[i] for i in dt or [0])
+```
+
+
+**II). Bucket Collect**
+| O(T): O(n) | O(S): O(1) | Rt: 48ms | 
+```python
+    def maxNumberOfBalloons(self, text: str) -> int:
+        m, dt = [0] * 26, {'a': 1, 'b': 1, 'l': 2, 'n': 1, 'o': 2}
+        for i in text:
+            if i in dt: m[ord(i) - ord('a')] += 1
+        return min(m[ord(i) - ord('a')] // dt[i] for i in dt)
+```
+
+
+**III). Balloon Wise**
+| O(T): O(n) | O(S): O(n) | Rt: 40ms | 
+```python
+    def maxNumberOfBalloons(self, text: str) -> int:
+        rst, dt = 0, {}
+        for i in text: dt[i] = dt.get(i, 0) + 1
+        while True:
+            for i in 'balloon':
+                dt[i] = dt.get(i, 0) - 1
+                if dt[i] < 0: return rst
+            rst += 1
+```
+Comment: it is natural to think in the angle of text, it require "thinking out of box" to switch the angle that is why I highly-valued this solution. Although this solution is not as efficient, there exist problems that can only be solved by thinking in the opposite side.
+
+
+Others: there are other more hard-coded solutions out there. 

@@ -1,0 +1,14 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Prefix Sum with HashMap**
+| O(T): O(n) | O(S): O(n) | Rt: 928ms | 
+```python
+    def numberOfSubarrays(self, nums: List[int], k: int) -> int:
+        runsum, rst, dt = 0, 0, {0: 1}
+        for i in nums:
+            runsum += i & 1
+            dt[runsum] = dt.get(runsum, 0) + 1
+            if runsum >= k: rst += dt[runsum-k]
+        return rst
+```
+
+Others: sliding window - https://leetcode.com/problems/count-number-of-nice-subarrays/discuss/419378/JavaC%2B%2BPython-Sliding-Window-O(1)-Space; I try sliding window method before this prefix sum solution (inspired by the hint), I feel very difficult to work out the sliding window solution. 

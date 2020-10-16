@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS**
+| O(T): O(n) | O(S): O(h) | Rt: 356ms | 
+```python
+    def canReach(self, arr: List[int], start: int) -> bool:
+        def dfs(arr, st, end):
+            if st < 0 or st >= end or arr[st] == -1: return
+            if arr[st] == 0: return True
+            tmp, arr[st] = arr[st], -1
+            return dfs(arr, st-tmp, end) or dfs(arr, st+tmp, end)
+           
+        return dfs(arr, start, len(arr))
+```
+
+Alternative: | Rt: 328ms |
+```python
+    def canReach(self, arr: List[int], start: int) -> bool:
+        if start < 0 or start >= len(arr) or arr[start] < 0: return 
+        tmp, arr[start] = arr[start], -1
+        return tmp == 0 or self.canReach(arr, start+tmp) or self.canReach(arr, start-tmp)
+```
+Referrence: https://leetcode.com/problems/jump-game-iii/discuss/464083/C%2B%2BJava-Recursion
+
+
+**II). BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 396ms | 
+```python
+    def canReach(self, arr: List[int], start: int) -> bool:
+        q, l = collections.deque([start]), len(arr)
+        while q:
+            index = q.popleft()
+            if index < 0 or index >= l or arr[index] < 0: continue
+            if arr[index] == 0: return True
+            tmp, arr[index] = arr[index], -1
+            q.append(index + tmp); q.append(index - tmp)
+        return False
+```

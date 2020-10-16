@@ -1,0 +1,47 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search**
+| O(t): O(lgn) | O(m): O(1) | Rt: 32ms | 
+```python
+    def mySqrt(self, x: int) -> int:
+        l, r = 0, x
+        while l < r:
+        	#tilt toward right, upper bound fashion binary search
+            mid = (l + r + 1) // 2
+            if mid > x // mid:
+                r = mid - 1
+            else:
+                l = mid
+        return l
+```
+referrence: https://leetcode.com/problems/sqrtx/discuss/25066/Solve-this-problem-with-Binary-Search/24127
+
+**II). Newton's Method**
+| O(t): O(?) | O(m): O(1) | Rt: 28ms | 
+note: not sure what the time complexity is. It seems faster than O(lgn) binary search solution
+```python
+    def mySqrt(self, n: int) -> int:
+        if n == 0: return 0
+        p = n
+        # p*p > n, prevent overflow
+        while p*p > n:
+            #Newton's method, x1 = x0 - (f(x0) / f'(x0)), f(x) = x*x - n
+            #apply here: x1 = x0 - (x0*x0 - n) / 2*x0 = 0.5 * x0 + 0.5 * (n/x0)
+            p = int(0.5 * (p + n / p))
+        return p
+```
+
+**III). Bit Manipulation**
+| O(t): O(lgn) | O(m): O(1) | Rt: 32ms | 
+```python
+    def mySqrt(self, x: int) -> int:
+    	#the maximum square root of integer (2**31 - 1) is 2**15
+        rst, mask = 0, 1 << 15
+        while mask:
+            cur = rst | mask
+            #probing, build most significant bit first, then iterate less significant bits
+            if cur <= x / cur: rst = cur
+            mask >>= 1
+        return rst
+```
+referrence: https://leetcode.com/problems/sqrtx/discuss/25048/Share-my-O(log-n)-Solution-using-bit-manipulation
+

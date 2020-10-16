@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Even Wins**
+| O(T): O(1) | O(S): O(1) | Rt: 28ms | 
+```python
+    def divisorGame(self, N: int) -> bool:
+        return N % 2 == 0
+```
+Analysis: the devidor of a odd number must be odd number (including 1) while dividor of a even number can be even or odd (including 1). When Alice face a even number, she can always choose 1 to make the number left odd. Bob has no choice but choosing a odd dividor, odd - odd gives you another even (which means Alice will always has even while Bob stuck with odd). Simple reduction thinking.  
+
+
+**II). DP**
+| O(T): O(n) | O(S): O(n) | Rt: 68ms | 
+```python
+    def divisorGame(self, N: int) -> bool:
+        ali = [False] * (N + 1)
+        for i in range(N + 1):
+            for j in range(1, (i // 2) + 1):
+                #imagine j is Bob, i as Alice
+                if i % j == 0 and not ali[i-j]:
+                    ali[i] = True
+                    break
+        return ali[N]
+```
+Referrence: https://leetcode.com/problems/divisor-game/discuss/274608/Simple-DP-Java-Solution
+
+
+**III). Brute Force**
+| O(T): O(n!) | O(S): O() | Rt: ms | TLE
+```python
+    def divisorGame(self, N: int) -> bool:
+        for i in range(1, N):
+            if N % i == 0 and not self.divisorGame(N - i): return True
+        return False
+```
+Referrence: https://leetcode.com/problems/divisor-game/discuss/274608/Simple-DP-Java-Solution
+Comment: a recursion solution provided in the same post as well. 
+

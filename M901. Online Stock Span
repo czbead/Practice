@@ -1,0 +1,15 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack Pair**
+| O(T): O() | O(S): O() | Rt: 444ms | 
+```python
+    def __init__(self):
+        self.stack = []
+
+    def next(self, price: int) -> int:
+        cur = 1
+        while self.stack and price >= self.stack[-1][1]:
+            cur += self.stack.pop()[0]
+        #tuple: (amount of previous prices that <= current price, price)
+        self.stack.append((cur, price))
+        return cur
+```

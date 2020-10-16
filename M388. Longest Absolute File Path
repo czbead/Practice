@@ -1,0 +1,38 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def lengthLongestPath(self, input: str) -> int:
+        stack, rst, arr = [], 0, input.split('\n')
+        for i in arr:
+            level = i.count('\t')
+            while len(stack) > level: stack.pop()
+            stack.append(i[level:])
+            if '.' in i: rst = max(rst, len('/'.join(stack)))
+        return rst
+```
+Comment: be careful '\t'（escape character） is taken as one character in python. 
+Alternative: save length only.  | Rt: 28ms |
+```python
+    def lengthLongestPath(self, input: str) -> int:
+        stack, rst, arr = [], 0, input.split('\n')
+        for i in arr:
+            level = i.count('\t')
+            while len(stack) > level: stack.pop()
+            stack.append(len(i) - level + 1)
+            if '.' in i: rst = max(rst, sum(stack) - 1)
+        return rst
+```
+Triple: prefix sum. | Rt: 28ms |
+```python
+    def lengthLongestPath(self, input: str) -> int:
+        stack, rst, arr = [], 0, input.split('\n')
+        for i in arr:
+            level = i.count('\t')
+            while len(stack) > level: stack.pop()
+            cur = len(i) - level + 1
+            if stack: cur += stack[-1]
+            stack.append(cur)
+            if '.' in i: rst = max(rst, cur - 1)
+        return rst
+```

@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Top Down Pre Order Traverse**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def smallestFromLeaf(self, root: TreeNode, pre='') -> str:
+        def dfs(node, path, rst):
+            if not node: return
+            path = chr(node.val + 97) + path
+            if not node.left and not node.right: rst[0] = min(rst[0], path); return
+            dfs(node.left, path, rst)
+            dfs(node.right, path, rst)
+            
+        rst = [chr(123)]
+        dfs(root, '', rst)
+        return rst[0]
+```
+Alternative: | Rt: 44ms |
+```python
+    def smallestFromLeaf(self, root: TreeNode, pre='') -> str:
+        def dfs(node, path):
+            if not node: return chr(123)
+            path = chr(node.val + 97) + path
+            if not node.left and not node.right: return path
+            return min(dfs(node.left, path), dfs(node.right, path))
+            
+        return dfs(root, '')
+```
+Comment: I spent so long hours on "bottom up" solutions which is proved impossible. This problem is not very difficult, but very easy get yourself in traps. 

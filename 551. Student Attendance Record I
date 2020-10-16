@@ -1,0 +1,36 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def checkRecord(self, s: str) -> bool:
+        return s.count('A') < 2 and 'LLL' not in s
+```
+
+
+**II). One Pass**
+| O(T): O(n) | O(S): O(1) | Rt: 44ms | 
+```python
+    def checkRecord(self, s: str) -> bool:
+        cta = ctl = 0
+        for i in s:
+            if i == 'L': ctl += 1
+            else: 
+                if ctl > 2 or cta > 1: return False
+                ctl = 0
+                if i == 'A': cta += 1
+        return ctl < 3 and cta < 2
+```
+Alternative: |Rt: 24ms |
+```python
+    def checkRecord(self, s: str) -> bool:
+        cta = ctl = 0
+        for i in s:
+            if i == 'A': cta += 1
+            if i == 'L': ctl += 1
+            else: ctl = 0
+            if cta > 1 or ctl >2: return False
+        return True
+```
+Referrence: https://leetcode.com/problems/student-attendance-record-i/discuss/101556/C%2B%2B-very-simple-solution
+
+

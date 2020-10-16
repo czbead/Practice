@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy Zip Version**
+| O(t): O(n) | O(m): O(n) | Rt: 60ms | 
+```python
+    def maxProfit(self, prices: List[int]) -> int:
+        return sum(j - i for i, j in zip(prices, prices[1:]) if j > i)
+```
+
+
+**II). Greedy In-place**
+| O(t): O(n) | O(m): O(1) | Rt: 60ms | 
+```python
+    def maxProfit(self, prices: List[int]) -> int:
+        return sum(prices[i+1] - prices[i] for i in range(len(prices) - 1) if prices[i+1] > prices[i])
+```
+
+**Advanced Exploration**
+**III). Maximum Profit with Minimum Transaction**
+| O(t): O(n) | O(m): O(1) | Rt: 64ms | 
+Method: Rotate Two Pointer
+```python
+    def maxProfit(self, prices: List[int]) -> int:
+        if not prices: return 0
+        leng = len(prices)
+        rst = i = j = 0
+        while i < leng:
+            print(i, j)
+            while i < leng - 1 and prices[i + 1] <= prices[i]: i += 1
+            if i == leng - 1: break
+            j = i
+            while j < leng - 1 and prices[j + 1] >= prices[j]: j += 1
+            rst += prices[j] - prices[i]
+            i = j
+        return rst
+```
+Comment: find all longest increasing subsequences and add the profits to final result. 
+

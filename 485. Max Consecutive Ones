@@ -1,0 +1,67 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat by Split**
+| O(T): O(n) | O(S): O(n) | Rt: 396ms | 
+```python
+    def findMaxConsecutiveOnes(self, nums: List[int]) -> int:
+        arr = ''.join(map(str, nums)).split('0')
+        return max([len(chunk) for chunk in arr] or [0])
+```
+
+
+**II). Growing State**
+| O(T): O(n) | O(S): O(1) | Rt: 380ms | 
+```python
+    def findMaxConsecutiveOnes(self, nums: List[int]) -> int:
+        for i in range(len(nums) - 1):
+            if nums[i+1] == 1 and nums[i] > 0: nums[i+1] = nums[i] + 1
+        return max(nums) if nums else 0
+```
+
+
+**III). Relay Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 380ms | 
+```python
+    def findMaxConsecutiveOnes(self, nums: List[int]) -> int:
+        rst, i, ct, l = 0, 0, 0, len(nums)
+        while i < l:
+            if nums[i] == 0: i += 1
+            else: 
+                j, ct = i + 1, ct + 1
+                while j < l and nums[j] == 1: j, ct = j + 1, ct + 1
+                rst = max(rst, ct)
+                ct = 0
+                i = j + 1
+        #don't miss the last round count
+        rst = max(rst, ct)
+        return rst
+```
+Comment: relay pointer is a kind of two pointer. this solution takes the least steps by i = j + 1 and j = i + 1, no overlapped visit at all.
+
+
+**IV). Consecutive Count**
+| O(T): O(n) | O(S): O(1) | Rt: 364ms | 
+```python
+    def findMaxConsecutiveOnes(self, nums: List[int]) -> int:
+        rst = ct = 0
+        for i in nums:
+            if i: ct += 1
+            else: 
+                rst = max(rst, ct)
+                ct = 0
+        #last round check
+        rst = max(rst, ct)
+        return rst
+```
+Alternative: | Rt: 396ms |
+```python
+    def findMaxConsecutiveOnes(self, nums: List[int]) -> int:
+        rst = ct = 0
+        for i in nums:
+            ct += i
+            if not i: 
+                rst = max(rst, ct)
+                ct = 0
+        #last round check
+        rst = max(rst, ct)
+        return rst
+```	

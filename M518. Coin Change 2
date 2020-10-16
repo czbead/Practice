@@ -1,0 +1,40 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP: Bottom-UP**
+| O(T): O(n) | O(S): O(n) | Rt: 132ms | 
+```python
+    def change(self, amount: int, coins: List[int]) -> int:
+        dp = [0] * (amount + 1)
+        dp[0] = 1
+        for i in coins:
+            for j in range(i, amount+1):
+                dp[j] += dp[j-i]
+        return dp[-1]
+```
+Comment: "You may assume that you have infinite number of each kind of coin.", this is critical. What if "you can use each coin at most once" (the input can contain duplicate coin like this one: [1, 2, 2, 5])? the solution is top-down dp: 
+```python
+    def change(self, amount: int, coins: List[int]) -> int:
+        dp = [0] * (amount + 1)
+        dp[0] = 1
+        for i in coins:
+            for j in range(amount, i-1, -1):
+                dp[j] += dp[j-i]
+        return dp[-1]
+```
+
+Alternative: the naive knapsack solution. | Rt: 552ms |
+```python
+    def change(self, amount: int, coins: List[int]) -> int:
+        if amount == 0: return 1
+        l = len(coins)
+        dp = [[0] * (amount+1) for _ in range(l+1)]
+        for i in range(1, l+1):
+            dp[i][0] = 1
+            for j in range(1, amount+1):
+                dp[i][j] = dp[i-1][j]  #don't take ith coin (coins[i-1])
+                if coins[i-1] <= j:  #takse ith coin (coins[i-1])
+                    dp[i][j] += dp[i][j-coins[i-1]]
+        return dp[-1][-1]
+```
+Referrence: https://leetcode.com/problems/coin-change-2/discuss/99212/Knapsack-problem-Java-solution-with-thinking-process-O(nm)-Time-and-O(m)-Space
+Comment: I found this naive solution is more difficult to compose while I can work out the "short version" immediately. Be careful when amount == 0, you have one way to make that amount: use no coin.  
+

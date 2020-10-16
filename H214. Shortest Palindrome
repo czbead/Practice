@@ -1,0 +1,69 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Longest Palindrom from Left**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def shortestPalindrome(self, s: str) -> str:
+        def isPal(s, r): return all(s[i] == s[r-i] for i in range((r+1)//2))
+        
+        if len(set(s)) <= 1: return s
+        l, mx = len(s), 0
+        for i in range(1, l):
+            if isPal(s, i): mx = i
+        return s[mx+1:][::-1] + s
+```
+
+Alternative: | Rt: ms | TLE
+```python
+    def shortestPalindrome(self, s: str) -> str:
+        l, k = len(s), 0
+        for i in range(l//2, -1, -1):
+            #check odd length palindrome
+            if l >= 2*i + 1:
+                if all(s[j] == s[2*i-j] for j in range(i)): k = 2*i; break
+            #check even length palindrom
+            if all(s[j] == s[2*i-1-j] for j in range(i)): k = 2*i-1; break
+        return s[k+1:][::-1] + s
+```
+Comment: extend palindrom check;
+
+
+**II). **
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+**III). **
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+**IV). **
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+**V). **
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+**VI). **
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+
+
+Alternative: | Rt: ms |
+```python
+
+```
+

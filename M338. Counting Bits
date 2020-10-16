@@ -1,0 +1,48 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat**
+| O(T): O(n*32) | O(S): O(32) | Rt: 84ms | 
+```python
+    def countBits(self, num: int) -> List[int]:
+        return [bin(i).count('1') for i in range(num+1)]
+```
+
+
+**II). 1 Bit Reduction**
+| O(T): O() | O(S): O() | Rt: 144ms | 
+```python
+    def countBits(self, num: int) -> List[int]:
+        rst = []
+        for i in range(num+1):
+            cur, ct = i, 0
+            while cur: 
+                ct += 1
+                cur &= cur-1  #get the next '1' bit
+            rst.append(ct)
+        return rst
+```
+
+
+**III). DP with Right Shift(>>)**
+| O(T): O(n) | O(S): O(n) | Rt: 80ms | 
+```python
+    def countBits(self, num: int) -> List[int]:
+        rst = [0] * (num + 1)
+        for i in range(1, num + 1):
+            rst[i] = rst[i>>1] + (i&1)
+        return rst
+```
+Referrence: https://leetcode.com/problems/counting-bits/discuss/79539/Three-Line-Java-Solution
+Comment: I guess most coders can understand this solution but not easy for ourselves to come up with it. The DP idea is simple, each number is teared into two parts: [remaining bits] + [last bit]. We count the '1' in two part add them up. The first part is well computed in previous stage while check the last bit is trivial. This hard part of this dp solution is: a typical dp solution, it is next state is decided by its previous state (linear state reduction). While this solution adopts a "right shift" dp state reduction trick. 
+
+
+**IV). DP with N&(N-1)**
+| O(T): O(n) | O(S): O(n) | Rt: 80ms | 
+```python
+    def countBits(self, num: int) -> List[int]:
+        rst = [0] * (num + 1)
+        for i in range(1, num + 1):
+            rst[i] = rst[i&(i-1)] + 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/counting-bits/discuss/79527/Four-lines-C%2B%2B-time-O(n)-space-O(n)
+Comment: n & (n-1) drops the right-most 1 bit and comes to the next '1' bit in the row. 

@@ -1,0 +1,44 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Minimal Increase**
+| O(T): O(n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def nextPermutation(self, nums: List[int]) -> None:
+        le, index = len(nums), None
+        if le < 2: return nums
+        for i in range(le-2, -1, -1): 
+            if nums[i] < nums[i+1]: index = i; break
+        if index is None: nums.reverse(); return
+        #j must exist, at least can be i+1
+        for j in range(le-1, i, -1): 
+            if nums[j] > nums[index]: break
+        nums[index], nums[j] = nums[j], nums[index]
+        l, r = index+1, le-1
+        while l < r: 
+            nums[l], nums[r] = nums[r], nums[l]
+            l, r = l+1, r-1
+```
+Alternative: binary search version. | Rt: 44ms |
+```python
+    def nextPermutation(self, nums: List[int]) -> None:
+        le, index = len(nums), None
+        if le < 2: return nums
+        for i in range(le-2, -1, -1): 
+            if nums[i] < nums[i+1]: index = i; break
+        if index is None: nums.reverse(); return
+        #binary search j
+        l, r = index+1, le-1
+        while l < r:
+            m = l + (r-l+1)//2  #apply tilt, if not, TLE 
+            if nums[m] <= nums[index]: r = m - 1
+            else: l = m
+        j = r
+        #swap
+        nums[index], nums[j] = nums[j], nums[index]
+        #reverse nums[index+1:]
+        l, r = index+1, le-1
+        while l < r: 
+            nums[l], nums[r] = nums[r], nums[l]
+            l, r = l+1, r-1
+```
+Referrence: https://leetcode.com/problems/next-permutation/discuss/13866/Share-my-O(n)-time-solution
+Comment: please find explanation in the referrence post. 

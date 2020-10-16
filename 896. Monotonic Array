@@ -1,0 +1,56 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat with Sort**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 568ms | 
+```python
+    def isMonotonic(self, A: List[int]) -> bool:
+        sortedA = sorted(A)
+        return A == sortedA or A == sortedA[::-1]
+```
+
+
+**II). Consistancy**
+| O(T): O(n) | O(S): O(n) | Rt: 492ms | 
+```python
+    def isMonotonic(self, A: List[int]) -> bool:
+        return all(i<=j for i, j in zip(A, A[1:])) or all(A[i+1]<=A[i] for i in range(len(A)-1))
+```
+Comment: all apply range will give you O(1) space. 
+Alternative:  wrong answer since equal case.  
+```python
+    def isMonotonic(self, A: List[int]) -> bool:
+        return all((A[i+1]-A[i])*(A[i]-A[i-1]) >= 0 for i in range(1, len(A)-1))
+```
+Comment: as long as one side is equal to 0, you lose the check for the other side. Therefore this is a wrong solution. It only applys to strict ascending or descending senarioes, no equal case tolerant.
+
+
+**III). One pass**
+| O(T): O(n) | O(S): O(1) | Rt: 516ms | 
+```python
+    def isMonotonic(self, A: List[int]) -> bool:
+        return len({A[i+1] > A[i] for i in range(len(A) - 1) if A[i+1] != A[i]}) <= 1
+```
+Comment: all true or all false. Great solution.
+
+Alternative: contradiction.  | Rt: 500ms |
+```python
+    def isMonotonic(self, A: List[int]) -> bool:
+        isAsc = isDesc = False
+        for i, j in zip(A, A[1:]):
+            if i < j: isAsc = True
+            elif i > j: isDesc = True
+            if isAsc and isDesc: return False
+        return True
+```
+Triple: | Rt: 516ms |
+```python
+    def isMonotonic(self, A: List[int]) -> bool:
+        base = A[0] < A[-1]
+        for i in range(len(A)-1):
+            if A[i] != A[i+1] and bool(A[i] < A[i+1]) != base: return False
+        return True
+```
+Referrence: idea from https://leetcode.com/problems/monotonic-array/discuss/165917/JAVA-Tricky-Solution
+Comment: tricky solution. 
+
+Others: cmp function, I am not familar with.  https://leetcode.com/problems/monotonic-array/discuss/165889/C%2B%2BJavaPython-One-Pass-O(N)
+

@@ -1,0 +1,127 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Pop Add**
+| O(T): O(n) | O(S): O(n) | Rt: 288ms | 
+note: n denotes the longer list length
+```python
+    def addToArrayForm(self, A: List[int], K: int) -> List[int]:
+        def toarr(k):
+            rst = []
+            while k:
+                rst.append(k % 10)
+                k //= 10
+            return rst[::-1]
+        
+        k = toarr(K)
+        rst, carry = [], 0
+        while A and k:
+            cur = A.pop() + k.pop() + carry
+            rst.append(cur % 10)
+            carry = cur // 10
+        remain = A or k
+        while remain and carry:
+            cur = remain.pop() + carry
+            rst.append(cur % 10)
+            carry = cur // 10
+        if not carry: return remain + rst[::-1]
+        else: rst.append(1)
+        return rst[::-1]
+```
+Alternative: string convert.  | Rt: 280ms |
+```python
+    def addToArrayForm(self, A: List[int], K: int) -> List[int]:
+        k = [int(i) for i in str(K)]
+        rst, carry = [], 0
+        while A and k:
+            cur = A.pop() + k.pop() + carry
+            rst.append(cur % 10)
+            carry = cur // 10
+        remain = A or k
+        while remain and carry:
+            cur = remain.pop() + carry
+            rst.append(cur % 10)
+            carry = cur // 10
+        if not carry: return remain + rst[::-1]
+        else: rst.append(1)
+        return rst[::-1]
+```
+Triple: or style concise but not efficient.  | Rt: 316ms |
+```python
+    def addToArrayForm(self, A: List[int], K: int) -> List[int]:
+        k = [int(i) for i in str(K)]
+        rst, carry = [], 0
+        while A or k:
+            a, b = A.pop() if A else 0, k.pop() if k else 0
+            cur = a + b + carry
+            rst.append(cur % 10)
+            carry = cur // 10
+        if carry: rst.append(1)
+        rst.reverse()
+        return rst
+```
+Comment: notice that 1 <= A.length <= 10000; 0 <= K <= 10000, the length difference of A and K will probably be huge which "or" will do a lot of unnecessary work.
+
+
+**II). Constant Space**
+| O(T): O(n) | O(S): O(1) | Rt: 280ms | 
+```python
+    def addToArrayForm(self, A: List[int], K: int) -> List[int]:
+        k = [int(i) for i in str(K)]
+        rst, carry = [], 0
+        if len(k) > len(A): k, A = A, k
+        k.reverse(), A.reverse()
+        for i in range(len(k)):
+            cur = k[i] + A[i] + carry
+            A[i], carry = cur % 10, cur // 10
+        if not carry: A.reverse(); return A
+        for i in range(len(k), len(A)):
+            cur = A[i] + carry
+            A[i], carry = cur % 10, cur // 10
+            if not carry: break
+        if carry: A.append(1)
+        A.reverse(); return A
+```
+
+
+**III). Python Only**
+| O(T): O(n) | O(S): O(1) | Rt: 412ms | 
+```python
+    def addToArrayForm(self, A: List[int], K: int) -> List[int]:
+        def fromarr(arr):
+            rst = 0
+            for i in arr: rst = rst * 10 + i
+            return rst
+        return [int(i) for i in str(fromarr(A) + K)]
+```
+Comment: python never overflow for number. 
+Alternative: One-liner  | Rt: 328ms |
+```python
+    def addToArrayForm(self, A: List[int], K: int) -> List[int]:
+        return [int(i) for i in str(int(''.join(map(str, A))) + K)]
+```
+Referrence: https://leetcode.com/problems/add-to-array-form-of-integer/discuss/234505/Python3-One-Line
+
+
+**IV). K as Carry**
+| O(T): O(n) | O(S): O(1) | Rt: 308ms | 
+```python
+    def addToArrayForm(self, A: List[int], K: int) -> List[int]:
+        for i in range(len(A)-1, -1, -1):
+            K, A[i] = divmod(A[i] + K, 10)
+        return [int(i) for i in str(K)] + A if K else A
+```
+Referrence: https://leetcode.com/problems/add-to-array-form-of-integer/discuss/234488/JavaC%2B%2BPython-Take-K-itself-as-a-Carry
+Comment: genius solution. Each step add part of K to A's item and the remaining K will be passed to next higher digit (get K = K // 10). 
+Alternative:  | Rt: 284ms |
+```python
+    def addToArrayForm(self, A: List[int], K: int) -> List[int]:
+        rst = []
+        for i in range(len(A)-1, -1, -1):
+            cur = A[i] + K
+            rst.append(cur % 10)
+            K = cur // 10
+            if K == 0: return A[:i] + rst[::-1]
+        while K:
+            rst.append(K % 10)
+            K //= 10
+        return rst[::-1]
+```

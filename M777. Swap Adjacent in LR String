@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). On the Correct Side**
+| O(T): O(n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def canTransform(self, start: str, end: str) -> bool:
+        def gen(s):
+            for i in range(len(s)):
+                if s[i] != 'X': yield (s[i], i)
+        
+        if len(start) != len(end): return False
+        for i, j in itertools.zip_longest(gen(start), gen(end)):
+            if i is None or j is None: return False
+            (a, ai), (b, bi) = i, j
+            if a != b: return False
+            if a == 'L' and ai < bi: return False
+            if a == 'R' and ai > bi: return False
+        return True
+```
+Referrence: https://leetcode.com/problems/swap-adjacent-in-lr-string/discuss/217070/Python-using-corresponding-position-
+Comment: for each pair of non-X in start and end: they should be the same alpha letter; index of 'L' in start should be smaller or equal to index of 'L' in end. index of 'R' in start should be greater or equal to index of 'R' in end;
+
+
+**II). Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def canTransform(self, start: str, end: str) -> bool:
+        if len(start) != len(end): return False
+        i, j, l = 0, 0, len(start)
+        while True:
+            while i < l and start[i] == 'X': i += 1
+            while j < l and end[j] == 'X': j += 1
+            if i == l or j == l:
+                if i == j: return True
+                return False
+            if start[i] != end[j]: return False
+            if start[i] == 'L': 
+                if i < j: return False
+            #start[i] == 'R'
+            else:
+                if i > j: return False
+            i, j = i+1, j+1
+```
+Referrence: https://leetcode.com/problems/swap-adjacent-in-lr-string/discuss/113789/Simple-Java-one-pass-O(n)-solution-with-explaination

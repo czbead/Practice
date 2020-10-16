@@ -1,0 +1,170 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Reverse**
+| O(T): O(n+m) | O(S): O(1) | Rt: 68ms | 
+```python
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        def reverse(head):
+            if not head: return None
+            pre, cur = None, head
+            while cur:
+                cur.next, pre, cur = pre, cur, cur.next
+            return pre
+        
+        if not l1 or not l2: return l1 or l2
+        carry, rev1, rev2 = 0, reverse(l1), reverse(l2)
+        
+        pre, h, h2 = rev1, rev1, rev2  #don't forget to record the pre node
+        while h and h2:
+            carry, h.val = divmod(h.val + h2.val + carry, 10)
+            pre, h, h2 = h, h.next, h2.next
+            
+        if h2:  pre.next = h2; h = pre.next  #be very careful to update the h pointer (concat)
+        while h and carry:
+            carry, h.val = divmod(h.val + carry, 10)
+            pre, h = h, h.next   #don't forget to record pre node
+        if carry: pre.next = ListNode(1)
+        return reverse(rev1)
+```
+Alternative: create a new linked list as result. | Rt: 72ms |
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        def reverse(head):
+            if not head: return None
+            pre, cur = None, head
+            while cur:
+                cur.next, pre, cur = pre, cur, cur.next
+            return pre
+        
+        if not l1 or not l2: return l1 or l2
+        carry, rev1, rev2 = 0, reverse(l1), reverse(l2)
+        
+        tail = None
+        while rev1 or rev2 or carry:
+            v1, v2 = rev1.val if rev1 else 0, rev2.val if rev2 else 0
+            carry, val = divmod(v1 + v2 + carry, 10)
+            n = ListNode(val)
+            n.next, tail = tail, n
+            rev1, rev2 = rev1.next if rev1 else None, rev2.next if rev2 else None
+        return n
+```
+Triple: another style. | Rt: 72ms |
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        def reverse(head):
+            if not head: return None
+            pre, cur = None, head
+            while cur:
+                cur.next, pre, cur = pre, cur, cur.next
+            return pre
+        
+        if not l1 or not l2: return l1 or l2
+        carry, rev1, rev2 = 0, reverse(l1), reverse(l2)
+        
+        tail = None
+        while rev1 or rev2 or carry:
+            if rev1: carry += rev1.val
+            if rev2: carry += rev2.val
+            carry, val = divmod(carry, 10)
+            n = ListNode(val)
+            n.next, tail = tail, n
+            rev1, rev2 = rev1.next if rev1 else None, rev2.next if rev2 else None
+        return n
+```
+
+
+**II). Stack**
+| O(T): O(n+m) | O(S): O(n+m) | Rt: 72ms | 
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        if not l1 or not l2: return l1 or l2
+        carry, stack, stack2 = 0, [], []
+        while l1: stack.append(l1); l1 = l1.next
+        while l2: stack2.append(l2); l2 = l2.next
+        
+        while stack and stack2: 
+            n = stack.pop()
+            carry, n.val = divmod(n.val + stack2.pop().val + carry, 10)
+        if stack2: stack = stack2; stack2[-1].next = n
+        while stack and carry:
+            n = stack.pop()
+            carry, n.val = divmod(n.val + carry, 10)
+        if carry:  #stack is empty for sure
+            rst = ListNode(1)
+            rst.next = n
+            return rst
+        #list is empty or not empty
+        return stack[0] if stack else n
+```
+Alternative: create a new linked list. | Rt: 68ms |
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        if not l1 or not l2: return l1 or l2
+        carry, stack, stack2 = 0, [], []
+        while l1: stack.append(l1); l1 = l1.next
+        while l2: stack2.append(l2); l2 = l2.next
+        
+        tail = None
+        while stack or stack2 or carry: 
+            v1, v2 = stack.pop().val if stack else 0, stack2.pop().val if stack2 else 0
+            carry, val = divmod(v1 + v2 + carry, 10)
+            n = ListNode(val)
+            n.next, tail = tail, n
+        return tail
+```
+Triple: stack vals instead. | Rt: 76ms |
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        if not l1 or not l2: return l1 or l2
+        carry, stack, stack2 = 0, [], []
+        while l1: stack.append(l1.val); l1 = l1.next
+        while l2: stack2.append(l2.val); l2 = l2.next
+        
+        tail = None
+        while stack or stack2 or carry: 
+            if stack: carry += stack.pop()
+            if stack2: carry += stack2.pop()
+            carry, val = divmod(carry, 10)
+            n = ListNode(val)
+            n.next, tail = tail, n
+        return tail
+```
+Referrence: https://leetcode.com/problems/add-two-numbers-ii/discuss/92623/Easy-O(n)-Java-Solution-using-Stack
+
+
+**III). Recursion**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+Referrence: here is a recursive solution: https://leetcode.com/problems/add-two-numbers-ii/discuss/92645/My-favorite-Java-recursive-solution-%3A-a-clean-and-fancy-way
+Comment: whenever there is a stack solution there must exist a equivalent recursive solution. For this problem, recursive solution is much more harder than a iterative one.
+
+
+**IV). Generator**
+| O(T): O(n) | O(S): O(1) | Rt: 84ms | 
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        def genNode(head):
+            if head.next: yield from genNode(head.next)
+            yield head.val
+            
+        if not l1 or not l2: return l1 or l2      
+        gen1, gen2 = genNode(l1), genNode(l2)
+        carry, tail = 0, None
+        for i, j in itertools.zip_longest(gen1, gen2):
+            if i: carry += i
+            if j: carry += j
+            new = ListNode(carry % 10)
+            carry //= 10
+            new.next, tail = tail, new
+        if carry: 
+            new = ListNode(1)
+            new.next, tail = tail, new
+        return tail
+```
+Alternative: don't create new linked list. | Rt: ms |
+```python
+
+```
+Comment: without creating result list is difficult to work out. 

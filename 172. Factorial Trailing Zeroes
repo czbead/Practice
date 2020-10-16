@@ -1,0 +1,20 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Count Five Deividor**
+| O(t): O() | O(m): O() | Rt: ms | 
+```python
+    def trailingZeroes(self, n: int) -> int:
+        rst = 0
+        while n > 4:
+            n = n // 5
+            rst += n
+        return rst
+```
+
+
+**II). Recursion**
+| O(t): O() | O(m): O() | Rt: ms | 
+```python
+    def trailingZeroes(self, n: int) -> int:
+        if n < 5: return 0
+        return n // 5 + self.trailingZeroes(n // 5)
+```

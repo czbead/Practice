@@ -1,0 +1,21 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(n) | Rt: 260ms | 
+```python
+    def findPoisonedDuration(self, timeSeries: List[int], duration: int) -> int:
+        if not timeSeries: return 0
+        #duration - (j - i) = duration + i - j
+        summ = sum(duration + i - j for i, j in zip(timeSeries, timeSeries[1:]) if j - i < duration)
+        return duration * len(timeSeries) - summ
+```
+Alternative: readable version.  | Rt: 268ms |
+```python
+    def findPoisonedDuration(self, timeSeries: List[int], duration: int) -> int:
+        if not timeSeries: return 0
+        summ = 0
+        for i in range(len(timeSeries)-1):
+            interval = timeSeries[i+1] - timeSeries[i]
+            if interval < duration: summ += duration - interval
+        return duration * len(timeSeries) - summ
+```
+

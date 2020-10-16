@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Exhuasive Group Sum**
+| O(T): O(n) | O(S): O(n*n) | Rt: 60ms | 
+```python
+    def lastStoneWeightII(self, stones: List[int]) -> int:
+        summ, s = sum(stones), set([0])
+        for i in stones:
+            new = [i+j for j in s]
+            s.update(new)
+        best, base = 0, summ/2
+        for i in s:
+            if abs(i-base) < abs(best-base): 
+                best = i
+        return abs(summ - best*2)
+```
+
+Alternative: | Rt: 80ms |
+```python
+    def lastStoneWeightII(self, stones: List[int]) -> int:
+        summ, s = sum(stones), set([0])
+        for i in stones:
+            s |= {i+j for j in s}
+        return min(abs(summ - 2 * i) for i in s)
+```
+Referrence: https://leetcode.com/problems/last-stone-weight-ii/discuss/294888/JavaC%2B%2BPython-Easy-Knapsacks-DP
+
+
+**II). DP: 0-1 Knapsack with Capacity Sum // 2**
+| O(T): O(mn) | O(S): O(mn) | Rt: 156ms | 
+```python
+    def lastStoneWeightII(self, stones: List[int]) -> int:
+        summ, l = sum(stones), len(stones)
+        dp = [[0]*(summ//2+1) for _ in range(l + 1)]
+        for i in range(1, l+1):
+            for j in range(summ//2+1):
+                dp[i][j] = dp[i-1][j]  #default: not take the stone
+                if j >= stones[i-1]:   #could take it, update for the max
+                    dp[i][j] = max(dp[i][j], dp[i-1][j-stones[i-1]] + stones[i-1])
+        return summ -  2*dp[-1][-1]
+```
+Referrence: https://leetcode.com/problems/last-stone-weight-ii/discuss/294888/JavaC++Python-Easy-Knapsacks-DP/393908

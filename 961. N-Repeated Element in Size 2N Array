@@ -1,0 +1,117 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat with Counter**
+| O(T): O(n) | O(S): O(n) | Rt: 304ms | 
+```python
+    def repeatedNTimes(self, A: List[int]) -> int:
+        return collections.Counter(A).most_common(1)[0][0]
+```
+
+
+**II). One in Three or Hide in the End**
+| O(T): O(n) | O(S): O(1) | Rt: ms | 
+```python
+    def repeatedNTimes(self, A: List[int]) -> int:
+        for i in range(1, len(A)-1):
+            if A[i] == A[i-1] or A[i] == A[i+1]: return A[i]
+            elif A[i-1] == A[i+1]: return A[i-1]
+        return A[0]
+```
+
+
+**III). Sort**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 240ms | 
+```python
+    def repeatedNTimes(self, A: List[int]) -> int:
+        A.sort()
+        if A[0] == A[1]: return A[0]
+        elif A[-1] == A[-2]: return A[-1]
+        return A[len(A) // 2]
+```
+Alternative:  | Rt: 220ms |
+```python
+    def repeatedNTimes(self, A: List[int]) -> int:
+        A.sort()
+        mid = len(A) // 2
+        return A[mid] if A[-1] == A[mid] else A[mid-1]
+```
+
+
+**IV). Bucket Collect**
+| O(T): O(n) | O(S): O(1) | Rt: 232ms | 
+```python
+    def repeatedNTimes(self, A: List[int]) -> int:
+        buck = [0] * 10001
+        for i in A:
+            buck[i] += 1
+            if buck[i] > 1: return i
+```
+Alternative: random choice.  | Rt: 216ms |
+```python
+    def repeatedNTimes(self, A: List[int]) -> int:
+        buck = [0] * 10001
+        while True:
+            i = random.choice(A)
+            A.remove(i)
+            buck[i] += 1
+            if buck[i] > 1: return i
+```
+
+
+
+**V). Set**
+| O(T): O(n) | O(S): O(n) | Rt: 208ms | 
+```python
+    def repeatedNTimes(self, A: List[int]) -> int:
+        s = set()
+        for i in A:
+            if i in s: return i
+            else: s.add(i)
+```
+Alternative: random choice.  | Rt: 212ms |
+```python
+    def repeatedNTimes(self, A: List[int]) -> int:
+        s = set()
+        while True:
+            i = random.choice(A)
+            A.remove(i)
+            if i in s: return i
+            else: s.add(i)
+```
+
+
+**VI). Index with Except**
+| O(T): O(n^(0.5n)) | O(S): O(1) | Rt: 212ms | 
+```python
+    def repeatedNTimes(self, A: List[int]) -> int:
+        for i in range(len(A)):
+            try:
+                i = A.index(A[i], i + 1)
+                return A[i]
+            except:
+                continue
+```
+
+
+**VII). Count**
+| O(T): O(n^(0.5n)) | O(S): O(1) | Rt: 216ms | 
+```python
+    def repeatedNTimes(self, A: List[int]) -> int:
+        return next(i for i in A if A.count(i) > 1)
+```
+Alternative: random choice.  | Rt: 236ms |
+```python
+    def repeatedNTimes(self, A: List[int]) -> int:
+        while True:
+            print(A)
+            i = random.choice(A)
+            if A.count(i) > 1: return i
+            A.remove(i)
+```
+
+
+**VIII). Sum**
+| O(T): O(n) | O(S): O(1) | Rt: 224ms | 
+```python
+    def repeatedNTimes(self, A: List[int]) -> int:
+        return (sum(A) - sum(set(A))) // (len(A) // 2 - 1)
+```

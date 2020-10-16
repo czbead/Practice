@@ -1,0 +1,89 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Flaten List**
+| O(T): O(mn) | O(S): O(mn) | Rt: 156ms | 
+```python
+    def shiftGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:
+        flat = [i for row in grid for i in row]
+        l, lc = len(flat), len(grid[0])
+        k = k % l
+        shift = flat[-k:] + flat[:-k]
+        return [shift[i:i+lc] for i in range(0, l, lc)]
+```
+Alternative: make use of deque.  | Rt: 156ms |
+```python
+    def shiftGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:
+        flat = collections.deque([i for row in grid for i in row])
+        l, lc = len(flat), len(grid[0])
+        for _ in range(k%l): flat.appendleft(flat.pop())
+        flat = list(flat)
+        return [flat[i:i+lc] for i in range(0, l, lc)]
+```
+Triple: numpy reshape.  | Rt: 296ms |
+```python
+    def shiftGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:
+        flat = collections.deque([i for row in grid for i in row])
+        l, lr, lc = len(flat), len(grid), len(grid[0])
+        for _ in range(k%l): flat.appendleft(flat.pop())
+        import numpy as np
+        flat = np.array(flat)
+        rst = flat.reshape(lr, lc)
+        return rst
+```
+Forth: lambda fashion.  | Rt: 156ms |
+```python
+    def shiftGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:
+        flat = [i for row in grid for i in row]
+        k = k % len(flat)
+        shift = lambda lst, x: lst[-x:] + lst[:-x]
+        reshape = lambda lst, c: [lst[i:i+c] for i in range(0, len(lst), c)]
+        return reshape(shift(flat, k), len(grid[0]))
+```
+
+
+**II). Resolve Index**
+| O(T): O(mn) | O(S): O(mn) | Rt: 172ms | 
+```python
+    def shiftGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:
+        r, c = len(grid), len(grid[0])
+        rst = [[None] * c for _ in range(r)]
+        for i in range(r): 
+            for j in range(c):
+                ind = i * c + j + k
+                rst[ind//c%r][ind%c] = grid[i][j]
+        return rst
+```
+
+
+**III). Flat Reverse**
+| O(T): O(mn) | O(S): O(mn) | Rt: 164ms | 
+```python
+    def shiftGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:
+        flat = [i for row in grid for i in row]
+        l = len(flat); k = k % l
+        flat.reverse()
+        flat[:k] = reversed(flat[:k])
+        flat[k:] = reversed(flat[k:])
+        reshape = lambda lst, c: [lst[i:i+c] for i in range(0, len(lst), c)]
+        return reshape(flat, len(grid[0]))
+```
+
+
+**IV). Reverse Matrix**
+| O(T): O(mn) | O(S): O(1) | Rt: 184ms | 
+```python
+    def shiftGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:
+        def reverse(l, r, c):
+            while l < r:
+                grid[l//c][l%c], grid[r//c][r%c] = grid[r//c][r%c], grid[l//c][l%c]
+                l, r = l + 1, r - 1
+        row, col = len(grid), len(grid[0])
+        leng = row * col; k %= leng
+        reverse(0, leng-1, col)
+        reverse(0, k-1, col)  # first k elements, be careful with the index
+        reverse(k, leng-1, col)
+        return grid
+```
+Comment: achieve rotate by reversion, this is a trick I have seen before (once or twice, not very common-used) but cannot remember it when this problem comes to me. 
+
+
+

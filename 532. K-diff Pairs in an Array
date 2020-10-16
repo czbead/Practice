@@ -1,0 +1,62 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter**
+| O(T): O(n) | O(S): O(n) | Rt: 124ms | 
+```python
+    def findPairs(self, nums: List[int], k: int) -> int:
+        if k < 0: return 0
+        ct = collections.Counter(nums)
+        if k == 0: return sum(ct[i] > 1 for i in ct)
+        return sum(ct[i+k] > 0 for i in ct)
+```
+
+
+**II). One Pass Dict**
+| O(T): O(n) | O(S): O(n) | Rt: 128ms | 
+```python
+    def findPairs(self, nums: List[int], k: int) -> int:
+        if k < 0: return 0
+        rst, dt = 0, {}
+        for i in nums:
+            if i in dt:
+                if k == 0 and dt[i] == 1: rst += 1
+                #won't be counted again
+                dt[i] = -1
+            else:
+            	#won't duplicate since only new val can check existed val, no val can check twice.
+                if i + k in dt: rst += 1
+                if i - k in dt: rst += 1
+                dt[i] = 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/k-diff-pairs-in-an-array/discuss/100098/Java-O(n)-solution-one-Hashmap-easy-to-understand/146186
+
+
+**III). Set Intersection**
+| O(T): O(n) | O(S): O(n) | Rt: 120ms | 
+```python
+    def findPairs(self, nums: List[int], k: int) -> int:
+        if k < 0: return 0
+        if k == 0: return sum(v > 1 for v in collections.Counter(nums).values())
+        s = set(nums)
+        return len(s & {i + k for i in s})
+```
+Referrence: https://leetcode.com/problems/k-diff-pairs-in-an-array/discuss/100116/1-liner-in-Python-O(n)-time
+
+
+**IV). Cache Only 1 of a Pair**
+| O(T): O(n) | O(S): O(n) | Rt: 132ms | 
+```python
+    def findPairs(self, nums: List[int], k: int) -> int:
+        if k < 0: return 0
+        seen, rst = set(), set()
+        for i in nums:
+            if i + k in seen: rst.add(i)
+            if i - k in seen: rst.add(i-k)
+            seen.add(i)
+        return len(rst)
+```
+Referrence: https://leetcode.com/problems/k-diff-pairs-in-an-array/discuss/100151/C%2B%2B-Java-Clean-Code-with-Explanation-set-map
+
+
+Others: Two pointer, can be very complicated from my perspective. -- https://leetcode.com/problems/k-diff-pairs-in-an-array/discuss/100114/Self-explained-AC-Java-Sliding-Window
+

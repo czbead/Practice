@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Math: GCD**
+| O(T): O(n) | O(S): O(1) | Rt: 16ms | 
+```python
+    def canMeasureWater(self, x: int, y: int, z: int) -> bool:
+        def gcd(a, b):
+            while b:
+                a, b = b, a%b
+            return a
+        if x + y < z: return False
+        if x == z or y == z or x+y == z or z == 0: return True
+        return z % gcd(x, y) == 0
+```
+Referrence: https://leetcode.com/problems/water-and-jug-problem/discuss/83715/Math-solution-Java-solution
+Alternative: | Rt: 28ms |
+```python
+    def canMeasureWater(self, x: int, y: int, z: int) -> bool:
+        def gcd(a, b):
+            while b:
+                a, b = b, a%b
+            return a
+        
+        return z == 0 or (x + y >= z and z % gcd(x, y) == 0)
+```
+Referrence: https://leetcode.com/problems/water-and-jug-problem/discuss/83714/A-little-explanation-on-GCD-method.-C%2B%2BJavaPython
+
+
+Others: a BFS solution -- https://leetcode.com/problems/water-and-jug-problem/discuss/83709/Breadth-First-Search-with-explanation.
+

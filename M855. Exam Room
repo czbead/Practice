@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Save Seat in Array**
+| O(T): O(n) / O(n) | O(S): O(n) | Rt: 344ms | 
+```python
+class ExamRoom:
+
+    def __init__(self, N: int):
+        self.n = N
+        self.arr = []
+
+    def seat(self) -> int:
+        if not self.arr: self.arr.append(0); return 0
+        gap, pos = self.arr[0], 0
+        for i in range(1, len(self.arr)):
+            gapi = (self.arr[i] - self.arr[i-1]) // 2
+            if gapi > gap: gap, pos = gapi, (self.arr[i] + self.arr[i-1]) // 2
+        if self.n - 1 - self.arr[-1] > gap: pos = self.n - 1
+        bisect.insort(self.arr, pos)
+        return pos
+
+    def leave(self, p: int) -> None:
+        self.arr.remove(p)
+```
+Referrence: https://leetcode.com/problems/exam-room/discuss/139862/C%2B%2BJavaPython-Straight-Forward
+
+
+Others: using Min-Heap solutions: https://leetcode.com/problems/exam-room/discuss/139941/Python-O(log-n)-time-for-both-seat()-and-leave()-with-heapq-and-dicts-Detailed-explanation; https://leetcode.com/problems/exam-room/discuss/185690/Python-heapq-clean-solution-with-explanation-seat-O(log-n)-leave-O(n)
+

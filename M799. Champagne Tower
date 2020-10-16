@@ -1,0 +1,64 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP: Row By Row**
+| O(T): O() | O(S): O() | Rt: 100ms | 
+```python
+    def champagneTower(self, poured: int, query_row: int, query_glass: int) -> float:
+        pre = [poured]
+        for i in range(1, query_row+1):
+            pre = [0] + pre + [0]
+            row = [0] * (i+1)
+            for j in range(i+1): 
+                if pre[j] > 1: row[j] += (pre[j] - 1) / 2
+                if pre[j+1] > 1: row[j] += (pre[j+1] - 1) / 2
+            pre = row
+        
+        if pre[query_glass] > 1: return 1
+        return pre[query_glass]
+```
+
+Alternative: concise version. | Rt: 196ms |
+```python
+    def champagneTower(self, poured: int, query_row: int, query_glass: int) -> float:
+        pre = [poured]
+        for i in range(1, query_row+1):
+            pre = [0] + pre + [0]
+            row = [0] * (i+1)
+            for j in range(i+1): 
+                row[j] += max((pre[j] - 1) / 2, 0.0)
+                row[j] += max((pre[j+1] - 1) / 2, 0.0)
+            pre = row
+        
+        return min(pre[query_glass], 1)
+```
+
+
+**II). DP: 2-D**
+| O(T): O() | O(S): O() | Rt: 104ms | 
+```python
+    def champagneTower(self, poured: int, query_row: int, query_glass: int) -> float:
+        dp = [[0.0] * 100 for _ in range(query_row+1)]
+        dp[0][0] = poured
+        #for each row computing the next row
+        for i in range(query_row):
+            for j in range(i+1):
+                if dp[i][j] > 1:
+                    dp[i+1][j] += (dp[i][j] - 1) / 2
+                    dp[i+1][j+1] += (dp[i][j] - 1) / 2
+                    #we actually don't care other cells, so this step can skip. 
+                    dp[i][j] = 1
+        return min(dp[query_row][query_glass], 1)
+```
+Referrence: https://leetcode.com/problems/champagne-tower/discuss/118660/20ms-C%2B%2B-Easy-understand-solution
+
+Alternative: 1-D dp. | Rt: 156ms |
+```python
+    def champagneTower(self, poured: int, query_row: int, query_glass: int) -> float:
+        #the last row has (query_row + 1) items
+        dp = [poured] + [0] * query_row
+        for i in range(1, query_row+1):
+            for j in range(i, -1, -1):
+                #the space reuse is actually very tricky
+                dp[j] = (max(dp[j-1]-1, 0) + max(dp[j]-1, 0)) / 2 
+        return min(dp[query_glass], 1)
+```
+Referrence: https://leetcode.com/problems/champagne-tower/discuss/118711/JavaC%2B%2BPython-1D-DP-O(R)-space

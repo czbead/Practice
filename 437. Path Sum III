@@ -1,0 +1,90 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Sum -- List**
+| O(T): O(n * n) | O(S): O(n) | Rt: 140ms | 
+```python
+    def pathSum(self, root: TreeNode, sum: int) -> int:
+        def dfs(node, target):
+            if not node: return 0
+            val = node.val
+            target = [i - val for i in target]
+            count = target.count(0)
+            #sum could be 0, count before append
+            target.append(sum)
+            return count + dfs(node.left, target) + dfs(node.right, target)
+        return dfs(root, [sum])
+```
+Question: I cannot clear 0s in target list (won't pass). The sum is appended at the end of last round while append the sum at the beginning of current round won't pass (one case is that single node is not a path. but it is not enough, even without single-node path, it is still not pass the OJ. Another case is sum == 0, I guess I am clear of this question now). Great appreciation if anyone can explain why? 
+Alternative: | Rt; 160 ms |
+```python
+    def pathSum(self, root: TreeNode, sum: int) -> int:
+        def dfs(node, target):
+            if not node: return 
+            val = node.val
+            target = [i - val for i in target]
+            self.rst += target.count(0)
+            target.append(sum)
+            dfs(node.left, target)
+            dfs(node.right, target)
+            
+        self.rst = 0
+        dfs(root, [sum])
+        return self.rst
+``` 
+
+
+**II). Two Sum - Dual Recursion**
+| O(T): O(n*n) | O(S): O(1) | Rt: 772ms | 
+```python
+    def pathSum(self, root: TreeNode, sum: int) -> int:
+        def dfs(node, target):
+            if not node: return 0
+            nxttar = target - node.val
+            cnt = dfs(node.left, nxttar) + dfs(node.right, nxttar)
+            return cnt + 1 if nxttar == 0 else cnt
+        if not root: return 0
+        return dfs(root, sum) + self.pathSum(root.left, sum) + self.pathSum(root.right, sum)
+```
+Referrence: https://leetcode.com/problems/path-sum-iii/discuss/91889/Simple-Java-DFS
+
+
+**III). Prefix Sum**
+| O(T): O(n) | O(S): O(n) | Rt: 44ms | 
+```python
+    def pathSum(self, root: TreeNode, sum: int) -> int:
+        def preSum(node, curSum, target, preSums):
+            if not node: return 
+            curSum += node.val
+            #question 1: why cannot put the current sum into presums first then add the count?
+            self.rst += preSums.get(curSum - target, 0)
+            preSums[curSum] = preSums.get(curSum, 0) + 1
+            preSum(node.left, curSum, target, preSums)
+            preSum(node.right, curSum, target, preSums)
+            #question 2: why we need to remove the current sum instance from the presums after traverse its children?
+            preSums[curSum] -= 1
+        self.rst = 0
+        preSum(root, 0, sum, {0: 1})
+        return self.rst
+```
+Referrence: Python version of post - https://leetcode.com/problems/path-sum-iii/discuss/91878/17-ms-O(n)-java-Prefix-sum-method
+Analysis: almost everybody feels overwhelmed when they come to this solution for the first time.  Well, here is an extremely easy explanation. 
+To understand this solution, let's take a look at a very similar problem first: please implement an constant time solution which calculates the sum of a list from a starting index to an ending index (both included, index is 1-based). 
+As the solution is trivial, I code it for you as follows. 
+```python
+class sumOfList:
+    def __init__(self, lst):
+        self.sums = [0] + lst
+        for i in range(len(lst) - 1):
+            self.sums[i + 1] += self.sums[i]
+
+    def sumFromTo(self, st, end):
+        return self.sums[end] - self.sums[st-1]
+```
+Take a look at the solution again, I think you may find youself almost understand it now. Here is one last thing the may trouble you. In the "List Sum From To" solution, we apply "targetSum = PrefixSumCur(end) - PrefixSumPre(st)". But in the "Path Sum" solution, we applied an variantion of the trick: "PrefixSumPre = PrefixSumCur - targetSum". Why we need this variation? Because target and curSum are both clear while we are not sure whether there exist an ideal "PrefixSumPre" in the "PreSums" dict. Each path (longest from root to leaf) from top to bottom is exactly a list of numbers. To be short, the "Path Sum" problem is a "Multiple List Sum" problem. Each path in this "Path Sum" problem is just a range [st, end] in the longest list. There you go, you are now able to understand the solution.
+
+To make you fully understand the solution, I leave two questions in the solution using comments.
+For question 1, what will happen if you swith the order of thest two steps? Well, It actually doesn't matter a lot but two edge cases. First, it will return the amount of nodes in the tree when the "target sum" == 0 no matter whatever the tree is like. Because "cursum - 0 == cursum" and cursum has been put into the dict already.  Well it is clearly wrong. Second and most important edge case -- "single-node path". Well, single node should not be counted as a path. Therefore, if a node.val == sum, it should not be counted. When a node comes and lead to cursum == sum, you should not counted as it a "path" immediately (it is a node). Instead, you count it in the next round if cursum == sum (path of 2 nodes) or in the n-th round if cursum == sum (path of n nodes). Path of 1 node, there is no such thing. 
+
+The second question, Why we add the cursum instance into the presums, pass it to children of current node, and then remove the cursum instance but -= 1? The current sum should only involve with its children, not other nodes not in the current parent-child root-leaf path (list). Is your solution yield bigger result? Well, most likely, it is because of this -- you shared the parents with children while they are not connected in the tree. This is a huge pain.    
+
+
+

@@ -1,0 +1,48 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(lgn) | O(S): O(h) | Rt: 72ms | 
+```python
+    def searchBST(self, root: TreeNode, val: int) -> TreeNode:
+        if not root: return 
+        nval = root.val
+        if val > nval: return self.searchBST(root.right, val)
+        elif val < nval: return self.searchBST(root.left,val)
+        return root
+```
+
+
+**II). Iteration**
+| O(T): O(lgn) | O(S): O(1) | Rt: 64ms | 
+```python
+    def searchBST(self, root: TreeNode, val: int) -> TreeNode:
+        s = [root]
+        while s: 
+            node = s.pop()
+            if not node: continue
+            nval = node.val
+            if val < nval: s.append(node.left)
+            elif val > nval: s.append(node.right)
+            else: return node
+        return None
+```
+Alternative: one direction forward don't need collection container. | Rt: 68ms |
+```python
+    def searchBST(self, root: TreeNode, val: int) -> TreeNode:
+        while root:
+            nval = root.val
+            if val < nval: root = root.left
+            elif val > nval: root = root.right
+            else: return root
+        return None
+```
+Triple: concise choice. | Rt: 76ms |
+```python
+    def searchBST(self, root: TreeNode, val: int) -> TreeNode:
+        while root and root.val != val:
+            if val < root.val: root = root.left
+            else: root = root.right
+        return root
+```
+Referrence: inspiration from https://leetcode.com/problems/search-in-a-binary-search-tree/discuss/149274/Java-beats-100-concise-method-using-recursion-and-iteration/192492
+
+

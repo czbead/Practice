@@ -1,0 +1,19 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy and Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def removeKdigits(self, num: str, k: int) -> str:
+        if not num: return '0'
+        stack = []
+        for i in range(len(num)):
+            while k > 0 and stack and stack[-1] > num[i]:
+                stack.pop(); k -= 1
+            stack.append(num[i])
+        #if there is extra k remains, for instance: 12345 wouldn't delete anything in the previous process
+        for _ in range(k): stack.pop()
+        for i in range(len(stack)): 
+            if stack[i] != '0': return ''.join(stack[i:])
+        return '0'
+```
+Referrence: https://leetcode.com/problems/remove-k-digits/discuss/88708/Straightforward-Java-Solution-Using-Stack
+Comment: from left to right, goes from most significant digit to least significant one, always delete previous digits greater than the coming digit.

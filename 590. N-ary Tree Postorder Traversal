@@ -1,0 +1,82 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 48ms | 
+```python
+    def postorder(self, root: 'Node') -> List[int]:
+        def dfs(node, lst):
+            if not node: return 
+            for i in node.children: dfs(i, lst)
+            lst.append(node.val)
+            return lst
+        return dfs(root, [])
+```
+Alternative: without parameter. | Rt: 52ms |
+```python
+    def postorder(self, root: 'Node') -> List[int]:
+        if not root: return []
+        rst = []
+        for i in root.children: rst.extend(self.postorder(i))
+        rst.append(root.val)
+        return rst
+```
+Comment: although the second version looks conciser, it needs to create a list container for each single round while the parameter passing fashion has only one lifecycle consistant list container.
+
+
+**II). Iteration -- No Reverse**
+| O(T): O(n) | O(S): O(n) | Rt: 68ms | 
+```python
+    def postorder(self, root: 'Node') -> List[int]:
+        rst, s = [], [(root, 0)]
+        while s:
+            node, visited = s.pop()
+            if not node: continue
+            if visited: rst.append(node.val)
+            else: s.extend([(node, 1)] + [(child, 0) for child in reversed(node.children)])
+        return rst
+```
+Alternative: queue version. | Rt: 56ms |
+```python
+    def postorder(self, root: 'Node', lst: list=None) -> List[int]:
+        rst, q = [], collections.deque([(root, 0)])
+        while q:
+            node, visited = q.popleft()
+            if not node: continue
+            if visited: rst.append(node.val)
+            else: 
+                q.appendleft((node, 1))
+                for node in reversed(node.children):
+                    q.appendleft((node, 0))
+        return rst
+```
+Comment: if you'd like to make it conciser by using extendleft(), please be careful about the order.
+Suggestion: please do master the real postorder although coming up with the preorder reversing solution may look cooler.
+
+
+**III). Iteration - Reverse Preorder**
+| O(T): O(n) | O(S): O(h) | Rt: 48ms | 
+```python
+    def postorder(self, root: 'Node') -> List[int]:
+        rst, s = [], [root]
+        while s:
+            node = s.pop()
+            if not node: continue
+            rst.append(node.val)
+            s += node.children
+        return reversed(rst)
+```
+Alternative: dumb insert variation. | Rt: 56 ms |
+```python
+    def postorder(self, root: 'Node') -> List[int]:
+        rst, s = [], [root]
+        while s:
+            node = s.pop()
+            if not node: continue
+            rst.insert(0, node.val)
+            s += node.children
+        return rst
+```
+Comment: the insert is actually reversing the order, quite the same
+
+Others: two-stack (not as smart as reversing solution, not as staightforward as real postorder) - https://leetcode.com/problems/n-ary-tree-postorder-traversal/discuss/174665/Java-Iterative-Solution-Using-Two-Stacks.
+non-reversing solution (I don't suggest it because there isn't a pattern you can reuse in similar questions while the "visited state tag" trick is widely applied every where in similar problems) - https://leetcode.com/problems/n-ary-tree-postorder-traversal/discuss/165343/Python-Iterative-Solution-(without-reversing)%3A-same-stack-logic-as-recursive
+

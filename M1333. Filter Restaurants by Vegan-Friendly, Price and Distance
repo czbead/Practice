@@ -1,0 +1,15 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 368ms | 
+```python
+    def filterRestaurants(self, restaurants: List[List[int]], veganFriendly: int, maxPrice: int, maxDistance: int) -> List[int]:
+        valid = {id: rate for id, rate, vf, price, distance in restaurants if price <= maxPrice and distance <= maxDistance and(not veganFriendly or vf)}
+        return sorted(valid, key = lambda x: (valid[x], x), reverse=True)
+```
+
+Alternative: | Rt: 380ms |
+```python
+    def filterRestaurants(self, restaurants: List[List[int]], veganFriendly: int, maxPrice: int, maxDistance: int) -> List[int]:
+        restaurants.sort(key=lambda x: (-x[1], -x[0]))
+        return [id for id, rate, vf, price, distance in restaurants if price <= maxPrice and distance <= maxDistance and (not veganFriendly or vf)]
+```

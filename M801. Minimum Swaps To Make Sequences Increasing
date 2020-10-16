@@ -1,0 +1,20 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Logic DP**
+| O(T): O(n) | O(S): O(1) | Rt: 88ms | 
+```python
+    def minSwap(self, A: List[int], B: List[int]) -> int:
+        swap, stay = 1, 0
+        for i in range(1, len(A)):
+            selfAsc = A[i] > A[i-1] and B[i] > B[i-1]
+            interchangeAsc = A[i] > B[i-1] and B[i] > A[i-1]
+            if selfAsc and interchangeAsc:
+                tmp = stay
+                stay = min(stay, swap)
+                swap = min(tmp, swap) + 1
+            elif selfAsc: swap += 1      #stay = stay
+            else:  #interchangeAsc
+                stay, swap = swap, stay+1
+        return min(stay, swap)
+```
+Referrence: https://leetcode.com/problems/minimum-swaps-to-make-sequences-increasing/discuss/161887/Bottom-up-DP-with-Optimization-(Java-Python)
+Comment: I not fully understand this solution;

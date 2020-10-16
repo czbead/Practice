@@ -1,0 +1,72 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). XOR Bit-wise**
+| O(T): O(lgn) | O(S): O(1) | Rt: 20ms | 
+```python
+    def hasAlternatingBits(self, n: int) -> bool:
+        a = n & 1
+        while n > 1:
+            n >>= 1
+            b = n & 1
+            if not a ^ b: return False
+            a = b       
+        return True
+```
+Alternative: | Rt: 28ms |
+```python
+    def hasAlternatingBits(self, n: int) -> bool:
+        a = n % 2
+        while n > 1:
+            n //= 2
+            b = n % 2
+            if a + b != 1: return False
+            a = b
+        return True
+```
+Triple: concise choice. | Rt: 40ms |
+```python
+    def hasAlternatingBits(self, n: int) -> bool:
+        while (n > 1 and (n & 1) ^ ((n >> 1) & 1)): n >>= 1
+        return n < 2
+```
+
+
+**II). Stringify**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 24ms | 
+```python
+    def hasAlternatingBits(self, n: int) -> bool:
+        s = bin(n)[2:]
+        return all(i != j for i, j in zip(s, s[1:]))
+```
+Alternative: | Rt: 24ms |
+```python
+    def hasAlternatingBits(self, n: int) -> bool:
+        return '00' not in bin(n) and '11' not in bin(n)
+```
+
+
+**III). Xor All-Bit-wise**
+| O(T): O(1) | O(S): O(1) | Rt: 24ms | 
+```python
+    def hasAlternatingBits(self, n: int) -> bool:
+        if not n: return False
+        #nn should be all 1s
+        nn = n ^ (n >> 1)
+        #n * (n + 1) validate all 1s
+        return nn & (nn + 1) == 0
+```
+Comment: I should have thought about this. Apply xor to each bit pair to apply all in once. 
+Alternative: | Rt: ms |
+```python
+    def hasAlternatingBits(self, n: int) -> bool:
+        #should only have leading 1
+        nn = n ^ (n >> 2)
+        return nn & (nn - 1) == 0
+```
+Referrence: https://leetcode.com/problems/binary-number-with-alternating-bits/discuss/108427/Oneliners-(C%2B%2B-Java-Ruby-Python)
+Triple: n & (n-1) trick variation. | Rt: 28ms |
+```python
+    def hasAlternatingBits(self, n: int) -> bool:
+        nn = (n ^ (n >> 1)) + 1
+        return nn & (nn - 1) == 0
+``` 
+

@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Slice Chunk**
+| O(t): O(n*m) | O(m): O(m) | Rt: 24ms | 
+notes: n denotes haystack, m denotes needle
+```python
+    def strStr(self, haystack: str, needle: str) -> int:
+        if not needle: return 0
+        l = len(needle)
+        for i in range(len(haystack) - l + 1):
+            if haystack[i:i+l] == needle:
+                return i
+        return -1
+```
+
+**II). Fine Comparison**
+| O(t): O(n*m) | O(m): O(1) | Rt: 44ms | 
+```python
+    def strStr(self, haystack: str, needle: str) -> int:
+        def equal(s, needle, idx):
+            for i in range(len(needle)):
+                if needle[i] != s[idx+i]:
+                    return False
+            return True
+            
+        if not needle: return 0
+        l = len(needle)
+        for i in range(len(haystack) - l + 1):
+            if equal(haystack, needle, i):
+                return i
+        return -1
+```
+Alternative concise version: | RT: 32ms
+```python
+    def strStr(self, haystack: str, needle: str) -> int:
+        if not needle: return 0
+        l = len(needle)
+        for i in range(len(haystack) - l + 1):
+            for j in range(l):
+                if needle[j] != haystack[i+j]:
+                    break
+                if j == l-1: return i
+        return -1
+``` 
+
+Advanced Choices: KMP Algorithm, Rabin Karp Algorithm

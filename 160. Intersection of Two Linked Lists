@@ -1,0 +1,108 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Walk Both Path**
+| O(t): O(m+n) | O(m): O(1) | Rt: 200ms | 
+```python
+    def getIntersectionNode(self, headA, headB):
+        a, b = headA, headB
+        while a or b:
+            if a is b: return a
+            a = a.next if a else headB
+            b = b.next if b else headA
+        return None
+```
+Comment: no worry for dead loop because both runners will reach at the end at the same time if there is no joint at all.
+Alternative: | Rt: 192ms |
+```python
+    def getIntersectionNode(self, headA, headB):
+        a, b = headA, headB
+        while a is not b:
+            a = a.next if a else headB
+            b = b.next if b else headA
+        return a
+```
+Comment: since a and b finally will walk the same distance, they will arrive at the end "None" (the end of each linked list is None) at the same time. This elegant version make use of this special "a is b" (None is None) to end the probing natually. 
+
+
+**II). Route Snapshot & Reverse**
+| O(t): O(m+n) | O(m): O(m+n) | Rt: ms | 
+note: this method modified one of the linked list structure (reverse). Therefore cannot pass OJ. Just for open mind thinking
+```python
+    def getIntersectionNode(self, headA, headB):
+        a, b, rout1, rout2 = headA, headB, [], []
+        while b:
+            rout1.append(b)
+            b = b.next
+            
+        #reverse lined list a
+        pre = None
+        while a:
+            nxt = a.next
+            a.next = pre
+            pre = a
+            a = nxt
+        
+        b = headB
+        while b:
+            rout2.append(b)
+            b = b.next
+        
+        for i, r in enumerate(rout1):
+        	#route start to diverge, return last common node as joined node
+            if rout2[i] is not r: return rout2[i-1]
+        return None
+```
+
+
+**III). Route Snapshot**
+| O(t): O(m+n) | O(m): O(m+n) | Rt: 188ms | 
+```python
+    def getIntersectionNode(self, headA, headB):
+        if not headA or not headB: return None
+        routa, routb = [], []
+        while headA: 
+            routa.append(headA)
+            headA = headA.next
+        while headB: 
+            routb.append(headB)
+            headB = headB.next
+        routa.reverse()
+        routb.reverse()
+        minlen = min(len(routa), len(routb))
+        i = 0
+        #no single common node
+        if routa[i] is not routb[i]: return None
+        while i < minlen and routa[i] is routb[i]:
+            i += 1
+        return routa[i-1]
+```
+Comment: this solution is not O(1) space, just for fun.
+
+
+**IV). Truncate**
+| O(t): O(m+n) | O(m): O(1) | Rt: 196ms | 
+```python
+    def getIntersectionNode(self, headA, headB):
+        if not headA or not headB: return None
+        lena, lenb, a, b = 0, 0, headA, headB
+        while a: 
+            lena += 1
+            a = a.next
+        while b: 
+            lenb += 1
+            b = b.next
+        offset = abs(lena - lenb)
+        if lena > lenb: headA, headB = headB, headA
+        while offset:
+            headB = headB.next
+            offset -= 1
+        while headA and headA is not headB:
+            headA = headA.next
+            headB = headB.next
+        return headA
+```
+Referrence: https://leetcode.com/problems/intersection-of-two-linked-lists/discuss/49846/Python-solution-for-intersection-of-two-singly-linked-lists
+
+
+**Concat-Cycle-Start**: step1: concat linked list A with linked list B. step 2: detect cycle. step 3: find the start point of the potential cycle. 
+I just cannot figure out why he can find the start point of the cycle by that same pace moving forward.
+Referrence: https://leetcode.com/problems/intersection-of-two-linked-lists/discuss/49798/Concise-python-code-with-comments/182352

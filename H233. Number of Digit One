@@ -1,0 +1,17 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Math**
+| O(T): O() | O(S): O() | Rt: 32ms | 
+```python
+    def countDigitOne(self, n: int) -> int:
+        if n <= 0: return 0
+        rst, num, a = 0, n, 1
+        while num:
+            num, digit = divmod(num, 10)
+            rst += num * a
+            if digit == 1: rst += n%a + 1
+            elif digit > 1: rst += a
+            a *= 10
+        return rst
+```
+Reference: https://leetcode.com/problems/number-of-digit-one/discuss/64382/JavaPython-one-pass-solution-easy-to-understand
+

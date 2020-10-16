@@ -1,0 +1,44 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). HashMap**
+| O(T): O(n) | O(S): O(n) | Rt: 144ms | 
+```python
+    def findDuplicate(self, paths: List[str]) -> List[List[str]]:
+        dt = collections.defaultdict(list)
+        for i in paths:
+            arr = i.split()
+            root, files = arr[0], arr[1:]
+            for j in files:
+                st = next(i for i in range(len(j)) if j[i] == '(')
+                name, content = j[:st], j[st+1:-1]
+                dt[content].append(root + '/' + name)
+        return filter(lambda x: len(x)>1, dt.values())
+```
+
+Alternative: | Rt: 92ms |
+```python
+    def findDuplicate(self, paths: List[str]) -> List[List[str]]:
+        dt = collections.defaultdict(list)
+        for i in paths:
+            arr = i.split()
+            root, files = arr[0], arr[1:]
+            for j in files:
+                st = j.index('(')
+                name, content = j[:st], j[st+1:-1]
+                dt[content].append(root + '/' + name)
+        return filter(lambda x: len(x)>1, dt.values()) 
+```
+
+Triple: | Rt: 92ms |
+```python
+    def findDuplicate(self, paths: List[str]) -> List[List[str]]:
+        dt = collections.defaultdict(list)
+        for i in paths:
+            arr = i.split()
+            root, files = arr[0], arr[1:]
+            for j in files:
+                name, content = j.split('(')
+                dt[content[:-1]].append(root + '/' + name)
+        return filter(lambda x: len(x)>1, dt.values())
+```
+
+Referrence: the follow-ups - https://leetcode.com/problems/find-duplicate-file-in-system/discuss/104123/C%2B%2B-clean-solution-answers-to-follow-up

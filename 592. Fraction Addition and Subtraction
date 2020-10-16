@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive: No Regex**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def fractionAddition(self, expression: str) -> str:
+        expression = expression.replace('-', '+-')
+        a, b = 0, 1
+        for i in expression.split('+'):
+            if not i: continue
+            tmp = i.split('/')
+            m, n = int(tmp[0]), int(tmp[1])
+            a, b = a * n + m * b , b * n
+            com = math.gcd(a, b)
+            a, b = a // com, b // com
+        return str(a) + '/' + str(b)
+```
+
+Alternative: | Rt: 24ms |
+```python
+    def fractionAddition(self, expression: str) -> str:
+        def gcd(a, b):
+            while b:
+                a, b = b, a%b
+            return a
+        
+        expression = expression.replace('-', '+-')
+        a, b = 0, 1
+        for i in expression.split('+'):
+            if not i: continue
+            tmp = i.split('/')
+            m, n = int(tmp[0]), int(tmp[1])
+            a, b = a * n + m * b , b * n
+            com = gcd(a, b)
+            a, b = a // com, b // com
+        return str(a) + '/' + str(b)
+```
+Referrence: https://leetcode.com/problems/fraction-addition-and-subtraction/discuss/205958/Simple-Python-solution-no-Fraction-and-for-people-who-are-not-familiar-with-Regular-Expression.

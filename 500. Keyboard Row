@@ -1,0 +1,89 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Dict Naive**
+| O(T): O(n*m) | O(S): O(1) | Rt: 28ms | 
+```python
+    def findWords(self, words: List[str]) -> List[str]:
+        dt1 = {i: 1 for i in 'qwertyuiop'}  
+        dt2 = {i: 2 for i in 'asdfghjkl'}
+        dt3 = {i: 3 for i in 'zxcvbnm'}
+        dt = {**dt1, **dt2, **dt3}
+        return [word for word in words if len(set([dt[w] for w in word.lower()])) == 1]
+```
+Alternative: | Rt: 28ms |
+```python
+    def findWords(self, words: List[str]) -> List[str]:
+        dt = {}
+        for i in 'qwertyuiop': dt[i] = 1
+        for i in 'asdfghjkl': dt[i] = 2
+        for i in 'zxcvbnm': dt[i] = 3
+        return [word for word in words if len(set([dt[w] for w in word.lower()])) == 1]
+```
+
+
+**II). Set Compare**
+| O(T): O(nm) | O(S): O(n) | Rt: 40ms | 
+```python
+    def findWords(self, words: List[str]) -> List[str]:
+        rst, a, b, c = [], set('qwertyuiop'), set('asdfghjkl'), set('zxcvbnm')
+        for word in words:
+            s = set(word.lower())
+            if s <= a or s <= b or s <= c: 
+                rst.append(word)
+        return rst
+```
+
+
+**III). Set Subtract**
+| O(T): O(mn) | O(S): O(n) | Rt: 28ms | 
+```python
+    def findWords(self, words: List[str]) -> List[str]:
+        rst, a, b, c = [], set('qwertyuiop'), set('asdfghjkl'), set('zxcvbnm')
+        for word in words:
+            s = set(word.lower())
+            if not (s-a) or not (s-b) or not (s-c): 
+                rst.append(word)
+        return rst
+```
+
+
+**IV). Set &**
+| O(T): O(mn) | O(S): O(n) | Rt: 28ms | 
+```python
+    def findWords(self, words: List[str]) -> List[str]:
+        rst, a, b, c = [], set('qwertyuiop'), set('asdfghjkl'), set('zxcvbnm')
+        for word in words:
+            s = set(word.lower())
+            if s&a == s or s&b == s or s&c == s: 
+                rst.append(word)
+        return rst
+```
+
+
+**V). Set In**
+| O(T): O(mn) | O(S): O(n) | Rt: 28ms | 
+```python
+    def findWords(self, words: List[str]) -> List[str]:
+        all_in = lambda ws, s: all(w in s for w in ws)
+        rst, a, b, c = [], set('qwertyuiop'), set('asdfghjkl'), set('zxcvbnm')
+        for word in words:
+            s = set(word.lower())
+            if any([all_in(s, a), all_in(s, b), all_in(s, c)]): 
+                rst.append(word)
+        return rst
+```
+
+
+**VI). Set-issubset**
+| O(T): O(mn) | O(S): O(n) | Rt: 20ms | 
+```python
+    def findWords(self, words: List[str]) -> List[str]:
+        all_in = lambda ws, s: all(w in s for w in ws)
+        rst, a, b, c = [], set('qwertyuiop'), set('asdfghjkl'), set('zxcvbnm')
+        for word in words:
+            s = set(word.lower())
+            if s.issubset(a) or s.issubset(b) or s.issubset(c): 
+                rst.append(word)
+        return rst
+```
+
+

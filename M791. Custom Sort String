@@ -1,0 +1,51 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bucket Collect in Order**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def customSortString(self, S: str, T: str) -> str:
+        rst, order, m = '', [], [0] * 26
+        for i in S: order.append(ord(i) - ord('a'))
+        for i in T: m[ord(i) - ord('a')] += 1
+        for i in order:
+            if m[i]: 
+                rst += chr(i + ord('a')) * m[i]
+                m[i] = 0
+        for i in range(26):
+            if m[i]: rst += chr(i + ord('a')) * m[i]
+        return rst
+```
+
+Alternative: save the order list. | Rt: 28ms |
+```python
+    def customSortString(self, S: str, T: str) -> str:
+        rst, m = '', [0] * 26
+        for i in T: m[ord(i) - ord('a')] += 1
+        for i in S:
+            index = ord(i) - ord('a')
+            if m[index]: 
+                rst += i * m[index]
+                m[index] = 0
+        for i in range(26):
+            if m[i]: rst += chr(i + ord('a')) * m[i]
+        return rst
+```
+
+Triple: concise sort solution. | Rt: 20ms |
+```python
+    def customSortString(self, S: str, T: str) -> str:
+        dt = {S[i]: i for i in range(len(S))}
+        #for thoes not in S, whatever order is fine
+        return ''.join(sorted(T, key= lambda x: dt.get(x, 26)))
+```
+
+Forth: learn counter pop and items from this solution.  | Rt: 28ms |
+```python
+    def customSortString(self, S: str, T: str) -> str:
+        rst, ct = [], collections.Counter(T)
+        for i in S: 
+            if i in ct:
+                rst.extend([i] * ct.pop(i))
+        for k, v in ct.items(): rst.extend([k] * v)
+        return ''.join(rst)
+```
+Referrence: https://leetcode.com/problems/custom-sort-string/discuss/116615/JavaPython-3-one-Java-10-liner-Python-6-liner-and-2-liner-solutions-w-comment

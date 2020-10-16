@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS Brute Force**
+| O(T): O(mn) | O(S): O(n) | Rt: 28ms | 
+```python
+    def minMutation(self, start: str, end: str, bank: List[str]) -> int:
+        q, bank, visited = collections.deque([(start, 0)]), set(bank), set([start])
+        if end not in bank: return -1
+        l = len(start)
+        while q:
+            candidate, step = q.pop()
+            lst, step = list(candidate), step + 1
+            for i in range(l):
+                original = lst[i]
+                for j in 'ACGT':
+                    if j == original: continue
+                    lst[i] = j
+                    tmp = ''.join(lst)
+                    if tmp not in visited and tmp in bank:
+                        if tmp == end: return step
+                        q.appendleft((tmp, step)); visited.add(tmp)
+                lst[i] = original   
+        return -1
+```
+Referrence: https://leetcode.com/problems/minimum-genetic-mutation/discuss/91484/Java-Solution-using-BFS
+
+
+**II). BFS Traverse Bank**
+| O(T): O(mn) | O(S): O(n) | Rt: 24ms | 
+```python
+    def minMutation(self, start: str, end: str, bank: List[str]) -> int:
+        #three states as a tuple: the current string, previous string, current steps
+        q = collections.deque([(start, start, 0)])  
+        if end not in bank: return -1
+        l = len(start)
+        while q:
+            cur, pre, step = q.pop()
+            for candidate in bank:
+                #diff at 1 letter, prevent backward, only allow forward
+                if candidate != pre and sum(candidate[i] != cur[i] for i in range(l)) == 1:
+                    if candidate == end: return step + 1
+                    q.appendleft((candidate, cur, step+1))
+        return -1
+```
+Referrence: https://leetcode.com/problems/minimum-genetic-mutation/discuss/91489/Python-Solution-using-BFS
+Comment: this is a great solution because bank won't cover all permutations. Here is a trick -- keep a record of previous state and use it to make the mutation "move forward" rather than backward (each round change 1 letter, could go back to the original). As long as the candidate don't go back this step, it won't go back in following steps. Because each round only mutate one letter, and we force it not return to previous one in each round. This is the magic. Here is a question, Could we use a visited set instead which is common for this situation. The answer is no, couldn't use a global visited set. If you still want to use visited set, you a individual visited set for each candidate in the queue. Think about it.   

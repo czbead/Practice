@@ -1,0 +1,87 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bisect**
+| O(T): O(qwlgw) | O(S): O(q + w) | Rt: 88ms |
+note: q: queries size; w: words size; 
+```python
+    def numSmallerByFrequency(self, queries: List[str], words: List[str]) -> List[int]:
+        def f(s):
+            m = [0] * 26
+            for i in s: m[ord(i) - ord('a')] += 1
+            #no worry for empty list because 1 <= queries[i].length, words[i].length <= 10
+            return next(m[i] for i in range(26) if m[i])
+        l, wlst = len(words), [f(word) for word in words]
+        wlst.sort()
+        return [l - bisect.bisect(wlst, f(i)) for i in queries]
+```
+Alternative: with count(min()). | Rt: 64ms |
+```python
+    def numSmallerByFrequency(self, queries: List[str], words: List[str]) -> List[int]:
+        f = lambda s: s.count(min(s))
+        l, wlst = len(words), [f(word) for word in words]
+        wlst.sort()
+        return [l - bisect.bisect(wlst, f(i)) for i in queries]
+```
+Triple: full implementation.  | Rt: 72ms |
+```python
+    def numSmallerByFrequency(self, queries: List[str], words: List[str]) -> List[int]:
+        #upper bound binary search
+        def bs_right(lst, target):
+            #r = len(lst) - 1 is wrong, it will return len(lst) - 1 when target > lst[-1] while it should return len(lst)
+            l, r = 0, len(lst)
+            while l < r:
+                mid = l + (r - l) // 2
+                if lst[mid] <= target: l = mid + 1
+                else: r = mid
+            return l
+                
+        f = lambda s: s.count(min(s))
+        l, wlst = len(words), [f(word) for word in words]
+        wlst.sort()
+        return [l - bs_right(wlst, f(i)) for i in queries]
+```
+
+
+**II). Counting Sort F**
+| O(T): O(qw) | O(S): O(w) | Rt: 64ms | 
+```python
+    def numSmallerByFrequency(self, queries: List[str], words: List[str]) -> List[int]:
+        f = lambda s: s.count(min(s))
+        l, wlst = len(words), [f(word) for word in words]
+        biggerthan, m = [0] * 11, [0] * 11
+        for i in wlst: m[i] += 1
+        #compute a list contain bigger than frequence occurence
+        for i in range(1, 11): 
+            #the sum of frequence less or equal than i, prefix sum
+            m[i] += m[i-1]
+            #the amount of frequence greater than i
+            biggerthan[i] = l - m[i]
+        return [biggerthan[f(i)] for i in queries]
+```
+Alternative: itertools.accumulate(). | Rt: 60ms |
+```python
+    def numSmallerByFrequency(self, queries: List[str], words: List[str]) -> List[int]:
+        f = lambda s: s.count(min(s))
+        l, wlst = len(words), [f(word) for word in words]
+        m = [0] * 11
+        for i in wlst: m[i] += 1
+        m = [l - i for i in itertools.accumulate(m)]
+        return [m[f(i)] for i in queries]
+```
+
+
+**III). Brute Force**
+| O(T): O(qw) | O(S): O(q + w) | Rt: 948ms | 
+```python
+    def numSmallerByFrequency(self, queries: List[str], words: List[str]) -> List[int]:
+        f = lambda s: s.count(min(s))
+        qlst, wlst = [f(i) for i in queries], [f(word) for word in words]
+        return [sum(j > i for j in wlst) for i in qlst]
+```
+Alternative: improved brute force. | Rt: 76ms |
+```python
+    def numSmallerByFrequency(self, queries: List[str], words: List[str]) -> List[int]:
+        f = lambda s: s.count(min(s))
+        qlst, wlst = [f(i) for i in queries], [f(word) for word in words]
+        ctw = collections.Counter(wlst)
+        return [sum(ctw[k] for k in ctw if k > i) for i in qlst]
+```

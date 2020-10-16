@@ -1,0 +1,21 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Brute Force**
+| O(T): O(n) | O(S): O(n) | Rt: 40ms | 
+```python
+    def repeatedSubstringPattern(self, s: str) -> bool:
+        l = len(s)
+        for i in range(1, l // 2 + 1):
+            if l % i: continue
+            elif s[:i] * (l // i) == s: return True
+        return False
+```
+
+
+**II). Optimal**
+| O(T): O(n) | O(S): O(n) | Rt: 40ms | 
+```python
+    def repeatedSubstringPattern(self, s: str) -> bool:
+        return s in (s * 2)[1: -1]
+```
+Analysis: To understand this solution. Let's consider the repeated substring as whole. Then the string will look like "A" * N (N > 1). If N == 2 works, it will work for any N > 2. Well it is simple to understand it works for N == 2 because "BAAB" contains "A". To prove why a negative case never pass the solution, Let the string be "AB" and A != B. Do the double operation will gives "ABAB" while the single step rotation leads to "XBAY" (X, Y have nothing to do with A, B now). Only when B == A could satisfy the "in", However A != B. It is obviously contradicted. The proof is just a scratch for your understanding, not official at all. 
+

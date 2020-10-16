@@ -1,0 +1,15 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O() | O(S): O() | Rt: 484ms | 
+```python
+    def displayTable(self, orders: List[List[str]]) -> List[List[str]]:
+        table, foodset = collections.defaultdict(dict), set()
+        for _, tabno, food in orders:
+            foodset.add(food)
+            table[tabno][food] = table[tabno].get(food, 0) + 1
+        foodList = sorted(foodset)
+        rst = [['Table'] + foodList]
+        for i in sorted(table, key=int):
+            rst.append([i] + [str(table[i].get(j, 0)) for j in foodList])
+        return rst
+```

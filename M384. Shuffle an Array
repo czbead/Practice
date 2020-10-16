@@ -1,0 +1,23 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Deep Copy**
+| O(T): O() | O(S): O() | Rt: 324ms | 
+```python
+class Solution:
+
+    def __init__(self, nums: List[int]):
+        self.num = nums
+        self.l = len(nums)
+        
+    def reset(self) -> List[int]:
+        return self.num
+
+    def shuffle(self) -> List[int]:
+        tmp = self.num[:]
+        #fix one index and generate the other. I randonized both at my first try, wrong.
+        for i in range(self.l):
+            j = random.randint(0, i)
+            if i != j: tmp[i], tmp[j] = tmp[j], tmp[i]
+        return tmp
+```
+Referrence: https://leetcode.com/problems/shuffle-an-array/discuss/85958/First-Accepted-Solution-Java
+Comment: this is a probability problem. Before you move to next state, you don't know what is next and whether you have a next state. That is why the solution only randomize the previous index. Another point, why we start at the original input every time? Could we start with the previous shuffle result? I think that won't give all permutation "equal probability". 

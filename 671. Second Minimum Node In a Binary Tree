@@ -1,0 +1,80 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 24ms | 
+```python
+    def findSecondMinimumValue(self, root: TreeNode) -> int:
+        def preorder(node, rval, minv):
+            if not node: return 
+            if node.val != rval and node.val < minv[0]: minv[0] = node.val
+            preorder(node.left, rval, minv)
+            preorder(node.right, rval, minv)
+            
+        minv =[float('inf')]
+        preorder(root, root.val, minv)
+        return -1 if minv[0] == float('inf') else minv[0]
+```
+Alternative: slightly optimized. | Rt: 28ms |
+```python
+    def findSecondMinimumValue(self, root: TreeNode) -> int:
+        def preorder(node, rval, minv):
+            if not node: return 
+            val = node.val
+            if val != rval and val < minv[0]: minv[0] = node.val
+            #the other situation is, node.val > rval, not need to go inside
+            elif val == rval:
+                preorder(node.left, rval, minv)
+                preorder(node.right, rval, minv)
+            
+        minv =[float('inf')]
+        preorder(root, root.val, minv)
+        return -1 if minv[0] == float('inf') else minv[0]
+```
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def findSecondMinimumValue(self, root: TreeNode) -> int:
+        if not root: return 
+        base, rst, s = root.val, float('inf'), [root]
+        while s: 
+            node = s.pop()
+            if not node: continue
+            val = node.val
+            if val > base and val < rst: rst = val
+            elif val == base: 
+                s.append(node.left)
+                s.append(node.right)
+        return -1 if rst == float('inf') else rst
+```
+
+
+**III). Devide and Conquer**
+| O(T): O(n) | O(S): O(h) | Rt: 24ms | 
+```python
+    def findSecondMinimumValue(self, root: TreeNode) -> int:
+        if not root: return -1
+        if not root.right and not root.left: -1
+        if root.left and root.left.val != root.val: l = root.left.val
+        else: l = self.findSecondMinimumValue(root.left)
+        if root.right and root.right.val != root.val: r = root.right.val
+        else: r = self.findSecondMinimumValue(root.right)
+        #assume all tree node is positive. 
+        return min(l, r) if l != -1 and r != -1 else max(l, r)
+```
+Referrence: https://leetcode.com/problems/second-minimum-node-in-a-binary-tree/discuss/107158/Java-divide-and-conquer-solution
+Comment: I like this solution because it won't visit unecessary path in the tree. This solution is different from the recursion solution I, I don't know whether it is "Devide and Coquer". Once it finds a value, it will stop there because you really don't need to go further toward his subtree anymore. By maintaining two level nodes info, you don't need to pass the root.val anymore. Of course, the trade off is that it is more difficult to come up with this solution.
+
+Alternative: | Rt: 44ms |
+```python
+    def findSecondMinimumValue(self, root: TreeNode) -> int:
+        def helper(node, minval):
+            if not node: return -1
+            if node.val > minval: return node.val
+            l = helper(node.left, minval)
+            r = helper(node.right, minval)
+            return min(l, r) if l != -1 and r != -1 else max(l, r)
+        return helper(root, root.val)
+```
+
+

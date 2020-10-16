@@ -1,0 +1,80 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        rst = h = ListNode(-1)
+        while head:
+            if not head.next: h.next = head; h = h.next; break
+            elif head.val != head.next.val: 
+                h.next = head; h = h.next; head = head.next
+            else:
+                while head.next and head.val == head.next.val: 
+                    head = head.next
+                head = head.next
+        h.next = None
+                
+        return rst.next
+```
+Alternative: concise version. | Rt: 60ms |
+```python
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        rst = h = ListNode(-1)
+        while head:
+            if not head.next or head.val != head.next.val: 
+                h.next = head; h = h.next;
+            else:
+                while head.next and head.val == head.next.val: 
+                    head = head.next
+            head = head.next
+        h.next = None
+                
+        return rst.next
+```
+Triple: another concise version. | Rt: 36ms |
+```python
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        rst = h = ListNode(-1)
+        while head:
+            if not head.next or head.val != head.next.val: 
+                h.next = head; h = h.next; head = head.next;
+            else:
+                val = head.val; head = head.next
+                while head and head.val == val: head = head.next
+        h.next = None
+                
+        return rst.next
+```
+Comment: actually a two pointer solution: the h pointer hold "good sequence" while head pointer traverse the remaing sequence; while head pointer find a good node, the h pointer will concat it and move forward. 
+Forth: | Rt: 60ms |
+```python
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        rst = h = ListNode(-1)
+        h.next = head
+        while head:
+            while head.next and head.val == head.next.val:
+                head = head.next
+            if h.next == head: h = h.next
+            else: h.next = head.next
+            head = head.next
+                
+        return rst.next
+```
+Referrence: https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/discuss/28335/My-accepted-Java-code
+
+
+**II). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 52ms | 
+```python
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        if not head or not head.next: return head
+        if head.val == head.next.val:
+            while head.next and head.val == head.next.val: 
+                head = head.next
+            return self.deleteDuplicates(head.next)
+        else: 
+            head.next = self.deleteDuplicates(head.next)
+            return head
+```
+Referrence: https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/discuss/28335/My-accepted-Java-code/27333
+

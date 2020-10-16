@@ -1,0 +1,581 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat**
+| O(T): O(1) | O(S): O(n) | Rt: 268ms | 
+```python
+    def __init__(self):
+        self.lst = [False] * 1000001
+
+    def add(self, key: int) -> None:
+        self.lst[key] = True
+
+    def remove(self, key: int) -> None:
+        self.lst[key] = False
+
+    def contains(self, key: int) -> bool:
+        return self.lst[key]
+```
+Alternative: matrix instead of flat array. | Rt: 344ms |
+```python
+    def __init__(self):
+        self.row, self.col = 1000, 1001
+        self.matrix = [[None] * self.col for _ in range(self.row)]
+        
+    def hash(self, key): return (key % self.row, key // self.row)
+
+    def add(self, key: int) -> None:
+        i, j = self.hash(key)
+        self.matrix[i][j] = True
+        
+    def remove(self, key: int) -> None:
+        i, j = self.hash(key)
+        self.matrix[i][j] = False
+
+    def contains(self, key: int) -> bool:
+        i, j = self.hash(key)
+        return self.matrix[i][j] == True
+```
+
+
+**II). Open Addressing**
+| O(T): O(n) | O(S): O(n) | Rt: 312ms | 
+```python
+    def __init__(self):
+        self.arr = [None] * 8
+        self.capacity = 8
+        self.size = 0
+        self.thres = 2 / 3
+        
+    def hash(self, key): return key % self.capacity
+        
+    def rehash(self, key): return (5 * key + 1) % self.capacity
+    
+    def insertPos(self, key):
+        pos = self.hash(key)
+        #using -1 to represent the "removed" item
+        while self.arr[pos] is not None:
+            if self.arr[pos] == key: return -1
+            if self.arr[pos] == -1: break
+            pos = self.rehash(pos)
+        return pos
+    
+    def safeAdd(self, key):
+        pos = self.insertPos(key)
+        #already in, 
+        if pos == -1: return 
+        self.arr[pos] = key
+        self.size += 1
+    
+    def safeAddArr(self, arr):
+        for val in arr: 
+            if val is not None: self.safeAdd(val)
+
+    def add(self, key: int) -> None:
+        def preAdd(self):
+            if self.size / self.capacity <= self.thres: return 
+            self.capacity <<= 1
+            oldArr, self.arr = copy.deepcopy(self.arr), [None] * self.capacity
+            self.safeAddArr(oldArr)
+        
+        preAdd(self)
+        self.safeAdd(key)
+         
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        while self.arr[pos] is not None:
+            if self.arr[pos] == key: 
+                self.arr[pos] = -1
+                self.size -= 1
+                return
+            pos = self.rehash(pos)
+        return
+
+    def contains(self, key: int) -> bool:
+        pos = self.hash(key)
+        while self.arr[pos] is not None:
+            if self.arr[pos] == key: return True
+            pos = self.rehash(pos)
+        return False
+```
+Question: when I update the reharshing parameter from '5' to '3' or '7', it will lead to a TLE. I don't know why. 
+Comment: there is a small bug in this solution as discussed here: https://leetcode.com/problems/design-hashset/discuss/210494/Real-Python-Solution-no-cheating-open-addressing/335432. When you add a key, when you hit a tombstone (newly removed position), you just put the key in. this is not safe bacause the key may appear after this position. To fix this bug, we only to do a a check before add. Here is the bug-free version. 
+
+Alternative: bug-free version. | Rt: 348ms |
+```python
+class MyHashSet:
+
+    def __init__(self):
+        self.arr = [None] * 8
+        self.capacity = 8
+        self.size = 0
+        self.thres = 2 / 3
+        
+    def hash(self, key): return key % self.capacity
+        
+    def rehash(self, key): return (5 * key + 1) % self.capacity
+    
+    def insertPos(self, key):
+        pos = self.hash(key)
+        #using -1 to represent the "removed" item
+        while self.arr[pos] is not None:
+            if self.arr[pos] == key: return -1
+            #here is the small bug, the following item may contain the key
+            if self.arr[pos] == -1: break
+            pos = self.rehash(pos)
+        return pos
+    
+    def safeAdd(self, key):
+        pos = self.insertPos(key)
+        #already in, 
+        if pos == -1: return 
+        self.arr[pos] = key
+        self.size += 1
+    
+    def safeAddArr(self, arr):
+        for val in arr: 
+            if val is not None: self.safeAdd(val)
+
+    def add(self, key: int) -> None:
+        def preAdd(self):
+            if self.size / self.capacity <= self.thres: return 
+            self.capacity <<= 1
+            oldArr, self.arr = copy.deepcopy(self.arr), [None] * self.capacity
+            self.safeAddArr(oldArr)
+        
+        preAdd(self)
+        #fix the small bug by precheck before add
+        if self.contains(key): return
+        self.safeAdd(key)
+         
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        while self.arr[pos] is not None:
+            if self.arr[pos] == key: 
+                #you cannot assign None, because you will lose track of continuous items
+                self.arr[pos] = -1
+                self.size -= 1
+                return
+            pos = self.rehash(pos)
+        return
+
+    def contains(self, key: int) -> bool:
+        pos = self.hash(key)
+        while self.arr[pos] is not None:
+            if self.arr[pos] == key: return True
+            pos = self.rehash(pos)
+        return False
+```
+
+
+**III). Chaining with List**
+| O(T): O() | O(S): O() | Rt: ms | TLE | 24/28 testcases passed |
+```python
+    def __init__(self):
+        self.size = 10000
+        self.arr = [[]] * self.size
+        
+    def hash(self, key): return key % self.size
+    
+    def find(self, key): 
+        pos = self.hash(key)
+        for i, v in enumerate(self.arr[pos]):
+            if v == key: return (pos, i)
+        return (pos, -1)
+
+    def add(self, key: int) -> None:
+        pos, ind = self.find(key)
+        if ind == -1: self.arr[pos].append(key)
+        
+    def remove(self, key: int) -> None:
+        pos, ind = self.find(key)
+        #if ind >= 0: self.arr[pos][ind] = -1
+        if ind >= 0: self.arr[pos][ind] = -1
+
+    def contains(self, key: int) -> bool:
+        pos, ind = self.find(key) 
+        return ind >= 0
+```
+
+
+**IV). Chaining with Linked List**
+| O(T): O() | O(S): O() | Rt: 212ms | 
+```python
+class ListNode: 
+    def __init__(self, val=None, nxt=None):
+        self.val = val
+        self.next = nxt
+    
+class MyHashSet:
+
+    def __init__(self):
+        self.size = 1000
+        self.arr = [None] * self.size
+        
+    def hash(self, key): return key % self.size
+    
+    def find(self, key): 
+        pos = self.hash(key)
+        head = self.arr[pos]
+        while head:
+            if head.val == key: return 1
+            head = head.next
+        return 0
+
+    def add(self, key: int) -> None:
+        if self.find(key): return 
+        pos = self.hash(key)
+        oldhead = self.arr[pos]
+        #maintain one pass, not necessary lind to the end.
+        head = ListNode(key, oldhead)
+        self.arr[pos] = head
+        
+    def remove(self, key: int) -> None:
+        #don't need to find first, one pass.
+        pos = self.hash(key)
+        head = self.arr[pos]
+        if head is None: return
+        if head.val == key: 
+            self.arr[pos] = head.next
+            return
+        pre, head = head, head.next
+        while head:
+            if head.val == key: 
+                pre.next = head.next
+                return
+            pre, head = head, head.next
+
+    def contains(self, key: int) -> bool:
+        return self.find(key)
+```
+
+
+**V). Chaining with Sorted Linked List**
+| O(T): O() | O(S): O() | Rt: 188ms | 
+```python
+class ListNode: 
+    def __init__(self, val=None, nxt=None):
+        self.val = val
+        self.next = nxt
+    
+class MyHashSet:
+
+    def __init__(self):
+        self.size = 1000
+        self.arr = [None] * self.size
+        
+    def hash(self, key): return key % self.size
+
+    def add(self, key: int) -> None:
+        pos = self.hash(key)
+        head = self.arr[pos]
+        if head is None: 
+            self.arr[pos] = ListNode(key)
+            return
+        if key < head.val: 
+            self.arr[pos] = ListNode(key, head)
+            return
+        if key == head.val: return
+        pre, head = head, head.next
+        while head:
+            if head.val == key: return 
+            elif head.val > key: 
+                pre.next = ListNode(key, head)
+                return
+            pre, head = head, head.next
+        pre.next = ListNode(key)
+        
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        head = self.arr[pos]
+        if head is None: return
+        if key < head.val: return
+        if head.val == key: 
+            self.arr[pos] = head.next
+            return
+        pre, head = head, head.next
+        while head:
+            if head.val == key: 
+                pre.next = head.next
+                return
+            elif head.val > key: return
+            pre, head = head, head.next
+
+    def contains(self, key: int) -> bool:
+        pos = self.hash(key)
+        head = self.arr[pos]
+        if head is None: return False
+        if key < head.val: return False
+        while head:
+            if head.val == key: return True
+            elif head.val > key: return False
+            head = head.next
+        return False
+```
+Comment: linked list insert and remove at time complexity O(1) and search at O(n). In fact, you need to search the node before remove or insert a node (prevent dupilcation.)
+
+
+**VI). Chaining with BST - Balance when Remove**
+| O(T): O() | O(S): O() | Rt: 248ms | 
+```python
+class Node: 
+    def __init__(self, val=None, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+        
+    def insert(self, value):
+        if self.val == value: return
+        elif self.val < value: 
+            if self.right: self.right.insert(value)
+            else: self.right = Node(value)
+        else: 
+            if self.left: self.left.insert(value)
+            else: self.left = Node(value)
+    
+    def find(self, value):
+        if self.val == value: return True
+        elif self.val < value: 
+            if self.right: return self.right.find(value)
+            else: return False
+        else:
+            if self.left: return self.left.find(value)
+            else: return False
+            
+    def get_min(self):
+        if not self.left: return self
+        return self.left.get_min()
+    
+    def inorderexc(self, key, arr):
+        if self.left: self.left.inorderexc(key, arr)
+        if self.val != key: arr.append(self.val)
+        if self.right: self.right.inorderexc(key, arr)
+        
+class Bst:
+    def __init__(self, root=None):
+        self.root = root
+    
+    def insert(self, value):
+        if not self.root: self.root = Node(value); return
+        self.root.insert(value)
+        
+    def delete(self, value):
+        if not self.root: return 
+        bstarr = self.bst2arrexc(value)
+        self.root = self.arr2bst(bstarr)
+        
+    def find(self, value):
+        if not self.root: return False
+        return self.root.find(value)
+    
+    def bst2arrexc(self, key):
+        arr = []
+        if self.root: self.root.inorderexc(key, arr)
+        return arr
+    
+    def arr2bst(self, arr):
+        if not arr: return None
+        mid = len(arr) // 2
+        root = Node(arr[mid])
+        root.left = self.arr2bst(arr[:mid])
+        root.right = self.arr2bst(arr[mid+1:])
+        return root
+    
+class MyHashSet:
+    def __init__(self):
+        self.size = 1000
+        self.arr = [None] * self.size
+        
+    def hash(self, key): return key % self.size
+
+    def add(self, key: int) -> None:
+        pos = self.hash(key)
+        root = self.arr[pos]
+        if root is None: root = Bst()
+        root.insert(key)
+        self.arr[pos] = root
+        
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        root = self.arr[pos]
+        if root is None: return 
+        root.delete(key)
+
+    def contains(self, key: int) -> bool:
+        pos = self.hash(key)
+        root = self.arr[pos]
+        if root is None: return False
+        return root.find(key)
+    
+```
+Comment: the core of all BST involved problem remains in the "remove operation". My first try on remove fails -- see post https://leetcode.com/problems/design-hashset/discuss/462902/Python-BST-Failed-Solution-(23-28)%3A-Could-you-find-the-Reason. This version adopts a new thinking -- conduct balancing when remove. The remove function actualy conducted by getting a sorted list (in-order traverse) then build a balanced BST based on a sorted array. 
+
+
+**VII). Chaining with BST -- Naive**
+| O(T): O() | O(S): O() | Rt: 216ms | 
+```python
+class Node: 
+    def __init__(self, val=None, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+        
+    def insert(self, value):
+        if self.val == value: return
+        elif self.val < value: 
+            if self.right: self.right.insert(value)
+            else: self.right = Node(value)
+        else: 
+            if self.left: self.left.insert(value)
+            else: self.left = Node(value)
+        
+    def delete(self, value):
+        if self.val == value: 
+            if self.left and self.right:
+                node = self.right.get_min()
+                self.val = node.val
+                self.right = self.right.delete(node.val)
+            else: return self.left or self.right 
+        elif self.val < value and self.right: self.right = self.right.delete(value)
+        elif self.val > value and self.left: self.left = self.left.delete(value)
+        return self
+    
+    def find(self, value):
+        if self.val == value: return True
+        elif self.val < value: 
+            if self.right: return self.right.find(value)
+            else: return False
+        else:
+            if self.left: return self.left.find(value)
+            else: return False
+            
+    def get_min(self):
+        if not self.left: return self
+        return self.left.get_min()
+        
+class Bst:
+    def __init__(self, root=None):
+        self.root = root
+    
+    def insert(self, value):
+        if not self.root: self.root = Node(value); return
+        self.root.insert(value)
+        
+    def delete(self, value):
+        if not self.root: return 
+        self.root = self.root.delete(value)
+        
+    def find(self, value):
+        if not self.root: return False
+        return self.root.find(value)
+    
+class MyHashSet:
+    def __init__(self):
+        self.size = 1000
+        self.arr = [None] * self.size
+        
+    def hash(self, key): return key % self.size
+
+    def add(self, key: int) -> None:
+        pos = self.hash(key)
+        root = self.arr[pos]
+        if root is None: root = Bst()
+        root.insert(key)
+        self.arr[pos] = root
+        
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        root = self.arr[pos]
+        if root is None: return 
+        root.delete(key)
+
+    def contains(self, key: int) -> bool:
+        pos = self.hash(key)
+        root = self.arr[pos]
+        if root is None: return False
+        return root.find(key)
+```
+Alternative: | Rt: 228ms |
+```python
+class Node: 
+    def __init__(self, val=None, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+        
+    def insert(self, value):
+        if self.val == value: return
+        elif self.val < value: 
+            if self.right: self.right.insert(value)
+            else: self.right = Node(value)
+        else: 
+            if self.left: self.left.insert(value)
+            else: self.left = Node(value)
+        
+    def delete(self, value):
+        if self.val == value: 
+            if self.left and self.right:
+                node, par = self.right.get_min(self)
+                #ideal case, when self.right has at least one left child
+                if par.left == node: par.left = node.right
+                #special case, when self.right has no left child, itself is the minimun of right subtree
+                else: par.right = node.right
+                self.val = node.val
+            else: return self.left or self.right 
+        elif self.val < value and self.right: self.right = self.right.delete(value)
+        elif self.val > value and self.left: self.left = self.left.delete(value)
+        return self
+    
+    def find(self, value):
+        if self.val == value: return True
+        elif self.val < value: 
+            if self.right: return self.right.find(value)
+            else: return False
+        else:
+            if self.left: return self.left.find(value)
+            else: return False
+            
+    def get_min(self, par):
+        if self.left: return self.left.get_min(self)
+        return (self, par)
+        
+class Bst:
+    def __init__(self, root=None):
+        self.root = root
+    
+    def insert(self, value):
+        if not self.root: self.root = Node(value); return
+        self.root.insert(value)
+        
+    def delete(self, value):
+        if not self.root: return 
+        self.root = self.root.delete(value)
+        
+    def find(self, value):
+        if not self.root: return False
+        return self.root.find(value)
+    
+class MyHashSet:
+    def __init__(self):
+        self.size = 1000
+        self.arr = [None] * self.size
+        
+    def hash(self, key): return key % self.size
+
+    def add(self, key: int) -> None:
+        pos = self.hash(key)
+        root = self.arr[pos]
+        if root is None: root = Bst()
+        root.insert(key)
+        self.arr[pos] = root
+        
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        root = self.arr[pos]
+        if root is None: return 
+        root.delete(key)
+
+    def contains(self, key: int) -> bool:
+        pos = self.hash(key)
+        root = self.arr[pos]
+        if root is None: return False
+        return root.find(key)
+```

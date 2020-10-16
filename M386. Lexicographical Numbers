@@ -1,0 +1,53 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O() | O(S): O() | Rt: 276ms | 
+```python
+    def lexicalOrder(self, n: int) -> List[int]:
+        def genall(i, thres, rst):
+            if i > thres: return
+            rst.append(i)
+            for j in range(10):
+                genall(i*10+j, thres, rst)
+        
+        if not n: return 
+        rst, cur = [], 1
+        while len(rst) < n:
+            genall(cur, n, rst)
+            cur += 1
+        return rst
+```
+Alternative: | Rt: 208ms |
+```python
+    def lexicalOrder(self, n: int) -> List[int]:
+        def genall(i, thres, rst):
+            rst.append(i)
+            for j in range(10):
+                if i*10+j <= thres:
+                    genall(i*10+j, thres, rst)
+        
+        if not n: return 
+        rst = []
+        for i in range(1, 10):
+            if i <= n:
+                genall(i, n, rst)
+        return rst
+```
+
+
+**II). Iteration**
+| O(T): O() | O(S): O() | Rt: 116ms | 
+```python
+    def lexicalOrder(self, n: int) -> List[int]:
+        if not n: return 
+        rst, cur = [], 1
+        while len(rst) < n:
+            rst.append(cur)
+            if cur * 10 <= n: cur *= 10
+            else:
+                if cur >= n: cur //= 10
+                cur += 1
+                while cur % 10 == 0: cur //= 10
+        return rst
+```
+Referrence: https://leetcode.com/problems/lexicographical-numbers/discuss/86237/AC-200ms-c%2B%2B-solution-beats-98
+Comment: this iterative solution can drive coder crazy due to its tricky special cases. 

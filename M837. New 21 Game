@@ -1,0 +1,38 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP with Slide Window**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def new21Game(self, N: int, K: int, W: int) -> float:
+        #never draw a number; point remain as 0; 0 always less or equal to N;
+        if K == 0: return 1
+        #K+W-1 is the max point Alice can possible get; if N > the max point available, return
+        if N > K + W-1: return 1
+        dp = [0] * (N+1)
+        dp[0] = 1
+        for i in range(1, N+1):
+            summ = 0
+            for j in range(i):
+                if i - j > W: continue
+                if j >= K: break
+                summ += dp[j]
+            dp[i] = summ / W
+        return sum(dp[K:])
+```
+
+Alternative: | Rt: 72ms |
+```python
+    def new21Game(self, N: int, K: int, W: int) -> float:
+        #never draw a number; point remain as 0; 0 always less or equal to N;
+        if K == 0: return 1
+        #K+W-1 is the max point Alice can possible get; if N > the max point available, return
+        if N > K + W-1: return 1
+        dp = [0] * (N+1)
+        dp[0], presum = 1, 1
+        for i in range(1, N+1):
+            dp[i] = presum / W
+            if i < K: presum += dp[i]
+            #sliding window, when size of win < W, grow window; when size of win = W; forward window
+            if i >= W: presum -= dp[i-W] 
+        return sum(dp[K:])
+```
+Referrence: https://leetcode.com/problems/new-21-game/discuss/132334/One-Pass-DP-O(N)

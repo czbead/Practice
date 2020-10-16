@@ -1,0 +1,106 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def serialize(self, root):
+        arr, stack = [], [root]
+        while any(stack):
+            arr += [str(i.val) if i else '#' for i in stack]
+            stack = [j for i in stack for j in (i.left if i else None, i.right if i else None)]
+        return ' '.join(arr)
+
+    def deserialize(self, data):
+        def buildTree(arr, i):
+            if i >= len(arr) or arr[i] == '#': return None
+            root = TreeNode(int(arr[i]))
+            root.left = buildTree(arr, 2*(i+1)-1)
+            root.right = buildTree(arr, 2*(i+1))
+            return root
+        
+        return buildTree(data.split(), 0)
+```
+
+Alternative: using dict instead of array and omit null node. | Rt: 132ms |
+```python
+    def serialize(self, root):
+        if not root: return ''
+        arr, stack = [], [(0, root)]
+        while stack:
+            nxt = []
+            for i, node in stack:
+                arr.append(str(i) + ' ' + str(node.val))
+                if node.left: nxt.append(((i+1)*2-1, node.left))
+                if node.right: nxt.append(((i+1)*2, node.right))
+            stack = nxt
+        return '/'.join(arr)
+
+    def deserialize(self, data):
+        def buildTree(dt, i):
+            if i not in dt: return None
+            root = TreeNode(dt[i])
+            root.left = buildTree(dt, 2*(i+1)-1)
+            root.right = buildTree(dt, 2*(i+1))
+            return root
+        
+        if not data: return None
+        dt = {}
+        for i in data.split('/'):
+            k, v = i.split()
+            dt[int(k)] = int(v)
+        return buildTree(dt, 0)
+```
+
+
+**II). PreOrder Traverse**
+| O(T): O() | O(S): O() | Rt: 124ms | 
+```python
+    def serialize(self, root):
+        def preorder(node, arr):
+            if not node: arr.append('#'); return
+            arr.append(str(node.val))
+            preorder(node.left, arr)
+            preorder(node.right, arr)
+        
+        arr = []
+        preorder(root, arr)
+        return ' '.join(arr)
+    
+    def deserialize(self, data):
+        def buildTree(it):
+            val = next(it)
+            if val == '#': return None
+            root = TreeNode(int(val))
+            root.left = buildTree(it)
+            root.right = buildTree(it)
+            return root
+        
+        return buildTree(iter(data.split()))
+```
+Reference: https://leetcode.com/problems/serialize-and-deserialize-binary-tree/discuss/74259/Recursive-preorder-Python-and-C%2B%2B-O(n)
+
+Alternative: | Rt: 124ms |
+```python
+    def serialize(self, root):
+        def preorder(node, arr):
+            if not node: arr.append('#'); return
+            arr.append(str(node.val))
+            preorder(node.left, arr)
+            preorder(node.right, arr)
+        
+        arr = []
+        preorder(root, arr)
+        return ' '.join(arr)
+    
+    def deserialize(self, data):
+        def buildTree(arr):
+            val = arr.pop()
+            if val == '#': return None
+            root = TreeNode(int(val))
+            root.left = buildTree(arr)
+            root.right = buildTree(arr)
+            return root
+        
+        return buildTree(data.split()[::-1])
+```
+
+Others: iterative preorder - https://leetcode.com/problems/serialize-and-deserialize-binary-tree/discuss/74264/Short-and-straight-forward-BFS-Java-code-with-a-queue

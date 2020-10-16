@@ -1,0 +1,25 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O() | O(S): O() | Rt: 28ms | 
+```python
+    def numOfBurgers(self, tomatoSlices: int, cheeseSlices: int) -> List[int]:
+        # 4x + 2y = to => 2x + y = to//2; x + y = ch; 
+        if tomatoSlices & 1: return []
+        t = tomatoSlices // 2
+        a = t - cheeseSlices
+        if a < 0: return []
+        b = cheeseSlices - a
+        if b < 0: return []
+        return [a, b]
+```
+
+Alternative: | Rt: 28ms |
+```python
+    def numOfBurgers(self, to: int, ce: int) -> List[int]:
+        # 4x + 2y = to => 2x + y = to//2; x + y = ch; 
+        if to & 1: return []
+        a = to//2 - ce
+        b = ce - a
+        if a < 0 or b < 0: return []
+        return [a, b]
+```

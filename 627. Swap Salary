@@ -1,0 +1,25 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**Char ASCII** | Rt: 390ms |
+```sql
+update salary
+    set sex = char(ascii('f') + ascii('m') - ascii(sex))
+```
+
+**ASCII XOR** | Rt: 464ms |
+```sql
+update salary
+    set sex = char(ascii('f') ^ ascii('m') ^ ascii(sex))
+```
+
+**Case** | Rt: 313ms |
+```sql
+update salary
+    set sex = (case when sex = 'm'
+                    then 'f' else 'm' end)
+```
+
+**IF** | Rt: 314ms |
+```sql
+update salary
+    set sex = if(sex = 'm', 'f', 'm')
+```

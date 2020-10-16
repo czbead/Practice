@@ -1,0 +1,47 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Enumerate the First Two Num**
+| O(T): O(n^3) | O(S): O(n) | Rt: 28ms | 
+```python
+    def isAdditiveNumber(self, num: str) -> bool:
+        def forward(num, a, b, st):
+            if st == len(num): return True
+            c = str(a + b)
+            if num[st:st+len(c)] != c: return False
+            return forward(num, b, a+b, st+len(c))
+        
+        if not num or len(num) < 3: return False
+        l = len(num)
+        for i in range(1, l//2 + 1):
+            if num[0] == '0' and i > 1: return False
+            a = int(num[:i])
+            #max(i, j-i) <= l-j, => i+j <=l; 2j-i <= l;  
+            for j in range(i+1, min(l-i, (l+i)//2) + 1):
+                if num[i] == '0' and j > i+1: break
+                b = int(num[i:j])
+                if forward(num, a, b, j): return True
+        return False
+```
+Referrence: https://leetcode.com/problems/additive-number/discuss/75567/Java-Recursive-and-Iterative-Solutions
+Alternative: iterative version. | Rt: 20ms |
+```python
+    def isAdditiveNumber(self, num: str) -> bool:
+        def valid(num, a, b, st):
+            while st < len(num):
+                c = str(a + b)
+                if num[st:st+len(c)] != c: return False
+                a, b, st = b, a+b, st+len(c)
+            return True
+        
+        if not num or len(num) < 3: return False
+        l = len(num)
+        for i in range(1, l//2 + 1):
+            if num[0] == '0' and i > 1: return False
+            a = int(num[:i])
+            #max(i, j-i) <= l-j, => i+j <=l; 2j-i <= l;  
+            for j in range(i+1, min(l-i, (l+i)//2) + 1):
+                if num[i] == '0' and j > i+1: break
+                b = int(num[i:j])
+                if valid(num, a, b, j): return True
+        return False
+```
+

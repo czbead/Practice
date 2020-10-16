@@ -1,0 +1,128 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(t): O(n*n) | O(m): O(1) | Rt: 276ms | 
+```python
+    def moveZeroes(self, nums: List[int]) -> None:
+        for i in range(len(nums)-1):
+            if nums[i] == 0:
+                alzero = True
+                for j in range(i+1, len(nums)):
+                    if nums[j] != 0: 
+                        alzero = False
+                        break
+                if alzero: return
+                nums[i], nums[j] = nums[j], nums[i]
+```
+
+
+**II). Count Zero**
+| O(t): O(n) | O(m): O(n) | Rt: 56ms | 
+```python
+    def moveZeroes(self, nums: List[int]) -> None:
+        ct = nums.count(0)
+        nums[:] = [i for i in nums if i != 0]
+        nums += [0] * ct
+```
+Comment: I don't know whether this counts as a strict in-place solution. Personally, a strict in-place solution should use no-extra space.
+
+
+**III). Sort by Key**
+| O(t): O(nlgn) | O(m): O(1) | Rt: 68ms | 
+```python
+    def moveZeroes(self, nums: List[int]) -> None:
+        nums.sort(key=bool, reverse=True)
+```
+Alternative: | Rt: 52ms |
+```python
+    def moveZeroes(self, nums: List[int]) -> None:
+        nums.sort(key=lambda x: 0 if x != 0 else 1)
+```
+https://leetcode.com/problems/move-zeroes/discuss/72074/Share-my-one-line-python-solution/121879
+
+
+**IV). Two Pointer Swap**
+| O(t): O(n) | O(m): O(1) | Rt: 48ms | 
+```python
+    def moveZeroes(self, nums: List[int]) -> None:
+        index = 0
+        for i in range(len(nums)):
+            if nums[i] != 0: 
+                nums[i], nums[index] = nums[index], nums[i]
+                index += 1
+```
+Comment: this will swap with itself when non-zeros leads the nums
+Alternative: improved non-self-swap version. | Rt: 44ms |
+```python
+    def moveZeroes(self, nums: List[int]) -> None:
+        index = 0
+        for i in range(len(nums)):
+            if nums[i] != 0:
+                if nums[index] == 0:
+                    nums[i], nums[index] = nums[index], nums[i]
+                index += 1
+```
+Referrence: https://leetcode.com/problems/move-zeroes/discuss/72012/Python-short-in-place-solution-with-comments.
+My Choice: | Rt: 48ms |
+```python
+    def moveZeroes(self, nums: List[int]) -> None:
+    	#index of the left-most 0
+        index = 0
+        for i in range(len(nums)):
+        	#index remain, this is critical. else, index move forward
+            if nums[i] == 0: continue
+            # i != index works as well, or nums[index] == 0
+            if i > index: nums[i], nums[index] = 0, nums[i]
+            index += 1
+```
+Comment: I like "shallow indented" code instead of "nested indented" ones because the shallow one most likely requires easier thinking and understanding by its nature.
+
+
+**V). Remove Zero**
+| O(t): O(n*n) | O(m): O(n) | Rt: 160ms | 
+```python
+    def moveZeroes(self, nums: List[int]) -> None:
+        ct = nums.count(0)
+        while 0 in nums:
+            nums.remove(0)
+        nums.extend([0]*ct)
+```
+Referrence: https://leetcode.com/problems/move-zeroes/discuss/72012/Python-short-in-place-solution-with-comments./223166
+Alternative: | O(t): O(n*n) | O(m): O(1) | Rt: 100ms |
+```python
+    def moveZeroes(self, nums: List[int]) -> None:
+        ct = nums.count(0)
+        for _ in range(ct):
+            nums.remove(0)
+            nums.append(0)
+```
+Referrence: https://leetcode.com/problems/move-zeroes/discuss/72012/Python-short-in-place-solution-with-comments./74628
+
+
+**VI). Two Pointer Del**
+| O(t): O(n*n) | O(m): O(1) | Rt: 48ms | 
+```python
+    def moveZeroes(self, nums: List[int]) -> None:
+        l, r = 0, len(nums)-1
+        while l < r:
+            if nums[l] != 0: l += 1
+            elif nums[r] == 0: r -= 1
+            else: 
+                del nums[l]
+                r -= 1
+                nums.append(0)
+```
+Referrence: improved from https://leetcode.com/problems/move-zeroes/discuss/72012/Python-short-in-place-solution-with-comments./160946
+
+
+**VI). Snowball: the Best**
+| O(t): O(n) | O(m): O(1) | Rt: 64ms | 
+```python
+    def moveZeroes(self, nums: List[int]) -> None:
+        zoct = 0
+        for i in range(len(nums)):
+            if nums[i] == 0: zoct += 1
+            #non-zero that have leading zoct 0s, swap with the first 0
+            elif zoct: nums[i-zoct], nums[i] = nums[i], 0
+```
+Referrence: https://leetcode.com/problems/move-zeroes/discuss/172432/THE-EASIEST-but-UNUSUAL-snowball-JAVA-solution-BEATS-100-(O(n))-%2B-clear-explanation
+Comment: excellent solution, as brilliant as the **Two Pointer Swap solution** if not better. Two Pointer solution takes two pointers (2 states) and one check (1 extra state check) while this solution takes only one counter (1 state) without any extra special case check.

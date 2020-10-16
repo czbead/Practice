@@ -1,0 +1,12 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Local and Global Max**
+| O(T): O(n) | O(S): O(1) | Rt: 196ms | 
+```python
+    def partitionDisjoint(self, A: List[int]) -> int:
+        mx, curmx,  index = A[0], A[0], 0
+        for i in range(len(A)):
+            if A[i] < curmx: curmx, index = mx, i
+            else: mx = max(mx, A[i])
+        return index + 1
+```
+Referrence: https://leetcode.com/problems/partition-array-into-disjoint-intervals/discuss/175945/Java-one-pass-7-lines

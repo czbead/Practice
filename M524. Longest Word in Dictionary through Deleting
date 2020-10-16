@@ -1,0 +1,55 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O(n*m) | O(S): O(n) | Rt: 388ms | 
+```python
+    def findLongestWord(self, s: str, d: List[str]) -> str:
+        def issubseq(a, b):
+            i = 0 
+            for j in b: 
+                if j == a[i]: i += 1
+                if i == len(a): return True
+            return False
+        
+        maxlen, rst = 0, ['']
+        for word in d:
+            if len(word) < maxlen: continue
+            if issubseq(word, s):
+                if len(word) == maxlen: rst.append(word)
+                else: maxlen, rst = len(word), [word]
+        return min(rst)
+```
+
+Alternative: | Rt: 400ms |
+```python
+    def findLongestWord(self, s: str, d: List[str]) -> str:
+        def issubseq(a, b):
+            i = 0 
+            for j in b: 
+                if j == a[i]: i += 1
+                if i == len(a): return True
+            return False
+        
+        rst = ''
+        for word in d:
+            if len(word) < len(rst): continue
+            if issubseq(word, s):
+                if len(word) == len(rst): rst = min(rst, word)
+                else: rst = word
+        return rst
+```
+
+
+**II). Sort Find First Valid**
+| O(T): O(mnlgn) | O(S): O(1) | Rt: 412ms | 
+```python
+    def findLongestWord(self, s: str, d: List[str]) -> str:
+        def issubseq(a, b):
+            i = 0 
+            for j in b: 
+                if j == a[i]: i += 1
+                if i == len(a): return True
+            return False
+        
+        d.sort(key=lambda x: (-len(x), x))
+        return next((word for word in d if issubseq(word, s)), '')
+```

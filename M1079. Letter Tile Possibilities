@@ -1,0 +1,49 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Iterative Set**
+| O(T): O() | O(S): O() | Rt: 68ms | 
+```python
+    def numTilePossibilities(self, tiles: str) -> int:
+        s = set([''])
+        for i in tiles:
+            s |= {m[:n] + i + m[n:] for m in s for n in range(len(m)+1)}
+        return len(s)-1
+```
+Referrence: https://leetcode.com/problems/letter-tile-possibilities/discuss/308392/python-set-solution
+
+
+**II). Recursive Reduce**
+| O(T): O() | O(S): O() | Rt: 124ms | 
+```python
+    def numTilePossibilities(self, tiles: str) -> int:
+        def recur(arr, path, s):
+            if path not in s: s.add(path)
+            for i in range(len(arr)):
+                recur(arr[:i]+arr[i+1:], path+arr[i], s)
+        
+        s = set()
+        recur(tiles, '', s)
+        return len(s) - 1
+```
+Referrence: https://leetcode.com/problems/letter-tile-possibilities/discuss/321673/Python-DFS-%2B-Set
+
+
+**III). Bucket Backtracking**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+    def numTilePossibilities(self, tiles: str) -> int:
+        def backtrack(arr):
+            count = 0
+            for i in range(26):
+                if not arr[i]: continue
+                arr[i] -= 1  #using one i-th letter
+                count += 1   #count the one i-th letter sequence
+                count += backtrack(arr)  #sequence of longer length must count
+                arr[i] += 1  #backtracking
+            return count
+        
+        m = [0] * 26
+        for i in tiles: m[ord(i) - ord('A')] += 1
+        return backtrack(m)
+```
+Referrence: https://leetcode.com/problems/letter-tile-possibilities/discuss/308284/Concise-java-solution
+

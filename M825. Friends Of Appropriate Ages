@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counting Sort with Prefix Sum**
+| O(T): O(n) | O(S): O(1) | Rt: 272ms | 
+```python
+    def numFriendRequests(self, ages: List[int]) -> int:
+        m, presum = [0] * 121, [0] * 122
+        #bucket sort
+        for i in ages: m[i] += 1
+        #prefix sum
+        for i in range(1, 122): presum[i] += presum[i-1] + m[i-1]
+        rst = 0
+        for i in range(15, 121):
+            if m[i] == 0: continue
+            #> 0.5 * i + 7: start with 8+i//2
+            ct = presum[i+1] - presum[8 + i//2]
+            rst += (ct - 1) * m[i]
+        return rst
+```
+Referrence: https://leetcode.com/problems/friends-of-appropriate-ages/discuss/127341/10ms-concise-Java-solution-O(n)-time-and-O(1)-space
+
+
+**II). Sort**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 312ms | 
+```python
+    def numFriendRequests(self, ages: List[int]) -> int:
+        ages.sort()
+        rst, leng, r, l = 0, len(ages), 0, 0
+        while r < leng:
+            ct = 1
+            while r < leng - 1 and ages[r] == ages[r+1]: r, ct = r+1, ct+1
+            while l < r and ages[l] <= 0.5 * ages[r] + 7: l = l+1
+            rst += ct * (r - l)
+            r += 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/friends-of-appropriate-ages/discuss/127029/C++JavaPython-Easy-and-Straight-Forward/229978
+

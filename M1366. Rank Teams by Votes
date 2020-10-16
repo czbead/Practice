@@ -1,0 +1,13 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 76ms | 
+```python
+    def rankTeams(self, votes: List[str]) -> str:
+        if len(votes) == 1: return votes[0]
+        l = len(votes[0])
+        dt = {i: [0] * l for i in votes[0]}
+        for v in votes:
+            for i in range(l):
+                dt[v[i]][i] -= 1
+        return ''.join(sorted(dt, key=lambda x: (dt[x], x)))
+```

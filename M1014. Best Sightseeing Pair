@@ -1,0 +1,23 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy**
+| O(T): O(n) | O(S): O(1) | Rt: 504ms | 
+```python
+    def maxScoreSightseeingPair(self, A: List[int]) -> int:
+        rst, i, l = -1, 0, len(A)
+        for j in range(1, l):
+            rst = max(rst, A[i] + A[j] + i - j)
+            if A[j] + j >= A[i] + i: i = j
+        return rst
+```
+
+Alternative: step reduce. | Rt: 512ms |
+```python
+    def maxScoreSightseeingPair(self, A: List[int]) -> int:
+        rst = cur = 0
+        for i in A:
+            rst = max(rst, cur + i)
+            #each step forward, reduce 1
+            cur = max(cur, i) - 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/best-sightseeing-pair/discuss/260850/JavaC%2B%2BPython-One-Pass

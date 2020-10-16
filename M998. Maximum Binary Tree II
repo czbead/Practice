@@ -1,0 +1,25 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Always Go Right**
+| O(T): O(n) | O(S): O(1) | Rt: 36ms | 
+```python
+    def insertIntoMaxTree(self, root: TreeNode, val: int) -> TreeNode:
+        if not root or root.val < val:
+            node = TreeNode(val)
+            node.left = root
+            return node
+        root.right = self.insertIntoMaxTree(root.right, val)
+        return root
+```
+
+
+**II). Iterative with Dummy Head**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def insertIntoMaxTree(self, root: TreeNode, val: int) -> TreeNode:
+        dummy, node = TreeNode(-1), TreeNode(val)
+        dummy.right = root
+        cur, par = root, dummy
+        while cur and cur.val >= val: cur, par = cur.right, cur
+        par.right, node.left = node, cur
+        return dummy.right
+```

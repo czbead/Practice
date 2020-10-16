@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Get Length and Make Circle**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        if not head: return
+        l, h = 1, head  #l is the length of list
+        while h.next: l, h = l + 1, h.next
+        k = k % l  
+        if k == 0: return head
+        move = l - k  #move forward steps
+        h.next = head  #concat the end to the head, make it a circle
+        while move: h, move = h.next, move - 1
+        rst = h.next  #h is the end, h.next is the result head
+        h.next = None
+        return rst
+```
+Alternative: concise version. | Rt: 28ms |
+```python
+    def rotateRight(self, head: ListNode, k: int) -> ListNode:
+        if not head: return
+        l, h = 1, head  #l is the length of list
+        while h.next: l, h = l + 1, h.next
+        k = (l - k) % l
+        h.next = head  #concat the end to the head, make it a circle
+        while k: h, k = h.next, k - 1
+        rst = h.next  #h is the end, h.next is the result head
+        h.next = None
+        return rst
+```
+

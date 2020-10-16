@@ -1,0 +1,70 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer with Reduce**
+| O(T): O(n) | O(S): O(1) | Rt: 60ms | 
+```python
+    def compress(self, chars: List[str]) -> int:
+        st = i = 0
+        while i < len(chars):
+            while i < len(chars) and chars[i] == chars[st]: i += 1
+            #the character 
+            st += 1
+            if i - st > 0:
+            	#because +1 in previous step, now + 1 back to get the count
+                chars[st: i] = str(i - st + 1)
+                st += 1
+                i = st
+        return st
+```
+
+
+**II). Read Pointer and Write Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 56ms | 
+```python
+    def compress(self, chars: List[str]) -> int:
+        #write pointer, read pointer
+        wp, rp, l = 0, 0, len(chars)
+        while rp < l:
+            #current character and its frequency
+            char, f, rp = chars[rp], 1, rp + 1
+            while rp < l and chars[rp] == char: f, rp = f + 1, rp + 1
+            chars[wp], wp = char, wp + 1
+            if f > 1:
+                for i in str(f): chars[wp], wp = i, wp + 1
+        return wp 
+```
+Referrence: idea from - https://leetcode.com/problems/string-compression/discuss/122241/Python-solution-with-detailed-explanation
+
+
+**III). Two Pointer Compare**
+| O(T): O(n) | O(S): O(1) | Rt: 56ms | 
+```python
+    def compress(self, chars: List[str]) -> int:
+        i, j, ct, l = 0, 0, 1, len(chars)
+        while j < l:
+            chars[i] = chars[j]
+            i += 1
+            while j + 1 < l and chars[j + 1] == chars[j]: ct, j = ct+1, j+1
+            if ct > 1: 
+                ctstr = str(ct)
+                chars[i: i+len(ctstr)] = ctstr
+                i += len(ctstr)
+            ct, j = 1, j + 1
+        return i
+```
+Referrence: idea from post - https://leetcode.com/problems/string-compression/discuss/92568/Python-Two-Pointers-O(n)-time-O(1)-space
+Alternative: without inner while version | Rt: 56ms |
+```python
+    def compress(self, chars: List[str]) -> int:
+        i, j, ct, l = 0, 0, 1, len(chars)
+        while j < l:
+            if j + 1 < l and chars[j+1] == chars[j]: ct, j = ct+1, j+1
+            else:
+                chars[i] = chars[j]
+                i += 1
+                if ct > 1: 
+                    ctstr = str(ct)
+                    chars[i: i+len(ctstr)] = ctstr
+                    i += len(ctstr)
+                ct, j = 1, j + 1
+        return i
+```

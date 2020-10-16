@@ -1,0 +1,51 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        def backtrack(tri, rowi, coli, summ, rst):
+            if rowi == len(tri): rst[0] = min(rst[0], summ); return
+            backtrack(tri, rowi+1, coli, summ+tri[rowi][coli], rst)
+            backtrack(tri, rowi+1, coli+1, summ+tri[rowi][coli+1], rst)
+            
+        if not triangle: return 
+        rst = [float('inf')]
+        backtrack(triangle, 1, 0, triangle[0][0], rst)
+        return rst[0]
+```
+
+
+**II). DP**
+| O(T): O(n*n) | O(S): O(n) | Rt: 56ms | 
+```python
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        if not triangle: return
+        dp = triangle[-1]
+        for i in range(len(triangle)-2, -1, -1):
+            for j in range(i+1):
+                dp[j] = min(dp[j], dp[j+1]) + triangle[i][j]
+        return dp[0]
+```
+Alternative: modify the input. | Rt: 52ms |
+```python
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        if not triangle: return
+        for i in range(len(triangle)-2, -1, -1):
+            for j in range(i+1):
+                triangle[i][j] += min(triangle[i+1][j], triangle[i+1][j+1])
+        return triangle[0][0]
+```
+Referrence: https://leetcode.com/problems/triangle/discuss/38730/DP-Solution-for-Triangle
+Triple: top down. | Rt: 76ms |
+```python
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        if not triangle: return
+        rst = triangle[:]
+        for i in range(1, len(triangle)):
+            for j in range(i+1):
+                if j == 0: rst[i][j] += rst[i-1][j]
+                elif j == i: rst[i][j] += rst[i-1][-1]
+                else: rst[i][j] += min(rst[i-1][j-1], rst[i-1][j])
+        return min(rst[-1])
+```
+Referrence: https://leetcode.com/problems/triangle/discuss/38735/Python-easy-to-understand-solutions-(top-down-bottom-up).

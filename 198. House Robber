@@ -1,0 +1,49 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP**
+| O(t): O(n) | O(m): O(n) | Rt: 32ms | 
+note: can be O(1) space if update the nums directly
+```python
+    def rob(self, nums: List[int]) -> int:
+        if not nums: return 0
+        dp = [0] + nums
+        for i in range(2, len(dp)):
+            dp[i] = max(dp[i] + dp[i-2], dp[i-1])
+        return dp[-1]
+```
+Alternative: O(1) space neat code. | Rt: 28ms |
+```python
+    def rob(self, nums: List[int]) -> int:
+        nums = [0, 0] + nums
+        for i in range(2, len(nums)):
+            nums[i] = max(nums[i-1], nums[i] + nums[i-2])
+        return nums[-1]
+```
+
+
+**II). State Machine**
+| O(t): O(n) | O(m): O(1) | Rt: 28ms | 
+```python
+    def rob(self, nums: List[int]) -> int:
+        a = b = 0
+        for i in nums:
+            a, b = b, max(b, a+i)
+        return b
+```
+
+
+**III). Recursion - TLE**
+| O(t): O(n) | O(m): O(n) | Rt: ms | 
+```python
+    def rob(self, nums: List[int]) -> int:
+        if not nums: return 0
+        return max(self.rob(nums[:-1]), self.rob(nums[:-2]) + nums[-1])
+```
+Alternative: both TLE. O(1) space complexity.
+```python
+    def rob(self, nums: List[int]) -> int:
+        def recur(nums, end):
+            if end <= 0: return 0
+            return max(recur(nums, end-1), recur(nums, end-2) + nums[end-1])
+        return recur(nums, len(nums))
+```
+

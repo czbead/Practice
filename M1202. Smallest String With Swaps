@@ -1,0 +1,49 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Union Find**
+| O(T): O() | O(S): O() | Rt: 708ms | 
+```python
+    def smallestStringWithSwaps(self, s, pairs):
+        def find(m, i):
+            if i != m[i]: m[i] = find(m, m[i])
+            return m[i]
+
+        def union(m, i, j):
+            m[find(m, j)] = find(m, i)
+
+        l = len(s)
+        m = list(range(l))
+        for i, j in pairs: union(m, i, j)
+            
+        dt = collections.defaultdict(list)
+        for i in range(l): dt[find(m, i)].append(i)
+            
+        sl = list(s)
+        for k in dt:
+            strs = sorted([s[i] for i in dt[k]])
+            for i, c in zip(dt[k], strs): sl[i] = c
+        return ''.join(sl)
+```
+
+Alternative: | Rt: 732ms |
+```python
+    def smallestStringWithSwaps(self, s, pairs):
+        def find(m, i):
+            if i != m[i]: m[i] = find(m, m[i])
+            return m[i]
+
+        def union(m, i, j):
+            m[find(m, j)] = find(m, i)
+
+        l = len(s)
+        m = list(range(l))
+        for i, j in pairs: union(m, i, j)
+            
+        dt = collections.defaultdict(list)
+        for i in range(l): dt[find(m, i)].append(i)
+            
+        sl = list(s)
+        for k in dt: dt[k] = sorted([s[i] for i in dt[k]], reverse=True)
+        for i in range(l): sl[i] = dt[find(m, i)].pop()
+        return ''.join(sl)
+```
+Referrence: https://leetcode.com/problems/smallest-string-with-swaps/discuss/387524/Short-Python-Union-find-solution-w-Explanation

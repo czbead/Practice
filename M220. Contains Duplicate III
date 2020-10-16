@@ -1,0 +1,17 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Range Sort with Bucket**
+| O(T): O(n) | O(S): O(n) | Rt: 60ms | 
+```python
+    def containsNearbyAlmostDuplicate(self, nums: List[int], k: int, t: int) -> bool:
+        if not nums or t < 0 or k <= 0: return False
+        width, l, dt = t+1, len(nums), {}
+        for i in range(l):
+            pos = nums[i] // width
+            if pos in dt: return True
+            if pos-1 in dt and nums[i] - dt[pos-1] < width: return True
+            if pos+1 in dt and dt[pos+1] - nums[i] < width: return True
+            dt[pos] = nums[i]
+            if i >= k: del dt[nums[i-k] // width]
+        return False
+```
+Referrence: https://leetcode.com/problems/contains-duplicate-iii/discuss/61645/AC-O(N)-solution-in-Java-using-buckets-with-explanation; https://leetcode.com/problems/contains-duplicate-iii/discuss/61639/JavaPython-one-pass-solution-O(n)-time-O(n)-space-using-buckets;

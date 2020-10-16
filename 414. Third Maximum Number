@@ -1,0 +1,42 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). **
+| O(T): O(n) | O(S): O(1) | Rt: 52ms | 
+```python
+    def thirdMax(self, nums: List[int]) -> int:
+        m = s = t = -float('inf')
+        for i in nums:
+            if i > m: m, s, t = i, m, s
+            elif i < m and i > s: s, t = i, s
+            elif i < s and i > t: t = i
+        return m if t == -float('inf') else t
+```
+Comment: to get the third maximum (don't need to be distinct), just remove the < upper check
+
+
+**II). Remove Max Twice**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def thirdMax(self, nums: List[int]) -> int:
+        s = list(set(nums))
+        if len(s) < 3: return max(s)
+        s.remove(max(s)); s.remove(max(s))
+        return max(s)
+```
+
+
+**III). Heapq - For Fun**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 44ms | 
+```python
+    def thirdMax(self, nums: List[int]) -> int:
+        nums = [-i for i in nums]
+        heapq.heapify(nums)
+        mx = pre = heapq.heappop(nums)
+        ct = 1
+        while nums:
+            cur = heapq.heappop(nums)
+            if cur != pre: ct, pre = ct + 1, cur
+            if ct == 3: return -cur
+        return -mx
+```
+Comment: it is **not O(n)** solution, illegal solution. Just for fun and paractice usage.
+

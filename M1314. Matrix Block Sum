@@ -1,0 +1,19 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Matrix Prefix Sum**
+| O(T): O(mn) | O(S): O(mn) | Rt: 112ms | 
+```python
+    def matrixBlockSum(self, mat: List[List[int]], K: int) -> List[List[int]]:
+        r, c = len(mat), len(mat[0])
+        m = [[0] * (c+1) for _ in range(r+1)]
+        for i in range(1, r+1):
+            for j in range(1, c+1):
+                m[i][j] = m[i][j-1] + m[i-1][j] - m[i-1][j-1] + mat[i-1][j-1]
+        
+        rst = [[0] * c for _ in range(r)]
+        for i in range(r):
+            for j in range(c):
+                i1, j1, i2, j2 = max(0, i-K), max(0, j-K), min(r, i+K+1), min(c, j+K+1)
+                rst[i][j] = m[i2][j2] - m[i2][j1] - m[i1][j2] + m[i1][j1]
+        return rst
+```
+Referrence: https://leetcode.com/problems/matrix-block-sum/discuss/477036/JavaPython-3-PrefixRange-sum-w-analysis-similar-to-LC-30478

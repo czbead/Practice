@@ -1,0 +1,67 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Compute Average Once Out**
+| O(T): O() | O(S): O() | Rt: 256ms | 
+```python
+class UndergroundSystem:
+
+    def __init__(self):
+        self.dtin = {}
+        self.timeBetween = {}
+
+    def checkIn(self, id: int, stationName: str, t: int) -> None:
+        self.dtin[id] = (stationName, t)
+
+    def checkOut(self, id: int, stationName: str, t: int) -> None:
+        st, t0 = self.dtin[id]
+        key, time = (st, stationName), t - t0
+        average, times = self.timeBetween.get(key, (0, 0))
+        self.timeBetween[key] = ((average * times + time) / (times+1), times+1)
+
+    def getAverageTime(self, startStation: str, endStation: str) -> float:
+        return self.timeBetween[(startStation, endStation)][0]
+```
+
+Alternative: | Rt: 264ms |
+```python
+class UndergroundSystem:
+
+    def __init__(self):
+        self.dtin = {}
+        self.timeBetween = collections.defaultdict(list)
+
+    def checkIn(self, id: int, stationName: str, t: int) -> None:
+        self.dtin[id] = (stationName, t)
+
+    def checkOut(self, id: int, stationName: str, t: int) -> None:
+        st, t0 = self.dtin[id]
+        key, time = (st, stationName), t - t0
+        self.timeBetween[key].append(time)
+
+    def getAverageTime(self, startStation: str, endStation: str) -> float:
+        alltour = self.timeBetween[(startStation, endStation)]
+        return sum(alltour) / len(alltour)
+```
+
+Triple: | Rt: 244ms |
+```python
+class UndergroundSystem:
+
+    def __init__(self):
+        self.dtin = {}
+        self.timeBetween = collections.defaultdict(list)
+
+    def checkIn(self, id: int, stationName: str, t: int) -> None:
+        self.dtin[id] = (stationName, t)
+
+    def checkOut(self, id: int, stationName: str, t: int) -> None:
+        st, t0 = self.dtin[id]
+        key, time = (st, stationName), t - t0
+        timesum, times = self.timeBetween.get(key, (0, 0))
+        self.timeBetween[key] = (timesum+time, times+1)
+
+    def getAverageTime(self, startStation: str, endStation: str) -> float:
+        alltour = self.timeBetween[(startStation, endStation)]
+        return alltour[0] / alltour[-1]
+```
+Referrence: https://leetcode.com/problems/design-underground-system/discuss/554879/JavaC%2B%2B-HashMap-and-Pair-Clean-code-O(1)
+

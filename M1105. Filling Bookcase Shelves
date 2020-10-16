@@ -1,0 +1,49 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP with Prefix Sum**
+| O(T): O(n) | O(S): O(n) | Rt: 48ms | 
+```python
+    def minHeightShelves(self, books: List[List[int]], shelf_width: int) -> int:
+        books = [[0, 0]] + books
+        l = len(books)
+        dp = [float('inf')] * (l); dp[0] = 0
+        for i in range(1, l): books[i][0] += books[i-1][0]
+        for i in range(1, l):
+            for j in range(i-1, -1, -1):
+                if books[i][0] - books[j][0] <= shelf_width: 
+                    dp[i] = min(dp[i], dp[j] + max(books[k][1] for k in range(j+1, i+1)))
+                else: break
+        return dp[-1]
+```
+
+Alternative: | Rt: 172ms |
+```python
+    def minHeightShelves(self, books: List[List[int]], shelf_width: int) -> int:
+        books = [[0, 0]] + books
+        l = len(books)
+        dp = [float('inf')] * (l); dp[0] = 0
+        for i in range(1, l): books[i][0] += books[i-1][0]
+        for i in range(1, l):
+            for j in range(i):
+                if books[i][0] - books[j][0] <= shelf_width: 
+                    dp[i] = min(dp[i], dp[j] + max(books[k][1] for k in range(j+1, i+1)))
+                else: continue
+        return dp[-1]
+```
+
+Triple: | Rt: 44ms |
+```python
+    def minHeightShelves(self, books: List[List[int]], shelf_width: int) -> int:
+        books = [[0, 0]] + books
+        l = len(books)
+        dp = [float('inf')] * (l); dp[0] = 0
+        #prefix sum for thickness
+        for i in range(1, l): books[i][0] += books[i-1][0]
+        for i in range(1, l):
+            mxheight = 0
+            for j in range(i-1, -1, -1):
+                mxheight = max(mxheight, books[j+1][1])
+                if books[i][0] - books[j][0] <= shelf_width: 
+                    dp[i] = min(dp[i], dp[j] + mxheight)
+                else: break
+        return dp[-1]
+```

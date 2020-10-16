@@ -1,0 +1,26 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Prefix Sum with HashMap**
+| O(T): O(n) | O(S): O(n) | Rt: 332ms | 
+```python
+    def subarraysDivByK(self, A: List[int], K: int) -> int:
+        pre, summ, count = {0: 1}, 0, 0
+        for i in A:
+            summ = (summ + i) % K
+            count += pre.get(summ, 0)
+            pre[summ] = pre.get(summ, 0) + 1
+        return count
+```
+Comment: when you see "continuous subarray" in the description, you can always fetch this "template" for the problem. 
+
+Alternative: further improvement.  |Rt: 304ms |
+```python
+    def subarraysDivByK(self, A: List[int], K: int) -> int:
+        pre, summ, count = [0] * K, 0, 0
+        pre[0] = 1
+        for i in A:
+            summ = (summ + i) % K
+            count += pre[summ]
+            pre[summ] +=  1
+        return count
+```
+

@@ -1,0 +1,46 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion -- Collect to Bucket**
+| O(T): O(n) | O(S): O(h) | Rt: 56ms | 
+```python
+    def averageOfLevels(self, root: TreeNode) -> List[float]:
+        def traverse(node, rst, dep):
+            if not node: return
+            #new level start 
+            if dep >= len(rst): rst.append([node.val])
+            #level list already existed, just append it 
+            else: rst[dep].append(node.val)
+            traverse(node.left, rst, dep + 1)
+            traverse(node.right, rst, dep + 1)
+            
+        rst = []
+        traverse(root, rst, 0)
+        return [sum(lst) / len(lst) for lst in rst]
+```
+
+
+**II). Iteration -- BFS Row-Wise**
+| O(T): O() | O(S): O() | Rt: 36ms | 
+```python
+    def averageOfLevels(self, root: TreeNode) -> List[float]:
+        rst, s = [], [root] if root else None
+        while s:
+            rst.append(sum(node.val for node in s) / len(s))
+            s = [n for node in s for n in (node.left, node.right) if n]
+        return rst
+```
+
+
+**III). Iteration -- BFS Pair-Wise**
+| O(T): O(n) | O(S): O(h) | Rt: 48ms | 
+```python
+    def averageOfLevels(self, root: TreeNode) -> List[float]:
+        rst, q = [], collections.deque([(root, 0)])
+        while q:
+            node, dep = q.popleft()
+            if not node: continue
+            if dep >= len(rst): rst.append([node.val])
+            else: rst[dep].append(node.val)
+            q.append((node.left, dep + 1))
+            q.append((node.right, dep + 1))
+        return [sum(lst) / len(lst) for lst in rst]
+```

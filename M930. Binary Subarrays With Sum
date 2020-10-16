@@ -1,0 +1,25 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cache Prefix Sum**
+| O(T): O(n) | O(S): O(n) | Rt: 288ms | 
+```python
+    def numSubarraysWithSum(self, A: List[int], S: int) -> int:
+        pre, summ, rst = {0: 1}, 0, 0
+        for i in A:
+            summ += i
+            rst += pre.get(summ - S, 0)
+            pre[summ] = pre.get(summ, 0) + 1
+        return rst
+```
+
+Alternative: | Rt: 264ms |
+```python
+    def numSubarraysWithSum(self, A: List[int], S: int) -> int:
+        summ, rst, l = 0, 0, len(A)
+        m = [0] * (l + 1); m[0] = 1
+        for i in A:
+            summ += i
+            rst += m[summ - S]
+            m[summ] += 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/binary-subarrays-with-sum/discuss/186683/C%2B%2BJavaPython-Sliding-Window-O(1)-Space

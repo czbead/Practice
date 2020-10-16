@@ -1,0 +1,17 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking: Brute Force**
+| O(T): O() | O(S): O() | Rt: 36ms | 
+```python
+    def pyramidTransition(self, bottom: str, allowed: List[str]) -> bool:
+        def dfs(base, dt, i, path):
+            if len(base) == 1: return True
+            if i == len(base)-1: return dfs(path, dt, 0, '')
+            if base[i: i+2] not in dt: return False
+            for j in dt[base[i:i+2]]:
+                if dfs(base, dt, i+1, path+j): return True
+            return False
+        
+        dt = collections.defaultdict(list)
+        for i in allowed: dt[i[:-1]].append(i[-1])
+        return dfs(bottom, dt, 0, '')
+```

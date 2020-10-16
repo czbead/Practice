@@ -1,0 +1,49 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). No Repeat**
+| O(t): O(?) | O(m): O(?) | Rt: 24ms | 
+```python
+    def isHappy(self, n: int) -> bool:
+        seen = set()
+        while n != 1:
+            seen.add(n)
+            nxt = 0
+            while n:
+                nxt += (n % 10) ** 2
+                n //= 10
+            if nxt in seen: return False
+            n = nxt
+        return True
+```
+Alternative: | Rt: 32ms |
+```python
+    def isHappy(self, n: int) -> bool:
+        seen = set()
+        while n not in seen:
+            seen.add(n)
+            n = sum(int(i) ** 2 for i in str(n))
+            if n == 1: return True
+        return False
+
+```
+
+
+**II). Catch Up**
+| O(t): O(?) | O(m): O(1) | Rt: 28ms | 
+```python
+    def isHappy(self, n: int) -> bool:
+        def nxt(num):
+            rst = 0
+            while num:
+                rst += (num % 10) ** 2
+                num //= 10
+            return rst
+        
+        nn = nxt(n)
+        while nn != 1:
+            if n == nn: return False
+            n = nxt(n)
+            nn = nxt(nxt(nn))
+        return True
+```
+Referrence: https://leetcode.com/problems/happy-number/discuss/57180/Python-44ms-O(1)-space
+

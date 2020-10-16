@@ -1,0 +1,60 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bit Manipulation XOR**
+| O(T): O(n) | O(S): O(1) | Rt: 72ms | 
+```python
+    def singleNumber(self, nums: List[int]) -> List[int]:
+        m = 0
+        for i in nums: m ^= i
+        #get masking, the "last set bit" (right most 1 bit)
+        m &= -m  #just remember it, I cannot explain
+        rst = [0, 0]
+        for i in nums:
+            #the masking help separate the result two unique num into different group
+            #because they differs in the masking bit
+            if m & i: rst[0] ^= i
+            else: rst[1] ^= i
+        return rst
+```
+Referrence: https://leetcode.com/problems/single-number-iii/discuss/68900/Accepted-C%2B%2BJava-O(n)-time-O(1)-space-Easy-Solution-with-Detail-Explanations
+Comment: the idea is simple: separate the result two number into different group (we don't care the other duplicate numbers, why? because they are pairs, each group will have even amount of them. those pairs will pair out in the end no matter what the distribution is). The masking is not necessary the "last set bit" (right most 1 bit), any '1 bit' in the a^b (assume [a, b] is the result) can help distinguish they two. 
+
+Alternative: only xor one group works as well. | Rt: 108ms |
+```python
+    def singleNumber(self, nums: List[int]) -> List[int]:
+        m = 0
+        for i in nums: m ^= i
+        mask = m
+        mask &= -mask
+        a = 0
+        for i in nums:
+            if mask & i: a ^= i
+        return [a, a ^ m]  #m == a ^ b
+``` 
+
+Triple: naive masking (last set bit -- right most 1 bit) resolving. | Rt: 56ms |
+```python
+    def singleNumber(self, nums: List[int]) -> List[int]:
+        m, mask = 0, 1
+        for i in nums: m ^= i
+        #get "last set bit" (right most 1 bit) by brute force
+        while not m & mask: mask <<= 1 
+        a = 0
+        for i in nums:
+            if mask & i: a ^= i
+        return [a, a ^ m]  #m == a ^ b
+```
+
+Forth: masking by first set bit -- left most 1 bit. | Rt: ms | TLE
+```python
+    def singleNumber(self, nums: List[int]) -> List[int]:
+        m, mask = 0, 1
+        for i in nums: m ^= i
+        #exceed the highest position of m by 1 step
+        while mask <= m: mask <<= 1
+        #get "first set bit" (left most 1 bit) by brute force
+        while not m & mask: mask >>= 1
+        a = 0
+        for i in nums:
+            if mask & i: a ^= i
+        return [a, a ^ m]
+```

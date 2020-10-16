@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def find132pattern(self, nums: List[int]) -> bool:
+        if not nums or len(nums) < 3: return False
+        l = len(nums)
+        for i in range(l - 2):
+            for j in range(i+1, l-1):
+                for k in range(j+1, l):
+                    if nums[i] < nums[k] < nums[j]: return True
+        return False
+```
+Comment: 80 /95 test cases passed.
+Alternative: | Rt: TLE | 84/ 95 test cases passed.
+```python
+    def find132pattern(self, nums: List[int]) -> bool:
+        if not nums or len(nums) < 3: return False
+        if len(set(nums)) < 3: return False
+        l = len(nums)
+        for i in range(l - 2):
+            for j in range(i+1, l-1):
+                if nums[j] <= nums[i] + 1: continue
+                for k in range(j+1, l):
+                    if nums[i] < nums[k] < nums[j]: return True
+        return False
+```
+
+
+**II). Greedy with Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 148ms | 
+```python
+    def find132pattern(self, nums: List[int]) -> bool:
+        stack, r = [], -float('inf')
+        nums.reverse()
+        for i in nums:
+            if i < r: return True
+            while stack and stack[-1] < i: r = stack.pop()
+            stack.append(i)
+        return False
+```
+Referrence: https://leetcode.com/problems/132-pattern/discuss/94081/10-line-Python-Solution
+Comment: let me explain this sotution. First, let us name [1, 3, 2] as [l, m, r] (l: left, m: middle, r: right). The job is simple, find a pair [m, r] where index of m < index of r and value of m > value of r; You can tell the order is reversed, which is exactly stack's feature (first come last out, reverse order); 
+
+

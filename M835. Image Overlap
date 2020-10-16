@@ -1,0 +1,22 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Offset**
+| O(T): O() | O(S): O() | Rt: 392ms | 
+```python
+    def largestOverlap(self, A: List[List[int]], B: List[List[int]]) -> int:
+        l = len(A)
+        a = [(i, j) for i in range(l) for j in range(l) if A[i][j]]
+        b = [(i, j) for i in range(l) for j in range(l) if B[i][j]]
+        return max(collections.Counter([(ai-bi, aj-bj) for ai, aj in a for bi, bj in b]).values() or [0])
+```
+Referrence: https://leetcode.com/problems/image-overlap/discuss/130623/C++JavaPython-Straight-Forward/151025
+
+Alternative: 1-d conversion. | Rt: 220ms |
+```python
+    def largestOverlap(self, A: List[List[int]], B: List[List[int]]) -> int:
+        l = len(A)
+        a = [i*100+j for i in range(l) for j in range(l) if A[i][j]]
+        b = [i*100+j for i in range(l) for j in range(l) if B[i][j]]
+        return max(collections.Counter([ai-bi for ai in a for bi in b]).values() or [0])
+```
+Referrence: https://leetcode.com/problems/image-overlap/discuss/130623/C%2B%2BJavaPython-Straight-Forward
+

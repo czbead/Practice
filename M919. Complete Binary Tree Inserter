@@ -1,0 +1,50 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). HashMap**
+| O(T): O() | O(S): O() | Rt: 68ms | 
+```python
+    def __init__(self, root: TreeNode):
+        self.root = root
+        self.dt = {}
+        self.i = 1
+        
+        stack = [self.root]
+        while stack:
+            for i in stack:
+                self.dt[self.i] = i
+                self.i += 1
+            stack = [j for i in stack for j in (i.left, i.right) if j]
+
+    def insert(self, v: int) -> int:
+        node = TreeNode(v)
+        key, mod = divmod(self.i, 2)
+        if mod: self.dt[key].right = node
+        else: self.dt[key].left = node
+        self.dt[self.i] = node
+        self.i += 1
+        return self.dt[key].val
+
+    def get_root(self) -> TreeNode:
+        return self.root
+```
+
+
+**II). Array**
+| O(T): O() | O(S): O() | Rt: 64ms | 
+```python
+    def __init__(self, root: TreeNode):
+        self.arr, stack = [], [root]
+        while stack:
+            self.arr.extend(stack)
+            stack = [j for i in stack for j in (i.left, i.right) if j]
+        
+    def insert(self, v: int) -> int:
+        node = TreeNode(v)
+        i, j = divmod(len(self.arr)-1, 2)
+        if j: self.arr[i].right = node
+        else: self.arr[i].left = node
+        self.arr.append(node)
+        return self.arr[i].val
+
+    def get_root(self) -> TreeNode:
+        return self.arr[0]
+```

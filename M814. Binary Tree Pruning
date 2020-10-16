@@ -1,0 +1,13 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS, Prune Every Single 0 Leaf Node**
+| O(T): O(n) | O(S): O(h) | Rt: 32ms | 
+```python
+    def pruneTree(self, root: TreeNode) -> TreeNode:
+        if not root: return None
+        root.left = self.pruneTree(root.left)
+        root.right = self.pruneTree(root.right)
+        #bottom-up manner, every leaf 0-node is pruned; 
+        if not root.left and not root.right and root.val == 0: return None
+        return root
+```
+Comment: I tried to work out a iterative solution, and then I figure out any iterative solution need to keep track of two level nodes infomation and check the third level nodes, which make iterative solution less readable; The recursive function is simple because the recursion stack implicitly connect current state with previous state and next comming state. 

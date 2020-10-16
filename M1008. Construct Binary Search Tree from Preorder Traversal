@@ -1,0 +1,77 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Iterative Stack**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def bstFromPreorder(self, preorder: List[int]) -> TreeNode:
+        root, l = TreeNode(preorder[0]), len(preorder)
+        stack = [root]
+        for i in range(1, l):
+            if preorder[i] < stack[-1].val:
+                node = TreeNode(preorder[i])
+                stack[-1].left = node
+                stack.append(node)
+            else:
+                while stack and stack[-1].val < i:
+                    last = stack.pop()
+                node = TreeNode(preorder[i])
+                last.right = node
+                stack.append(node)
+        return root
+```
+
+Alternative: using iter. | Rt: 32ms |
+```python
+    def bstFromPreorder(self, preorder: List[int]) -> TreeNode:
+        it = iter(preorder)
+        root = TreeNode(next(it))
+        stack = [root]
+        for i in it:
+            if i < stack[-1].val:
+                node = TreeNode(i)
+                stack[-1].left = node
+                stack.append(node)
+            else:
+                while stack and stack[-1].val < i:
+                    last = stack.pop()
+                node = TreeNode(i)
+                last.right = node
+                stack.append(node)
+        return root
+```
+
+Triple: | Rt: 32ms |
+```python
+    def bstFromPreorder(self, preorder: List[int]) -> TreeNode:
+        root = TreeNode(preorder[0])
+        stack = [root]
+        for i in preorder[1:]:
+            if i < stack[-1].val:
+                node = TreeNode(i)
+                stack[-1].left = node
+                stack.append(node)
+            else:
+                while stack and stack[-1].val < i:
+                    last = stack.pop()
+                node = TreeNode(i)
+                last.right = node
+                stack.append(node)
+        return root
+```
+
+
+**II). Recursive Build**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def bstFromPreorder(self, preorder: List[int]) -> TreeNode:
+        def buildTree(arr, i, bound):
+            if i[0] == len(arr) or arr[i[0]] >= bound: return 
+            root = TreeNode(arr[i[0]])
+            i[0] += 1
+            root.left = buildTree(arr, i, root.val)
+            root.right = buildTree(arr, i, bound)
+            return root
+        
+        return buildTree(preorder, [0], float('inf'))
+```
+Referrence: https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/discuss/252232/JavaC%2B%2BPython-O(N)-Solution
+

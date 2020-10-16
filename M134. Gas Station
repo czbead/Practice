@@ -1,0 +1,51 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O() | O(S): O() | Rt: 52ms | 
+```python
+    def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:
+        st = tank = gassum = costsum = 0
+        for i in range(len(gas)):
+            gassum += gas[i]
+            costsum += cost[i]
+            tank += gas[i] - cost[i]
+            if tank < 0: st, tank = i+1, 0
+        return st if gassum >= costsum else -1
+```
+Alternative: | Rt: 56ms |
+```python
+    def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:
+        st = tank = total = 0
+        for i in range(len(gas)):
+            offset = gas[i] - cost[i]
+            total += offset
+            tank += offset
+            if tank < 0: st, tank = i+1, 0
+        return st if total >= 0 else -1
+```
+Referrence: https://leetcode.com/problems/gas-station/discuss/42568/Share-some-of-my-ideas.
+Comment: once your tank get a negative oil, all previous stop is impossible; if gas sum equal to or greater than total cost, must exist a solution. And the description restrict the solution is unique.  
+
+
+**II). Greedy - Choose the Best Stop to Start**
+| O(T): O(n) | O(S): O(1) | Rt: 52ms | 
+```python
+    def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:
+        rst, tankmax, tank = -1, 0, 0 
+        for i in range(len(gas)-1, -1, -1):
+            tank += gas[i] - cost[i]
+            #choose the stop that accumulate most oil in tank to start the trip
+            #remember the answer is unique, it has to be it if there exists one. 
+            if tank >= tankmax: rst = i
+            tankmax = max(tank, tankmax)
+        return -1 if tank < 0 else rst
+```
+Alternative: improved version. | Rt: 48ms |
+```python
+    def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:
+        rst, tankmax, tank = -1, 0, 0 
+        for i in range(len(gas)-1, -1, -1):
+            tank += gas[i] - cost[i]
+            if tank >= tankmax: rst, tankmax = i, tank
+        return -1 if tank < 0 else rst
+```
+

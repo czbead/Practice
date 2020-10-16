@@ -1,0 +1,52 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter Then Sort by Count**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 36ms | 
+```python
+    def frequencySort(self, s: str) -> str:
+        if not s: return ''
+        ct = collections.Counter(s)
+        alpha = list(ct)
+        alpha.sort(key=lambda x: -ct[x])
+        return ''.join(i * ct[i] for i in alpha)
+```
+
+
+**II). Double Bucket Sort**
+| O(T): O(n) | O(S): O(n) | Rt: 56ms | 
+```python
+    def frequencySort(self, s: str) -> str:
+        if not s: return ''
+        m = [0] * 128
+        for i in s: m[ord(i)] += 1
+        mm = [None] * (len(s) + 1)
+        for i, v in enumerate(m):
+            if mm[v] is None: mm[v] = [i]
+            else: mm[v].append(i)
+        rst = []
+        for i in range(len(mm)-1, -1, -1):
+            if mm[i] is None: continue
+            for j in mm[i]:
+                rst.append(i * chr(j))
+        return ''.join(rst)
+```
+Comment: the input scale is not bounded, this solution is not a good choice. Just know this is always a choice.
+
+
+**III). Heap**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 60ms | 
+```python
+    def frequencySort(self, s: str) -> str:
+        if not s: return ''
+        m = [0] * 128
+        for i in s: m[ord(i)] += 1
+        mm = [None] * (len(s) + 1)
+        for i, v in enumerate(m):
+            if mm[v] is None: mm[v] = [i]
+            else: mm[v].append(i)
+        rst = []
+        for i in range(len(mm)-1, -1, -1):
+            if mm[i] is None: continue
+            for j in mm[i]:
+                rst.append(i * chr(j))
+        return ''.join(rst)
+```

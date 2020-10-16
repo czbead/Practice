@@ -1,0 +1,125 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Build BST upon Preorder**
+| O(T): O() | O(S): O() | Rt: 96ms | 
+```python
+class Codec:
+
+    def serialize(self, root: TreeNode) -> str:
+        def preorder(node, rst):
+            rst.append(str(node.val))
+            if node.left: preorder(node.left, rst)
+            if node.right: preorder(node.right, rst)
+        
+        if not root: return ''
+        rst = []
+        preorder(root, rst)
+        return ','.join(rst)
+
+    def deserialize(self, data: str) -> TreeNode:
+        def bstinsert(root, val):
+            if not root: return TreeNode(val)
+            if val < root.val: root.left = bstinsert(root.left, val)
+            else: root.right = bstinsert(root.right, val)
+            return root
+        
+        if not data: return None
+        lst = [int(i) for i in data.split(',')]
+        root = TreeNode(lst[0])
+        for i in range(1, len(lst)): bstinsert(root, lst[i])
+        return root
+```
+Alternative: build both branches. | Rt: 92ms |
+```python
+class Codec:
+
+    def serialize(self, root: TreeNode) -> str:
+        def preorder(node, rst):
+            rst.append(str(node.val))
+            if node.left: preorder(node.left, rst)
+            if node.right: preorder(node.right, rst)
+        
+        if not root: return ''
+        rst = []
+        preorder(root, rst)
+        return ','.join(rst)
+
+    def deserialize(self, data: str) -> TreeNode:
+        def build(lst):
+            if not lst: return
+            root = TreeNode(lst[0])
+            l, r = [], []
+            for i in range(1, len(lst)):
+                if lst[i] < lst[0]: l.append(lst[i])
+                else: r.append(lst[i])
+            root.left, root.right = build(l), build(r)
+            return root
+        
+        if not data: return None
+        lst = [int(i) for i in data.split(',')]
+        return build(lst) 
+```
+Triple: iterative preorder, pop build fashion. | Rt: ms |
+```python
+class Codec:
+
+    def serialize(self, root: TreeNode) -> str:
+        if not root: return ''
+        rst, stack = [], [root]
+        while stack:
+            node = stack.pop()
+            rst.append(node.val)
+            if node.right: stack.append(node.right)
+            if node.left: stack.append(node.left)
+            
+        return ','.join(map(str,rst))
+
+    def deserialize(self, data: str) -> TreeNode:
+        def build(lst):
+            if not lst: return
+            root = TreeNode(lst.pop())
+            l, r = [], []
+            while lst:
+                if lst[-1] < root.val: l.append(lst.pop())
+                else: r.append(lst.pop())
+            l.reverse(); r.reverse()
+            root.left, root.right = build(l), build(r)
+            return root
+        
+        if not data: return None
+        lst = [int(i) for i in data.split(',')]
+        lst.reverse()
+        return build(lst) 
+```
+Referrence: https://leetcode.com/problems/serialize-and-deserialize-bst/discuss/93175/Java-PreOrder-%2B-Queue-solution
+Comment: using two lists to construct a bst if of O(n*n) time complexity in worst case, n(lgn) on average. bst insert takes O(n*n) in worst case, O(nlgn) on average.
+
+Forth: o(n) bst tree build version. | Rt: 68ms |
+```python
+class Codec:
+
+    def serialize(self, root: TreeNode) -> str:
+        if not root: return ''
+        rst, stack = [], [root]
+        while stack:
+            node = stack.pop()
+            rst.append(node.val)
+            if node.right: stack.append(node.right)
+            if node.left: stack.append(node.left)
+            
+        return ','.join(map(str,rst))
+
+    def deserialize(self, data: str) -> TreeNode:
+        def build(lst, minv, maxv):
+            if not lst: return
+            if lst[-1] > maxv or lst[-1] < minv: return 
+            root = TreeNode(lst.pop())
+            root.left = build(lst, minv, root.val)
+            root.right = build(lst, root.val, maxv)
+            return root
+        
+        if not data: return None
+        lst = [int(i) for i in data.split(',')]
+        lst.reverse()
+        return build(lst, -float('inf'), float('inf')) 
+```
+

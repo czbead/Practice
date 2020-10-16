@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search Index and Value**
+| O(T): O(lgn * lgn) | O(S): O(1) | Rt: 72ms | 
+```python
+    def singleNonDuplicate(self, nums: List[int]) -> int:
+        if not nums: return
+        l, r = 0, len(nums)-1
+        while l < r:
+            mval = nums[l] + (nums[r] - nums[l]) // 2
+            m = bisect.bisect(nums, mval)
+            #(m-l) is the amount of nums that >= lval and <= mval
+            if (m - l) % 2 == 0: l = m
+            else: r = m-1
+        return nums[l]
+```
+
+
+**II). Binary Search Index**
+| O(T): O(lgn) | O(S): O(1) | Rt: 64ms | 
+```python
+    def singleNonDuplicate(self, nums: List[int]) -> int:
+        if not nums: return
+        l, r = 0, len(nums)-1
+        while l < r:
+            m = l + (r - l) // 2
+            if m & 1:  #m is odd
+                if nums[m] == nums[m-1]: l = m + 1
+                else: r = m
+            else: 
+                if nums[m] == nums[m+1]: l = m + 2
+                else: r = m
+        return nums[l]
+```
+Referrence: https://leetcode.com/problems/single-element-in-a-sorted-array/discuss/100754/Java-Binary-Search-short-(7l)-O(log(n))-w-explanations
+Comment: take a input and do an analysis on it, it is the best way to understand this solution. 

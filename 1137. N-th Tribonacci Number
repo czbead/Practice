@@ -1,0 +1,50 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). State Machine**
+| O(T): O(n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def tribonacci(self, n: int) -> int:
+        a, b, c = 0, 1, 1
+        for _ in range(n): a, b, c = b, c, a+b+c
+        return a
+```
+Comment: translate Tribonacci as: the next state equals to the sum of previous 3 states.
+
+
+**II). DP**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def tribonacci(self, n: int) -> int:
+        dp = [1] * (n + 1)
+        dp[0] = 0
+        if n < 3: return dp[n]
+        for i in range(3, n+1): dp[i] = dp[i-1] + dp[i-2] + dp[i-3]
+        return dp[n]
+```
+
+
+**III). Recursion with Memo**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    memo = {0: 0, 1: 1, 2:1}
+    def tribonacci(self, n: int) -> int:
+        if n in self.memo: return self.memo[n]
+        fn = self.tribonacci(n-1) + self.tribonacci(n-2) + self.tribonacci(n-3)
+        self.memo[n] = fn
+        return fn
+```
+
+
+**IV). N-th K-bonacci**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def tribonacci(self, n: int) -> int:
+        k, dp = 3, [1] * (n + 1)
+        dp[0] = 0
+        if n < k: return dp[n]
+        for i in range(k, n+1): dp[i] = sum(dp[i-k:i])
+        return dp[n]
+```
+
+
+Others: lgn solution - https://leetcode.com/problems/n-th-tribonacci-number/discuss/347604/C%2B%2BO(k3log(n))-Solution-(k3)-Matrix-Exponentiation
+math solution - https://leetcode.com/problems/n-th-tribonacci-number/discuss/348503/O(1)-Solution-using-math.

@@ -1,0 +1,79 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Graph Solution: Find the Joint**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def subtreeWithAllDeepest(self, root: TreeNode) -> TreeNode:
+        s, dtpar = [root], {}
+        #Step1: DFS build child-parent graph
+        while s:
+            node = s.pop()
+            if node.left: dtpar[node.left] = node; s.append(node.left)
+            if node.right: dtpar[node.right] = node; s.append(node.right)
+    
+        #Step2: BFS find the last row
+        pre = s = [root]
+        while s:
+            pre = s
+            s = [j for i in s for j in (i.left, i.right) if j]
+       
+        #Step3: BFS go upwards find joint
+        s = pre
+        while len(set(s)) > 1:
+            s = [dtpar[i] for i in s]
+        return s[0]
+```
+
+
+**II). Find Equally Deep Node**
+| O(T): O() | O(S): O() | Rt: 36ms | 
+```python
+    def subtreeWithAllDeepest(self, root: TreeNode) -> TreeNode:
+        def depth(node):
+            if not node: return 0
+            return 1 + max(depth(node.left), depth(node.right))
+        
+        def dfs(node):
+            l, r = depth(node.left), depth(node.right)
+            if l == r: return node
+            if l < r: return dfs(node.right)
+            return dfs(node.left)
+        
+        return dfs(root)
+```
+
+Alternative: hash the depth for all nodes. | Rt: 36ms |
+```python
+    def subtreeWithAllDeepest(self, root: TreeNode) -> TreeNode:
+        def depth(node, dt):
+            if not node: return 0
+            if node in dt: return dt[node]
+            dt[node] = 1 + max(depth(node.left, dt), depth(node.right, dt))
+            return dt[node]
+        
+        def dfs(node, dt):
+            l, r = dt[node.left], dt[node.right]
+            if l == r: return node
+            if l < r: return dfs(node.right, dt)
+            return dfs(node.left, dt)
+        
+        dt = {None: 0}
+        depth(root, dt)
+        return dfs(root, dt)
+```
+Referrence: https://leetcode.com/problems/smallest-subtree-with-all-the-deepest-nodes/discuss/146786/Simple-recursive-Java-Solution
+
+Others: another DFS solution - https://leetcode.com/problems/smallest-subtree-with-all-the-deepest-nodes/discuss/146868/Simple-Java-dfs-recursion-function-with-explanation
+
+Triple: short DFS solution. | Rt: 32ms |
+```python
+    def subtreeWithAllDeepest(self, root: TreeNode) -> TreeNode:
+        def dfs(node):
+            if not node: return 0, None
+            l, r = dfs(node.left), dfs(node.right)
+            if l[0] > r[0]: return l[0] + 1, l[1] 
+            if r[0] > l[0]: return r[0] + 1, r[1]
+            return l[0] + 1, node
+        
+        return dfs(root)[1]
+```
+Referrence: https://leetcode.com/problems/smallest-subtree-with-all-the-deepest-nodes/discuss/146808/C%2B%2BJavaPython-One-Pass

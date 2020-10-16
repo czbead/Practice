@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**Where** | Rt: 705ms |
+```sql
+select e1.Name as Employee 
+	from Employee e1, Employee e2 
+		where e1.Salary > e2.Salary and e1.ManagerId = e2.Id
+```
+Safe way: | Rt: 416 |
+```sql
+select e1.Name as Employee 
+	from Employee e1, Employee e2 
+		where e1.Salary > e2.Salary and e1.ManagerId is not Null and e1.ManagerId = e2.Id
+```
+
+**Join** | Rt: 770ms |
+```sql
+select e1.Name as Employee 
+	from Employee e1 join Employee e2 
+		on e1.Salary > e2.Salary and e1.ManagerId = e2.Id
+```
+Comment: equal to "inner join"
+
+**Join Where** | Rt: 601ms |
+```sql
+select e1.Name as Employee 
+    from Employee e1 join Employee e2 on e1.ManagerId = e2.Id
+        where e1.Salary > e2.Salary
+```

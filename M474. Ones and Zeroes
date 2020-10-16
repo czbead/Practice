@@ -1,0 +1,42 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP: 0-1 Knapsack**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def findMaxForm(self, strs: List[str], m: int, n: int) -> int:
+        if not strs: return 0
+        dp = [[[0] * (n+1) for _ in range(m+1)] for _ in range(len(strs)+1)]
+        for i in range(1, len(strs)+1):
+            for j in range(m+1):
+                for k in range(n+1):
+                    #don't take current string item
+                    dp[i][j][k] = dp[i-1][j][k]
+                    ct0 = strs[i-1].count('0')
+                    ct1 = len(strs[i-1]) - ct0
+                    if j >= ct0 and k >= ct1:
+                        #consider taking the currrent string item
+                        dp[i][j][k] = max(dp[i][j][k], 1+dp[i-1][j-ct0][k-ct1])
+        return dp[-1][-1][-1]
+```
+
+Alternativd: top-down manner dp. | Rt: 3140ms |
+```python
+    def findMaxForm(self, strs: List[str], m: int, n: int) -> int:
+        if not strs: return 0
+        dp = [[0] * (n+1) for _ in range(m+1)]
+        for s in strs:
+            ct0 = s.count('0')
+            ct1 = len(s) - ct0
+            for i in range(m, ct0-1, -1):
+                for j in range(n, ct1-1, -1):
+                    dp[i][j] = max(dp[i][j], 1+dp[i-ct0][j-ct1])
+        return dp[-1][-1]
+```
+Referrence: https://leetcode.com/problems/ones-and-zeroes/discuss/95814/c++-DP-solution-with-comments/100383; https://leetcode.com/problems/ones-and-zeroes/discuss/95811/Java-Iterative-DP-Solution-O(mn)-Space
+Comment: why top-down dp forwarding rather than bottom-up (bottom-up is the antural way to do dp)? Well, the difference of bottom-up and top-down is: whether you can reuse a item multiple times (nothing to do with count(item)) . Obviously, for each previous case, we deduct the count from m and n -- you can reuse the previous state. 
+
+Let me give an example: 
+["10", "0001", "111001", "1", "0"]; 5; 3
+bottom-up dp gives: 8 ['1' * 5, '0' * 3]  #this solution uses '1' five times and '0' 3 times;
+top-down dp gives: 4 ['10', '0001', '1', '0'] #each item only use once
+
+To decide a bottom-up or top-down dp, try to understand the input -- is it a set (no duplications) or a list (probably with duplications). A 'set' input usually occurs in a "reuse" senario while a 'list' input probably each unique item can only be used noce. 

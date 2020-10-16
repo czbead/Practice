@@ -1,0 +1,46 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive Top Down**
+| O(T): O(n) | O(S): O(1) | Rt: 64ms | 
+```python
+    def maxAncestorDiff(self, root: TreeNode) -> int:
+        def dfs(node, maxv, minv, rst):
+            if not node: rst[0] = max(rst[0], maxv - minv); return
+            if node.val < minv: minv = node.val
+            if node.val > maxv: maxv = node.val
+            dfs(node.left, maxv, minv, rst)
+            dfs(node.right, maxv, minv, rst)
+        
+        rst = [0]
+        dfs(root, -float('inf'), float('inf'), rst)
+        return rst[0]
+```
+
+Alternative: | Rt: 80ms |
+```python
+    def maxAncestorDiff(self, root: TreeNode) -> int:
+        def dfs(node, maxv, minv, rst):
+            if not node: rst[0] = max(rst[0], maxv - minv); return
+            if node.val < minv: minv = node.val
+            elif node.val > maxv: maxv = node.val
+            dfs(node.left, maxv, minv, rst)
+            dfs(node.right, maxv, minv, rst)
+        
+        rst = [0]
+        dfs(root, root.val, root.val, rst)
+        return rst[0]
+```
+
+Triple: | Rt: 60ms |
+```python
+    def maxAncestorDiff(self, root: TreeNode) -> int:
+        def dfs(node, maxv, minv):
+            if not node: return 0
+            if node.val < minv: minv = node.val
+            elif node.val > maxv: maxv = node.val
+            l, r = dfs(node.left, maxv, minv), dfs(node.right, maxv, minv)
+            return max(maxv - minv, l, r)
+        
+        return dfs(root, root.val, root.val)
+```
+Referrence: https://leetcode.com/problems/maximum-difference-between-node-and-ancestor/discuss/274610/JavaC++Python-Top-Down/262349
+Comment: bottom up manner wont fix this problem. 

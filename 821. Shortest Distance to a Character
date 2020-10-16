@@ -1,0 +1,152 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Helper list -- Binary Search**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 40ms | 
+```python
+    def shortestToChar(self, S: str, C: str) -> List[int]:
+        inds = [-float('inf')] + [i for i, v in enumerate(S) if v == C] + [float('inf')]
+        rst = [None] * len(S)
+        for i, v in enumerate(S):
+            if v == C: rst[i] = 0
+            else:
+                ind = bisect.bisect(inds, i)
+                rst[i] = min(inds[ind] - i, i - inds[ind - 1])
+        return rst
+            
+```
+
+
+**II). Helper List -- Start at a End**
+| O(T): O(n) | O(S): O(n) | Rt: 36ms | 
+```python
+    def shortestToChar(self, S: str, C: str) -> List[int]:
+        inds = [-float('inf')] + [i for i, v in enumerate(S) if v == C] + [float('inf')]
+        cur, rst = 1, [None] * len(S)
+        for i in range(len(S)):
+            if i > inds[cur]: cur += 1
+            rst[i] = min(inds[cur] - i, i - inds[cur-1])
+        return rst
+```
+Alternative: pop style, from the end.  | Rt: 32ms |
+```python
+    def shortestToChar(self, S: str, C: str) -> List[int]:
+        inds = [-float('inf')] + [i for i, v in enumerate(S) if v == C]
+        up, rst = float('inf'), [None] * len(S)
+        for i in range(len(S) - 1, -1, -1):
+            if i < inds[-1]: up = inds.pop()
+            rst[i] = min(up - i, i - inds[-1])
+        return rst
+```
+
+
+**III). Helper List -- Radiate Radius**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def shortestToChar(self, S: str, C: str) -> List[int]:
+        inds = [i for i, v in enumerate(S) if v == C] + [10000]
+        st, rst = 0, [None] * len(S)
+        mid = (inds[st] + inds[st+1]) / 2
+        for i in range(len(S)):
+            if i > mid: 
+                st += 1
+                mid = (inds[st] + inds[st+1]) / 2
+            rst[i] = abs(i - inds[st])
+        return rst
+```
+Alternative: pop style.  | Rt: 36ms |
+```python
+    def shortestToChar(self, S: str, C: str) -> List[int]:
+        inds = [-10000] + [i for i, v in enumerate(S) if v == C]
+        up, rst = inds.pop(), [None] * len(S)
+        mid = (inds[-1] + up) / 2
+        for i in range(len(S) - 1, -1, -1):
+            if i < mid: 
+                up = inds.pop()
+                mid = (inds[-1] + up) / 2
+            rst[i] = abs(up - i)
+        return rst
+```
+Triple: iterator style. | Rt: 36ms |
+```python
+    def shortestToChar(self, S: str, C: str) -> List[int]:
+        inds = [i for i, v in enumerate(S) if v == C] + [10000]
+        iteri = iter(inds)
+        st, end, rst = next(iteri), next(iteri), [None] * len(S)
+        mid = (st + end) / 2
+        for i in range(len(S)):
+            if i > mid: 
+                st, end = end, next(iteri)
+                mid = (st + end) / 2
+            rst[i] = abs(i - st)
+        return rst
+```
+Comment: I know all of these solutions are humble comparing to the optimal one. Althought, I have to say these are base techniques sometimes you really need to make use of. 
+
+
+**IV). Bidirection Traverse -- Two Pass**
+| O(T): O(n) | O(S): O(1) | Rt: 60ms | 
+```python
+    def shortestToChar(self, S: str, C: str) -> List[int]:
+        l, r, rst = -float('inf'), float('inf'), [None] * len(S)
+        for i, v in enumerate(S):
+            if v == C: rst[i], l = 0, i
+            else: rst[i] = i - l
+        for i in range(len(S) - 1, -1, -1):
+            if S[i] == C: r = i
+            else: rst[i] = min(r - i, rst[i])
+        return rst
+```
+Alternative: | Rt: 36ms |
+```python
+    def shortestToChar(self, S: str, C: str) -> List[int]:
+        rst = [float('inf')] * len(S)
+        for i, v in enumerate(S):
+            if v == C: rst[i] = 0
+            else: rst[i] = rst[i-1] + 1
+        for i in range(len(S) - 2, -1, -1):
+            if S[i] != C: rst[i] = min(rst[i+1] + 1, rst[i])
+        return rst
+```
+Triple: | Rt: 40ms |
+```python
+    def shortestToChar(self, S: str, C: str) -> List[int]:
+        l = len(S)
+        rst = [0 if i == C else float('inf') for i in S]
+        for i in range(l - 1): rst[i+1] = min(rst[i] + 1, rst[i+1])
+        for i in reversed(range(l - 1)): rst[i] = min(rst[i], rst[i+1] + 1)
+        return rst
+```
+Fourth: compress two traverse into one. worse readibility though.  | Rt: 36ms |
+```python
+    def shortestToChar(self, S: str, C: str) -> List[int]:
+        l = len(S)
+        pos, rst = -l, [l] * l
+        for i in list(range(l)) + list(range(l)[::-1]):
+            if S[i] == C: pos = i
+            rst[i] = min(rst[i], abs(i - pos))
+        return rst
+```
+Referrence: https://leetcode.com/problems/shortest-distance-to-a-character/discuss/125788/C%2B%2BJavaPython-2-Pass-with-Explanation
+Comment: this solution seems like greedy, make the best decision in each direction traverse, and finally get the global optimal. 
+
+
+**V). Practice Find**
+| O(T): O(n ^ 2) | O(S): O(1) | Rt: 24ms | 
+```python
+    def shortestToChar(self, S: str, C: str) -> List[int]:
+        pre, cur, rst = -float('inf'), S.find(C), [None] * len(S)
+        for i in range(len(S)):
+            if i > cur: pre, cur = cur, S.find(C, cur + 1)
+            if cur == -1: cur = float('inf')
+            rst[i] = min(i - pre, cur - i)
+        return rst
+```
+
+
+**VI). Concise but Slow**
+| O(T): O(n ^ 2) | O(S): O(n) | Rt: 68ms | 
+```python
+    def shortestToChar(self, S: str, C: str) -> List[int]:
+        inds = [i for i, v in enumerate(S) if v == C]
+        return [min(abs(j - i) for j in inds) for i in range(len(S))]
+```
+

@@ -1,0 +1,21 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def strWithout3a3b(self, A: int, B: int) -> str:
+        rst = ''
+        while A and B:
+            if A > B:
+                rst += 'aab'
+                A, B = A-2, B-1
+            elif A < B: 
+                rst += 'bba'
+                A, B = A-1, B-2
+            else:
+                rst += 'ab'
+                A, B = A-1, B-1
+        if A: rst += 'a' * A
+        else: rst += 'b' * B
+        return rst
+```
+

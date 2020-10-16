@@ -1,0 +1,30 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Iterate from Strict Mininum**
+| O(T): O() | O(S): O(1) | Rt: 168ms | 
+```python
+    def minEatingSpeed(self, piles: List[int], H: int) -> int:
+        summ = sum(piles)
+        #(a + b - 1) // b = math.ceil(a / b), K is at least base value
+        base = (summ + H - 1) // H
+        #-(-a//b) = math.ceil(a / b)
+        while sum(-(-i//base) for i in piles) > H: 
+            base += 1
+        return base
+```
+
+
+**II). Binary Search**
+| O(T): O(lgn) | O(S): O(1) | Rt: 412ms | 
+```python
+    def minEatingSpeed(self, piles: List[int], H: int) -> int:
+        mx = max(piles)
+        #eat at a speed grater than mx per hour won't reduce time, eat as slow as possible
+        l, r = 1, mx
+        while l < r:
+            m = (l + r) // 2
+            #too slow, should eat more per hour
+            if sum(-(-i//m) for i in piles) > H: l = m+1
+            else: r = m
+        return l
+```
+Referrence: https://leetcode.com/problems/koko-eating-bananas/discuss/152506/Binary-Search-Java-Python-with-Explanations

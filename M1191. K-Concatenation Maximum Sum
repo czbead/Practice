@@ -1,0 +1,40 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Kadane**
+| O(T): O(n) | O(S): O(1) | Rt: 552ms | 
+```python
+    def kConcatenationMaxSum(self, arr: List[int], k: int) -> int:
+        summ = maxsubsum = cursum = 0
+        maxsumfromst, minsumfromst, mod = 0, 0, 10 ** 9 + 7
+        for i in arr:
+            summ += i
+            #Kadane's algorithm
+            cursum += i
+            if cursum > 0: maxsubsum = max(maxsubsum, cursum)
+            else: cursum = 0
+            
+            #max prefix sum
+            maxsumfromst = max(maxsumfromst, summ)
+            #summ - minsumfromst => max suffix sum
+            minsumfromst = min(minsumfromst, summ)
+        if k == 1: maxsubsum % mod
+        if summ <= 0 : return max(maxsubsum, maxsumfromst + (summ - minsumfromst)) % mod
+        maxsumfromend = summ - minsumfromst
+        return (summ * (k-2) + maxsumfromst + maxsumfromend) % mod
+```
+
+Alternative: 2 round Kadane. | Rt: 628ms |
+```python
+    def kConcatenationMaxSum(self, arr: List[int], k: int) -> int:
+        summ = mx = cur = 0
+        mod = 10 ** 9 + 7
+        for r in range(2):
+            for i in arr:
+                if r == 0: summ += i
+                cur += i
+                if cur > 0: mx = max(mx, cur)
+                else: cur = 0
+            if k == 1: return mx % mod
+        return (mx + (k-2) * max(summ, 0)) % mod
+```
+Referrence: https://leetcode.com/problems/k-concatenation-maximum-sum/discuss/382808/Python3-6-liner-Kadane
+Comment: the 2 round Kadane can avoid the maxprefixsum + maxsuffixsum by two pass while the latter only takes one pass. Two round Kadane makes the code much more clean. 

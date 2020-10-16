@@ -1,0 +1,25 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Count All**
+| O(T): O(n+m) | O(S): O(n) | Rt: 32ms | 
+```python
+    def mostCommonWord(self, paragraph: str, banned: List[str]) -> str:
+        p = ''.join([i if i == ' ' or i.isalpha() else ' ' for i in paragraph.lower()])
+        ct = collections.Counter(p.split())
+        for i in banned: ct[i] = 0
+        maxv = max(ct.values())
+        #guaranteed a answer, and answer is unique
+        return next(k for k in ct if ct[k] == maxv)
+```
+
+
+**II). Only Count Valid**
+| O(T): O(n+m) | O(S): O(n) | Rt: 32ms | 
+```python
+    def mostCommonWord(self, paragraph: str, banned: List[str]) -> str:
+        ban, p = set(banned), re.findall('\w+', paragraph.lower())
+        words = [word for word in p if word not in ban]
+        return collections.Counter(words).most_common(1)[0][0]
+```
+
+Other: wonderful solution using trie - https://leetcode.com/problems/most-common-word/discuss/168958/Store-Words-in-Trie.-6ms-beats-99-Java
+

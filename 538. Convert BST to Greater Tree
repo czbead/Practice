@@ -1,0 +1,84 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). RFS**
+| O(T): O(n) | O(S): O(h) | Rt: 60ms | 
+```python
+    def convertBST(self, root: TreeNode) -> TreeNode:
+        def rfs(node, pre):
+            if not node: return 0
+            r = rfs(node.right, pre)
+            node.val += pre[0]
+            pre[0] = node.val
+            rfs(node.left, pre)
+        rfs(root, [0])
+        return root
+```
+Alternative: | Rt: 68ms |
+```python
+	    pre = 0
+    def convertBST(self, root: TreeNode) -> TreeNode:
+        if not root: return
+        self.convertBST(root.right)
+        root.val += self.pre
+        self.pre = root.val
+        self.convertBST(root.left)
+        return root
+```
+Triple: |Rt: 76ms|
+```python
+    def convertBST(self, root: TreeNode) -> TreeNode:
+        def rfs(node, pre):
+            if not node: return pre
+            r = rfs(node.right, pre)
+            node.val += r
+            return rfs(node.left, node.val)
+        rfs(root, 0)
+        return root
+```
+Referrence: https://leetcode.com/problems/convert-bst-to-greater-tree/discuss/100506/Java-Recursive-O(n)-time/104625
+Comment: how to understand this. This solution pass value instead of passing referrence, however it repass a new value in each round (each round explicitly transit the value to next round works like a referrence container). Another critical point, why return left child in the end? because a left child stands for a subtree which will be pass to the upper parent node as a "right node" (actually right subtree). 
+
+
+**II). Get as Reversed List**
+| O(T): O(n) | O(S): O(n) | Rt: 76ms | 
+```python
+    def convertBST(self, root: TreeNode) -> TreeNode:
+        revT = lambda r: revT(r.right) + [r] + revT(r.left) if r else []
+        lst = revT(root)
+        for i in range(1, len(lst)): lst[i].val += lst[i-1].val
+        return root
+```
+
+
+**III). RFS Iteration with State**
+| O(T): O(n) | O(S): O(h) | Rt: 80ms | 
+```python
+    def convertBST(self, root: TreeNode) -> TreeNode:
+        summ, s = 0, [(root, 0)]
+        while s:
+            node, visited = s.pop()
+            if node is None: continue
+            if not visited: s.extend([(node.left, 0), (node, 1), (node.right, 0)])
+            else:
+                summ += node.val
+                node.val = summ
+        return root
+```
+Referrence: https://leetcode.com/problems/convert-bst-to-greater-tree/discuss/134313/python-simple-iterative-solution
+
+
+**IV). RFS Iteration with Stack**
+| O(T): O(n) | O(S): O(h) | Rt: 72ms | 
+```python
+    def convertBST(self, root: TreeNode) -> TreeNode:
+        summ, s, node = 0, [], root
+        while node or s:
+            while node:
+                s.append(node)
+                node = node.right
+            cur = s.pop()
+            summ += cur.val
+            cur.val = summ
+            node = cur.left
+        return root
+```
+

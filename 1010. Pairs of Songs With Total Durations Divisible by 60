@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Case Analysis**
+| O(T): O(n) | O(S): O(n) | Rt: 236ms | 
+```python
+    def numPairsDivisibleBy60(self, time: List[int]) -> int:
+        #the songs whose time % 60 != 0, get its time % 60
+        odd = [i % 60 for i in time if i % 60]
+        #the amount of songs whoes time % 60 == 0
+        good = len(time) - len(odd)
+        rst = good * (good - 1) // 2
+        ct = collections.Counter(odd)
+        for k in ct:
+            if k == 30: rst += ct[30] * (ct[30] - 1) // 2
+            else: rst += ct[k] * ct[60-k]
+            #avoid repeat count
+            ct[k] = 0
+        return rst
+```
+
+
+**II). Bucket Collect**
+| O(T): O(n) | O(S): O(1) | Rt: 240ms | 
+```python
+    def numPairsDivisibleBy60(self, time: List[int]) -> int:
+        rst, m = 0, [0] * 60
+        for i in time: m[i % 60] += 1
+        rst += m[0] * (m[0] - 1) // 2
+        rst += m[30] * (m[30] - 1) // 2
+        for i in range(1, 30): rst += m[i] * m[60 - i]
+        return rst
+```
+
+
+**III). Match with What you Have SoFar**
+| O(T): O(n) | O(S): O(n) | Rt: 272ms | 
+```python
+    def numPairsDivisibleBy60(self, time: List[int]) -> int:
+        rst, dt = 0, {}
+        for i in time:
+            rst += dt.get(-i % 60, 0)
+            dt[i % 60] = dt.get(i % 60, 0) + 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/pairs-of-songs-with-total-durations-divisible-by-60/discuss/256738/JavaC%2B%2BPython-Two-Sum-with-K-60
+

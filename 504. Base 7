@@ -1,0 +1,75 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Basic Game**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 28ms | 
+```python
+    def convertToBase7(self, num: int) -> str:
+        if not num: return '0'
+        rst, n = [], abs(num)
+        while n:
+            rst.append(str(n % 7))
+            n //= 7
+        rst.reverse()  #rst[::-1] costs extra space
+        return  '-' * (num < 0) + ''.join(rst) 
+```
+Comment: zero check, it is painful...
+
+
+**II). Treat as Decimal**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 20ms | 
+```python
+    def convertToBase7(self, num: int) -> str:
+        if not num: return '0'
+        rst, summ, n = [], 0, abs(num)
+        while n:
+            rst.append(n % 7)
+            n //= 7
+        while rst: summ = summ * 10 + rst.pop()
+        return '-' * (num < 0) + str(summ)
+```
+Alternative: | Rt: 24ms |
+```python
+    def convertToBase7(self, num: int) -> str:
+        if not num: return '0'
+        rst, summ, n = [], 0, abs(num)
+        while n:
+            rst.append(n % 7)
+            n //= 7
+        for i in range(len(rst)): summ += 10 ** i * rst[i]
+        return '-' * (num < 0) + str(summ)
+```
+
+
+**III). Build in the Run**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 28ms | 
+```python
+    def convertToBase7(self, num: int) -> str:
+        if not num: return '0'
+        rst, n = '', abs(num)
+        while n:
+            rst = str(n % 7) + rst 
+            n //= 7
+        return '-' * (num < 0) + rst
+```
+Comment: whenever you consider using string and need to update it in the process, be ready for sacrificing the efficiency and space. 
+Alternative: | Rt: 32ms |
+```python
+    def convertToBase7(self, num: int) -> str:
+        if not num: return '0'
+        summ, i, n = 0, 1, abs(num)
+        while n:
+            summ = (n % 7) * i + summ 
+            n, i = n // 7, i * 10 
+        return '-' * (num < 0) + str(summ)
+```
+
+
+**IV). Recursion**
+| O(T): O(lgn) | O(S): O(1) | Rt: 24ms | 
+```python
+    def convertToBase7(self, num: int) -> str:
+        if num < 0: return '-' + self.convertToBase7(-num)
+        elif num < 7: return str(num)
+        return self.convertToBase7(num // 7) + str(num % 7)
+```
+Referrence: idea from https://leetcode.com/problems/base-7/discuss/98364/JavaC%2B%2BPython-Iteration-and-Recursion
+Comment: nice negetive number situation transformation. 

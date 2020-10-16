@@ -1,0 +1,80 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n!) | O(S): O(n) | Rt: ms | TLE
+```python
+class Solution:
+    maxlen = 0
+    def longestPalindrome(self, s: str) -> str:
+        if len(s) <= self.maxlen: return ''
+        if s == s[::-1]: self.maxlen = len(s); return s
+        return max(self.longestPalindrome(s[1:]), self.longestPalindrome(s[:-1]), key=len)
+```
+
+
+**II). Two Pointer**
+| O(T): O(n*n) | O(S): O(n) | Rt: 1016ms | 
+```python
+    def longestPalindrome(self, s: str) -> str:
+        def probe(s, i, end):
+            l, r = i-1, i+1
+            while l >= 0 and s[l] == s[i]: l -= 1
+            while r < end and s[r] == s[i]: r += 1
+            while l >= 0 and r < end  and s[l] == s[r]: l, r = l-1, r+1
+            return s[l+1:r]
+            
+        rst, maxlen, leng = '', 0, len(s)
+        for i in range(leng):
+            cur = probe(s, i, leng)
+            if len(cur) > maxlen: rst, maxlen = cur, len(cur)
+        return rst
+```
+Alternative: improved version. | Rt: 92ms |
+```python
+    def longestPalindrome(self, s: str) -> str:
+        def probe(s, l, r, end):
+            while l >= 0 and r < end and s[l] == s[r]: l, r = l-1, r+1
+            return s[l+1:r]
+            
+        i, rst, leng = 0, '', len(s)
+        while i >= 0 and i < leng:
+            l, r = i-1, i+1
+            while r < leng and s[r] == s[i]: r += 1
+            rst = max(rst, probe(s, l, r, leng), key=len)
+            i = r
+        return rst
+```
+Triple: concise but slow version. | Rt: 816ms |
+```python
+    def longestPalindrome(self, s: str) -> str:
+        def probe(s, l, r, end):
+            while l >= 0 and r < end and s[l] == s[r]: l, r = l-1, r+1
+            return s[l+1:r]
+            
+        rst, leng = '', len(s)
+        for i in range(leng):
+            rst = max(rst, probe(s, i, i, leng), probe(s, i, i+1, leng), key=len)
+        return rst
+```
+
+
+**III). DP**
+| O(T): O(n*n) | O(S): O(n*n) | Rt: 3356ms | 
+```python
+    def longestPalindrome(self, s: str) -> str:
+        st, maxlen, l = 0, 0, len(s)
+        dp = [[False] * l for _ in range(l)]
+        for i in range(l-1, -1, -1):
+            for j in range(i, l):  #if start from i+1, cannot handle "a" test case
+                dp[i][j] = (s[i] == s[j] and (j-i < 3 or dp[i+1][j-1]))
+                if dp[i][j] and j - i + 1 > maxlen: st, maxlen = i, j-i+1
+        return s[st:st+maxlen]
+```
+Referrence:https://leetcode.com/problems/longest-palindromic-substring/discuss/2921/Share-my-Java-solution-using-dynamic-programming
+Analysis: dp[i][j] denotes whether s[i:j+1] is a valid palindrome. For each i, j, j should be grater than i clearly. To decide dp[i][j]: if s[i] != s[j], clearly false, therefore s[i] == s[j] is the prerequisite. Assume s[i] == s[j], if i == j, clearly True, same one; if j - i == 1, True as well, case like "...aa...". if j - i == 2, case like '...aba....', also true. if j - i > 2, say '...abca..' or '...abba...', not sure now, we need to consider the previous state -- dp[i+1][j-1]. Critical, for each state decision dp[i][j] we make, we need to consider its previous state dp[i+1][j-1], the previous state must be established before current state. Attention, dp[i+1][j-1] must be calculated before dp[i][j], which means i pointer goes from i+1 to i (descending) and j cursor goes from j-1 to j (ascending). Remember j must be grater than i as we analized before. To cover case like s == 'a', better let j be greater or equal to i. 
+
+Comment: this DP solution well ilustrate the thinking process of a advanced DP.   
+
+
+Others: another fast solution -- https://leetcode.com/problems/longest-palindromic-substring/discuss/2925/Python-O(n2)-method-with-some-optimization-88ms.
+O(N) solution using Manacher algorithm -- https://leetcode.com/problems/longest-palindromic-substring/discuss/3337/Manacher-algorithm-in-Python-O(n); https://en.wikipedia.org/wiki/Longest_palindromic_substring
+

@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | TLE 
+```python
+    def fourSumCount(self, A: List[int], B: List[int], C: List[int], D: List[int]) -> int:
+        if not A: return 0
+        rst, ctd = 0, collections.Counter(D)
+        for i in A: 
+            for j in B:
+                for k in C:
+                    rst += ctd[-(i + j + k)]
+        return rst
+```
+Comment: 46/ 48 test cases passed
+Alternative:  | Rt: TLE |
+```python
+    def fourSumCount(self, A: List[int], B: List[int], C: List[int], D: List[int]) -> int:
+        if not A: return 0
+        rst, ct = 0, collections.Counter
+        cta, ctb, ctc, ctd = ct(A), ct(B), ct(C), ct(D)
+        for i in cta: 
+            for j in ctb:
+                for k in ctc:
+                    rst += cta[i] * ctb[j] * ctc[k] * ctd[-(i+j+k)]
+        return rst
+```
+
+
+**II). Reduce to 2-Sum**
+| O(T): O(n * n) | O(S): O(n * n) | Rt: 280ms | 
+```python
+    def fourSumCount(self, A: List[int], B: List[int], C: List[int], D: List[int]) -> int:
+        ct = collections.Counter(a + b for a in A for b in B)
+        return sum(ct[-c-d] for c in C for d in D)
+```
+Referrence: https://leetcode.com/problems/4sum-ii/discuss/93917/Easy-2-lines-O(N2)-Python
+Comment: sapce complexity trade for time complexity. The hard brute force solution will take n ^ 4 time complexity and this solution decompose it into (n^2 + n^2).  

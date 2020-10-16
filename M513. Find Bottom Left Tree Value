@@ -1,0 +1,42 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def findBottomLeftValue(self, root: TreeNode) -> int:
+        if not root: return 
+        rst, stack = None, [root]
+        while stack:
+            rst = stack[0].val
+            stack = [child for node in stack for child in (node.left, node.right) if child]
+        return rst
+```
+Comment: level order BFS is almost always the best choice for "tree row traverse" problem. 
+
+
+**II). Preorder**
+| O(T): O(n) | O(S): O(h) | Rt: 44ms | 
+```python
+    def findBottomLeftValue(self, root: TreeNode) -> int:
+        def preorder(node, dep, state):
+            if dep > state[0]: state[0], state[1] = dep, node.val
+            if node.left: preorder(node.left, dep+1, state)
+            if node.right: preorder(node.right, dep+1, state)
+                
+        if not root: return
+        state = [0, None]
+        preorder(root, 1, state)
+        return state[1]
+```
+
+Alternative: iterative version. | Rt: 44ms |
+```python
+    def findBottomLeftValue(self, root: TreeNode) -> int:
+        stack, val, dep = [(root, 1)], None, 0
+        while stack:
+            node, curdep = stack.pop()
+            if not node: continue
+            if curdep > dep: dep, val = curdep, node.val
+            stack.append((node.right, curdep+1))
+            stack.append((node.left, curdep+1))
+        return val
+```

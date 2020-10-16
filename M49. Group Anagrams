@@ -1,0 +1,47 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Dict with Sort**
+| O(T): O(mnlgn) | O(S): O(mn) | Rt: 100ms | 
+```python
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        dt = collections.defaultdict(list)
+        for word in strs: dt[''.join(sorted(word))].append(word)
+        return dt.values()
+```
+Alternative: using tuple instead. | Rt: 100ms |
+```python
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        dt = collections.defaultdict(list)
+        for word in strs: dt[tuple(sorted(word))].append(word)
+        return dt.values() 
+```
+
+
+**II). Dict with Counting Sort**
+| O(T): O(mn) | O(S): O(mn) | Rt: 136ms | 
+```python
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        dt = collections.defaultdict(list)
+        for word in strs:
+            key = ''
+            m = [0] * 26
+            for i in word: m[ord(i) - ord('a')] += 1
+            for i in range(26):
+                if m[i]: key += chr(i + ord('a')) * m[i] 
+            dt[key].append(word)
+        return dt.values()
+```
+
+
+**III). Hash by Prime Product**
+| O(T): O(mn) | O(S): O(mn) | Rt: 104ms | 
+```python
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        dt = collections.defaultdict(list)
+        prime = [2, 3, 5, 7, 11 ,13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 107]
+        for word in strs:
+            key = 1
+            for i in word: key *= prime[ord(i) - ord('a')] 
+            dt[key].append(word)
+        return dt.values()
+```
+Referrence: https://leetcode.com/problems/group-anagrams/discuss/19233/O(M-*-N)-algorithm-using-hash-without-sort()

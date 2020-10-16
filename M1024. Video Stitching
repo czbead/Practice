@@ -1,0 +1,50 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy with Sort**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 28ms | 
+```python
+    def videoStitching(self, clips: List[List[int]], T: int) -> int:
+        clips.sort()
+        rst = 1; st = end = 0
+        for i, j in clips:
+            if i <= st: end = max(end, j)
+            else: 
+                if i > end: return -1
+                st, end, rst = end, max(end, j), rst+1
+            if end >= T: return rst
+        return -1
+```
+
+
+**II). Naive DP**
+| O(T): O(mn) | O(S): O(k) | Rt: 44ms | 
+```python
+    def videoStitching(self, clips: List[List[int]], T: int) -> int:
+        dp = [T+1] * (T+1); dp[0] = 0
+        for k in range(T+1):
+            for i, j in clips:
+                if i <= k <= j: dp[k] = min(dp[k], 1+dp[i])
+            if dp[k] == T+1: return -1
+        return dp[-1]
+```
+Referrence: https://leetcode.com/problems/video-stitching/discuss/270350/Java-DP-Short-Solution-!!!
+
+
+**III). Hash Max End**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def videoStitching(self, clips: List[List[int]], T: int) -> int:
+        mxend = [0] * (T+1)
+        for i, j in clips:
+            if i <= T: mxend[i] = max(mxend[i], j)
+                
+        st = end = count = 0
+        for i in range(T+1):
+            if i > end: return -1
+            end = max(end, mxend[i])
+            if i >= st:
+                count += 1
+                st = end
+                if st >= T: return count
+```
+Referrence: https://leetcode.com/problems/video-stitching/discuss/270680/C%2B%2B-O(N)-No-Sorting-(Greedy)-Explained
+

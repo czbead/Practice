@@ -1,0 +1,83 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search**
+| O(T): O() | O(S): O() | Rt: 344ms | 
+```python
+class MyCalendar:
+
+    def __init__(self):
+        self.arr = []
+
+    def book(self, start: int, end: int) -> bool:
+        index = self.bise(start)
+        if index == len(self.arr): self.arr.append((start, end)); return True
+        if end > self.arr[index][0]: return False
+        self.arr = self.arr[:index] + [(start, end)] + self.arr[index:]
+        return True
+    
+    #bisect_right self-implementation search by key= lambda x: x[1]
+    def bise(self, val):
+        if not self.arr: return 0
+        if val >= self.arr[-1][1]: return len(self.arr)
+        l, r = 0, len(self.arr)-1
+        while l < r:
+            m = (l + r) // 2
+            if self.arr[m][1] <= val: l = m+1
+            else: r = m
+        return l
+```
+
+Alternative: | Rt: 380ms |
+```python
+class MyCalendar:
+
+    def __init__(self):
+        self.ends = []
+        self.schedule = []
+
+    def book(self, start: int, end: int) -> bool:
+        index = bisect.bisect(self.ends, start)
+        if index == len(self.ends): 
+            self.ends.append(end)
+            self.schedule.append((start, end))
+            return True
+        if self.schedule[index][0] < end: return False
+        self.ends = self.ends[:index] + [end] + self.ends[index:]
+        self.schedule = self.schedule[:index] + [(start, end)] + self.schedule[index:]
+        return True
+```
+Comment: if we keep the start as a individual list, then the bisect should be bisect_left. 
+
+
+**II). Sorted LinkedList**
+| O(T): O() | O(S): O() | Rt: 672ms | 
+```python
+class ListNode:
+    
+    def __init__(self, st=None, end=None, nxt=None):
+        self.st = st
+        self.end = end
+        self.next = nxt
+        
+class LinkedList:
+    
+    def __init__(self, head=None):
+        self.head = head
+    
+    def insert(self, st, end):
+        if not self.head: self.head = ListNode(st, end); return True
+        pre = cur = self.head
+        while cur and cur.end <= st: pre, cur = cur, cur.next
+        if cur is None: pre.next = ListNode(st, end); return True
+        if cur.st < end: return False
+        if cur is self.head: self.head = ListNode(st, end, cur)
+        else: pre.next = ListNode(st, end, cur)
+        return True
+
+class MyCalendar:
+
+    def __init__(self):
+        self.schedule = LinkedList()
+
+    def book(self, start: int, end: int) -> bool:
+        return self.schedule.insert(start, end)
+```

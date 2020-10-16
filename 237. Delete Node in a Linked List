@@ -1,0 +1,9 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Word Play**
+| O(t): O(1) | O(m): O(1) | Rt: 40ms | 
+```python
+    def deleteNode(self, node):
+        node.val = node.next.val
+        node.next = node.next.next
+```
+Comment: not a typical problem. the critical part is **given only access to that node.**

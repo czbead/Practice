@@ -1,0 +1,58 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Froce**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def findTargetSumWays(self, nums: List[int], S: int) -> int:
+        def backtrack(nums, target, i, rst):
+            if i == len(nums):
+                if target == 0: rst[0] += 1
+                return 
+            backtrack(nums, target - nums[i], i+1, rst)
+            backtrack(nums, target + nums[i], i+1, rst)
+            
+        if not nums: return 
+        rst = [0]
+        backtrack(nums, S, 0, rst)
+        return rst[0]
+```
+
+
+**II). DP SubSet Sum**
+| O(T): O(n) | O(S): O(n) | Rt: 72ms | 
+```python
+    def findTargetSumWays(self, nums: List[int], S: int) -> int:
+        def subsetsum(nums, target):
+            #how many route leads to subset sum i
+            dp = [0] * (target + 1)
+            dp[0] = 1  #means, if a number == target, it is a valid single node route
+            for n in nums:
+                #top-down dp insures: every num only uses at most once in a specific route.
+                #bottom-up dp will get: every num can be used multiple times in every route
+                for i in range(target, n-1, -1):
+                    dp[i] += dp[i-n]
+            return dp[-1]
+        
+        if not nums: return 
+        summ = sum(nums)
+        #(summ + S) // 2 has to be even
+        if summ < S or (summ + S) % 2 == 1: return 0
+        return subsetsum(nums, (summ+S)//2)
+```
+Referrence: https://leetcode.com/problems/target-sum/discuss/97334/Java-(15-ms)-C%2B%2B-(3-ms)-O(ns)-iterative-DP-solution-using-subset-sum-with-explanation
+
+
+**III). BFS**
+| O(T): O(2^n) | O(S): O(2 ^ n) | Rt: 216ms | 
+```python
+    def findTargetSumWays(self, nums: List[int], S: int) -> int:
+        dt = {0:1}
+        for n in nums:
+            nxt_dt = {}
+            for i in dt:
+                nxt_dt[i+n] = nxt_dt.get(i+n, 0) + dt[i]
+                nxt_dt[i-n] = nxt_dt.get(i-n, 0) + dt[i]
+            dt = nxt_dt
+        return dt.get(S, 0)
+```
+Referrence: https://leetcode.com/problems/target-sum/discuss/97439/JavaPython-Easily-Understood
+

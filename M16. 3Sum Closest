@@ -1,0 +1,54 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Reduce to 2-Sum**
+| O(T): O(n*n) | O(S): O(1) | Rt: 88ms | 
+```python
+    def threeSumClosest(self, nums: List[int], target: int) -> int:   
+        nums.sort()
+        rst, mindiff, leng = 0, float('inf'), len(nums)
+        for i in range(leng - 2):
+            #skip repeated cases
+            if i == 0 or nums[i] != nums[i-1]:
+                if nums[i] + nums[i+1] + nums[i+2] - target > mindiff: break
+                l, r = i+1, leng-1
+                while l < r:
+                    cursum = nums[i] + nums[l] + nums[r]
+                    curdiff = cursum - target
+                    if curdiff >= mindiff: 
+                        r -= 1
+                        while l < r and nums[r] == nums[r+1]: r -= 1
+                    elif curdiff <= -mindiff: 
+                        l += 1
+                        while l < r and nums[l] == nums[l-1]: l += 1
+                    else: 
+                        mindiff, rst = abs(curdiff), cursum
+                        #move the diff toward 0
+                        if curdiff > 0: r -= 1
+                        elif curdiff < 0: l += 1
+                        else: return target
+        return rst
+```
+Alternative: remove the diff state.  | Rt: 100ms |
+```python
+    def threeSumClosest(self, nums: List[int], target: int) -> int:   
+        nums.sort()
+        rst, leng = float('inf'),  len(nums)
+        for i in range(leng - 2):
+            #skip repeated cases
+            if i == 0 or nums[i] != nums[i-1]:
+                l, r = i+1, leng-1
+                while l < r:
+                    cursum = nums[i] + nums[l] + nums[r]
+                    if cursum > target: 
+                        r -= 1
+                        #skip repeated cases
+                        while l < r and nums[r] == nums[r+1]: r -= 1
+                    elif cursum < target: 
+                        l += 1
+                        while l < r and nums[l] == nums[l-1]: l += 1
+                    else: return target
+                    if abs(rst - target) > abs(cursum - target): rst = cursum
+        return rst
+```
+Comment: this alternative version is not as fast because it update the result much more (every round) than the first version. 
+
+

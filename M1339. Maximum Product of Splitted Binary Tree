@@ -1,0 +1,70 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pass DFS**
+| O(T): O(n) | O(S): O(h) | Rt: 392ms | 
+```python
+    def maxProduct(self, root: TreeNode) -> int:
+        def treesum(node):
+            if not node: return 0
+            return node.val + treesum(node.left) + treesum(node.right)
+        
+        def treemax(node, total):
+            if not node: return 0
+            l, r = treemax(node.left, total), treemax(node.right, total)
+            self.rst = max(self.rst, l * (total-l), r * (total-r))
+            return node.val + l + r
+        
+        total, self.rst = treesum(root), 0
+        treemax(root, total)
+        return self.rst % (10**9 + 7)
+```
+
+Alternative: | Rt: 468ms |
+```python
+    def maxProduct(self, root: TreeNode) -> int:
+        def treemax(node, total):
+            if not node: return 0
+            l, r = treemax(node.left, total), treemax(node.right, total)
+            self.rst = max(self.rst, l * (total-l), r * (total-r))
+            return node.val + l + r
+        
+        self.rst = 0
+        total = treemax(root, 0)
+        treemax(root, total)
+        return self.rst % (10**9 + 7)
+```
+Referrence: https://leetcode.com/problems/maximum-product-of-splitted-binary-tree/discuss/496549/JavaC%2B%2BPython-Easy-and-Concise
+
+
+**II). One Pass**
+| O(T): O(n) | O(S): O(h) | Rt: 352ms | 
+```python
+    def maxProduct(self, root: TreeNode) -> int:
+        def treesum(node, s):
+            if not node: return 0
+            l, r = treesum(node.left, s), treesum(node.right, s)
+            s.add(l); s.add(r)
+            return node.val + l + r
+        
+        subsum = set()
+        total = treesum(root, subsum)
+        a, off, base = 0, float('inf'), total/2
+        for i in subsum:
+            if i == base: return i * i
+            if abs(i-base) < off: a, off = i, abs(i-base)
+        return a * (total - a) % (10 ** 9 + 7)
+```
+
+Alternative: | Rt: ms | Wrong Solution
+```python
+    def maxProduct(self, root: TreeNode) -> int:
+        def treesum(node, s):
+            if not node: return 0
+            l, r = treesum(node.left, s), treesum(node.right, s)
+            s.add(l); s.add(r)
+            return node.val + l + r
+        
+        subsum = set()
+        total = treesum(root, subsum)
+        return max((i * (total - i)) % (10**9 + 7) for i in subsum)
+```
+Comment: I don't know why this alternative solution doesn't work. 

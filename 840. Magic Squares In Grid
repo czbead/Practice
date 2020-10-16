@@ -1,0 +1,78 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force -- Cut the Cube**
+| O(T): O(mn) | O(S): O(mn) | Rt: 32ms | 
+```python
+    def numMagicSquaresInside(self, grid: List[List[int]]) -> int:
+        def ismagic(grid):
+            if grid[1][1] != 5: return False
+            flat = [i for row in grid for i in row]
+            if set(flat) != {1, 2, 3, 4, 5, 6, 7, 8, 9}: return False
+            if any(sum(row) != 15 for row in grid): return False
+            if any(sum(col) != 15 for col in zip(*grid)): return False
+            if sum(grid[i][i] for i in range(3)) != 15: return False
+            if sum(grid[2-i][i] for i in range(3)) != 15: return False
+            return True
+            
+        rst, row, col = 0, len(grid), len(grid[0])
+        for i in range(row - 2):
+            for j in range(col - 2):
+                cur = [grid[i + k][j:j+3] for k in range(3)]
+                if ismagic(cur): rst += 1
+        return rst
+```
+Comment: the core item should be 5, the sum of all combinations should be 15.
+
+
+**II). Brute Force -- Pass Index**
+| O(T): O(mn) | O(S): O(1) | Rt: 28ms | 
+```python
+    def numMagicSquaresInside(self, grid: List[List[int]]) -> int:
+        def ismagic(grid, i, j):
+            if grid[i][j] != 5: return False
+            flat = [grid[i+x][j+y] for x in (-1, 0, 1) for y in (-1, 0, 1)]
+            if set(flat) != {1, 2, 3, 4, 5, 6, 7, 8, 9}: return False
+            if any(sum(grid[i+x][j+y] for x in (-1, 0, 1)) != 15 for y in (-1, 0, 1)): return False
+            if any(sum(grid[i+x][j+y] for y in (-1, 0, 1)) != 15 for x in (-1, 0, 1)): return False
+            if sum(grid[i+k][j+k] for k in (-1, 0, 1)) != 15: return False
+            if sum(grid[i-k][j+k] for k in (-1, 0, 1)) != 15: return False
+            return True
+            
+        rst, row, col = 0, len(grid), len(grid[0])
+        for i in range(1, row - 1):
+            for j in range(1, col - 1):
+                if ismagic(grid, i, j): rst += 1
+        return rst
+```
+Alternative: using set.  | Rt: 36ms |
+```python
+    def numMagicSquaresInside(self, grid: List[List[int]]) -> int:
+        def ismagic(grid, i, j):
+            if grid[i][j] != 5: return False
+            flat = [grid[i+x][j+y] for x in (-1, 0, 1) for y in (-1, 0, 1)]
+            if set(flat) != {1, 2, 3, 4, 5, 6, 7, 8, 9}: return False
+            colsum = [sum(grid[i+x][j+y] for x in (-1, 0, 1)) for y in (-1, 0, 1)]
+            rowsum = [sum(grid[i+x][j+y] for y in (-1, 0, 1)) for x in (-1, 0, 1)]
+            diasum = [sum(grid[i+k][j+k] for k in (-1, 0, 1)), sum(grid[i-k][j+k] for k in (-1, 0, 1))]
+            return len(set(colsum + rowsum + diasum)) == 1
+            
+        rst, row, col = 0, len(grid), len(grid[0])
+        for i in range(1, row - 1):
+            for j in range(1, col - 1):
+                if ismagic(grid, i, j): rst += 1
+        return rst
+```
+
+
+**III). Strict Rule**
+| O(T): O(mn) | O(S): O(1) | Rt: 36ms | 
+```python
+    def numMagicSquaresInside(self, grid: List[List[int]]) -> int:
+        def ismagic(grid, i, j):
+            s = ''.join(str(grid[i+x//3][j+x%3]) for x in (0, 3, 6, 7, 8, 5, 2, 1))
+            return grid[i][j] % 2 == 0 and s in '43816729'*2 or s in '49276183'*2  
+            
+        return sum(ismagic(grid, i, j) for i in range(len(grid)-2) for j in range(len(grid[0])-2) if grid[i+1][j+1] == 5)
+```
+Referrence: https://leetcode.com/problems/magic-squares-in-grid/discuss/133874/Python-5-and-43816729
+
+

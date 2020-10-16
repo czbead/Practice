@@ -1,0 +1,87 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack**
+| O(T): O(n*n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def reverseParentheses(self, s: str) -> str:
+        stack, cur = [], ''
+        for i in s:
+            if  i == '(':
+                stack.append(cur)
+                stack.append('(')
+                cur = ''
+            elif i == ')':
+                while stack and stack[-1] != '(': cur = stack.pop() + cur
+                stack.pop()
+                stack.append(cur[::-1])
+                cur = ''
+            else:
+                cur += i
+        if cur: stack.append(cur)
+        return ''.join(stack)
+```
+
+Alternative: | Rt: 32ms |
+```python
+    def reverseParentheses(self, s: str) -> str:
+        stack = []
+        for i in s:
+            if i == ')':
+                cur = ''
+                while stack and stack[-1] != '(': cur = stack.pop() + cur
+                stack.pop()
+                stack.append(cur[::-1])
+            else: stack.append(i)
+        return ''.join(stack)
+```
+Referrence: https://leetcode.com/problems/reverse-substrings-between-each-pair-of-parentheses/discuss/382367/Simple-Stack-and-Queue-Solution
+
+Triple: | Rt: 40ms |
+```python
+    def reverseParentheses(self, s: str) -> str:
+        stack = ['']
+        for i in s:
+            if i == '(':
+                stack.append('')
+            elif i == ')':
+                tmp = stack.pop()[::-1]
+                stack[-1] += tmp
+            else: stack[-1] += i
+        return ''.join(stack)
+```
+Referrence: https://leetcode.com/problems/reverse-substrings-between-each-pair-of-parentheses/discuss/383670/JavaC%2B%2BPython-Why-not-O(N)
+
+
+**II). Queue Reverse Pair**
+| O(T): O() | O(S): O() | Rt: 64ms | 
+```python
+    def reverseParentheses(self, s: str) -> str:
+        left, q = [], collections.deque([])
+        for i in range(len(s)):
+            if s[i] == '(': left.append(i)
+            elif s[i] == ')': q.append((left.pop(), i))
+        rst = s
+        while q:
+            l, r = q.popleft()
+            rst = rst[:l+1] + rst[l+1:r][::-1] + rst[r:]
+        return ''.join(i for i in rst if i != '(' and i != ')')
+```
+
+Alternative: O(n) solution. | Rt: 44ms |
+```python
+    def reverseParentheses(self, s: str) -> str:
+        left, m, l = [], {}, len(s)
+        for i in range(l):
+            if s[i] == '(': left.append(i)
+            elif s[i] == ')': 
+                j = left.pop()
+                m[i], m[j] = j, i
+        i, d, rst = 0, 1, ''
+        while i < l:
+            if s[i] == '(' or s[i] == ')': i, d = m[i], -d
+            else: rst += s[i]
+            i += d
+        return rst
+```
+Referrence: https://leetcode.com/problems/reverse-substrings-between-each-pair-of-parentheses/discuss/383670/JavaC%2B%2BPython-Why-not-O(N)
+
+Others: recursive solution - https://leetcode.com/problems/reverse-substrings-between-each-pair-of-parentheses/discuss/382358/Simple-Java-Sol(Recursion)

@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(n) | Rt: 36ms | 
+```python
+    def calPoints(self, ops: List[str]) -> int:
+        rst, score = 0, []
+        for i in ops:
+            cur = 0
+            if i == "+": cur = score[-1] + score[-2]
+            elif i == "D": cur = score[-1] * 2
+            elif i == "C": rst -= score.pop()
+            else: cur = int(i)
+            rst += cur
+            if cur: score.append(cur)
+        return rst
+```
+Alternative: concise version | Rt: 36ms |
+```python
+    def calPoints(self, ops: List[str]) -> int:
+        score = []
+        for i in ops:
+            if i == "+": score.append(score[-1] + score[-2])
+            elif i == "D": score.append(score[-1] * 2)
+            elif i == "C": score.pop()
+            else: score.append(int(i))
+        return sum(score)
+```
+
+

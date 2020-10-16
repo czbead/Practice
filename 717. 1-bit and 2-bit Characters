@@ -1,0 +1,78 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP Recursion**
+| O(T): O(n) | O(S): O(lgn) | Rt: 68ms | 
+```python
+    def isOneBitCharacter(self, bits: List[int]) -> bool:
+        def isAvai(bits):
+            if not bits: return True
+            return (bits[-1] == 0 and isAvai(bits[:-1])) or (len(bits) > 1 and bits[-2] == 1 and isAvai(bits[:-2]))
+        return isAvai(bits[:-1])
+```
+
+
+**II). DP State Array**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def isOneBitCharacter(self, bits: List[int]) -> bool:
+        l = len(bits)
+        dp = [None] * l
+        for i in range(l):
+            if i == 0: dp[i] = bits[i] == 0
+            elif i == 1: dp[i] = (bits[i] == 0 and dp[i-1]) or bits[i-1] == 1
+            else: dp[i] = (dp[i-1] and bits[i] == 0) or (dp[i-2] and bits[i-1] == 1)
+        return len(dp) < 2 or dp[-2]
+```
+
+
+**III). DP Two State**
+| O(T): O(n) | O(S): O(1) | Rt: 44ms | 
+```python
+    def isOneBitCharacter(self, bits: List[int]) -> bool:
+        if len(bits) == 1: return bits[0] == 0
+        elif len(bits) == 2: return bits[0] == 0
+        a = bits[0] == 0
+        b = (bits[1] == 0 and a) or bits[0] == 1
+        for i in range(2, len(bits) - 1):
+            a, b = b, (a and bits[i-1] == 1) or (b and bits[i] == 0)
+        return b
+```
+
+
+**IV). String Replace**
+| O(T): O() | O(S): O() | Rt: 52ms | 
+```python
+    def isOneBitCharacter(self, bits: List[int]) -> bool:
+        if len(bits) == 1: return True
+        s = ''.join([str(i) for i in bits])
+        s = s.replace('11', '')
+        return not (len(s) > 1 and s[-2] == '1')
+```
+Comment: really not recommend for interview, not easy to come up with.
+
+
+**V). Greedy**
+| O(T): O(n) | O(S): O(1) | Rt: 52ms | 
+```python
+    def isOneBitCharacter(self, bits: List[int]) -> bool:
+        index, l = 0, len(bits)
+        while index < l - 1:
+            if bits[index] == 1: index += 2
+            else: index += 1
+        return index == l - 1
+```
+Comment: should end at index: len(bits) - 2 therefore starts at len(bits) - 1. The index cursor is starting index not ending index.
+
+
+**VI). Count 1: Optimal**
+| O(T): O(n) | O(S): O(1) | Rt: 44ms | 
+```python
+    def isOneBitCharacter(self, bits: List[int]) -> bool:
+        ctzero = 0
+        for i in range(len(bits) - 2, -1, -1):
+            if bits[i] == 1: ctzero += 1
+            else: break
+        return ctzero % 2 == 0
+```
+Referrence: https://leetcode.com/problems/1-bit-and-2-bit-characters/discuss/108967/JAVA-check-only-the-end-of-array
+Comment: count 1 between the last 0 and second last 0. If it is even amount, all 1s could pair up with themselves. Otherwise, it need to pair up with the ending 0 --> False. No matter what the sequence before the second last 0 is, they can pair up with each other (assume odd amount 1s, even amount 1s, no 1, easily can make it clear by yourself). 
+

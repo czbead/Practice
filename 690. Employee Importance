@@ -1,0 +1,68 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Dict**
+| O(T): O(n) | O(S): O(n) | Rt: 156ms | 
+```python
+    def getImportance(self, employees: List['Employee'], id: int) -> int:
+        subdt = {e.id: e.subordinates for e in employees} 
+        valdt = {e.id: e.importance for e in employees} 
+        sublst, rst = subdt[id], valdt[id]
+        while sublst:
+            rst += sum(valdt[i] for i in sublst)
+            sublst = [j for i in sublst for j in subdt[i]]
+        return rst
+```
+Comment: this is row-wise style, you can use pop-append style as well, depends on the granularity you want to adopt. Usually, for simple calculation like this, we prefer grater granularity like row-wise or even all-wise (batch style) shown as follows.  
+Alternative: concise choice, batch style. | Rt: 168ms |
+```python
+    def getImportance(self, employees: List['Employee'], id: int) -> int:
+        subdt = {e.id: e.subordinates for e in employees} 
+        valdt = {e.id: e.importance for e in employees} 
+        allsub = nxt = [id]
+        while nxt:
+            nxt = [j for i in nxt for j in subdt[i]]
+            allsub += nxt
+        return sum(valdt[i] for i in allsub)
+```
+
+
+**II). One Dict**
+| O(T): O(n) | O(S): O(n) | Rt: 180ms | 
+```python
+    def getImportance(self, employees: List['Employee'], id: int) -> int:
+        dt = {e.id: e for e in employees}  
+        sublst, rst = dt[id].subordinates, dt[id].importance
+        while sublst:
+            rst += sum(dt[i].importance for i in sublst)
+            sublst = [j for i in sublst for j in dt[i].subordinates]
+        return rst
+```
+Alternative: concise choice, batch style. | Rt: 160ms |
+```python
+    def getImportance(self, employees: List['Employee'], id: int) -> int:
+        dt = {e.id: e for e in employees}  
+        allsub = nxt = [id]
+        while nxt:
+            nxt = [j for i in nxt for j in dt[i].subordinates]
+            allsub += nxt
+        return sum(dt[i].importance for i in allsub)
+```
+
+
+**III). Recursion with Lambda**
+| O(T): O(n) | O(S): O(n) | Rt: 236ms | 
+```python
+    def getImportance(self, employees: List['Employee'], id: int) -> int:
+        get_ipt = lambda i: dt[i].importance + sum(get_ipt(j) for j in dt[i].subordinates)
+        dt = {e.id: e for e in employees}  
+        return get_ipt(id)
+```
+Alternative: longer but better practice version. | Rt: 160ms |
+```python
+    def getImportance(self, employees: List['Employee'], id: int) -> int:
+        get_ipt = lambda i, dt: dt[i].importance + sum(get_ipt(j, dt) for j in dt[i].subordinates)
+        dt = {e.id: e for e in employees}  
+        return get_ipt(id, dt)
+```
+Comment: use lambda as much as you can, it is fast, concise, readable and salable, everyone love it. 
+
+

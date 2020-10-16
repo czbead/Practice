@@ -1,0 +1,70 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Graph Traverse: BFS**
+| O(T): O(mn) | O(S): O(n) | Rt: 20ms | 
+```python
+    def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+        #this is a graph problem, be careful with dead loop
+        #keep track with the path you already traversed
+        def findpath(graph, st, end, candidate, visitstate):
+            if st not in graph or end not in graph: return -1.0
+            #reuse the container globally, empty previous data before a new query comes
+            if st == end: return 1.0
+            candidate.clear(); visitstate.clear()
+            #initialize state from start point
+            candidate.append((st, 1.0))
+            #this set keep track of path already visited
+            visitstate.add(st)
+            while candidate:
+                x, val = candidate.pop()
+                for y, value in graph[x]:
+                    if y in visitstate: continue
+                    newval = val * value
+                    if y == end: return newval
+                    #push candidate into the queue, BFS manner
+                    candidate.appendleft((y, newval))
+                    #build new direct path to accelerate further query, memory for time tradeoff
+                    graph[st].append((y, newval))
+                    graph[y].append((st, 1.0 / newval))
+                    visitstate.add(y)
+            return -1.0
+        
+        #build the graph
+        graph = collections.defaultdict(list)
+        for nums, val in zip(equations, values):
+            a, b = nums
+            graph[a].append((b, val))
+            graph[b].append((a, 1.0/val))
+        
+        que, visited = collections.deque([]), set()
+        return [findpath(graph, m, n, que, visited) for m, n in queries]
+```
+Referrence: https://leetcode.com/problems/evaluate-division/discuss/88275/Python-fast-BFS-solution-with-detailed-explantion
+Alternative: DFS version. | Rt: 28ms |
+```python
+    def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+        def findpath(graph, a, b):
+            if a not in graph or b not in graph: return -1.0
+            if a == b: return 1.0
+            stack, visited = [(a, 1.0)], set([a])
+            while stack:
+                x, val = stack.pop()
+                for y, value in graph[x]:
+                    if y in visited: continue
+                    newval = val * value
+                    if y == b: return newval
+                    #DFS manner
+                    stack.append((y, newval))
+                    graph[a].append((y, newval))
+                    graph[y].append((a, 1.0 / newval))
+                    visited.add(y)
+            return -1.0
+        
+        #build the graph
+        graph = collections.defaultdict(list)
+        for nums, val in zip(equations, values):
+            a, b = nums
+            graph[a].append((b, val))
+            graph[b].append((a, 1.0/val))
+        
+        return [findpath(graph, m, n) for m, n in queries]
+```

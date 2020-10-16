@@ -1,0 +1,52 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Generate Sequential Digit**
+| O(T): O() | O(S): O() | Rt: 32ms | 
+```python
+    def sequentialDigits(self, low: int, high: int) -> List[int]:
+        i, r = len(str(low))-1, len(str(high))
+        rst, path = [], [9] * i
+        while i <= r:
+            if path[-1] == 9:
+                i += 1
+                path = list(range(1, i+1))
+            else: path = [i+1 for i in path]
+            n = int(''.join(map(str, path))) 
+            if n < low: continue
+            if n > high: break
+            rst.append(n)
+        return rst
+```
+
+Alternative: | Rt: 24ms |
+```python
+    def sequentialDigits(self, low: int, high: int) -> List[int]:
+        gen = lambda x: (int(''.join(map(str, range(1, x+1)))), int(''.join(map(str, [1]*x))))
+        rst, i, r = [], len(str(low)), len(str(high))
+        cur, gap = gen(i)
+        while i <= r:
+            if cur > high: break
+            if cur >= low: rst.append(cur)
+            if (cur + 1) % 10 == 0:
+                i += 1
+                cur, gap = gen(i)
+            else: cur += gap
+        return rst
+```
+
+```python
+    def sequentialDigits(self, low: int, high: int) -> List[int]:
+        gen = lambda x: (int(''.join(map(str, range(1, x+1)))), int(''.join(map(str, [1]*x))))
+        rst, i, r = [], len(str(low))-1, len(str(high))
+        cur, gap = 9, 1
+        while i <= r:
+            if (cur + 1) % 10 == 0:
+                i += 1
+                cur, gap = gen(i)
+            else: cur += gap
+            if cur > high: break
+            if cur >= low: rst.append(cur)
+        return rst
+```
+
+
+Others: hard coded - https://leetcode.com/problems/sequential-digits/discuss/451851/Java-Just-a-joke; https://leetcode.com/problems/sequential-digits/discuss/451849/JavaPython-3-Simple-codes.

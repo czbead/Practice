@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 216ms | 
+```python
+    def largestPerimeter(self, A: List[int]) -> int:
+        A.sort(reverse=True)
+        for i in range(len(A) - 2):
+            if A[i] < A[i+1] + A[i+2]:
+                return A[i] + A[i+1] + A[i+2]
+        return 0
+```
+
+
+**II). Maximum 3 by Remove**
+| O(T): O(n!) | O(S): O(1) | Rt: 192ms | 
+```python
+    def largestPerimeter(self, A: List[int]) -> int:
+        maxv = max(A)
+        A.remove(maxv)
+        secv = max(A)
+        A.remove(secv)
+        while A:
+            cur = max(A)
+            A.remove(cur)
+            if cur + secv > maxv: return maxv + secv + cur
+            maxv, secv = secv, cur
+        return 0
+```

@@ -1,0 +1,46 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search**
+| O(T): O() | O(S): O() | Rt: 96ms | 
+```python
+    def __init__(self, root: TreeNode):
+        def dfs(node):
+            if node.val == -1: node.val = 0
+            if node.left:
+                node.left.val = node.val * 2 + 1
+                dfs(node.left)
+            if node.right:
+                node.right.val = node.val * 2 + 2
+                dfs(node.right)
+                
+        dfs(root)
+        self.arr, stack = [], [root]
+        while stack:
+            self.arr += [i.val for i in stack]
+            stack = [j for i in stack for j in (i.left, i.right) if j]
+            
+    def find(self, target: int) -> bool:
+        i = bisect.bisect(self.arr, target)
+        if i == 0 or self.arr[i-1] != target: return False
+        return True
+```
+
+Alternative: hashset. | Rt: 80ms |
+```python
+    def __init__(self, root: TreeNode):
+        def dfs(node):
+            if node.val == -1: node.val = 0
+            self.s.add(node.val)
+            if node.left:
+                node.left.val = node.val * 2 + 1
+                dfs(node.left)
+            if node.right:
+                node.right.val = node.val * 2 + 2
+                dfs(node.right)
+        
+        self.s = set()
+        dfs(root)
+            
+    def find(self, target: int) -> bool:
+        return target in self.s
+```
+

@@ -1,0 +1,33 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion -- Right First**
+| O(T): O(n) | O(S): O(h) | Rt: 32ms | 
+```python
+    def flatten(self, root: TreeNode, pre = None) -> None:
+        if not root: return 
+        if root.right: pre = self.flatten(root.right, pre)
+        if root.left: pre = self.flatten(root.left, pre)
+        root.right, root.left = pre, None
+        return root
+```
+Comment: always flatten right branch first, then flatten left branch with right flattened: left -> right flattened -> None; finally flat current root -> left flattened -> None; Each period, concat the result list of last period. Pre pointer always point to the root of a flattened subtree. 
+Referrence: here are a few similar solutions -- https://leetcode.com/problems/flatten-binary-tree-to-linked-list/discuss/36977/My-short-post-order-traversal-Java-solution-for-share/35040; https://leetcode.com/problems/flatten-binary-tree-to-linked-list/discuss/36977/My-short-post-order-traversal-Java-solution-for-share;
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def flatten(self, root: TreeNode, pre = None) -> None:
+        while root:
+            if root.left: 
+                #get the right-most node of left subtree
+                lr = root.left
+                while lr.right: lr = lr.right
+                #prune right subtree, concat it to the lr node
+                lr.right = root.right
+                #since root now has only left subtree, move it to right
+                root.right = root.left
+                root.left = None
+            root = root.right
+```
+Referrence: https://leetcode.com/problems/flatten-binary-tree-to-linked-list/discuss/37010/Share-my-simple-NON-recursive-solution-O(1)-space-complexity!
+Comment: cut off root's right subtree and make it a right subtree of the right-most node of root's left subtree. keep doing this until hit the end.

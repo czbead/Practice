@@ -1,0 +1,123 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Trie with DefaultDict**
+| O(T): O() | O(S): O() | Rt: 124ms | 
+```python
+class Node:
+    
+    def __init__(self):
+        self.sub = collections.defaultdict(Node)
+        #here should have a isend attribute, we store the word instead.
+        self.word = None
+        
+class Trie:
+    
+    def __init__(self):
+        self.root = Node()
+    
+    def insert(self, word):
+        cur = self.root
+        for i in word: cur = cur.sub[i]
+        cur.word = word
+        
+    def find(self, word):
+        cur = self.root
+        for i in word:
+            #this means this sentence word has no 'root'
+            if i not in cur.sub: return word
+            cur = cur.sub[i]
+            if cur.word is not None: return cur.word 
+        #cannot find a matched root for current word
+        return word  
+        
+class Solution:
+    def replaceWords(self, dict: List[str], sentence: str) -> str:
+        roots = Trie()
+        for word in dict: roots.insert(word)
+        return ' '.join(roots.find(word) for word in sentence.split())
+```
+
+Alternative: with naive dict. | Rt: 72ms |
+```python
+class Trie:
+    
+    def __init__(self):
+        self.root = {}
+    
+    def insert(self, word):
+        cur = self.root
+        for i in word: 
+            if i not in cur: cur[i] = {}
+            cur = cur[i]
+        cur['#'] = word
+        
+    def find(self, word):
+        cur = self.root
+        for i in word:
+            if i not in cur: return word
+            cur = cur[i]
+            if '#' in cur: return cur['#']
+        return word  
+        
+class Solution:
+    def replaceWords(self, dict: List[str], sentence: str) -> str:
+        roots = Trie()
+        for word in dict: roots.insert(word)
+        return ' '.join(roots.find(word) for word in sentence.split())
+```
+
+
+**II). Trie with Array**
+| O(T): O() | O(S): O() | Rt: 160ms | 
+```python
+class Node:
+    
+    def __init__(self):
+        self.sub = [None] * 26
+        #here should have a isend attribute, we store the word instead.
+        self.word = None
+        
+class Trie:
+    
+    def __init__(self):
+        self.root = Node()
+    
+    def insert(self, word):
+        cur = self.root
+        for i in word: 
+            index = ord(i) - ord('a')
+            if not cur.sub[index]: cur.sub[index] = Node()
+            cur = cur.sub[index]
+        cur.word = word
+        
+    def find(self, word):
+        cur = self.root
+        for i in word:
+            index = ord(i) - ord('a')
+            if cur.sub[index] is None: return word
+            cur = cur.sub[index]
+            if cur.word is not None: return cur.word 
+        #cannot find a matched root for current word
+        return word  
+        
+class Solution:
+    def replaceWords(self, dict: List[str], sentence: str) -> str:
+        roots = Trie()
+        for word in dict: roots.insert(word)
+        return ' '.join(roots.find(word) for word in sentence.split())
+```
+
+
+**III). Prefix HashSet Check**
+| O(T): O(mn) | O(S): O(n) | Rt: 68ms | 
+```python
+    def replaceWords(self, dict: List[str], sentence: str) -> str:
+        def getRoot(roots, maxl, word):
+            for i in range(1, min(maxl, len(word))+1):
+                if word[:i] in roots:
+                    return word[:i]
+            return word
+        
+        roots, maxl = set(dict), len(max(dict, key=len))
+        return ' '.join(getRoot(roots, maxl, i) for i in sentence.split())
+```
+Referrence: https://leetcode.com/problems/replace-words/discuss/105755/Python-Straightforward-with-Explanation-(Prefix-hash-Trie-solutions)

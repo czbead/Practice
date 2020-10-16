@@ -1,0 +1,26 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O() | O(S): O() | Rt: 28ms | 
+```python
+    def clumsy(self, N: int) -> int:
+         = {0: 0, 1: 1, 2: 2, 3: 6}
+        if N <= 3: return dt[N]
+        rst = N*(N-1)//(N-2) * 2
+        for i in range(N, 3, -4):
+            rst += (i-3) - i*(i-1)//(i-2)
+        return rst - dt[N%4]
+```
+
+Alternative: better with array. | Rt: 40ms |
+```python
+    def clumsy(self, N: int) -> int:
+        tail = [0, 1, 2, 6]
+        if N <= 3: return tail[N]
+        rst = N*(N-1)//(N-2) * 2
+        for i in range(N, 3, -4):
+            rst += (i-3) - i*(i-1)//(i-2)
+        return rst - tail[N%4]
+```
+
+Others: here is a clever math solution - https://leetcode.com/problems/clumsy-factorial/discuss/252279/You-never-think-of-this-amazing-O(1)-solution
+

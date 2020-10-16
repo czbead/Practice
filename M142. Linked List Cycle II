@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 48ms | 
+```python
+    def detectCycle(self, head: ListNode) -> ListNode:
+        if not head or not head.next: return
+        slow = fast = head
+        while fast and fast.next:
+            slow, fast = slow.next, fast.next.next
+            if fast is slow: break
+        if fast is not slow: return
+        met, st = slow, head
+        while met is not st:
+            met, st = met.next, st.next
+        return st
+```
+Referrence: https://leetcode.com/problems/linked-list-cycle-ii/discuss/44793/O(n)-solution-by-using-two-pointers-without-change-anything; https://leetcode.com/problems/linked-list-cycle-ii/discuss/44793/O(n)-solution-by-using-two-pointers-without-change-anything/216046;
+Alternative: | Rt: 44ms |
+```python
+    def detectCycle(self, head: ListNode) -> ListNode:
+        if not head or not head.next: return
+        st = slow = fast = head
+        while fast and fast.next:
+            slow, fast = slow.next, fast.next.next
+            if fast == slow:
+                while slow != st:
+                    slow, st = slow.next, st.next
+                return slow
+        return 
+```
+Referrence: https://leetcode.com/problems/linked-list-cycle-ii/discuss/44781/Concise-O(n)-solution-by-using-C%2B%2B-with-Detailed-Alogrithm-Description

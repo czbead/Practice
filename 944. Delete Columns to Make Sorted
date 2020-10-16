@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Zip and Sort**
+| O(T): O(mnlgn) | O(S): O(n) | Rt: 88ms | 
+```python
+    def minDeletionSize(self, A: List[str]) -> int:
+        return sum(list(i) != sorted(i) for i in zip(*A))
+```
+Comment: zip function returns a tuple, sorted function will convert any collections to a sorted list implicitly. sorted(('a', 'b')) = ['a', 'b']
+Alternative: lambda fashion.  | O(T): O(mn) | Rt: 172ms |
+```python
+    def minDeletionSize(self, A: List[str]) -> int:
+        isdesc = lambda x: any(j < i for i, j in zip(x, x[1:]))
+        return sum(isdesc(i) for i in zip(*A))
+```
+Triple:  | O(T): O(mn) | Rt: 176ms |
+```python
+	def minDeletionSize(self, A: List[str]) -> int:
+        return sum(any(col[i+1] < col[i] for i in range(len(col) - 1)) for col in zip(*A))
+```
+
+
+**II). Column Based Matrix Traverse**
+| O(T): O(mn) | O(S): O(1) | Rt: 180ms | 
+```python
+        def minDeletionSize(self, A: List[str]) -> int:
+        rst = 0
+        for j in range(len(A[0])):
+            for i in range(len(A) - 1):
+                if A[i][j] > A[i+1][j]: rst += 1; break
+        return rst
+```
+Alternative: One-liner.  | Rt: 196ms |
+```python
+    def minDeletionSize(self, A: List[str]) -> int:
+        return sum(any(A[i+1][j] < A[i][j] for i in range(len(A) - 1)) for j in range(len(A[0])))
+```
+

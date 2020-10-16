@@ -1,0 +1,68 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(m+n) | O(S): O(m+n) | Rt: 24ms | 
+```python
+    def backspaceCompare(self, S: str, T: str) -> bool:
+        def getS(s):
+            rst, ct = [], 0
+            for i in reversed(s):
+                if i == '#': ct += 1
+                elif ct: ct -= 1
+                else: rst.append(i)
+            return rst
+        return getS(S) == getS(T)
+```
+Comment: the result from getS is reversed list, unnecessary to reverse it to compare eauality. 
+Alternative:  | Rt: 28ms |
+```python
+    def backspaceCompare(self, S: str, T: str) -> bool:
+        def getS(s):
+            rst = []
+            for i in s:
+                if i == '#': 
+                    if rst: rst.pop()
+                else: rst.append(i)
+            return rst
+        return getS(S) == getS(T)
+```
+
+
+**II). Generator**
+| O(T): O(n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def backspaceCompare(self, S: str, T: str) -> bool:
+        def nxt(s):
+            ct = 0
+            for i in reversed(s):
+                if i == '#': ct += 1
+                elif ct: ct -= 1
+                else: yield i
+                
+        nxt_t, nxt_s = nxt(T), nxt(S)
+        for i, j in itertools.zip_longest(nxt_t, nxt_s):
+            if i != j: return False
+        return True   
+```
+Comment: zip_longest function, when one side runs out of items, it will have "None". 
+
+
+**III). Two Pointer with Two Counter**
+| O(T): O(n) | O(S): O(1) | Rt: 20ms | 
+```python
+    def backspaceCompare(self, S: str, T: str) -> bool:
+        cts, ctt, rs, rt = 0, 0, len(S) - 1, len(T) - 1
+        while rs >= 0 or rt >= 0:
+            while rs >= 0 and (S[rs] == '#' or cts): 
+                if S[rs] == '#': cts += 1
+                else: cts -= 1
+                rs -= 1
+            while rt >= 0 and (T[rt] == '#' or ctt): 
+                if T[rt] == '#': ctt += 1
+                else: ctt -= 1
+                rt -= 1
+            if S[rs] != T[rt]: return False
+            rs, rt = rs-1, rt-1
+        return True
+```
+
+

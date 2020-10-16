@@ -1,0 +1,9 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Math**
+| O(T): O(1) | O(S): O(1) | Rt: 28ms | 
+```python
+    def bulbSwitch(self, n: int) -> int:
+        return int(n ** 0.5)
+```
+Referrence: https://leetcode.com/problems/bulb-switcher/discuss/77104/Math-solution..
+Comment: It smelled like a brain-teaser and it truly is. I can understand the explanations and perhaps remember this trick for a few months. However, I cannot come up with it originally. A bulb i will be switched n times -- n is the amount of factors of i. While factors comes in pairs, for example i == 15, (1, 15), (3, 5). Ideally, every i have even amount of unique factors. Except one edge case, square number like 9, (1, 9), (3, 3), always yields odd amount of factors. Find all the square number not greater than n then. 

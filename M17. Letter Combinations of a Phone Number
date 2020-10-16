@@ -1,0 +1,52 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Accumulate**
+| O(T): O(4^n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def letterCombinations(self, digits: str) -> List[str]:
+        if not digits: return []
+        dt = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}
+        rst = ['']
+        for i in digits: rst = [j+k for j in rst for k in dt[i]]
+        return rst
+```
+Alternative: using list instead of dict.  | Rt: 24ms |
+```python
+    def letterCombinations(self, digits: str) -> List[str]:
+        if not digits: return []
+        rst, dt = [''], ['abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz']
+        for i in digits: rst = [j+k for j in rst for k in dt[ord(i) - ord('2')]]
+        return rst
+```
+Triple: intuitive but use extra space version. | Rt: 24ms |
+```python
+    def letterCombinations(self, digits: str) -> List[str]:
+        if not digits: return []
+        rst, dt = [''], ['abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz']
+        for i in digits:
+            tmp = []
+            for j in rst:
+                for k in dt[ord(i) - ord('2')]:
+                    tmp.append(j+k)
+            rst = tmp
+        return rst
+```
+
+
+**II). Recursion**
+| O(T): O(4^n) | O(S): O(h) | Rt: 28ms | 
+```python
+    def letterCombinations(self, digits: str) -> List[str]:
+        def combi(prefix, st, end, rst):
+            if st == end: rst.append(prefix); return
+            else: 
+                for i in dt[ord(digits[st]) - ord('2')]: 
+                    combi(prefix+i, st+1, end, rst)
+        
+        if not digits: return []
+        rst, dt = [], ['abc', 'def', 'ghi', 'jkl', 'mno', 'pqrs', 'tuv', 'wxyz']
+        combi('', 0, len(digits), rst)
+        return rst
+```
+Referrence: https://leetcode.com/problems/letter-combinations-of-a-phone-number/discuss/8109/My-recursive-solution-using-Java
+
+

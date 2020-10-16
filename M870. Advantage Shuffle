@@ -1,0 +1,51 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy Swap**
+| O(T): O(n*n) | O(S): O() | Rt: ms | TLE
+```python
+    def advantageCount(self, A: List[int], B: List[int]) -> List[int]:
+        l = len(A)
+        for i in range(l):
+            b, m, n = B[i], None, i
+            #find the index of the mininum a that is grater than b
+            for j in range(i, l):
+                if A[j] > b:
+                    if m is None: m = j
+                    elif A[j] < A[m]: m = j
+                if A[j] < A[n]: n = j
+            #cannot find a greater item, put in the minimum one
+            if m is None: A[i], A[n] = A[n], A[i]
+            else: A[i], A[m] = A[m], A[i]
+        return A
+```
+
+
+**II). Greedy & Sort & Heap & Two Pointer**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 424ms | 
+```python
+    def advantageCount(self, A: List[int], B: List[int]) -> List[int]:
+        leng = len(A)
+        A.sort()
+        l, r = 0, leng-1
+        heap = [(-B[i], i) for i in range(leng)]
+        heapq.heapify(heap)
+        rst = [None] * leng
+        while heap:
+            val, index = heapq.heappop(heap)
+            if A[r] > -val: rst[index] = A[r]; r -= 1
+            else: rst[index] = A[l]; l += 1
+        return rst
+```
+
+
+**III). Item Distribution by Pairring Up**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 380ms | 
+```python
+    def advantageCount(self, A: List[int], B: List[int]) -> List[int]:
+        A.sort()
+        dt = collections.defaultdict(list)
+        for i in sorted(B, reverse=True):
+            if A[-1] > i: dt[i].append(A.pop())
+        return [dt[i].pop() if dt[i] else A.pop() for i in B]
+```
+Referrence: https://leetcode.com/problems/advantage-shuffle/discuss/149842/Python-Greedy-Solution-Using-Sort
+Comment: be careful for the duplication in this solution, it is really smart to use list to handle duplications.

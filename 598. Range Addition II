@@ -1,0 +1,46 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Intersection of All**
+| O(T): O(n) | O(S): O(n) | Rt: 68ms | 
+note: n is the dimension of ops list
+```python
+    def maxCount(self, m: int, n: int, ops: List[List[int]]) -> int:
+        if not ops: return m*n
+        lst = list(zip(*ops))
+        return min(lst[0]) * min(lst[1])
+```
+Alternative: without conversion. | Rt: 68ms |
+```python
+    def maxCount(self, m: int, n: int, ops: List[List[int]]) -> int:
+        if not ops: return m*n
+        rst = 1 
+        for lst in zip(*ops): rst *= min(lst)
+        return rst
+```
+Triple: without zip. | Rt: 72ms |
+```python
+    def maxCount(self, m: int, n: int, ops: List[List[int]]) -> int:
+        if not ops: return m*n
+        firstops, secondops = [op[0] for op in ops], [op[1] for op in ops]
+        return min(firstops) * min(secondops)
+```
+Forth: one-liner. | RT: 64ms |
+```python
+    def maxCount(self, m: int, n: int, ops: List[List[int]]) -> int:
+        return m * n if not ops else min([op[0] for op in ops]) * min(op[1] for op in ops)
+```
+Fifth: zip enumerate. | Rt: 64ms |
+```python
+    def maxCount(self, m: int, n: int, ops: List[List[int]]) -> int:
+        if not ops: return m*n
+        first, second = zip(*ops)
+        return min(first) * min(second)
+```
+Referrence: https://leetcode.com/problems/range-addition-ii/discuss/103612/Python-Straightforward-with-Explanation
+Sixth: exception fashion.  | Rt: 68ms |
+```python
+        try:
+            return min([op[0] for op in ops]) * min(op[1] for op in ops)
+        except:
+            return m*n
+```
+Referrence: https://leetcode.com/problems/range-addition-ii/discuss/146865/Easy-Python

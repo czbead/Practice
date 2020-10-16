@@ -1,0 +1,88 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Detect Same Tree**
+| O(T): O(n*m) | O(S): O(h) | Rt: 220ms | 
+```python
+    def isSubtree(self, s: TreeNode, t: TreeNode) -> bool:
+        def isSameTree(s, t):
+            if s and t:
+                return isSameTree(s.left, t.left) and isSameTree(s.right, t.right) and s.val == t.val
+            return s is t
+        if not s: return s is t
+        return isSameTree(s, t)  or self.isSubtree(s.left, t) or self.isSubtree(s.right, t)
+```
+Alternative: Iteration version. | Rt: 204ms |
+```python
+    def isSubtree(self, s: TreeNode, t: TreeNode) -> bool:
+        def isSameTree(s, t):
+            if s and t:
+                return isSameTree(s.left, t.left) and isSameTree(s.right, t.right) and s.val == t.val
+            return s is t
+        stack = [s]
+        while stack:
+            node = stack.pop()
+            if not node: continue
+            if isSameTree(node, t): return True
+            stack.append(node.right); stack.append(node.left)
+        return False
+```
+Referrence: idea from https://leetcode.com/problems/subtree-of-another-tree/discuss/102724/Java-Solution-tree-traversal/106046
+Triple: strict check fashion. | Rt: 208ms |
+```python
+    def isSubtree(self, s: TreeNode, t: TreeNode) -> bool:
+        def isSameTree(s, t):
+            if s and t:
+                return isSameTree(s.left, t.left) and isSameTree(s.right, t.right) and s.val == t.val
+            return s is t
+        stack = [s] if s else None
+        while stack:
+            node = stack.pop()
+            if isSameTree(node, t): return True
+            if node.right: stack.append(node.right)
+            if node.left: stack.append(node.left)
+        return False
+``` 
+
+
+**II). Stringify then SubString**
+| O(T): O(n+m) | O(S): O(n+m) | Rt: 64ms | 
+```python
+    def isSubtree(self, s: TreeNode, t: TreeNode) -> bool:
+        def strTree(t):
+        	#don't use empty string, here is a space
+            if not t: return ' '
+            return "P" + str(t.val) + "C" + strTree(t.left)  + strTree(t.right)
+        return strTree(t) in strTree(s)
+```
+Alternative: python 3 string format style. | Rt: 64ms |
+```python
+    def isSubtree(self, s: TreeNode, t: TreeNode) -> bool:
+        def strTree(t):
+            if not t: return 
+            return f"# {t.val} {strTree(t.left)} {strTree(t.right)}"
+        return strTree(t) in strTree(s)
+```
+Referrence: https://leetcode.com/problems/subtree-of-another-tree/discuss/386209/Python-98-speed-with-comments/348368
+Triple: iteration version. | Rt: 64ms |
+```python
+    def isSubtree(self, s: TreeNode, t: TreeNode) -> bool:
+        def strTree(t):
+            rst, s = [], [t]
+            #in order traverse
+            while s:
+                n = s.pop()
+                if not n: 
+                    #critical, to distinguish case like: "123None",  "1231None"
+                    rst.append('|')
+                    continue
+                #critical, to distinguish case like: "(12)None", "2None"
+                rst.append(f"# {n.val}")
+                s.append(n.right); s.append(n.left)
+            return ''.join(rst)
+        
+        return strTree(t) in strTree(s)
+```
+Referrence: idea from https://leetcode.com/problems/subtree-of-another-tree/discuss/102760/Easy-O(n)-java-solution-using-preorder-traversal
+ 
+
+Others: a hash solution - https://leetcode.com/problems/subtree-of-another-tree/discuss/102741/Python-Straightforward-with-Explanation-(O(ST)-and-O(S%2BT)-approaches)
+

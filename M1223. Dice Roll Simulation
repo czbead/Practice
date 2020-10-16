@@ -1,0 +1,30 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS with Cache**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def dieSimulator(self, n: int, rollMax: List[int]) -> int:
+        def dfs(n, m, last, accu, M, dt): 
+            if n == 0: return 1
+            k = (n, last, accu)
+            if (n, last, accu) not in dt: 
+                dt[k] = sum(dfs(n-1, m, i, accu+1 if i == last else 1, M, dt) for i in range(6) if i != last or accu < m[last]) % M
+            return dt[k]
+        
+        dt, M = {}, 10**9 + 7
+        #die uses 0~5 instead of 1~6
+        return dfs(n, rollMax, 0, 0, M, dt)
+```
+
+Alternative: | Rt: ms | TLE
+```python
+    def dieSimulator(self, n: int, rollMax: List[int]) -> int:
+        def dfs(n, m, last, accu, M, dp): 
+            if n == 0: return 1
+            if dp[n][last][accu] == 0: 
+                dp[n][last][accu] = sum(dfs(n-1, m, i, accu+1 if i == last else 1, M, dp) for i in range(6) if i != last or accu < m[last]) % M
+            return dp[n][last][accu]
+        
+        M, dp = 10**9 + 7, [[[0] * 16 for _ in range(6)] for _ in range(n+1)]
+        #die uses 0~5 instead of 1~6
+        return dfs(n, rollMax, 0, 0, M, dp)
+```

@@ -1,0 +1,55 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Buildup from End**
+| O(T): O(n + m) | O(S): O(n) | Rt: 44ms | 
+note: not sure the exact tc
+```python
+    def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        if not nums2: return
+        nxt = nums2.pop()
+        dt = {nxt: -1}
+        while nums2:
+            cur = nums2.pop()
+            if cur < nxt: dt[cur] = nxt
+            else: 
+                while cur >= nxt: 
+                    nxt = dt[nxt]
+                    if nxt == -1: break
+                dt[cur] = nxt     
+            nxt = cur
+        return [dt[i] for i in nums1]
+```
+Comment: keep the state of only one next element, backtrace the dict if needed.
+
+
+**II). Cache Increasing Sequence**
+| O(T): O(n + m) | O(S): O(n) | Rt: 40ms | 
+note: people say this is O(n + m), I guess the last solution is O(n + m) as well
+```python
+    def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        cache, dt = [], {}
+        while nums2:
+            cur = nums2.pop()
+            while cache and cache[-1] <= cur: cache.pop()
+            dt[cur] = cache[-1] if cache else -1
+            cache.append(cur)
+        return [dt[i] for i in nums1]
+```
+Comment: keep a list of increasing vals, once comes a so-far greatest val, the cache will dump all history vals and append the cur val. Imagine you are traveling accross a series of mountains, once you arrived at a new mountain, you can only see those mountains behind you that are taller than the current one.  
+
+
+**III). Naive**
+| O(T): O(n*n + m) | O(S): O(n) | Rt: 48ms | 
+```python
+    def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        dt, l2 = {}, len(nums2)
+        for i in range(l2):
+            cur = -1
+            for j in range(i + 1, l2):
+                if nums2[j] > nums2[i]: 
+                    cur = nums2[j]
+                    break
+            dt[nums2[i]] = cur
+        return [dt[i] for i in nums1]
+```
+
+

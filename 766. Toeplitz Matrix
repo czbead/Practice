@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Row-Wise Compare**
+| O(T): O(mn) | O(S): O(n) | Rt: 80ms | 
+```python
+    def isToeplitzMatrix(self, matrix: List[List[int]]) -> bool:
+        return all(matrix[i][:-1] == matrix[i+1][1:] for i in range(len(matrix) - 1))
+```
+Comment: I found I am pretty sick of these diagonal setting. This solution really ask your ability to think out of box. Instead of trapping youself in comparing point-to=point, we can comparing line-to-line.
+Alternative: better readability.  | Rt: 80ms |
+```python
+    def isToeplitzMatrix(self, matrix: List[List[int]]) -> bool:
+        for i in range(len(matrix) - 1):
+            currow, nxtrow = matrix[i], matrix[i+1]
+            if currow[:-1] != nxtrow[1:]: return False
+        return True
+```
+Triple: zip style.  | Rt: 88ms |
+```python
+    def isToeplitzMatrix(self, matrix: List[List[int]]) -> bool:
+        return all(row[:-1] == nxtrow[1:] for row, nxtrow in zip(matrix, matrix[1:]))
+```
+
+
+**II). Pair-Wise Compare**
+| O(T): O(mn) | O(S): O(1) | Rt: 80ms | 
+```python
+    def isToeplitzMatrix(self, matrix: List[List[int]]) -> bool:
+        for i in range(len(matrix) - 1):
+            for j in range(len(matrix[0]) - 1):
+                if matrix[i][j] != matrix[i+1][j+1]: return False
+        return True
+```
+Alternative: One-liner.  | Rt: 88ms |
+```python
+    def isToeplitzMatrix(self, matrix: List[List[int]]) -> bool:
+        return all(matrix[i][j] == matrix[i+1][j+1] for i in range(len(matrix) - 1) for j in range(len(matrix[0]) - 1))
+```
+Comment: Zig-zag pattern traverse. 
+
+Follow-up: 
+1. load one row, drop its last element and load the second element of the next row, compare them. If good, drop both and keep reading the next 2 element of next row. compare 2 pairs of them, if good, remove 4 of them and load the next 4 items. 
+2. when memory is the limit, using more computing power to save the situation. As long as you can at least load two items in a time, you can make it work. Try to resolve the mapping pairs and load them as many as possible into the memory, do the compare, if good, drop all of them and move the cursor forward (recalculate the mapping pair may required).
+3. think out of the box, Could you simply not load the origial data? Instead, calculate a representation? a hash code? for each of the element? for a bunch of elements? or even for a single row? a blocks? a matrix overall? Then we compare its representation rather then its original data. Of course, the representation method or hash function requires detailed design 

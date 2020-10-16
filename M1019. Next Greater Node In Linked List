@@ -1,0 +1,14 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 336ms | 
+```python
+    def nextLargerNodes(self, head: ListNode) -> List[int]:
+        stack, rst, cur, i = [], [], head, 0
+        while cur:
+            while stack and cur.val > stack[-1][0]:
+                rst[stack.pop()[1]] = cur.val
+            stack.append((cur.val, i))
+            rst.append(0)
+            cur, i = cur.next, i+1
+        return rst
+```

@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP with HashMap**
+| O(T): O(n*n) | O(S): O(n*n) | Rt: 1344ms | 
+```python
+    def longestArithSeqLength(self, A: List[int]) -> int:
+        dt, l = {}, len(A)
+        for i in range(1, l):
+            for j in range(i):
+                gap = A[i] - A[j]
+                dt[(i, gap)] = dt.get((j, gap), 1) + 1
+        return max(dt.values())
+```
+
+Alternative: | Rt: 2220ms |
+```python
+    def longestArithSeqLength(self, A: List[int]) -> int:
+        dt, l = {}, len(A)
+        dp, rst = [{} for _ in range(l)], 0
+        for i in range(1, l):
+            for j in range(i):
+                gap = A[i] - A[j]
+                dp[i][gap] = dp[j].get(gap, 1) + 1
+                rst = max(rst, dp[i][gap])
+        return rst
+```
+
+
+**II). DP with Array**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+    def longestArithSeqLength(self, A: List[int]) -> int:
+        dt, l = {}, len(A)
+        dp, rst = [[1] * 10001 for _ in range(l)], 0
+        for i in range(1, l):
+            for j in range(i):
+                gap = A[i] - A[j]
+                dp[i][gap] = max(dp[i][gap], dp[j][gap] + 1)
+                rst = max(rst, dp[i][gap])
+        return rst
+```
+Comment: there is some problem with the tese cases, the solution can pass last case if you run it individually. However, it failed only the last test case when you submit it. 

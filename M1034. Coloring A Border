@@ -1,0 +1,65 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS**
+| O(T): O(mn) | O(S): O(mn) | Rt: 320ms | 
+```python
+    def colorBorder(self, grid: List[List[int]], r0: int, c0: int, color: int) -> List[List[int]]:
+        def dfs(grid, r, c, i, j, col, core, compo):
+            ct, compo[i][j] = 0, 1
+            for x, y in [(i+1, j), (i-1, j), (i, j-1), (i, j+1)]:
+                if 0<=x<r and 0<=y<c and grid[x][y] == col:
+                    ct = ct+1
+                    if not compo[x][y]: dfs(grid, r, c, x, y, col, core, compo)
+            if ct == 4: core.add((i, j))
+        
+        r, c = len(grid), len(grid[0])
+        oricolor, core, compo = grid[r0][c0], set(), [[0] * c for _ in range(r)]
+        dfs(grid, r, c, r0, c0, oricolor, core, compo)
+        for i in range(r):
+            for j in range(c):
+                if compo[i][j] and (i, j) not in core:
+                    grid[i][j] = color
+        return grid
+```
+
+Alternative: flip value instead of another matrix. | Rt: 188ms |
+```python
+    def colorBorder(self, grid: List[List[int]], r0: int, c0: int, color: int) -> List[List[int]]:
+        def dfs(grid, r, c, i, j, col, core):
+            ct, grid[i][j] = 0, -col
+            for x, y in [(i+1, j), (i-1, j), (i, j-1), (i, j+1)]:
+                if 0<=x<r and 0<=y<c and abs(grid[x][y]) == col:
+                    ct = ct+1
+                    if grid[x][y] == col: dfs(grid, r, c, x, y, col, core)
+            if ct == 4: core.add((i, j))
+        
+        r, c, core, col = len(grid), len(grid[0]), set(), grid[r0][c0]
+        dfs(grid, r, c, r0, c0, col, core)
+        #non-border item remain positive
+        for i, j in core: grid[i][j] = col
+        for i in range(r):
+            for j in range(c):
+                if grid[i][j] == -col:
+                    grid[i][j] = color
+        return grid
+```
+
+Triple: remove the set; | Rt: 260ms |
+```python
+    def colorBorder(self, grid: List[List[int]], r0: int, c0: int, color: int) -> List[List[int]]:
+        def dfs(grid, r, c, i, j, col):
+            ct, grid[i][j] = 0, -col
+            for x, y in [(i+1, j), (i-1, j), (i, j-1), (i, j+1)]:
+                if 0<=x<r and 0<=y<c and abs(grid[x][y]) == col:
+                    ct = ct+1
+                    if grid[x][y] == col: dfs(grid, r, c, x, y, col)
+            if ct == 4: grid[i][j] = col
+        
+        r, c, col = len(grid), len(grid[0]), grid[r0][c0]
+        dfs(grid, r, c, r0, c0, col)
+        for i in range(r):
+            for j in range(c):
+                if grid[i][j] == -col:
+                    grid[i][j] = color
+        return grid
+```
+Comment: https://leetcode.com/problems/coloring-a-border/discuss/282847/C%2B%2B-with-picture-DFS

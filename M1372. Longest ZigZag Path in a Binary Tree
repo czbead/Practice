@@ -1,0 +1,32 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Double Recursive**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def longestZigZag(self, root: TreeNode) -> int:
+        def dfs(node, l):
+            if l:
+                if not node.left: return 0
+                else: return dfs(node.left, 0) + 1
+            else:
+                if not node.right: return 0
+                else: return dfs(node.right, 1) + 1
+        
+        if not root: return -1
+        return max(dfs(root, 0), dfs(root, 1), self.longestZigZag(root.left), self.longestZigZag(root.right))
+```
+
+
+**II). DFS Multiple State Update**
+| O(T): O(n) | O(S): O(h) | Rt: 440ms | 
+```python
+    def longestZigZag(self, root: TreeNode) -> int:
+        def dfs(node):
+            if not node: return -1, -1, -1
+            ll, lr, lbest = dfs(node.left)
+            rl, rr, rbest = dfs(node.right)
+            return lr + 1, rl + 1, max(lr+1, rl+1, lbest, rbest)
+        return dfs(root)[-1]
+```
+Referrence: https://leetcode.com/problems/longest-zigzag-path-in-a-binary-tree/discuss/531867/JavaPython-DFS-Solution
+
+Others: https://leetcode.com/problems/longest-zigzag-path-in-a-binary-tree/discuss/531808/Java-Recursion-Try-each-node-as-a-zigzag-root-then-return-valid-sum-to-parent

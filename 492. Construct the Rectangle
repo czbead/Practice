@@ -1,0 +1,20 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Probing**
+| O(T): O(sqrt(n)) | O(S): O(1) | Rt: 28ms | 
+```python
+    def constructRectangle(self, area: int) -> List[int]:
+        cur = int(math.sqrt(area))
+        while cur > 0:
+            if area % cur == 0: return (area // cur, cur)
+            cur -= 1
+```
+Alternative: better version. | Rt: 40ms |
+```python
+    def constructRectangle(self, area: int) -> List[int]:
+        cur = int(area ** 0.5)
+        while area % cur:
+            cur -= 1
+        return (area // cur, cur)
+```
+
+

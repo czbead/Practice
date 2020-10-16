@@ -1,0 +1,16 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Local State and Global State**
+| O(T): O() | O(S): O() | Rt: 52ms | 
+```python
+    def minFlipsMonoIncr(self, S: str) -> int:
+        #flip is global state; cnt1 counts the number of 1
+        #lcoal optimal leads to global optimal, kind of like a greedy
+        flip = cnt1 = 0
+        for i in S:
+            if i == '1': cnt1 += 1
+            else: flip += 1
+            #if flip <= cnt1: flip all 0s; otherwise: flip all ls
+            flip = min(flip, cnt1)
+        return flip
+```
+Referrence: https://leetcode.com/problems/flip-string-to-monotone-increasing/discuss/189751/C%2B%2B-one-pass-DP-solution-0ms-O(n)-or-O(1)-one-line-with-explaination.

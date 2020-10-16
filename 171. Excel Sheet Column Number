@@ -1,0 +1,26 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(t): O(n) | O(m): O(1) | Rt: 20ms | 
+```python
+    def titleToNumber(self, s: str) -> int:
+        rst, base = 0, ord('A')
+        for i in s:
+            rst = rst * 26 + (ord(i) - base + 1)
+        return rst
+```
+Alternative: | Rt: 32ms |
+```python
+    def titleToNumber(self, s: str) -> int:
+        from functools import reduce
+        return reduce(lambda x, y: x * 26 + y, [ord(i) - 64 for i in s])
+```
+
+**II). Reverse Sum**
+| O(t): O() | O(m): O() | Rt: 24ms | 
+```python
+    def titleToNumber(self, s: str) -> int:
+        rst, base = 0, ord('A')
+        for i, v in enumerate(reversed(s)):
+            rst += (ord(v) - base + 1) * (26 ** i)
+        return rst
+```

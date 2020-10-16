@@ -1,0 +1,59 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP with HashMap**
+| O(T): O() | O(S): O() | Rt: 476ms | 
+```python
+    def canIWin(self, num: int, target: int) -> bool:
+        def canWin(tar, n, used, m):
+            k = ''.join(used)
+            if k not in m:
+                m[k] = False
+                for i in range(1, n+1):
+                    if used[i] == '1': continue
+                    used[i] = '1'
+                    if i >= tar or not canWin(tar-i, n, used, m):
+                        m[k] = True; used[i] = '0'; break
+                    used[i] = '0'
+            return m[k]
+            
+        if num >= target: return True
+        s = num * (num+1) // 2
+        if s < target: return False
+        if s == target: return num & 1
+        return canWin(target, num, ['0']*(num+1), {})
+```
+Referrence: https://leetcode.com/problems/can-i-win/discuss/95277/Java-solution-using-HashMap-with-detailed-explanation
+
+Alternative: | Rt: 400ms |
+```python
+    def canIWin(self, num: int, target: int) -> bool:
+        def canWin(tar, n, state, m):
+            if state not in m:
+                m[state] = False
+                for i in range(n):
+                    if state & (1 << i): continue
+                    if i+1 >= tar or not canWin(tar-i-1, n, state|(1<<i), m):
+                        m[state] = True;  break
+            return m[state]
+            
+        if num >= target: return True
+        s = num * (num+1) // 2
+        if s < target: return False
+        if s == target: return num & 1
+        return canWin(target, num, 0, {})
+```
+Reference: https://leetcode.com/problems/can-i-win/discuss/95277/Java-solution-using-HashMap-with-detailed-explanation/99601
+
+Triple: | Rt: 632ms |
+```python
+    def canIWin(self, num: int, target: int) -> bool:
+        def canWin(t, n, k, m):
+            if k in m: return m[k]
+            m[k] = any(i+1>=t or not canWin(t-i-1, n, k|(1<<i), m) for i in range(n) if not k&(1<<i))
+            return m[k]
+            
+        if num >= target: return True
+        s = num * (num+1) // 2
+        if s < target: return False
+        if s == target: return num & 1
+        return canWin(target, num, 0, {})
+```

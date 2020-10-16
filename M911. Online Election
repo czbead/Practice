@@ -1,0 +1,34 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). HashMap with Binary Search**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 724ms | 
+```python
+    def __init__(self, persons: List[int], times: List[int]):
+        dt_vote, self.dt_lead = {-1:0}, {}
+        pre, self.time = -1, times
+        for p, t in zip(persons, times):
+            dt_vote[p] = dt_vote.get(p, 0) + 1
+            if dt_vote[p] >= dt_vote[pre]: 
+                pre = self.dt_lead[t] = p
+            else: self.dt_lead[t] = pre
+
+    def q(self, t: int) -> int:
+        i = bisect.bisect(self.time, t)
+        return self.dt_lead[self.time[i-1]]
+```
+
+Alternative: using list to carry lead candidate at each timestamp; | Rt: 644ms |
+```python
+    def __init__(self, persons: List[int], times: List[int]):
+        dt_vote, self.lead = {-1:0}, []
+        pre, self.time = -1, times
+        for p in persons:
+            dt_vote[p] = dt_vote.get(p, 0) + 1
+            if dt_vote[p] >= dt_vote[pre]: 
+                pre = p; self.lead.append(p)
+            else: self.lead.append(pre)
+
+    def q(self, t: int) -> int:
+        i = bisect.bisect(self.time, t)
+        return self.lead[i-1]
+```
+Referrence: https://leetcode.com/problems/online-election/discuss/173382/C%2B%2BJavaPython-Binary-Search-in-Times

@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force Width**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def leastBricks(self, wall: List[List[int]]) -> int:
+        r, width = len(wall), sum(wall[0])
+        rst, runsum = r, [width] * r
+        for i in range(width-1, 0, -1):
+            ct = 0
+            for j in range(r):
+                if runsum[j] > i: runsum[j] -= wall[j].pop()
+                if runsum[j] < i: ct += 1
+            rst = min(rst, ct)
+        return rst
+```
+
+
+**II). Hash Map: Running Sum**
+| O(T): O(nm) | O(S): O(n) | Rt: 180ms | 
+```python
+    def leastBricks(self, wall: List[List[int]]) -> int:
+        r, width, dt = len(wall), sum(wall[0]), {}
+        for row in wall:
+            runsum = 0
+            for i in row:
+                runsum += i
+                dt[runsum] = dt.get(runsum, r) - 1
+        #dt[width] = 0 to this point, revise it to r
+        dt[width] = r
+        return min(dt.values())
+```

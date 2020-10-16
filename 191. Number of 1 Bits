@@ -1,0 +1,60 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Count**
+| O(t): O(32) | O(m): O(1) | Rt: 16ms | 
+```python
+    def hammingWeight(self, n):
+        return bin(n).count("1")
+```
+
+
+**II). Bitwise - Left Shift**
+| O(t): O(32) | O(m): O(1) | Rt: 20ms | 
+```python
+    def hammingWeight(self, n):
+        rst = 0
+        while n:
+            rst += n & 1
+            n >>= 1
+        return rst
+```
+
+
+**III). Bitwise - N&(N-1)**
+| O(t): O(32) | O(m): O(1) | Rt: 24ms | 
+```python
+    def hammingWeight(self, n):
+        rst = 0
+        while n:
+            rst += 1
+            n &= (n - 1)
+        return rst
+```
+Comment: remember the bitwise trick: n&(n-1) will step over 0s between 1s, it will traverse from 1 to the next 1 ignoring 0s in between
+Alternative: One-liner Recursion version | Rt: 16ms |
+```python
+    def hammingWeight(self, n):
+        return 1 + self.hammingWeight(n & (n-1)) if n else 0
+```
+
+
+**IV). Bitwise - Masking**
+| O(t): O(32) | O(m): O(1) | Rt: 12ms | 
+```python
+    def hammingWeight(self, n):
+        rst, mask = 0, 1
+        for _ in range(32):
+            if n & mask: rst += 1
+            mask <<= 1
+        return rst
+```
+Comment: this is not a ideal solution for this problem though (will go through all 32 bits with on knowledge on all 0s condition). But it is a standard way worth mastering
+Alternative: | Rt: 16ms |
+```python
+    def hammingWeight(self, n):
+        rst, mask = 0, 1
+        while mask <= n:
+            if n & mask: rst += 1
+            mask <<= 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/number-of-1-bits/discuss/55120/Short-code-of-C%2B%2B-O(m)-by-time-m-is-the-count-of-1's-and-another-several-method-of-O(1)-time

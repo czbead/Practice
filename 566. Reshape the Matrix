@@ -1,0 +1,56 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Flat List Segment**
+| O(T): O(mn) | O(S): O(mn) | Rt: 100ms | 
+```python
+    def matrixReshape(self, nums: List[List[int]], r: int, c: int) -> List[List[int]]:
+        amt = len(nums) * len(nums[0])
+        if amt != r * c: return nums
+        flat = [i for row in nums for i in row]
+        if r == 1: return [flat]
+        return [flat[i:i+c] for i in range(0, amt, c)]
+```
+
+
+**II). Index Mapping Resolve**
+| O(T): O(mn) | O(S): O(1) | Rt: 104ms | 
+```python
+    def matrixReshape(self, nums: List[List[int]], r: int, c: int) -> List[List[int]]:
+        xlen, ylen = len(nums), len(nums[0])
+        if xlen * ylen != r * c: return nums
+        rst = [[None] * c for _ in range(r)]
+        for i in range(r * c): rst[i//c][i%c] = nums[i//ylen][i%ylen]
+        return rst
+```
+Referrence: https://leetcode.com/problems/reshape-the-matrix/discuss/102491/Java-Concise-O(nm)-time
+
+
+**III). One By One Collect**
+| O(T): O(mn) | O(S): O(n) | Rt: 104ms | 
+```python
+    def matrixReshape(self, nums: List[List[int]], r: int, c: int) -> List[List[int]]:
+        xlen, ylen = len(nums), len(nums[0])
+        if xlen * ylen != r * c: return nums
+        rst, row, ct = [], [], 0
+        for i in range(xlen):
+            for j in range(ylen):
+                row.append(nums[i][j])
+                ct += 1
+                if ct == c:
+                    rst.append(row)
+                    row, ct = [], 0
+        return rst
+```
+Alternative: index version one by one collect. | Rt: 100ms |
+```python
+    def matrixReshape(self, nums: List[List[int]], r: int, c: int) -> List[List[int]]:
+        xlen, ylen = len(nums), len(nums[0])
+        if xlen * ylen != r * c: return nums
+        rst, row, col = [[None] * c for _ in range(r)], 0, 0
+        for i in range(xlen):
+            for j in range(ylen):
+                rst[row][col], col = nums[i][j], col + 1
+                if col == c: row, col = row + 1, 0
+        return rst
+```
+
+

@@ -1,0 +1,63 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion - Two Level Check**
+| O(T): O(n) | O(S): O(h) | Rt: 432ms | 
+```python
+    def longestUnivaluePath(self, root: TreeNode) -> int:
+        def dfs(node, rst):
+            if not node: return 0
+            l = dfs(node.left, rst)
+            r = dfs(node.right, rst)
+            l = l + 1 if node.left and node.left.val == node.val else 0
+            r = r + 1 if node.right and node.right.val == node.val else 0
+            rst[0] = max(rst[0], l + r)
+            return max(l, r)
+        rst = [0]
+        dfs(root, rst)
+        return rst[0]
+```
+Comment: any path need to pass the current root node (left child cannot reach right child directly without connecting to the common parent, children cannot reach node beyond their parent without connecting to their parent). For each parent node, it only need to consider those descendants who share the same value as his, otherwise 0. The recursion process has to be bottom-up, otherwise you will miss thoes longest but not passing root node path cases. Regarding the left right order, it doesn't matter. The recursion involves two layer, parent and its children.  
+
+
+**II). Recursion - One Level Check**
+| O(T): O() | O(S): O() | Rt: 396ms | 
+```python
+    def longestUnivaluePath(self, root: TreeNode) -> int:
+        def dfs(node, preval, rst):
+            if not node: return 0
+            l = dfs(node.left, node.val, rst)
+            r = dfs(node.right, node.val, rst)
+            #if children is diff from parent val, it is 0 + 0, won't affect
+            #in current layer, update previous layer longest, different from solution I -- current layer update current layer longest
+            rst[0] = max(rst[0], l + r)
+            if node.val != preval: return 0
+            return max(l, r) + 1
+        rst = [0]
+        #here we assume the preval of root None, hope there is no None value in the tree
+        dfs(root, None, rst)
+        return rst[0]
+```
+Referrence: https://leetcode.com/problems/longest-univalue-path/discuss/108175/java-solution-with-global-variable
+Comment: this solution is beautiful and really difficult to come up with. The beauty is that the value is passed top-down while the real execution (return) is actually bottom-up. In other words, the top layer affects the underlying layer while the underlying layer support the upper layer without contradiction or dead loop. This kind of bi-direction workflow doesn't happen very often in solutions. 
+
+
+**III). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 576ms | 
+```python
+    def longestUnivaluePath(self, root: TreeNode) -> int:
+        rst, dt, stack = 0, {None: 0}, [(root, None, 0)]
+        while stack:
+            node, preval, visited = stack.pop()
+            if not node: continue
+            if not visited: 
+                stack.append((node, preval, 1))
+                stack.append((node.right, node.val, 0))
+                stack.append((node.left, node.val, 0))
+                continue
+            #no worry for k not existed in dict error, because all previous node is established before current node. 
+            if node.val == preval: dt[node] = max(dt[node.left], dt[node.right]) + 1
+            else: dt[node] = 0 
+            rst = max(rst, dt[node.left] + dt[node.right])
+        return rst
+```
+Question: is it possible to write a iterative solution without maintain a dict and a preval (or either of them)? I was thinking hard to find one but failed. 
+

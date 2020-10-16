@@ -1,0 +1,70 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def longestPalindrome(self, s: str) -> int:
+        ct = collections.Counter(s)
+        # v // 2 * 2 gives you the maximum even number less than v
+        summ = sum(v // 2 * 2 for v in ct.values())
+        return summ if summ == len(s) else summ + 1
+```
+Alternative: | Rt: 24ms |
+```python
+    def longestPalindrome(self, s: str) -> int:
+        odds, ct = 0, collections.Counter(s)
+        for i in ct.values():
+            if i % 2: odds += 1 
+        return min(len(s) - odds + 1, len(s))
+```
+Comment: the power of handing the opposite. 
+
+
+**II). Limited State**
+| O(T): O(n) | O(S): O(1) | Rt: 36ms | 
+```python
+    def longestPalindrome(self, s: str) -> int:
+        # 122 ('z') - 65 ('A') + 1 = 58
+        m = [0] * 58
+        for i in s: m[ord(i) - 65] += 1
+        summ = sum(i // 2 * 2 for i in m)
+        return min(summ + 1, len(s))
+```
+Alternative: | Rt: 32ms |
+```python
+    def longestPalindrome(self, s: str) -> int:
+        m = [0] * 58
+        for i in s: m[ord(i) - 65] += 1
+        odd = sum(i % 2 for i in m)
+        return len(s) - odd + 1 if odd else len(s)
+```
+
+
+**III). Set Count**
+| O(T): O(n*n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def longestPalindrome(self, s: str) -> int:
+        summ = 0
+        for i in set(s):
+            summ += s.count(i) // 2 * 2 
+        return min(summ + 1, len(s))
+```
+Alternative: | Rt: 28ms |
+```python
+    def longestPalindrome(self, s: str) -> int:
+        odd, l = 0, len(s)
+        for i in set(s): odd += s.count(i) % 2 
+        return min(l - odd + 1, l)
+```
+
+
+**IV). Collect Odds**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def longestPalindrome(self, s: str) -> int:
+        odd, l = set(), len(s)
+        for i in s:
+            if i not in odd: odd.add(i)
+            else: odd.remove(i)
+        return l - len(odd) + 1 if odd else l
+```
+

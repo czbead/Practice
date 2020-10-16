@@ -1,0 +1,56 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Iterative Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 20ms | 
+```python
+    def flatten(self, head: 'Node') -> 'Node':
+        if not head: return 
+        h, stack = head, []
+        while h.child or h.next or stack:
+            if h.child:
+                if h.next: stack.append(h.next)
+                h.child.prev, h.next, h.child = h, h.child, None
+            elif not h.next: 
+                node = stack.pop()
+                node.prev, h.next = h, node
+            h = h.next
+        return head
+```
+Comment: the input of this problem is a "nested" data structure which have multiple levels. To solve this kind of problem, there is one thing for sure -- you need "Stack" -- either function stack (recursion) or data structrue stack (stack).
+
+
+**II). Iterative Connect**
+| O(T): O(n) | O(S): O(1) | Rt: 36ms | 
+```python
+    def flatten(self, head: 'Node') -> 'Node':
+        if not head: return
+        h = head
+        while h:
+            if h.child:
+                tail = h.child
+                while tail.next: tail = tail.next
+                if h.next: tail.next, h.next.prev = h.next, tail
+                h.next, h.child.prev, h.child = h.child, h, None
+            h = h.next
+        return head
+```
+Referrence: https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/discuss/150321/Easy-Understanding-Java-beat-95.7-with-Explanation
+
+
+**III). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 52ms | 
+```python
+    def flatten(self, head: 'Node') -> 'Node':
+        def dfs(node):
+            if node.child:
+                tail = dfs(node.child)
+                if node.next: node.next.prev, tail.next = tail, node.next 
+                node.child.prev, node.next, node.child = node, node.child, None
+            if not node.next: return node
+            return dfs(node.next)
+        
+        if not head: return
+        dfs(head)
+        return head
+```
+Reverrence: https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/discuss/157606/Java-Recursive-Solution/179450
+Comment: the recursive solution is more difficult than the iterative ones because the pointer need to forward two directions: go down and go right. 

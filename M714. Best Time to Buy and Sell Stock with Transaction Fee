@@ -1,0 +1,76 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy**
+| O(T): O(n) | O(S): O(1) | Rt: 644ms | 
+```python
+    def maxProfit(self, prices: List[int], fee: int) -> int:
+        rst, curmin = 0, float('inf')
+        for i in prices:
+            if i < curmin: curmin = i
+            #can make profit 
+            elif i - curmin > fee:
+                rst += i - curmin - fee
+                curmin = i - fee
+        return rst
+```
+Referrence: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/discuss/201603/Python.-Greedy-is-good.
+Comment: why curmin = i - fee? I suggest you take a look at the referrence top voted comment;
+
+
+**II). DP: Two State**
+| O(T): O(n) | O(S): O(n) | Rt: 904ms | 
+```python
+    def maxProfit(self, prices: List[int], fee: int) -> int:
+        l = len(prices)
+        #buy[i]: best profit by not sell on i-th day, rest or buy in 
+        #sell[i]: best profit by not buy on i-th day, rest or sell out
+        buy, sell = [0] * l, [0] * l
+        buy[0] = -prices[0] - fee
+        for i in range(1, l):
+            #buy[i-1] means rest today, the other means buy in (sell out previously)
+            buy[i] = max(buy[i-1], sell[i-1] - prices[i] - fee)
+            sell[i] = max(sell[i-1], buy[i-1] + prices[i])
+        #must sell all stocks in last day
+        return sell[-1]
+```
+
+Alternative: | Rt: 880ms |
+```python
+    def maxProfit(self, prices: List[int], fee: int) -> int:
+        l = len(prices)
+        #buy[i]: best profit by not sell on i-th day, rest or buy in 
+        #sell[i]: best profit by not buy on i-th day, rest or sell out
+        buy, sell = [0] * l, [0] * l
+        buy[0] = -prices[0]
+        for i in range(1, l):
+            #buy[i-1] means rest today, the other means buy in (sell out previously)
+            buy[i] = max(buy[i-1], sell[i-1] - prices[i])
+            sell[i] = max(sell[i-1], buy[i-1] + prices[i] - fee)
+        #must sell all stocks in last day
+        return sell[-1]
+```
+Referrence: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/discuss/108871/2-solutions-2-states-DP-solutions-clear-explanation!
+
+
+**III). DP: Keep Previous State**
+| O(T): O(n) | O(S): O(1) | Rt: 788ms | 
+```python
+    def maxProfit(self, prices: List[int], fee: int) -> int:
+        sell_i, buy_i = 0, -float('inf')
+        for i in prices:
+            #cannot reverse order, buy first, sell then
+            buy_i = max(buy_i, sell_i - i - fee)
+            sell_i = max(sell_i, buy_i + i)
+        return sell_i
+```
+
+Alternative: | Rt: 748ms |
+```python
+    def maxProfit(self, prices: List[int], fee: int) -> int:
+        sell_i, buy_i = 0, -float('inf')
+        for i in prices:
+            #cannot reverse order, buy first, sell then
+            buy_i = max(buy_i, sell_i - i)
+            sell_i = max(sell_i, buy_i + i - fee)
+        return sell_i
+```
+Referrence: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/discuss/108870/Most-consistent-ways-of-dealing-with-the-series-of-stock-problems; 

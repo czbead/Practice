@@ -1,0 +1,66 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Global Timeline and Sort Time**
+| O(T): O() | O(S): O() | Rt: 84ms | 
+```python
+class Twitter:
+
+    def __init__(self):
+        self.time = 0
+        self.dt_new = collections.defaultdict(list)
+        self.dt_follow = collections.defaultdict(list)
+
+    def postTweet(self, userId: int, tweetId: int) -> None:
+        self.dt_new[userId].append((tweetId, self.time))
+        self.time += 1
+
+    def getNewsFeed(self, userId: int) -> List[int]:
+        feed = self.dt_new[userId][:]  #because we don't allow follow self, 
+        for user in self.dt_follow[userId]:
+            feed.extend(self.dt_new[user])
+        feed.sort(key=lambda x: x[1], reverse=True)
+        return [i for i, j in feed[:10]]
+
+    def follow(self, followerId: int, followeeId: int) -> None:
+        #don't allow follow self, should be consistant globally
+        if followerId != followeeId and followeeId not in self.dt_follow[followerId]:  
+            self.dt_follow[followerId].append(followeeId)
+
+    def unfollow(self, followerId: int, followeeId: int) -> None:
+        if followeeId in self.dt_follow[followerId]:
+            self.dt_follow[followerId].remove(followeeId)
+```
+Alternative: always follow self version. | Rt: 84ms |
+```python
+class Twitter:
+
+    def __init__(self):
+        self.time = 0
+        self.dt_new = collections.defaultdict(list)
+        self.dt_follow = collections.defaultdict(list)
+
+    def postTweet(self, userId: int, tweetId: int) -> None:
+        self.follow(userId, userId)  #always follow self
+        self.dt_new[userId].append((tweetId, self.time))
+        self.time += 1
+
+    def getNewsFeed(self, userId: int) -> List[int]:
+        feed = []
+        for user in self.dt_follow[userId]:
+            feed.extend(self.dt_new[user])
+        feed.sort(key=lambda x: x[1], reverse=True)
+        return [i for i, j in feed[:10]]
+
+    def follow(self, followerId: int, followeeId: int) -> None:
+        #always follow self, should be consistant globally
+        if followeeId not in self.dt_follow[followerId]:  
+            self.dt_follow[followerId].append(followeeId)
+
+    def unfollow(self, followerId: int, followeeId: int) -> None:
+        #you cannot unfollow youself
+        if followeeId != followerId and followeeId in self.dt_follow[followerId]:
+            self.dt_follow[followerId].remove(followeeId)
+```
+Comment: no matter you follow self or not not follow self, it should be kept globally consistant. 
+
+
+Others: heavier OOP design: https://leetcode.com/problems/design-twitter/discuss/82825/Java-OO-Design-with-most-efficient-function-getNewsFeed; 

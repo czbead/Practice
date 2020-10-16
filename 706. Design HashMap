@@ -1,0 +1,639 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Chaining -- List of List**
+| O(T): O(n) | O(S): O() | Rt: 212ms | 
+```python
+class MyHashMap:
+
+    def __init__(self):
+        self.size = 1000
+        self.lst = [None] * self.size
+        
+    def hash(self, key):
+        return key % self.size
+
+    def put(self, key: int, value: int) -> None:
+        pos = self.hash(key)
+        if self.lst[pos] is None: self.lst[pos] = []
+        for i in range(len(self.lst[pos])):
+            if self.lst[pos][i][0] == key: 
+                self.lst[pos][i] = (key, value)
+                return
+        self.lst[pos].append((key, value))
+        
+    def get(self, key: int) -> int:
+        pos = self.hash(key)
+        if self.lst[pos] is None: return -1
+        for k, v in self.lst[pos]: 
+            if k == key: return v
+        return -1
+
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        if self.lst[pos] is None: return 
+        # for k, v in self.lst[pos]:
+        #     if k == key: 
+        #         self.lst[pos].remove((k, v))
+        #         return
+        for i in range(len(self.lst[pos])):
+            if self.lst[pos][i][0] == key: 
+                del self.lst[pos][i]
+                return
+```
+Comment: it seems del index is faster remove element in python list. It is kind of meaningless to apply "load factor and rehash shuffle" in chaining based solutions. Usually, open addressing based solutions benefit from "load factor and rehash"
+
+Alternative: List of Sorted List -- Bisect.insort.  | Rt: 204ms |
+```python
+class MyHashMap:
+
+    def __init__(self):
+        self.size = 1000
+        self.lst = [None] * self.size
+        
+    def hash(self, key):
+        return key % self.size
+
+    def put(self, key: int, value: int) -> None:
+        pos = self.hash(key)
+        if self.lst[pos] is None: self.lst[pos] = []
+        for i, (k, v) in enumerate(self.lst[pos]):
+            if k == key: 
+                self.lst[pos][i] = (key, value)
+                return
+            elif k > key: break
+        bisect.insort(self.lst[pos], (key, value))
+        
+    def get(self, key: int) -> int:
+        pos = self.hash(key)
+        if self.lst[pos] is None: return -1
+        for k, v in self.lst[pos]: 
+            if k == key: return v
+            elif k > key: return -1
+        return -1
+
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        if self.lst[pos] is None: return 
+        for k, v in self.lst[pos]:
+            if k == key: 
+                self.lst[pos].remove((k, v))
+                return
+            elif k > key: return
+```
+
+triple: self implemented sort by insert.  | Rt: 212ms |
+```python
+class MyHashMap:
+
+    def __init__(self):
+        self.size = 1000
+        self.lst = [None] * self.size
+        
+    def hash(self, key):
+        return key % self.size
+
+    def put(self, key: int, value: int) -> None:
+        pos = self.hash(key)
+        if self.lst[pos] is None: self.lst[pos] = []
+        ind = None    #insert index
+        for i, (k, v) in enumerate(self.lst[pos]):
+            if k == key: 
+                self.lst[pos][i] = (key, value)
+                return
+            elif k > key: ind = i; break
+        if ind is None: self.lst[pos].append((key, value)); return     
+        self.lst[pos].insert(ind, (key, value))
+        
+    def get(self, key: int) -> int:
+        pos = self.hash(key)
+        if self.lst[pos] is None: return -1
+        for k, v in self.lst[pos]: 
+            if k == key: return v
+            elif k > key: return -1
+        return -1
+
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        if self.lst[pos] is None: return 
+        for k, v in self.lst[pos]:
+            if k == key: 
+                self.lst[pos].remove((k, v))
+                return
+            elif k > key: return
+```
+
+
+**II). Chaining -- List of Sorted LinkedList**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+class ListNode:
+    def __init__(self, key=None, value=None, nxt=None):
+        self.k = key
+        self.val = value
+        self.next = nxt
+    
+class MyHashMap:
+
+    def __init__(self):
+        self.size = 1000
+        self.lst = [None] * self.size
+        
+    def hash(self, key):
+        return key % self.size
+
+    def put(self, key: int, value: int) -> None:
+        pos = self.hash(key)
+        if self.lst[pos] is None: self.lst[pos] = ListNode(key, value); return
+        head = self.lst[pos]
+        if key < head.k: self.lst[pos] = ListNode(key, value, head); return
+        pre = h = head
+        while h:
+            if h.k == key: h.val = value; return
+            elif h.k > key: pre.next = ListNode(key, value, h); return
+            pre, h = h, h.next
+        pre.next = ListNode(key, value)
+        
+    def get(self, key: int) -> int:
+        pos = self.hash(key)
+        if self.lst[pos] is None: return -1
+        head = self.lst[pos]
+        while head:
+            if head.k == key: return head.val
+            elif head.k > key: return -1
+            head = head.next
+        return -1
+
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        if self.lst[pos] is None: return 
+        head = self.lst[pos]
+        if head.k == key: self.lst[pos] = head.next; return
+        pre = h = head
+        while h:
+            if h.k == key: pre.next = h.next; return
+            elif h.k > key: return 
+            pre, h = h, h.next
+```
+Alternative: unsorted intuitive version.  | Rt: 232ms |
+```python
+class ListNode:
+    def __init__(self, key=None, value=None, nxt=None):
+        self.k = key
+        self.val = value
+        self.next = nxt
+    
+class MyHashMap:
+
+    def __init__(self):
+        self.size = 1000
+        self.lst = [None] * self.size
+        
+    def hash(self, key):
+        return key % self.size
+
+    def put(self, key: int, value: int) -> None:
+        pos = self.hash(key)
+        if self.lst[pos] is None: self.lst[pos] = ListNode(key, value); return
+        h = head = self.lst[pos]
+        while h:
+            if h.k == key: h.val = value; return
+            h = h.next
+        self.lst[pos] = ListNode(key, value, head)
+        
+    def get(self, key: int) -> int:
+        pos = self.hash(key)
+        if self.lst[pos] is None: return -1
+        head = self.lst[pos]
+        while head:
+            if head.k == key: return head.val
+            head = head.next
+        return -1
+
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        if self.lst[pos] is None: return 
+        head = self.lst[pos]
+        if head.k == key: self.lst[pos] = head.next; return
+        pre = h = head
+        while h:
+            if h.k == key: pre.next = h.next; return
+            pre, h = h, h.next
+```
+
+
+**III). Open Addressing - Rehash and Load Factor**
+| O(T): O() | O(S): O() | Rt: 260ms | 
+```python
+class MyHashMap:
+
+    def __init__(self):
+        self.capacity = 8
+        self.lst = [None] * self.capacity
+        self.size = 0
+        self.loadfactor = 0.7
+        
+    def hash(self, key):
+        return key % self.capacity
+    
+    def rehash(self, orihash):
+        return (5 * orihash + 1) % self.capacity
+    
+    def safePut(self, key, value):
+        pos = self.hash(key)
+        while self.lst[pos] is not None: 
+            if self.lst[pos][0] == key: 
+                self.lst[pos] = (key, value)
+                return
+            #a small bug existed, see comment bellow
+            elif self.lst[pos][0] == -1: break
+            pos = self.rehash(pos)
+        self.lst[pos] = (key, value)
+        self.size += 1
+        
+    def shuffle(self, lst):
+        for tup in lst:
+            if tup is not None: self.safePut(tup[0], tup[1])
+
+    def put(self, key: int, value: int) -> None:
+        if self.size / self.capacity > self.loadfactor:
+            self.capacity <<= 1
+            orilst = self.lst
+            self.lst = [None] * self.capacity
+            self.shuffle(orilst)
+        
+        self.safePut(key, value)
+
+    def get(self, key: int) -> int:
+        pos = self.hash(key)
+        while self.lst[pos] is not None:
+            #when you find a (-1, -1) (removed item), you cannot stop and return not found, go on searching
+            if self.lst[pos][0] == key: return self.lst[pos][1]
+            pos = self.rehash(pos)
+        return -1
+
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        while self.lst[pos] is not None:
+            #why you cannot assign None? because you will lose the track of following items
+            if self.lst[pos][0] == key: 
+                self.lst[pos] = (-1, -1)
+                self.size -= 1
+                return
+            pos = self.rehash(pos)
+```
+
+Comment: this solution has a sligh bug. When you put a new key into the list, when you safe put it, when you hit a (-1, -1) position, you just put the key value in it. This is not safe, because there may exist solid date after this (-1, -1) position. However, the test case didn't cover this senario. How to fix this problem? it is not a big bug actually. A trivial way to fix it is: apply get first, if you cannot get it, it is safe to put it in (any position, including the (-1, -1) position). If you get the value, well, you won't insert it even you hit (-1, -1), go on searching until you find the key. Why this fix works? because the get function will skip (-1, -1), it will search all possibilities. 
+
+
+Alternative: bug-free safe solution.  | Rt: 276ms |
+```python
+class MyHashMap:
+
+    def __init__(self):
+        self.capacity = 8
+        self.lst = [None] * self.capacity
+        self.size = 0
+        self.loadfactor = 0.7
+        
+    def hash(self, key):
+        return key % self.capacity
+    
+    def rehash(self, orihash):
+        return (5 * orihash + 1) % self.capacity
+    
+    def safePut(self, key, value):
+        pos = self.hash(key)
+        while self.lst[pos] is not None: 
+            if self.lst[pos][0] == key: 
+                self.lst[pos] = (key, value)
+                return
+            elif self.lst[pos][0] == -1: break
+            pos = self.rehash(pos)
+        self.lst[pos] = (key, value)
+        self.size += 1
+        
+    def safeUpdate(self, key, value):
+        pos = self.hash(key)
+        while self.lst[pos] is not None: 
+            if self.lst[pos][0] == key: 
+                self.lst[pos] = (key, value)
+                return True
+            pos = self.rehash(pos)
+        
+    def shuffle(self, lst):
+        for tup in lst:
+            if tup is not None: self.safePut(tup[0], tup[1])
+
+    def put(self, key: int, value: int) -> None:
+        if self.size / self.capacity > self.loadfactor:
+            self.capacity <<= 1
+            orilst = self.lst
+            self.lst = [None] * self.capacity
+            self.shuffle(orilst)
+        
+        #here we have two methods to save a lot of computing for shuffle operations
+        #shuffle is always safePut, no need to do the O(n) check 
+        if self.get(key) == -1: self.safePut(key, value)
+        else: self.safeUpdate(key, value)
+
+    def get(self, key: int) -> int:
+        pos = self.hash(key)
+        while self.lst[pos] is not None:
+            #when you find a (-1, -1) (removed item), you cannot stop and return not found
+            if self.lst[pos][0] == key: return self.lst[pos][1]
+            pos = self.rehash(pos)
+        return -1
+
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        while self.lst[pos] is not None:
+            #why you cannot assign None? because you will lose the track of following items
+            if self.lst[pos][0] == key: 
+                self.lst[pos] = (-1, -1)
+                self.size -= 1
+                return
+            pos = self.rehash(pos)
+            
+```
+
+**IV). Chaining with BST -- Balancing when Remove**
+| O(T): O() | O(S): O() | Rt: 280ms | 
+```python
+class Node:
+    def __init__(self, key=None, value=None, left=None, right=None):
+        self.key = key
+        self.val = value
+        self.left = left
+        self.right = right
+        
+    def insert(self, key, value):
+        if self.key == key: self.val = value; return
+        if self.key < key: 
+            if self.right: self.right.insert(key, value);
+            else: self.right = Node(key, value); return
+        else:
+            if self.left: self.left.insert(key, value)
+            else: self.left = Node(key, value); return
+        
+    def find(self, key):
+        if self.key == key: return self.val
+        if self.key < key: 
+            if self.right: return self.right.find(key)
+            else: return -1
+        else: 
+            if self.left: return self.left.find(key)
+            else: return -1
+            
+    def get_min(self, node):
+        while node.left: node = node.left
+        return node
+    
+    def inorderexc(self, key, arr):
+        if self.left: self.left.inorderexc(key, arr)
+        if self.key != key: arr.append((self.key, self.val))
+        if self.right: self.right.inorderexc(key, arr)
+        
+class Bst:
+    def __init__(self, root=None):
+        self.root = root
+    
+    def insert(self, key, value):
+        if not self.root: self.root = Node(key, value); return 
+        self.root.insert(key, value)
+        
+    def find(self, key):
+        if not self.root: return -1
+        return self.root.find(key)
+        
+    def delete(self, key):
+        if not self.root: return
+        bstarr = self.bst2arrexc(key)
+        self.root = self.arr2bst(bstarr)
+        
+    def bst2arrexc(self, key):
+        arr = []
+        if self.root: self.root.inorderexc(key, arr)
+        return arr
+    
+    def arr2bst(self, arr):
+        if not arr: return None
+        mid = len(arr) // 2
+        root = Node(arr[mid][0], arr[mid][1])
+        root.left = self.arr2bst(arr[:mid]) 
+        root.right = self.arr2bst(arr[mid+1:])
+        return root
+    
+class MyHashMap:
+    def __init__(self):
+        self.size = 1000
+        self.lst = [None] * self.size
+        
+    def hash(self, key):
+        return key % self.size
+
+    def put(self, key: int, value: int) -> None:
+        # print("put", key, value)
+        pos = self.hash(key)
+        root = self.lst[pos]
+        if root is None: root = Bst()
+        root.insert(key, value)
+        self.lst[pos] = root
+        
+    def get(self, key: int) -> int:
+        pos = self.hash(key)
+        root = self.lst[pos]
+        if root is None: return -1
+        return root.find(key)
+
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        root = self.lst[pos]
+        if root is None: return 
+        root.delete(key)
+```
+Comment: when do the remove operation, the solution conducts BST balancing in the process. 
+
+
+
+**V). Chaining with BST -- Naive**
+| O(T): O() | O(S): O() | Rt: 252ms | 
+```python
+class Node:
+    def __init__(self, key=None, value=None, left=None, right=None):
+        self.key = key
+        self.val = value
+        self.left = left
+        self.right = right
+        
+    def insert(self, key, value):
+        if self.key == key: self.val = value; return
+        if self.key < key: 
+            if self.right: self.right.insert(key, value);
+            else: self.right = Node(key, value); return
+        else:
+            if self.left: self.left.insert(key, value)
+            else: self.left = Node(key, value); return
+        
+    def find(self, key):
+        if self.key == key: return self.val
+        if self.key < key: 
+            if self.right: return self.right.find(key)
+            else: return -1
+        else: 
+            if self.left: return self.left.find(key)
+            else: return -1
+        
+    def delete(self, key):
+        if self.key == key:
+            if self.right and self.left: 
+                psucc, succ = self.right.findMin(self)
+                #this is the ideal case, self.right has at least one left child
+                if psucc.left == succ: psucc.left = succ.right
+                #if the successor is self.right, this is the special case, self.right has not left child
+                else: psucc.right = succ.right
+                succ.left, succ.right = self.left, self.right
+                return succ                
+            else: return self.left or self.right
+        elif self.key > key:          
+            if self.left: self.left = self.left.delete(key)
+        else:                       
+            if self.right: self.right = self.right.delete(key)
+        return self
+
+    def findMin(self, parent):
+        if self.left: return self.left.findMin(self)
+        else: return (parent, self)
+        
+class Bst:
+    def __init__(self, root=None):
+        self.root = root
+    
+    def insert(self, key, value):
+        if not self.root: self.root = Node(key, value); return 
+        self.root.insert(key, value)
+        
+    def find(self, key):
+        if not self.root: return -1
+        return self.root.find(key)
+        
+    def delete(self, key):
+        if not self.root: return
+        self.root = self.root.delete(key)
+    
+class MyHashMap:
+    def __init__(self):
+        self.size = 1000
+        self.lst = [None] * self.size
+        
+    def hash(self, key):
+        return key % self.size
+
+    def put(self, key: int, value: int) -> None:
+        # print("put", key, value)
+        pos = self.hash(key)
+        root = self.lst[pos]
+        if root is None: root = Bst()
+        root.insert(key, value)
+        self.lst[pos] = root
+        
+    def get(self, key: int) -> int:
+        pos = self.hash(key)
+        root = self.lst[pos]
+        if root is None: return -1
+        return root.find(key)
+
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        root = self.lst[pos]
+        if root is None: return 
+        root.delete(key)
+```
+Referrence: https://stackoverflow.com/questions/33448561/delete-node-in-binary-search-tree-python
+Alternative:  | Rt: 256ms |
+```python
+class Node:
+    def __init__(self, key=None, value=None, left=None, right=None):
+        self.key = key
+        self.val = value
+        self.left = left
+        self.right = right
+        
+    def insert(self, key, value):
+        if self.key == key: self.val = value; return
+        if self.key < key: 
+            if self.right: self.right.insert(key, value);
+            else: self.right = Node(key, value); return
+        else:
+            if self.left: self.left.insert(key, value)
+            else: self.left = Node(key, value); return
+        
+    def find(self, key):
+        if self.key == key: return self.val
+        if self.key < key: 
+            if self.right: return self.right.find(key)
+            else: return -1
+        else: 
+            if self.left: return self.left.find(key)
+            else: return -1
+        
+    def delete(self, key):
+        if self.key == key:
+            if self.left and self.right:
+                minnode = self.right.get_min()
+                self.key, self.val = minnode.key, minnode.val
+                self.right = self.right.delete(minnode.key)
+            else: return self.left or self.right
+        elif self.key < key: 
+            if self.right: self.right = self.right.delete(key)
+        elif self.key > key:
+            if self.left: self.left = self.left.delete(key)
+        return self
+            
+    def get_min(self):
+        while self.left: return self.left.get_min()
+        return self
+        
+class Bst:
+    def __init__(self, root=None):
+        self.root = root
+    
+    def insert(self, key, value):
+        if not self.root: self.root = Node(key, value); return 
+        self.root.insert(key, value)
+        
+    def find(self, key):
+        if not self.root: return -1
+        return self.root.find(key)
+        
+    def delete(self, key):
+        if not self.root: return
+        self.root = self.root.delete(key)
+    
+class MyHashMap:
+    def __init__(self):
+        self.size = 1000
+        self.lst = [None] * self.size
+        
+    def hash(self, key):
+        return key % self.size
+
+    def put(self, key: int, value: int) -> None:
+        # print("put", key, value)
+        pos = self.hash(key)
+        root = self.lst[pos]
+        if root is None: root = Bst()
+        root.insert(key, value)
+        self.lst[pos] = root
+        
+    def get(self, key: int) -> int:
+        pos = self.hash(key)
+        root = self.lst[pos]
+        if root is None: return -1
+        return root.find(key)
+
+    def remove(self, key: int) -> None:
+        pos = self.hash(key)
+        root = self.lst[pos]
+        if root is None: return 
+        root.delete(key)   
+```
+Referrence: https://www.geeksforgeeks.org/binary-search-tree-set-2-delete/

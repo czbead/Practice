@@ -1,0 +1,47 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Generator**
+| O(T): O(n) | O(S): O(1) | Rt: 48ms | 
+```python
+    def kthSmallest(self, root: TreeNode, k: int) -> int:
+        def gen(node):
+            if node.left: yield from gen(node.left)
+            yield node.val
+            if node.right: yield from gen(node.right)
+        
+        genval = gen(root)
+        for _ in range(k-1): tmp = next(genval)
+        return next(genval)
+```
+
+
+**II). Iterative Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def kthSmallest(self, root: TreeNode, k: int) -> int:
+        stack = []
+        while True:
+            while root:
+                stack.append(root)
+                root = root.left
+            node, k = stack.pop(), k-1
+            if k == 0: return node.val
+            else: root = node.right
+```
+
+
+**III). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 56ms | 
+```python
+    def kthSmallest(self, root: TreeNode, k: int) -> int:
+        def dfs(node, nth, rst):
+            if node.left: dfs(node.left, nth, rst)
+            nth[0] -= 1
+            if nth[0] == 0: rst[0] = node.val; return
+            if node.right: dfs(node.right, nth, rst)
+        
+        rst = [0]
+        dfs(root, [k], rst)
+        return rst[0]
+```
+
+Follow-Up: if insert and delete operation happens frequently in the BST, a good idea is to building a map {node: the amount of nodes whoes val <= node.val}. When we do the insert or delete, update the hash map in the run. By doing this, we can apply binary search to the BST to find the N-th element at cost O(lgn). I cannot code it out since we need to implement the delete and insert function to support this solution. I cannot come up with a better idea which doesn't depends on the insert and delete function at all. 

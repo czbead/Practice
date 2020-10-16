@@ -1,0 +1,19 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**Max < Max** | Rt: 358ms |
+```sql
+select max(Salary) as SecondHighestSalary from Employee where Salary < (select max(salary) from Employee)
+```
+
+**Not In** | Rt: 283ms |
+```sql
+select max(Salary) as SecondHighestSalary from Employee where Salary not in (select max(salary) from Employee)
+```
+
+**N-th Highest** | Rt: 338ms |
+```sql
+select (
+    select distinct Salary from Employee order by Salary desc limit 1 offset 1
+) as SecondHighestSalary 
+```
+Comment: update offset value to get n-th highest salary
+

@@ -1,0 +1,20 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(1) | Rt: 112ms | 
+```python
+    def smallestRangeI(self, A: List[int], K: int) -> int:
+        return max(0, max(A) - min(A) - 2 * K)
+```
+Comment: narrow down as much as possible. 
+
+
+**II). Dumb One Pass**
+| O(T): O(n) | O(S): O(1) | Rt: 140ms | 
+```python
+    def smallestRangeI(self, A: List[int], K: int) -> int:
+        minv, maxv = float('inf'), -float('inf')
+        for i in A: minv, maxv = min(minv, i), max(maxv, i)
+        return max(maxv - minv - 2*K, 0)
+```
+
+

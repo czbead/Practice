@@ -1,0 +1,77 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Mod**
+| O(T): O(n) | O(S): O(1) | Rt: 124ms | 
+```python
+    def nextGreatestLetter(self, letters: List[str], target: str) -> str:
+        alpha = 'abcdefghijklmnopqrstuvwxyz'
+        dt = {v: i for i, v in enumerate(alpha)}
+        tar = dt[target]
+        nums = [(dt[l] - tar - 1) % 26 for l in letters]
+        return letters[nums.index(min(nums))]
+```
+
+
+**II). Binary Search**
+| O(T): O(lgn) | O(S): O(1) | Rt: 108ms | 
+```python
+    def nextGreatestLetter(self, letters: List[str], target: str) -> str:
+        l, r = 0, len(letters) - 1
+        while l < r:
+            mid = l + (r - l) // 2
+            if letters[mid] <= target: l = mid + 1
+            else: r = mid
+        return letters[l] if letters[l] > target else letters[0]
+```
+Alternative: with bisect_right.  | Rt: 116ms |
+```python
+    def nextGreatestLetter(self, letters: List[str], target: str) -> str:
+        pos = bisect.bisect(letters, target)
+        return letters[0] if pos == len(letters) else letters[pos]
+```
+Triple: | Rt: 108ms |
+```python
+    def nextGreatestLetter(self, letters: List[str], target: str) -> str:
+        l, r = 0, len(letters) - 1
+        while l <= r: 
+            mid = l + (r - l) // 2
+            if letters[mid] <= target: l = mid + 1
+            else: r = mid - 1
+        return letters[0] if l == len(letters) else letters[l]
+```
+Comment: two version self-implement binary search, the first one never index out of bound while the last one may exceed the index bound. Actually, the best binary search solution is checking the last element if less than the target, return first element, else do a normal binary search. To apply these edge case check here requires your concrete understanding of all corners of binary search. 
+Here is a clear solution I recommend: https://leetcode.com/problems/find-smallest-letter-greater-than-target/discuss/110005/Easy-Binary-Search-in-Java-O(log(n))-time/272178
+
+
+**III). Iterator**
+| O(T): O(n) | O(S): O(1) | Rt: 156ms | 
+```python
+    def nextGreatestLetter(self, letters: List[str], target: str) -> str:
+        return next((i for i in letters if i > target), letters[0])
+```
+Alternative: | Rt: 112ms |
+```python
+    def nextGreatestLetter(self, letters: List[str], target: str) -> str:
+        if letters[-1] <= target: return letters[0]
+        for l in letters:
+            if l > target: return l
+```
+Triple: | Rt: 116ms |
+```python
+    def nextGreatestLetter(self, letters: List[str], target: str) -> str:
+        for l in letters:
+            if l > target: return l
+        return letters[0]
+```
+
+
+**IV). Constant Time and Space**
+| O(T): O(1) | O(S): O(1) | Rt: 116ms | 
+```python
+    def nextGreatestLetter(self, letters: List[str], target: str) -> str:
+        s, base = set(letters), ord(target) + 1
+        #exclude itself
+        for _ in range(25):
+            base = base if base < 123 else base % 122 + 96
+            if chr(base) in s: return chr(base)
+            base += 1
+```

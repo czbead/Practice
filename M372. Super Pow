@@ -1,0 +1,13 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O() | O(S): O() | Rt: 112ms | 
+```python
+    def superPow(self, a: int, b: List[int]) -> int:
+        if not b: return
+        cur = a ** b[0] % 1337
+        for i in range(1, len(b)):
+            cur = cur ** 10 * a ** b[i] % 1337
+        return cur % 1337
+```
+
+Others: a few math solutions and recursive solutions can be found in discussion board as well.

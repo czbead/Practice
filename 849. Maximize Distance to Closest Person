@@ -1,0 +1,67 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Gap between 1s**
+| O(T): O(n) | O(S): O(n) | Rt: 128ms | 
+```python
+    def maxDistToClosest(self, seats: List[int]) -> int:
+        index = [-1] + [i for i, v in enumerate(seats) if v == 1] + [len(seats)]
+        #j - i - 1 = the continuous available seats
+        gap = [j - i - 1 for i, j in zip(index, index[1:])]
+        return max(gap[0], gap[-1], (max(gap[1:-1] or [1]) + 1) // 2)
+```
+Comment: the point is both end situation should be treated differently from the middle cases. 
+
+
+**II). Count Continuous 0s**
+| O(T): O(n) | O(S): O(1) | Rt: 134ms | 
+```python
+    def maxDistToClosest(self, seats: List[int]) -> int:
+        rst, ctzero, first = 0, 0, seats[0] == 0
+        for i in seats:
+            if i == 0: ctzero += 1
+            elif ctzero: 
+                if first: first, rst = False, ctzero
+                else: rst = max(rst, (ctzero + 1) // 2)
+                ctzero = 0
+        return max(rst, ctzero)
+```
+Alternative: different style.  | Rt: 132ms |
+```python
+    def maxDistToClosest(self, seats: List[int]) -> int:
+        rst, ctzero, first = 0, 0, True
+        for i in seats:
+            if i == 0: ctzero += 1
+            else: 
+                if first: first, rst = False, ctzero
+                elif ctzero: rst = max(rst, (ctzero + 1) // 2)
+                ctzero = 0
+        return max(rst, ctzero)
+```
+
+
+**III). Stringify**
+| O(T): O(n) | O(S): O(n) | Rt: 132ms | 
+```python
+    def maxDistToClosest(self, seats: List[int]) -> int:
+        s = ''.join(map(str, seats))
+        lst = s.split('1')
+        gap = list(map(lambda x: (len(x) + 1) // 2, lst))
+        return max(max(gap), len(lst[0]), len(lst[-1]))
+```
+Comment: not as good as solution I. 
+
+
+**IV). Two Pointer, One Pass**
+| O(T): O(n) | O(S): O(1) | Rt: 140ms | 
+```python
+    def maxDistToClosest(self, seats: List[int]) -> int:
+        pre, rst, l = -1, 0, len(seats)
+        for i in range(l):
+            if seats[i]:
+                if pre < 0: rst = i
+                else: rst = max(rst, (i - pre) // 2)
+                pre = i
+        return max(rst, l - 1 - pre)
+```
+Comment: whenever there is a counter, it can be replaced by another index (or pointer). This solution is quite similar to solution I and solution II. 
+
+

@@ -1,0 +1,25 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Set**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def maxSumDivThree(self, nums: List[int]) -> int:
+        s = {0}
+        for i in nums:
+            s |= {i+j for j in s}
+        return max(i for i in s if i % 3 == 0)
+```
+Comment: easy to guess the backtracking solution is TLE as well.
+
+
+**II). Bucket DP**
+| O(T): O(n) | O(S): O(1) | Rt: 424ms | 
+```python
+    def maxSumDivThree(self, nums: List[int]) -> int:
+        m = [0, 0, 0]
+        for i in nums:
+            for j in m[:]:
+                m[(i+j) % 3] = max(m[(i+j) % 3], i+j)
+        return m[0]
+```
+Referrence: https://leetcode.com/problems/greatest-sum-divisible-by-three/discuss/431077/JavaC%2B%2BPython-One-Pass-O(1)-space
+

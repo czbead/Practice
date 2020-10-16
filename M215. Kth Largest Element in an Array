@@ -1,0 +1,103 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat by Heapq.nlargest**
+| O(T): O(nlgk) | O(S): O(1) | Rt: 76ms | 
+```python
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        return heapq.nlargest(k, nums)[-1]
+```
+
+
+**II). Keep Track of Max K Item**
+| O(T): O(kn) | O(S): O(k) | Rt: 512ms | 
+```python
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        def shuffle(lst, num):
+            ind = bisect.bisect(lst, num)
+            return lst[1:ind] + [num] + lst[ind:]
+        
+        lst = [-float('inf')] * k
+        for i in nums:
+            if i <= lst[0]: continue
+            lst = shuffle(lst, i)
+        return lst[0]
+```
+Alternative: | Rt: 3076ms |
+```python
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        def shuffle(lst, num):
+            j, copy = 1, [0] * k
+            if num >= lst[-1]: return lst[1:] + [num]
+            for i in range(k):
+                if lst[j] <= num:
+                    copy[i], j = lst[j], j+1
+                else: copy[i] = num; break
+            copy[i+1:] = lst[j:]
+            return copy
+        
+        lst = [-float('inf')] * k
+        for i in nums:
+            if i <= lst[0]: continue
+            lst = shuffle(lst, i)
+        return lst[0]
+```
+
+
+**III). Heap**
+| O(T): O(nlgk) | O(S): O(k) | Rt: 140ms | 
+```python
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        lst = [-float('inf')] * k
+        heapq.heapify(lst)
+        for i in nums: 
+            if i <= lst[0]: continue
+            heapq.heappop(lst)
+            heapq.heappush(lst, i)
+        return lst[0]
+```
+
+
+**IV). Quick Select**
+| O(T): O(n) | O(S): O(1) | Rt: 108ms | 
+```python
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        def partition(arr, st, end):
+            ra = random.randint(st, end)
+            arr[ra], arr[end] = arr[end], arr[ra]
+            l, r = st, end-1
+            while l <= r:
+                if arr[l] <= arr[end]: l += 1
+                elif arr[r] >= arr[end]: r -= 1
+                else:
+                    arr[l], arr[r] = arr[r], arr[l]
+                    l, r = l+1, r-1
+            arr[end], arr[l] = arr[l], arr[end]
+            return l
+                
+        l, r, K = 0, len(nums)-1, len(nums)-k
+        while True:
+            p = partition(nums, l, r)
+            if p == K: return nums[p]
+            if p < K: l = p+1
+            else: r = p-1
+```
+Alternative: | Rt: 96ms |
+```python
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        def partition(arr, st, end):
+            ra = random.randint(st, end)
+            arr[ra], arr[end] = arr[end], arr[ra]
+            l = st
+            for r in range(st, end):
+                if arr[r] < arr[end]:
+                    arr[l], arr[r] = arr[r], arr[l]
+                    l += 1
+            arr[end], arr[l] = arr[l], arr[end]
+            return l
+                
+        l, r, K = 0, len(nums)-1, len(nums)-k
+        while True:
+            p = partition(nums, l, r)
+            if p == K: return nums[p]
+            if p < K: l = p+1
+            else: r = p-1
+```

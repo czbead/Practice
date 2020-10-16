@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP: Keep Min Product and Max Product State**
+| O(T): O(n) | O(S): O(1) | Rt: 116ms | 
+```python
+    def maxProduct(self, nums: List[int]) -> int:
+        #minp and maxp are current min product and current max product
+        #rst is global max product
+        rst = minp = maxp = nums[0]
+        isfirst = True  #skip first item because it is covered by initialization
+        for i in nums:
+            if isfirst: isfirst = False; continue
+            candidate = (i, minp * i, maxp * i)
+            minp = min(candidate)
+            maxp = max(candidate)
+            rst = max(rst, maxp)
+        return rst
+```
+Referrence: https://leetcode.com/problems/maximum-product-subarray/discuss/48230/Possibly-simplest-solution-with-O(n)-time-complexity
+Comment: I figure out I should keep min and max product for each round. However I still cannot believe that one number can make a product -- itself as the product (actually you should imagine a implicit base 1). People may think about Kadane Algorithm for this problem. I should say they are different. Kadane algorithm is designed for Maximum Sum Subarray, for a sum problem, once the accumulate sum is negative, just drop it and start from zero. However, for integer mulplication, you can drop nothing because no integer has a absolute value like 0.5 or 0.01, it make that every involving integer has the potential to make a greater product.  
+Alternative:  | Rt: 120ms |
+```python
+    def maxProduct(self, nums: List[int]) -> int:
+        rst = minp = maxp = nums[0]
+        for i in range(1, len(nums)):
+            tmps = (minp * nums[i], maxp * nums[i], nums[i])
+            minp, maxp = min(tmps), max(tmps)
+            rst = max(maxp, rst)
+        return rst
+```

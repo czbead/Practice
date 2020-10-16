@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Compute Median By Sort**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 76ms | 
+```python
+    def minMoves2(self, nums: List[int]) -> int:
+        if not nums: return
+        nums.sort()
+        l = len(nums)
+        m = nums[l // 2]
+        return sum(abs(m - i) for i in nums)
+```
+Comment: why pick up hte median? When we choose a number as meeting point, the whole list of numbers will be splited into two parts -- greater than meeting number, smaller than meeting number. Assume the amount of "greater part" is G and the amount of "smaller part" is S, we have S + G = total - 1 (the total amount is not import, the sum is for sure a constant number). What if we move the "meeting number" to the left by one step? There will be G+1 numbers need to move one more step left and S-1 numbers could save one step, overall, it takes extra (G+1 - (S-1)) steps. Now, it is easy to understand that make "two part" both have exactly same amount it the idealest way for our situation which means G == S (each offset to this point cost extra more steps). 
+
+Alternative: | Rt: 72ms |
+```python
+    def minMoves2(self, nums: List[int]) -> int:
+        if not nums: return
+        nums.sort()
+        rst, l, r = 0, 0, len(nums)-1
+        while l < r: 
+            rst += nums[r] - nums[l]
+            l, r = l+1, r-1
+        return rst  
+```
+Referrence: https://leetcode.com/problems/minimum-moves-to-equal-array-elements-ii/discuss/94937/Java(just-like-meeting-point-problem)
+Comment: this solution shares the same idea, it will finally reduce to the median point as well. To explain it, for any two different numbers a, b, say a < b, the minimum cost is b - a (put the meeting point in any position between this two bound, including both bounds, cost the same minimum steps)
+
+Others: here is a quick select solution -- https://leetcode.com/problems/minimum-moves-to-equal-array-elements-ii/discuss/94917/Java-O(n)-Time-using-QuickSelect; I think the quick select is not O(n) in worst case. 
+

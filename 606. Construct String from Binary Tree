@@ -1,0 +1,73 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 52ms | 
+```python
+    def tree2str(self, t: TreeNode) -> str:
+        if not t: return ''
+        rst = f"{t.val}"
+        if t.left or t.right: rst += f"({self.tree2str(t.left)})"
+        if t.right: rst += f"({self.tree2str(t.right)})"
+        return rst
+```
+Comment: this tree recursion is really not typical. I could figure out the no-omit solution but cannot figure out this solution. The difficulty is all the "omit" case. And the "omit" is all about right branch. The wisdom of this solution is that it takes control in high level(open racket and close it all together while normally we open it first and close it later.)
+Alternative: ez-understanding version. | Rt: 48ms |
+```python
+    def tree2str(self, t: TreeNode) -> str:
+        if not t: return ''
+        rst = f"{t.val}"
+        l = self.tree2str(t.left)
+        r = self.tree2str(t.right)
+        if not l and not r: return rst
+        #as long as it has next level, append left branch no matter what it is
+        rst += f"({l})"
+        #append right branch if and only if right branch has solid value
+        if r: rst += f"({r})"
+        return rst
+```
+Referrence: idea from https://leetcode.com/problems/construct-string-from-binary-tree/discuss/103992/Java-Solution-Tree-Traversal
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def tree2str(self, t: TreeNode) -> str:
+        rst, s = '', [t] if t else []
+        while s:
+            node = s.pop()
+            #only left child can possibly be empty, because right child is strictly checked
+            if not node: rst += '('; continue
+            elif node == ")": rst += ')'; continue
+                
+            rst += f"({node.val}"
+            if not node.left and not node.right: continue
+                
+            #from here, it is if node.left or node.right, i prefer shallow indentation
+            if node.right:
+                s.append(')')
+                s.append(node.right)
+            #right child is strictly checked while left child has no check at all
+            s.append(')')
+            s.append(node.left)
+        return rst[1:]
+```
+Referrence: idea from https://leetcode.com/problems/construct-string-from-binary-tree/discuss/151806/Python3%3A-Iterative-Method-Using-stack
+Comment: the left child empty case is not hard-coded comparing to the original post. 
+Alternative: you probably like this fashion, more readable.  | Rt: 40ms |
+```python
+    def tree2str(self, t: TreeNode) -> str:
+        rst, s = '', [t] if t else []
+        while s:
+            node = s.pop()
+            if not node: rst += '('; continue
+            elif node == ")": rst += ')'; continue
+                
+            rst += f"({node.val}"
+            if node.left or node.right:
+                if node.right:
+                    s.append(')')
+                    s.append(node.right)
+                s.append(')')
+                s.append(node.left)
+        return rst[1:]
+```
+

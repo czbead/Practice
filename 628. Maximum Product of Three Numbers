@@ -1,0 +1,61 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 284ms | 
+```python
+    def maximumProduct(self, nums: List[int]) -> int:
+        nums.sort()
+        return max(nums[-1] * nums[-2] * nums[-3], nums[0] * nums[1] * nums[-1])
+```
+
+
+**II). Limit State**
+| O(T): O(n) | O(S): O(1) | Rt: 284ms | 
+```python
+    def maximumProduct(self, nums: List[int]) -> int:
+        max1 = max2 = max3 = -float('inf')
+        min1 = min2 = float('inf')
+        for i in nums:
+            if i > max1: max1, max2, max3 = i, max1, max2
+            elif i > max2: max2, max3 = i, max2
+            elif i > max3: max3 = i
+            if i < min1: min1, min2 = i, min1
+            elif i < min2: min2 = i
+        return max(min1 * min2 * max1, max1 * max2 * max3)
+```
+
+
+**III). Combination**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 276ms | 
+```python
+    def maximumProduct(self, nums: List[int]) -> int:
+        nums.sort()
+        del nums[2:-3]
+        return max(a * b * c for a, b, c in itertools.combinations(nums, 3))
+```
+Referrence: https://leetcode.com/problems/maximum-product-of-three-numbers/discuss/104779/Python-Straightforward-with-Explanation
+
+
+**IV). Min Heap**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 372ms | 
+```python
+    def maximumProduct(self, nums: List[int]) -> int:
+        ncopy = copy.deepcopy(nums)
+        heapq.heapify(ncopy)
+        min1, min2 = heapq.heappop(ncopy), heapq.heappop(ncopy)
+        
+        neg = [-i for i in nums]
+        heapq.heapify(neg)
+        max1, max2, max3 = -heapq.heappop(neg), -heapq.heappop(neg), -heapq.heappop(neg)
+        
+        return max(min1 * min2 * max1, max1 * max2 * max3) 
+```
+Comment: this heap solution heapify all nums therefore is of time complexity O(nlgn). In real case, we don't need to heapify all elements. The refined version is provided as follows.
+Alternative: heapq nlargest and nsmallest. | O(T): O(nlgk) | O(S): O(1) | Rt: 276ms | 
+```python
+    def maximumProduct(self, nums: List[int]) -> int:
+        hpl, hps = heapq.nlargest(3, nums), heapq.nsmallest(2, nums)
+        return max(hpl[0] * hpl[1] * hpl[2], hps[-1] * hps[-2] * hpl[0])
+```
+Referrence: https://leetcode.com/problems/maximum-product-of-three-numbers/discuss/104739/Python-O(N)-and-1-line
+Comment: heap solution is compatible for maximum product of k numbers. 
+

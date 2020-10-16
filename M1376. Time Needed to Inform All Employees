@@ -1,0 +1,57 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS Routing**
+| O(T): O(n) | O(S): O() | Rt: 1808ms | 
+```python
+    def numOfMinutes(self, n: int, headID: int, manager: List[int], informTime: List[int]) -> int:
+        def dfs(dt, informTime, t, cur):
+            if not dt[cur]: return t
+            time = t + informTime[cur]
+            return max(dfs(dt, informTime, time, i) for i in dt[cur])
+        
+        dt = collections.defaultdict(list)
+        for i in range(n): dt[manager[i]].append(i)
+        return dfs(dt, informTime, 0, headID)
+```
+
+Alternative: | Rt: 1796ms |
+```python
+    def numOfMinutes(self, n: int, headID: int, manager: List[int], informTime: List[int]) -> int:
+        def dfs(dt, informTime, cur):
+            if not dt[cur]: return 0
+            return max(dfs(dt, informTime, i) for i in dt[cur]) + informTime[cur]
+        
+        dt = [[] for _ in range(n)]
+        for i in range(n): 
+            if manager[i] != -1: dt[manager[i]].append(i)
+        return dfs(dt, informTime, headID)
+```
+Referrence: https://leetcode.com/problems/time-needed-to-inform-all-employees/discuss/532560/JavaC%2B%2BPython-DFS
+
+Triple: bottom-up dfs. | Rt: 1228ms |
+```python
+    def numOfMinutes(self, n: int, headID: int, manager: List[int], informTime: List[int]) -> int:
+        def dfs(manager, informTime, i):
+            if manager[i] != -1:
+                informTime[i] += dfs(manager, informTime, manager[i])
+                manager[i] = -1
+            return informTime[i]
+        
+        return max(dfs(manager, informTime, i) for i in range(n))
+```
+Referrence: https://leetcode.com/problems/time-needed-to-inform-all-employees/discuss/532560/JavaC%2B%2BPython-DFS
+
+
+**II). BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 1524ms | 
+```python
+    def numOfMinutes(self, n: int, headID: int, manager: List[int], informTime: List[int]) -> int:
+        rst, q, dt = 0, collections.deque([(headID, 0)]), collections.defaultdict(list)
+        for i in range(n): dt[manager[i]].append(i)
+        while q:
+            i, t = q.popleft()
+            if not dt[i]: rst = max(rst, t)
+            t += informTime[i]
+            q.extend((j, t) for j in dt[i])
+        return rst
+```
+

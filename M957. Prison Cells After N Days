@@ -1,0 +1,22 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force with Cycle Reduce**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def prisonAfterNDays(self, cells: List[int], N: int) -> List[int]:
+        for _ in range(N):
+            cells = [0] + [~(cells[i-1] ^ cells[i+1]) for i in range(1, 7)] + [0]
+        return cells
+```
+
+Alternative: detect cycle and hash state. | Rt: 32ms |
+```python
+    def prisonAfterNDays(self, cells: List[int], N: int) -> List[int]:
+        state = {tuple(cells): N}
+        while N:
+            cells = [0] + [1-(cells[i-1] ^ cells[i+1]) for i in range(1, 7)] + [0]
+            tu, N = tuple(cells), N-1
+            if tu in state: N %= state[tu] - N
+            else: state[tu] = N
+        return cells
+```
+Referrence: https://leetcode.com/problems/prison-cells-after-n-days/discuss/205684/JavaPython-Find-the-Loop-or-Mod-14

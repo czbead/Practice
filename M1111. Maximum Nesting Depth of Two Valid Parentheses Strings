@@ -1,0 +1,55 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack and Half Max Depth Split**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def maxDepthAfterSplit(self, seq: str) -> List[int]:
+        l = len(seq)
+        rst, dep, stack, mxdep = [0] * l, [0] * l, [], 0
+        for i in range(l):
+            if seq[i] == '(': stack.append(i)
+            else: 
+                depth = 0
+                while stack and stack[-1] < 0:
+                    depth = min(depth, stack.pop())
+                dep[i] = dep[stack.pop()] = abs(depth) + 1
+                stack.append(-dep[i])
+                mxdep = max(dep[i], mxdep)
+        thres = mxdep // 2
+        for i in range(l):
+            if dep[i] <= thres: rst[i] = 1
+        return rst
+```
+
+Alternative: even out both sides. | Rt: 48ms |
+```python
+    def maxDepthAfterSplit(self, seq: str) -> List[int]:
+        l = len(seq)
+        rst = [0] * l
+        a = b = 0
+        for i in range(l):
+            if seq[i] == '(': 
+                if a <= b: a += 1
+                else: b += 1; rst[i] = 1
+            else: 
+                if a >= b: a -= 1
+                else: b -= 1; rst[i] = 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/maximum-nesting-depth-of-two-valid-parentheses-strings/discuss/328841/JavaC%2B%2BPython-O(1)-Extra-Space-Except-Output
+
+Triple: odd and even. | Rt: 48ms |
+```python
+    def maxDepthAfterSplit(self, seq: str) -> List[int]:
+        l = len(seq)
+        rst, cur = [0] * l, 0
+        for i in range(l):
+            if seq[i] == '(': 
+                cur += 1
+                rst[i] = cur&1
+            else: 
+                rst[i] = cur&1
+                cur -= 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/maximum-nesting-depth-of-two-valid-parentheses-strings/discuss/328920/very-easy-and-clean-code-one-pass-O(N)-with-explanation
+

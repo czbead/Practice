@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy: Append to an Existed Sequence or Start a New Sequence**
+| O(T): O(n) | O(S): O(n) | Rt: 608ms | 
+```python
+    def isPossible(self, nums: List[int]) -> bool:
+        if len(nums) < 3: return False
+        ct, dt = collections.Counter(nums), collections.defaultdict(int)
+        for i in nums:
+            #used up by previous sequence
+            if ct[i] <= 0: continue
+            #every comming i, we need to put it into a valid position
+            #either append it to a existd valid sequence, or build its own valid sequence
+            ct[i] -= 1
+            #can be append to a previous valid (len > 3) sequence, append it(greedy)
+            #we have to update the dt value, remove 1 from dt[i-1] and add 1 to dt[i] 
+            if dt[i-1] > 0: dt[i-1] -= 1; dt[i] += 1;
+            #start your own valid sequence
+            elif ct[i+1] > 0 and ct[i+2] > 0:
+                ct[i+1] -= 1
+                ct[i+2] -= 1
+                #dt[i] indicates how many existed valid sequences end with number i
+                dt[i+2] += 1
+            else: return False
+        return True
+```
+Referrence: https://leetcode.com/problems/split-array-into-consecutive-subsequences/discuss/106514/Python-Easy-Understand-Greedy
+
+Others: here is a O(1) Space soltion - https://leetcode.com/problems/split-array-into-consecutive-subsequences/discuss/106495/Java-O(n)-time-and-O(1)-space-solution-greedily-extending-shorter-subsequence

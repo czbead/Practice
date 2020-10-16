@@ -1,0 +1,17 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sliding Window**
+| O(T): O(n) | O(S): O(1) | Rt: 600ms | 
+```python
+    def maxFreq(self, s: str, maxLetters: int, minSize: int, maxSize: int) -> int:
+        st, m, dt = 0, [0] * 26, collections.defaultdict(int)
+        for i in range(len(s)):
+            m[ord(s[i]) - ord('a')] += 1
+            if i - st + 1 == minSize:
+                if sum(i > 0 for i in m) <= maxLetters: dt[s[st: i+1]] += 1
+                m[ord(s[st]) - ord('a')] -= 1
+                st += 1
+        return max(dt.values()) if dt else 0
+```
+Referrence: https://leetcode.com/problems/maximum-number-of-occurrences-of-a-substring/discuss/457577/C%2B%2B-Greedy-approach-%2B-Sliding-window-O(n).
+Comment: the most critical part of the problem is understanding that the maxSize doesn't matter at all. We never use maxSize because if the result is of maxSize length, there must exist a minSize length result as well at worst.
+

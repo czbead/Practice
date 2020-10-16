@@ -1,0 +1,67 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtrack: Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def shoppingOffers(self, price: List[int], special: List[List[int]], needs: List[int]) -> int:
+        def backtrack(needs, l, offer, path, money):
+            if all(i == j for i, j in zip(needs, path)): return money
+            rst = float('inf')
+            for i in offer:
+                copy = path[:]
+                #precheck
+                if any(copy[j] + i[j] > needs[j] for j in range(l)): continue
+                for j in range(l): copy[j] += i[j] 
+                rst = min(rst, backtrack(needs, l, offer, copy, money + i[-1]))
+            return rst
+
+        l = len(price)
+        for i, v in enumerate(price):
+            tmp = [0] * l
+            tmp[i] = 1
+            tmp.append(v)
+            special.append(tmp)
+        return backtrack(needs, l, special, [0]*l, 0)
+```
+
+Alternative: take direct perchase as basic case. | Rt: 104ms |
+```python
+    def shoppingOffers(self, price: List[int], special: List[List[int]], needs: List[int]) -> int:
+        def directBuy(price, need):
+            return sum(i * j for i, j in zip(price, need))
+        
+        def backtrack(needs, price, l, offer):
+            rst = directBuy(price, needs)
+            for i in offer:
+                #precheck
+                if any(i[j] > needs[j] for j in range(l)): continue
+                copy = needs[:]
+                for j in range(l): copy[j] -= i[j] 
+                rst = min(rst, backtrack(copy, price, l, offer) + i[-1])
+            return rst
+
+        l = len(price)
+        return backtrack(needs, price, l, special)
+```
+
+Triple: slightly improved; | Rt: 52ms |
+```python
+    def shoppingOffers(self, price: List[int], special: List[List[int]], needs: List[int]) -> int:
+        directBuy = lambda price, need: sum(i * j for i, j in zip(price, need))
+        
+        #this pos parameter can help avoid using "exceed special offer"
+        def backtrack(needs, price, l, offer, pos):
+            rst = directBuy(price, needs)
+            for i in range(pos, len(offer)):
+                if offer[i][-1] >= rst: continue
+                copy = needs[:]
+                for j in range(l):
+                    copy[j] -= offer[i][j]
+                    if copy[j] < 0: copy = None; break
+                if copy is None: continue 
+                rst = min(rst, backtrack(copy, price, l, offer, i) + offer[i][-1])
+            return rst
+
+        l = len(price)
+        return backtrack(needs, price, l, special, 0)
+```
+Referrence: https://leetcode.com/problems/shopping-offers/discuss/105212/Very-Easy-to-understand-JAVA-Solution-beats-95-with-explanation

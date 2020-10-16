@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def decodeString(self, s: str) -> str:
+        stack, n, c = [], 0, ''
+        for i in s:
+            if i.isdigit(): 
+                if c: stack.append(c); c = ''
+                n = n * 10 + int(i)
+            elif i == '[': stack.append(n); n = 0;
+            elif i == ']':
+                tmp = c
+                while isinstance(stack[-1], str): tmp = stack.pop() + tmp
+                stack.append(stack.pop() * tmp)
+                n, c = 0, ''
+            else: c += i
+        return ''.join(stack) + c
+```
+Comment: the critical point is: each '[*]' entity should match a previous number by string multiplication; what if the previous item is not number? it must be a string, concat it as new string waiting for multiplication. 
+
+Alternative: a concise well-formatted version. | Rt: ms |
+```python
+    def decodeString(self, s: str) -> str:
+        stack, curnum, curstr = [], 0, ''
+        for i in s:
+            if i == '[':
+                stack.append(curstr)
+                stack.append(curnum)
+                curstr, curnum = '', 0
+            elif i == ']':
+                num, prestr = stack.pop(), stack.pop()
+                curstr = prestr + curstr * num
+            elif i.isdigit():
+                curnum = curnum * 10 + int(i)
+            else:
+                curstr += i
+        return curstr
+```
+Referrence: https://leetcode.com/problems/decode-string/discuss/87662/Python-solution-using-stack
+
+Othershere is a great recursive c++ solution -- https://leetcode.com/problems/decode-string/discuss/87543/0ms-simple-C%2B%2B-solution
+

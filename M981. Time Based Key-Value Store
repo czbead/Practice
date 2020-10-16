@@ -1,0 +1,56 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search with Two HashMap**
+| O(T): O() | O(S): O() | Rt: 732ms | 
+```python
+    def __init__(self):
+        self.table = collections.defaultdict(list)
+        self.value = {}
+
+    def set(self, key: str, value: str, timestamp: int) -> None:
+        self.table[key].append(timestamp)
+        self.value[(key, timestamp)] = value
+
+    def get(self, key: str, timestamp: int) -> str:
+        index = bisect.bisect(self.table[key], timestamp)
+        if index == 0: return ''
+        return self.value[(key, self.table[key][index-1])]
+```
+
+Alternative: | Rt: 812ms |
+```python
+    def __init__(self):
+        self.table = collections.defaultdict(list)
+        
+    def bise_upper(self, arr, val):
+        if not arr: return ''
+        l, r = 0, len(arr)
+        while l < r:
+            m = (l + r) // 2
+            if arr[m][0] <= val: l = m+1
+            else: r = m
+        if l == 0: return ''
+        return arr[l-1][1]
+
+    def set(self, key: str, value: str, timestamp: int) -> None:
+        self.table[key].append((timestamp, value))
+
+    def get(self, key: str, timestamp: int) -> str:
+        return self.bise_upper(self.table[key], timestamp)
+```
+
+Triple: | Rt: 676ms |
+```python
+    def __init__(self):
+        self.table = collections.defaultdict(list)
+        self.value = collections.defaultdict(list)
+
+    def set(self, key: str, value: str, timestamp: int) -> None:
+        self.table[key].append(timestamp)
+        self.value[key].append(value)
+
+    def get(self, key: str, timestamp: int) -> str:
+        index = bisect.bisect(self.table[key], timestamp)
+        return self.value[key][index-1] if index else ""
+```
+Referrence: https://leetcode.com/problems/time-based-key-value-store/discuss/247130/Python-concise-6-liner
+

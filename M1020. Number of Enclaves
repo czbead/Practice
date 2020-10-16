@@ -1,0 +1,39 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS from Edge**
+| O(T): O() | O(S): O(1) | Rt: 868ms | 
+```python
+    def numEnclaves(self, A: List[List[int]]) -> int:
+        def dfspaint(A, r, c, i, j):
+            A[i][j] = 0
+            for x, y in [(i+1, j), (i-1, j), (i, j+1), (i, j-1)]:
+                if 0<=x<r and 0<=y<c and A[x][y]: 
+                    dfspaint(A, r, c, x, y)
+            
+        r, c = len(A), len(A[0])
+        for i in range(r): 
+            if A[i][0]: dfspaint(A, r, c, i, 0)
+            if A[i][c-1]: dfspaint(A, r, c, i, c-1)
+        for j in range(c):
+            if A[0][j]: dfspaint(A, r, c, 0, j)
+            if A[r-1][j]: dfspaint(A, r, c, r-1, j)
+                
+        return sum(i for row in A for i in row)
+```
+
+Alternative: | Rt: 1072ms |
+```python
+    def numEnclaves(self, A: List[List[int]]) -> int:
+        def canoff(A, r, c, i, j):
+            A[i][j] = 0
+            for x, y in [(i+1, j), (i-1, j), (i, j+1), (i, j-1)]:
+                if 0<=x<r and 0<=y<c and A[x][y]: 
+                    canoff(A, r, c, x, y)
+            
+        r, c, ct = len(A), len(A[0]), 0
+        for i in range(r):
+            for j in range(c):
+                if not A[i][j]: continue
+                if i == 0 or j == 0 or i == r-1 or j == c-1:
+                    canoff(A, r, c, i, j)
+        return sum(i for row in A for i in row)
+```

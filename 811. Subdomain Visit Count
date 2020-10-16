@@ -1,0 +1,56 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O(nm) | O(S): O(m) | Rt: 36ms | 
+note: m denotes the maximum size of chunks in all domains
+```python
+    def subdomainVisits(self, cpdomains: List[str]) -> List[str]:
+        dt = collections.defaultdict(int)
+        for i in cpdomains:
+            t, chunkStr = i.split()
+            times, chunks = int(t), chunkStr.split('.')
+            while chunks:
+                dt['.'.join(chunks)] += times
+                chunks = chunks[1:]
+        return [str(dt[k]) + ' ' + k for k in dt]
+```
+Alternative: concat domains first.  | Rt: 52ms |
+```python
+    def subdomainVisits(self, cpdomains: List[str]) -> List[str]:
+        dt = {}
+        for i in cpdomains:
+            t, chunkStr = i.split()
+            times, chunks = int(t), chunkStr.split('.')
+            domains = ['.'.join(chunks[i:]) for i in range(len(chunks))]
+            for domain in domains: dt[domain] = dt.get(domain, 0) + times
+        return [' '.join([str(dt[k]), k]) for k in dt]
+```
+Triple: one split.   | Rt: 48ms |
+```python
+    def subdomainVisits(self, cpdomains: List[str]) -> List[str]:
+        dt = collections.defaultdict(int)
+        for i in cpdomains:
+            t, *chunks = i.replace('.', ' ').split()
+            times = int(t)
+            for i in range(len(chunks)): dt['.'.join(chunks[i:])] += times
+        return [str(dt[k]) + ' ' + k for k in dt]
+```
+Referrence: https://leetcode.com/problems/subdomain-visit-count/discuss/121770/Python-short-and-understandable-solution-68-ms
+
+
+**II). No Split**
+| O(T): O() | O(S): O() | Rt: 56ms | 
+```python
+    def subdomainVisits(self, cpdomains: List[str]) -> List[str]:
+        dt = collections.defaultdict(int)
+        for i in cpdomains:
+            ind = i.index(' ')
+            times, s = int(i[:ind]), i[ind+1:]
+            dt[s] += times
+            for j, v in enumerate(s):
+                if v == '.': dt[s[j+1:]] += times
+        return [str(dt[k]) + ' ' + k for k in dt]
+```
+Referrence: https://leetcode.com/problems/subdomain-visit-count/discuss/121738/C%2B%2BJavaPython-Easy-Understood-Solution
+https://leetcode.com/problems/subdomain-visit-count/discuss/130262/Java%3A-Do-not-use-String.split()-to-handle-the-string-in-this-case-and-the-code-will-run-faster
+
+

@@ -1,0 +1,90 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Prefix Sum**
+| O(T): O(n ^ 2) | O(S): O(n) | Rt: 1024ms | 
+```python
+    def checkSubarraySum(self, nums: List[int], k: int) -> bool:
+        if not nums or len(nums) < 2: return 
+        l = len(nums)
+        prefixsum = [0] * (l + 1)
+        for i in range(1, l+1):
+            prefixsum[i] += prefixsum[i-1] + nums[i-1]
+            
+        for i in range(2, l+1):
+            for j in range(i-1):
+                cursum = prefixsum[i] - prefixsum[j]
+                if k == 0:
+                    if cursum == 0: return True
+                elif cursum % k == 0: return True
+        return False
+```
+
+Alternative: exclude the edge case k == 0. | Rt: 820ms |
+```python
+    def checkSubarraySum(self, nums: List[int], k: int) -> bool:
+        if not nums or len(nums) < 2: return 
+        l = len(nums)
+        if k == 0: return any(nums[i] == nums[i+1] == 0 for i in range(l-1))
+        
+        prefixsum = [0] * (l + 1)
+        for i in range(1, l+1):
+            prefixsum[i] += prefixsum[i-1] + nums[i-1]
+            
+        for i in range(2, l+1):
+            for j in range(i-1):
+                if (prefixsum[i] - prefixsum[j]) % k == 0: return True
+        return False
+```
+
+Triple: apply mod opertion in the run. | Rt: 840ms |
+```python
+    def checkSubarraySum(self, nums: List[int], k: int) -> bool:
+        if not nums or len(nums) < 2: return 
+        l = len(nums)
+        if k == 0: return any(nums[i] == nums[i+1] == 0 for i in range(l-1))
+        
+        prefixsum = [0] * (l + 1)
+        for i in range(1, l+1):
+            prefixsum[i] = (prefixsum[i-1] + nums[i-1]) % k
+            
+        for i in range(2, l+1):
+            for j in range(i-1):
+                if (prefixsum[i] - prefixsum[j]) % k == 0: return True
+        return False
+```
+
+
+**II). BFS**
+| O(T): O(n*n) | O(S): O(n) | Rt: 968ms | 
+```python
+    def checkSubarraySum(self, nums: List[int], k: int) -> bool:
+        if not nums or len(nums) < 2: return 
+        l = len(nums)
+        if k == 0: return any(nums[i] == nums[i+1] == 0 for i in range(l-1))
+        stack  = []
+        for i in nums:
+            new = [i]
+            for j in stack:
+                if (i + j) % k == 0: return True
+                else: new.append(i + j)
+            stack = new
+        return False
+```
+
+Alternative: apply mod operation in the run. | Rt: 1384ms |
+```python
+    def checkSubarraySum(self, nums: List[int], k: int) -> bool:
+        if not nums or len(nums) < 2: return 
+        l = len(nums)
+        if k == 0: return any(nums[i] == nums[i+1] == 0 for i in range(l-1))
+        stack  = []
+        for i in nums:
+            new = [i]
+            for j in stack:
+                if (i + j) % k == 0: return True
+                else: new.append((i+j) % k)
+            stack = new
+        return False
+```
+
+Others: here is a concise efficient solution: https://leetcode.com/problems/continuous-subarray-sum/discuss/99499/Java-O(n)-time-O(k)-space
+I don't know how this nice solution survive all those edge cases. It seems like a coincidence -- something you cannot "learn" or "remember". 

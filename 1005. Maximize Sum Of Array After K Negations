@@ -1,0 +1,103 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Min Heap**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 48ms | 
+```python
+    def largestSumAfterKNegations(self, A: List[int], K: int) -> int:
+        heapq.heapify(A)
+        for _ in range(K): heapq.heappush(A, -heapq.heappop(A))
+        return sum(A)
+```
+Comment: always negate the minimum. 
+Alternative: slightly improved. | Rt: 40ms |
+```python
+    def largestSumAfterKNegations(self, A: List[int], K: int) -> int:
+        heapq.heapify(A)
+        for _ in range(K % (2 * len(A))): heapq.heappush(A, -heapq.heappop(A))
+        return sum(A)
+```
+Comment: if you do 2 * len(A) negating, you can always get the original input list. 
+Triple: further improved.  | Rt: 48ms |
+```python
+    def largestSumAfterKNegations(self, A: List[int], K: int) -> int:
+        heapq.heapify(A)
+        K %= 2*len(A)
+        for i in range(K):
+            if A[0] >= 0: return sum(A) - ((K - i) & 1) * 2 * A[0] 
+            heapq.heappush(A, -heapq.heappop(A))
+        return sum(A)
+```
+Comment: Once all elements are positive, stop the game and check the remaining times need to modify. If the remaining is even, it is the sum of current list (you negate the minimun even times, it remains the same). Otherwise, you need to deduct the minimum twice because you already added it to the sum once (and it is negative after odd times negating). This should boost the runtime however it didn't ....
+
+Question: could we reduce K by % 2(len(A))? I think not, but the solution get passed. **I clarify the "Reduce K" trick in the above solutions (and below) may not be applicable in case some troubles .** 
+
+
+**II). Remove and Append**
+| O(T): O(kn) | O(S): O(1) | Rt: 136ms | 
+```python
+    def largestSumAfterKNegations(self, A: List[int], K: int) -> int:
+        for _ in range(K): 
+            curmin = min(A)
+            A.remove(curmin)
+            A.append(-curmin)
+        return sum(A)
+```
+Alternative: slightly improved.  | Rt: 124ms | O(T): n^2 |
+```python
+    def largestSumAfterKNegations(self, A: List[int], K: int) -> int:
+        for _ in range(K % (2*len(A))): 
+            curmin = min(A)
+            A.remove(curmin)
+            A.append(-curmin)
+        return sum(A)
+```
+
+
+**III). Greedy**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 56ms | 
+```python
+    def largestSumAfterKNegations(self, A: List[int], K: int) -> int:
+        A.sort(); K %= 2 * len(A); i = 0
+        while A[i] < 0 and i < K: A[i], i = -A[i], i + 1
+        return sum(A) - ((K-i) % 2) * 2 * min(A)
+```
+
+
+**IV). Counting Sort**
+| O(T): O(n) | O(S): O(n) | Rt: 56ms | 
+```python
+    def largestSumAfterKNegations(self, A: List[int], K: int) -> int:
+        ct = collections.Counter(A)
+        for i in range(-100, 0):
+            if K == 0: break
+            if i in ct: 
+                amt = min(K, ct[i])
+                ct[i] -= amt
+                ct[-i] += amt
+                K -= amt
+        a = list(ct.elements())
+        return sum(a) - (K&1) * 2 * min(a) 
+```
+Referrence: https://leetcode.com/problems/maximize-sum-of-array-after-k-negations/discuss/252254/C++Python-Sort/246430
+Comment: take advantage of the -100 <= A[i] <= 100.
+
+
+**V). Bucket Collect then Counting Sort**
+| O(T): O(n) | O(S): O(1) | Rt: 48ms | 
+```python
+    def largestSumAfterKNegations(self, A: List[int], K: int) -> int:
+        m = [0] * 201
+        for i in A: m[i+100] += 1
+        for i in range(0, 100):
+            if K == 0: break
+            if m[i]: 
+                amt = min(K, m[i])
+                m[i] -= amt
+                # -(i - 100) + 100 = 200 -i
+                m[200 - i] += amt
+                K -= amt
+        suma = sum((i-100) * v for i, v in enumerate(m) if v)
+        # mina = next(i - 100 for i, v in enumerate(m) if v)
+        return suma - (K&1) * 2 * min(map(abs, A)) 
+```
+Referrence: idea from https://leetcode.com/problems/maximize-sum-of-array-after-k-negations/discuss/252849/C%2B%2BJava-O(n)-or-O(1)
+Question: min([5,6,9,-3,3], key=abs) == -3 and min([5,6,9,-4,3], key=abs) == 3. Who tell me Why?

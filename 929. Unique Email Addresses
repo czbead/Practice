@@ -1,0 +1,52 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(mn) | O(S): O(mn) | Rt: 48ms | 
+```python
+    def numUniqueEmails(self, emails: List[str]) -> int:
+        s = set()
+        for i in emails:
+            a, b = i.split('@')
+            s.add(a.split('+')[0].replace('.', '') + '@' + b)
+        return len(s)
+```
+
+
+**II). No Build-in Split and Replace**
+| O(T): O(112) | O(S): O(mn) | Rt: 112ms | 
+```python
+    def numUniqueEmails(self, emails: List[str]) -> int:
+        def cleanE(s):
+            rst, omit = [], False 
+            for i in range(len(s)):
+                if s[i] == '@': 
+                    rst.append(s[i:])
+                    return ''.join(rst)
+                elif s[i] == '+': omit = True
+                elif s[i] != '.' and not omit: rst.append(s[i])
+                
+        return len({cleanE(i) for i in emails})
+```
+Alternative:  | Rt: 88ms |
+```python
+    def numUniqueEmails(self, emails: List[str]) -> int:
+        def cleanE(s):
+            l, r = 0, len(s) - 1
+            while s[l] != '+' and s[l] != '@': l += 1
+            while s[r] != '@': r -= 1
+            return ''.join(i for i in s[:l] if i != '.') + s[r:]
+                
+        return len({cleanE(i) for i in emails})
+```
+Triple:  | Rt: 72ms |
+```python
+    def numUniqueEmails(self, emails: List[str]) -> int:
+        def cleanE(s):
+            half, r = [], len(s) - 1
+            for i in s:
+                if i == '@' or i == '+': break
+                elif i != '.': half.append(i)
+            while s[r] != '@': r -= 1
+            return ''.join(half) + s[r:]
+                
+        return len({cleanE(i) for i in emails})
+```

@@ -1,0 +1,121 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Trie**
+| O(T): O() | O(S): O() | Rt: 28ms | 
+```python
+class Node:
+    
+    def __init__(self):
+        self.sub = collections.defaultdict(Node)
+        self.sum = 0
+        self.isend = False
+        
+class Trie:
+    
+    def __init__(self):
+        self.root = Node()
+        
+    def insert(self, key, val):
+        cur = self.root
+        if self.find(key): 
+            for i in key:
+                cur = cur.sub[i]
+                cur.sum = val
+        else:
+            for i in key:
+                cur = cur.sub[i]
+                cur.sum += val
+        cur.isend = True
+        
+            
+    def find(self, key):
+        cur = self.root
+        for i in key:
+            if i not in cur.sub: return False
+            cur = cur.sub[i]
+        return cur.isend
+    
+    def getsum(self, prefix):
+        cur = self.root
+        for i in prefix:
+            cur = cur.sub[i]
+            rst = cur.sum
+        return rst
+
+class MapSum:
+
+    def __init__(self):
+        self.trie = Trie()
+
+    def insert(self, key: str, val: int) -> None:
+        self.trie.insert(key, val)
+
+    def sum(self, prefix: str) -> int:
+        return self.trie.getsum(prefix)
+```
+
+Alternative: using a set to check duplicate keys. | Rt: 24ms |
+```python
+class Node:
+    
+    def __init__(self):
+        self.sub = collections.defaultdict(Node)
+        self.sum = 0
+        
+class Trie:
+    
+    def __init__(self):
+        self.root = Node()
+        
+    def insert(self, key, val):
+        cur = self.root
+        for i in key:
+            cur = cur.sub[i]
+            cur.sum += val
+            
+    def update(self, key, val):
+        cur = self.root
+        for i in key:
+            cur = cur.sub[i]
+            cur.sum = val
+    
+    def getsum(self, prefix):
+        cur = self.root
+        for i in prefix:
+            cur = cur.sub[i]
+            rst = cur.sum
+        return rst
+
+class MapSum:
+
+    def __init__(self):
+        self.trie = Trie()
+        self.key = set()
+
+    def insert(self, key: str, val: int) -> None:
+        if key in self.key: 
+            self.trie.update(key, val)
+        else: 
+            self.trie.insert(key, val)
+            self.key.add(key)
+            
+    def sum(self, prefix: str) -> int:
+        return self.trie.getsum(prefix)
+```
+Referrence: https://leetcode.com/problems/map-sum-pairs/discuss/107508/Python-Efficient-O(k)-Insert-and-Sum-using-Trie
+
+
+**II). Naive Dict**
+| O(T): O() | O(S): O() | Rt: 32ms | 
+```python
+class MapSum:
+
+    def __init__(self):
+        self.dt = {}
+
+    def insert(self, key: str, val: int) -> None:
+        self.dt[key] = val
+            
+    def sum(self, prefix: str) -> int:
+        return sum(self.dt[k] for k in self.dt if k.startswith(prefix))
+```
+Referrence: https://leetcode.com/problems/map-sum-pairs/discuss/107551/Python-3-Lines-Solution

@@ -1,0 +1,92 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Range DP with Counter**
+| O(T): O(n) | O(S): O(n) | Rt: 56ms | 
+```python
+    def deleteAndEarn(self, nums: List[int]) -> int:
+        if not nums: return 0
+        ct = collections.Counter(nums)
+        mink, maxk = min(nums), max(nums)
+        l = maxk - mink + 1
+        dp = [0] * l
+        for i in range(l):
+            #key = i + mink
+            take = ct[i+mink] * (i+mink)
+            if i > 1: take += dp[i-2]
+            notake = dp[i-1] if i > 0 else 0
+            dp[i] = max(take, notake)
+        return dp[-1]
+```
+
+Alternative: make it concise. | Rt: 56ms |
+```python
+    def deleteAndEarn(self, nums: List[int]) -> int:
+        if not nums: return 0
+        ct = collections.Counter(nums)
+        mink, maxk = min(nums), max(nums)
+        l = maxk - mink + 1
+        dp = [0] * (l+2)
+        for i in range(2, l+2):
+            #key = i + mink
+            dp[i] = max(dp[i-2] + ct[i+mink-2] * (i+mink-2), dp[i-1])
+        return dp[-1]
+```
+
+Triple: sort counter key. | Rt: 52ms |
+```python
+    def deleteAndEarn(self, nums: List[int]) -> int:
+        if not nums: return 0
+        ct = collections.Counter(nums)
+        key, skip, take = sorted(ct), 0, 0
+        for i in range(len(key)):
+            if i == 0 or (i > 0 and key[i-1] != key[i]-1):
+                skip, take = take, take + key[i] * ct[key[i]]
+            else: 
+                tmp = max(skip + key[i] * ct[key[i]], take)
+                skip = take
+                take = tmp
+        return take
+```
+
+Forth: | Rt: 56ms |
+```python
+    def deleteAndEarn(self, nums: List[int]) -> int:
+        if not nums: return 0
+        ct = collections.Counter(nums)
+        key = sorted(ct)
+        l = len(key)
+        dp = [0] * (l+2)
+        for i in range(2, l + 2):
+            if i == 2 or (i > 2 and key[i-3] != key[i-2]-1):
+                dp[i] = dp[i-1] + ct[key[i-2]] * key[i-2]
+            else: 
+                dp[i] = max(dp[i-2] + ct[key[i-2]] * key[i-2], dp[i-1])
+        return dp[-1]
+```
+
+
+**II). DP with Bucket Sum**
+| O(T): O(kn) | O(S): O(n) | Rt: 124ms | 
+```python
+    def deleteAndEarn(self, nums: List[int]) -> int:
+        if not nums: return 0
+        m = [0] * 10001
+        for i in nums: m[i] += i
+        take = skip = 0
+        for i in range(10001):
+            tmp = max(skip+m[i], take)
+            skip = take  #skip current num indicates take last num 
+            take = tmp   #no necessary take i num, means "take i num into consideration"
+        return take
+```
+
+Alternative: using bucket as dp array. | Rt: 164ms |
+```python
+    def deleteAndEarn(self, nums: List[int]) -> int:
+        if not nums: return 0
+        m = [0] * 10001
+        for i in nums: m[i] += i
+        for i in range(2, 10001):
+            m[i] = max(m[i-2]+m[i], m[i-1])
+        return m[-1]
+```
+Referrence: https://leetcode.com/problems/delete-and-earn/discuss/109895/JavaC%2B%2B-Clean-Code-with-Explanation

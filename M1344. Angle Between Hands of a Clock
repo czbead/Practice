@@ -1,0 +1,9 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O() | O(S): O() | Rt: 24ms | 
+```python
+    def angleClock(self, hour: int, minutes: int) -> float:
+        h, m = hour + minutes/60, minutes / 5
+        angle = abs(h-m) * 30
+        return min(angle, 360-angle)
+ ```

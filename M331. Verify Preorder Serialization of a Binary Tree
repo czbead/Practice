@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bottom-UP**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def isValidSerialization(self, preorder: str) -> bool:
+        stack, ct = preorder.split(','), 0
+        while stack:
+            if stack[-1] == '#': ct += 1; stack.pop()
+            else:
+                #each parent node to counterpart two subnodes 
+                if ct <= 1: return False  #not enough subnodes; fasle case
+                #one number node counterpart 2 '#' node and push one '#' back, deduct 1 in total
+                ct -= 1; stack.pop()
+        #the final state: root, #, #.
+        return ct == 1
+```
+Comment: I cannot figure out this solution if I haven't check the "related topic" field. In real interview, you don't have that info at all. 
+
+
+**II). In-Out Degree Analysis**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def isValidSerialization(self, preorder: str) -> bool:
+        #why initial state 1? root has 0 indegree, 2 out degree, you can initialize it as 2, the final condition will be 1. Here we assume root as a normal parent node: has 1 indegree and 2 outdegree which out - in == 1
+        stack, degree = preorder.split(','), 1
+        for node in stack:
+            #before we traverse all nodes, the degree should be positive (out > in: means have sub nodes)
+            if degree < 1: return False
+            #null node: in degree +1; out degree + 0; overall out - in = -1 
+            if node == '#': degree -= 1
+            #non-null node: indegree +1; outdegree +2; overall out - in = 1
+            else: degree += 1
+        #after traverse all nodes, the indegree sum must equal outdegree sum
+        return degree == 0
+```
+Referrence: https://leetcode.com/problems/verify-preorder-serialization-of-a-binary-tree/discuss/78551/7-lines-Easy-Java-Solution
+

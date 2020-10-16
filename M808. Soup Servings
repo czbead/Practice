@@ -1,0 +1,21 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O() | O(S): O(n) | Rt: 24ms | 
+```python
+    def soupServings(self, N: int) -> float:
+        def f(a, b, m):
+            if N > 4800: return 1
+            if (a, b) in m: return m[(a, b)]
+            if a <= 0 and b <= 0: return 0.5
+            if a <= 0: return 1
+            if b <= 0: return 0
+            cur = (f(a-4, b, m) + f(a-3, b-1, m) + f(a-2, b-2, m) + f(a-1, b-3, m)) / 4
+            m[(a, b)] = cur
+            return cur
+        
+        #or (N + 24 // 25); works as math.ceil(N/25)
+        n, m = -(-N//25), {}
+        return f(n, n, m)
+```
+Referrence: https://leetcode.com/problems/soup-servings/discuss/121711/C%2B%2BJavaPython-When-N-greater-4800-just-return-1
+

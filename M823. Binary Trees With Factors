@@ -1,0 +1,15 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort and HashMap**
+| O(T): O() | O(S): O() | Rt: 328ms | 
+```python
+    def numFactoredBinaryTrees(self, A: List[int]) -> int:
+        l, dt = len(A), {}
+        for i in sorted(A):
+            count = 1
+            for j in dt:
+                if i % j == 0 and i//j in dt:
+                    count += dt[j] * dt[i//j]
+            dt[i] = count
+        return sum(dt.values()) % (10 ** 9 + 7)
+```
+Referrence: https://leetcode.com/problems/binary-trees-with-factors/discuss/126277/Concise-Java-solution-using-HashMap-with-detailed-explanation.-Easily-understand!!!

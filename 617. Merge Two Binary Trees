@@ -1,0 +1,61 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 64ms | 
+```python
+    def mergeTrees(self, t1: TreeNode, t2: TreeNode) -> TreeNode:
+        if not t1 and not t2: return 
+        elif t1 and t2: 
+            t1.val += t2.val
+            t1.left = self.mergeTrees(t1.left, t2.left)
+            t1.right = self.mergeTrees(t1.right, t2.right)
+        elif not t1 and t2: 
+            t1 = t2
+        return t1
+```
+Alternative: conciser version. | Rt: 76ms |
+```python
+    def mergeTrees(self, t1: TreeNode, t2: TreeNode) -> TreeNode:
+        if not t1 or not t2: return t1 or t2
+        t1.val += t2.val
+        t1.left = self.mergeTrees(t1.left, t2.left)
+        t1.right = self.mergeTrees(t1.right, t2.right)
+        return t1
+```
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 76ms | 
+```python
+    def mergeTrees(self, t1: TreeNode, t2: TreeNode) -> TreeNode:
+        if not t1 or not t2: return t1 or t2
+        s = [(t1, t2)]
+        while s: 
+            n1, n2 = s.pop()
+            #nothing to add on
+            if not n2: continue
+            n1.val += n2.val
+            #base initialization, critical to check n2's corresponding child
+            if not n1.left and n2.left: n1.left = TreeNode(0)
+            if not n1.right and n2.right: n1.right = TreeNode(0)
+            #stack pairs, level by level add up
+            s.append((n1.right, n2.right))
+            s.append((n1.left, n2.left))
+        return t1
+```
+Comment: three things I learn from this solution: n2-oriented thinking pattern, the goal is to add n2 to n1. Therefore, we adjust n1 according to n2. When to start, When to stop, When we need initialization, all decided by n2. Second, complete the n1 to make edge case normal. Third, it is critical to make sure n1 is not empty in the first round and maintein this property in the process. 
+Alternative: | Rt: 72ms |
+```python
+    def mergeTrees(self, t1: TreeNode, t2: TreeNode) -> TreeNode:
+        if not t1 or not t2: return t1 or t2
+        s = [(t1, t2)]
+        while s: 
+            n1, n2 = s.pop()
+            #nothing to add on
+            if not n2: continue
+            n1.val += n2.val
+            if not n1.right: n1.right = n2.right
+            else: s.append((n1.right, n2.right))
+            if not n1.left: n1.left = n2.left
+            else: s.append((n1.left, n2.left))
+        return t1
+```

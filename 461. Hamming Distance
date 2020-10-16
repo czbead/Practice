@@ -1,0 +1,64 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bit Traverse Xor**
+| O(T): O(lgn) | O(S): O(1) | Rt: 20ms | 
+```python
+    def hammingDistance(self, x: int, y: int) -> int:
+        x, y = x & 0xffffffff, y & 0xffffffff
+        rst = 0
+        while x or y:
+            rst += (x&1) ^ (y&1)
+            x, y = x >> 1, y >> 1
+        return rst
+```
+
+
+**II). Bin Stringify**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 20ms | 
+```python
+    def hammingDistance(self, x: int, y: int) -> int:
+        x, y = bin(x)[2:], bin(y)[2:]
+        if len(x) > len(y): x, y = y, x
+        x = '0' * (len(y) - len(x)) + x
+        return sum(i != j for i, j in zip(x, y))
+```
+
+
+**III). Xor All Count 1**
+| O(T): O(lgn) | O(S): O(1) | Rt: 24ms | 
+```python
+    def hammingDistance(self, x: int, y: int) -> int:
+        rst, z = 0, x ^ y
+        while z:
+            rst += 1
+            z &= z - 1
+        return rst
+```
+Alternative: | Rt: 24ms |
+```python
+    def hammingDistance(self, x: int, y: int) -> int:
+        return bin(x ^ y).count('1')
+```
+Triple: | Rt: 24ms |
+```python
+    def hammingDistance(self, x: int, y: int) -> int:
+        rst, diff = 0, x ^ y
+        while diff:
+            rst += diff & 1
+            diff >>= 1
+        return rst
+```
+Comment: count 1 actually.
+
+
+**IV). Mod and Divide**
+| O(T): O(lgn) | O(S): O(1) | Rt: 20ms | 
+```python
+    def hammingDistance(self, x: int, y: int) -> int:
+        rst = 0
+        while x or y: 
+            rst += (x % 2) ^ (y % 2)
+            x, y = x // 2, y // 2
+        return rst
+```
+
+

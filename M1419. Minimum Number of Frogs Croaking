@@ -1,0 +1,58 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy Sequence Grow**
+| O(T): O(n) | O(S): O(1) | Rt: 300ms | 
+```python
+    def minNumberOfFrogs(self, croakOfFrogs: str) -> int:
+        rst, m, seq = 0, {c: i for i, c in enumerate('croak')}, [0] * 5
+        for i in croakOfFrogs:
+            if i == 'c': seq[0] += 1
+            else:
+                ind = m[i]
+                seq[ind-1] -= 1
+                if seq[ind-1] < 0: return -1
+                seq[ind] += 1
+                if i == 'k': seq[ind] -= 1
+            rst = max(rst, sum(seq))
+        if any(seq): return -1
+        return rst
+```
+
+Alternative: | Rt: 196ms |
+```python
+    def minNumberOfFrogs(self, croakOfFrogs: str) -> int:
+        m, seq = {c: i for i, c in enumerate('croak')}, [0] * 5
+        rst = frog = 0
+        for i in croakOfFrogs:
+            if i == 'c': 
+                seq[0] += 1
+                frog += 1
+                rst = max(rst, frog)
+            else:
+                ind = m[i]
+                seq[ind-1] -= 1
+                if seq[ind-1] < 0: return -1
+                if i == 'k': frog -= 1
+                else: seq[ind] += 1
+        if frog: return -1
+        return rst
+```
+Referrence: https://leetcode.com/problems/minimum-number-of-frogs-croaking/discuss/586543/C%2B%2BJava-with-picture-simulation
+
+Triple: | Rt: 148ms |
+```python
+    def minNumberOfFrogs(self, croakOfFrogs: str) -> int:
+        c = r = o = a = k = frog = rst = 0
+        for i in croakOfFrogs:
+            if i == 'c': 
+                c, frog = c+1, frog+1
+                rst = max(rst, frog)
+            elif i == 'r': r += 1
+            elif i == 'o': o += 1
+            elif i == 'a': a += 1
+            else: k, frog = k+1, frog-1
+            if not (c >= r >= o >= a >= k): return -1
+        if not frog and c == r == o == a ==k: return rst
+        return -1
+```
+Referrence: https://leetcode.com/problems/minimum-number-of-frogs-croaking/discuss/586653/C%2B%2B-Python-Java-Guaranteed-Easiest-Explanation
+

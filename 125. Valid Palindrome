@@ -1,0 +1,54 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Filter and Compare**
+| O(t): O(n) | O(m): O(n) | Rt: 52ms | 
+```python
+    def isPalindrome(self, s: str) -> bool:
+        s = [i.lower() for i in s if i.isalnum()]
+        #or s == s[::-1] with more space required
+        return all(s[i] == s[-1-i] for i in range(len(s) // 2))
+```
+
+
+**II). Regex**
+| O(t): O(n) | O(m): O(n) | Rt: 28ms | 
+```python
+    def isPalindrome(self, s: str) -> bool:
+    	#^negate all 
+        s1 = re.sub('[^0-9a-z]', '', s.lower())
+        return s1 == s1[::-1]
+```
+Alternative: | Rt: 40ms |
+```python
+    def isPalindrome(self, s: str) -> bool:
+    	#"\w" matches all aplphanumeric and underscore, "\W" is the negation of "\w"
+        s1 = re.sub('\W', '', s.lower())
+        return s1 == s1[::-1]
+```
+Referrence: https://leetcode.com/problems/valid-palindrome/discuss/40003/Simple-79-ms-Python-solution/37932
+
+
+**III). Two Pointer**
+| O(t): O(n) | O(m): O(1) | Rt: 48ms | in-place
+```python
+    def isPalindrome(self, s: str) -> bool:
+        l, r = 0, len(s) - 1
+        s = s.lower()
+        while l < r:
+            while l < r and not s[l].isalnum(): l += 1
+            while l < r and not s[r].isalnum(): r -= 1
+            if s[l] != s[r]: return False
+            l, r = l+1, r-1
+        return True
+```
+Alternative: | Rt: 56ms |
+```python
+    def isPalindrome(self, s: str) -> bool:
+        s = s.lower()
+        l, r = 0, len(s)-1
+        while l < r:
+            if not s[l].isalnum(): l += 1
+            elif not s[r].isalnum(): r -= 1
+            elif s[l] != s[r]: return False
+            else: l, r = l+1, r-1
+        return True
+```

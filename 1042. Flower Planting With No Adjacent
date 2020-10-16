@@ -1,0 +1,32 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy Graph**
+| O(T): O(mn) | O(S): O(mn) | Rt: 472ms | 
+```python
+    def gardenNoAdj(self, N: int, paths: List[List[int]]) -> List[int]:
+        graph = [[] for i in range(N)]
+        for i, j in paths: 
+            graph[i-1].append(j-1)
+            graph[j-1].append(i-1)
+        plan = [0] * N
+        for i in range(N):
+            if not plan[i]:
+                plan[i] = ({1, 2, 3, 4} - {plan[i] for i in graph[i]}).pop()
+        return plan
+```
+Referrence: https://leetcode.com/problems/flower-planting-with-no-adjacent/discuss/290858/JavaC%2B%2BPython-Greedily-Paint
+Alternative: rewrite using dict.  | Rt: 504ms |
+```python
+    def gardenNoAdj(self, N: int, paths: List[List[int]]) -> List[int]:
+        graph = collections.defaultdict(list)
+        for i, j in paths: 
+            graph[i].append(j)
+            graph[j].append(i)
+        plan = [0] * N
+        for i in range(1, N+1):
+            if not plan[i-1]:
+                plan[i-1] = ({1, 2, 3, 4} - {plan[i-1] for i in graph[i]}).pop()
+        return plan
+```
+
+Others: other solutions are pretty much the same as this one. 
+

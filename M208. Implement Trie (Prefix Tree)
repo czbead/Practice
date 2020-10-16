@@ -1,0 +1,134 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Trie with DefaultDict**
+| O(T): O() | O(S): O() | Rt: 300ms | 
+```python
+class Node:
+    def __init__(self):
+        self.sub = collections.defaultdict(Node)
+        self.isend = False
+
+class Trie:
+    def __init__(self):
+        self.root = Node()
+
+    def insert(self, word: str) -> None:
+        cur = self.root
+        for i in word: cur = cur.sub[i]
+        cur.isend = True
+
+    def search(self, word: str) -> bool:
+        cur = self.root
+        for i in word:
+            if i not in cur.sub: return False
+            cur = cur.sub[i]
+        return cur.isend
+
+    def startsWith(self, prefix: str) -> bool:
+        cur = self.root
+        for i in prefix:
+            if i not in cur.sub: return False
+            cur = cur.sub[i]
+        return True
+```
+Alternative: dict instead of defaultdict. | Rt: 284ms |
+```python
+class Node:
+    def __init__(self):
+        self.sub = {}
+        self.isend = False
+
+class Trie:
+
+    def __init__(self):
+        self.root = Node()
+
+    def insert(self, word: str) -> None:
+        cur = self.root
+        for i in word:
+            if i not in cur.sub: cur.sub[i] = Node()
+            cur = cur.sub[i]
+        cur.isend = True
+
+    def search(self, word: str) -> bool:
+        cur = self.root
+        for i in word:
+            if i not in cur.sub: return False
+            cur = cur.sub[i]
+        return cur.isend
+
+    def startsWith(self, prefix: str) -> bool:
+        cur = self.root
+        for i in prefix:
+            if i not in cur.sub: return False
+            cur = cur.sub[i]
+        return True
+```
+Triple: without Node class. | Rt: 180ms |
+```python
+class Trie:
+    def __init__(self):
+        self.root = {}
+
+    def insert(self, word: str) -> None:
+        cur = self.root
+        for i in word:
+            if i not in cur: cur[i] = {}
+            cur = cur[i]
+        cur['#'] = 0   #key is the value actually, the last value doesn't matter
+
+    def search(self, word: str) -> bool:
+        cur = self.root
+        for i in word:
+            if i not in cur: return False
+            cur = cur[i]
+        return '#' in cur
+
+    def startsWith(self, prefix: str) -> bool:
+        cur = self.root
+        for i in prefix:
+            if i not in cur: return False
+            cur = cur[i]
+        return True
+```
+Referrence: https://leetcode.com/problems/implement-trie-prefix-tree/discuss/58834/AC-Python-Solution/222298
+
+
+**II). Trie with Alpha List**
+| O(T): O() | O(S): O() | Rt: 372ms | 
+```python
+class Node:
+    def __init__(self):
+        self.sub = [None] * 26
+        self.isend = False
+
+class Trie:
+    def __init__(self):
+        self.root = Node()
+        
+    def locate(self, key):
+        return ord(key) - ord('a')
+
+    def insert(self, word: str) -> None:
+        cur = self.root
+        for i in word: 
+            pos = self.locate(i)
+            if not cur.sub[pos]: cur.sub[pos] = Node()
+            cur = cur.sub[pos]
+        cur.isend = True
+
+    def search(self, word: str) -> bool:
+        cur = self.root
+        for i in word:
+            pos = self.locate(i)
+            if not cur.sub[pos]: return False
+            cur = cur.sub[pos]
+        return cur.isend
+
+    def startsWith(self, prefix: str) -> bool:
+        cur = self.root
+        for i in prefix:
+            pos = self.locate(i)
+            if not cur.sub[pos]: return False
+            cur = cur.sub[pos]
+        return True
+```

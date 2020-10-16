@@ -1,0 +1,36 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS**
+| O(T): O(n * n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def zigzagLevelOrder(self, root: TreeNode) -> List[List[int]]:
+        rst, s, zigzag = [], [root] if root else None, 0
+        while s:
+            row = [node.val for node in s]
+            if zigzag: row = row[::-1]
+            rst.append(row)
+            zigzag ^= 1
+            s = [child for n in s for child in (n.left, n.right) if child]
+        return rst
+```
+Comment: all the same as the the "left to right in order" traversal but adding a ziazag controller. 
+Question: I cannot come up with a "no reversing" or "no flag" solution. Python insert by index is of O(n) complexity while Java can do it in O(1) (almost all top voted answer use this trick.)
+
+
+**II). Insert**
+| O(T): O(n * n) | O(S): O(h) | Rt: 44ms | 
+```python
+    def zigzagLevelOrder(self, root: TreeNode) -> List[List[int]]:
+        def dfs(node, depth, rst):
+            if not node: return
+            if len(rst) <= depth: rst.append([])
+            #when depth is odd number
+            if depth & 1: rst[depth].insert(0, node.val)
+            else: rst[depth].append(node.val)
+            dfs(node.left, depth+1, rst)
+            dfs(node.right, depth+1, rst)
+            
+        rst = []
+        dfs(root, 0, rst)
+        return rst
+```
+

@@ -1,0 +1,17 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sliding Window**
+| O(T): O(n) | O(S): O(1) | Rt: 80ms | 
+```python
+    def equalSubstring(self, s: str, t: str, maxCost: int) -> int:
+        l, mx, st = len(s), 0, 0
+        for i in range(l):
+            maxCost -= abs(ord(s[i]) - ord(t[i]))
+            if maxCost < 0: mx = max(mx, i-st)
+            while maxCost < 0: 
+                maxCost += abs(ord(s[st]) - ord(t[st]))
+                st += 1
+        mx = max(mx, l-st)
+        return mx
+```
+Comment: I don't quite understand why we don't need a variable to update the "maximum length of substring" in these solutions. 
+

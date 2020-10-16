@@ -1,0 +1,117 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Standard Binary Search**
+| O(T): O(lgn) | O(S): O(1) | Rt: 24ms | 
+```python
+    def isPerfectSquare(self, num: int) -> bool:
+        l, r = 0, num
+        while l < r:
+            mid = l + (r - l) // 2
+            #mid < num / mid is much safer from overflow
+            if mid ** 2 < num: l = mid + 1
+            else: r  = mid
+        return l ** 2 == num
+```
+Comment: this standard way binary search will do a full binary search even the mid cursor hit the target in its first try, it will still go for the following checks (exactly a full binary search). A standard binary search is designed to find the most possible (potential) value in a sorted list, and the potential value is always the l indexed value (or r, because l == r in the last round). As whether the l indexed value is the target, you need check in the return statement. The standard binary search is the most inefficient binary search because it does full check. But it is simple, concise, fault-talerant, robust and elegant. It should be mastered by all engineers. 
+
+
+**II). Standard Binary Search with Check**
+| O(T): O(lgn) | O(S): O(1) | Rt: 20ms | 
+```python
+    def isPerfectSquare(self, num: int) -> bool:
+        l, r = 0, num
+        while l < r:
+            mid = l + (r - l) // 2
+            val = mid ** 2
+            if val == num: return True
+            elif val < num: l = mid + 1
+            else: r = mid
+        return l ** 2 == num
+```
+Comment: once the mid cursor hit the target, return immediately, faster than the standard version. We cannot simply return False in the end because the mid cursor cannot explore all possibilities in a standard binary search. To be exact, the mid cursor will only miss the boundary of the last range ([l, r], r == l, one check missed), therefore the last check is indispensable. 
+
+
+
+**III). All Check Binary Search**
+| O(T): O(lgn) | O(S): O(1) | Rt: 24ms | 
+```python
+    def isPerfectSquare(self, num: int) -> bool:
+        l, r = 0, num
+        while l <= r:
+            mid = l + (r - l) // 2
+            val = mid ** 2
+            if val == num: return True
+            elif val < num: l = mid + 1
+            else: r = mid - 1
+        return False
+```
+Comment: Binary Search is a piece of art. Be careful for their slightly differences. This binary search is the most efficient binary search (actually it makes not difference because all binary search is fast by its nature). Besides direct return, it does all checks in the middle which means the mid cursor will hit every possible corners. Because it converges the range faster by both l = mid + 1 and r = mid - 1 comparing to either boundary forward, it is slightly faster than standard binary search fashion **solution II** 
+
+Conclusion: binary search has only two styles -- standard and all-check (non-standard ?). never mix them up in real coding (it may turn out to be correct, but once the list content changes it may fail, it may bring disasters.) Safe coding, happy life. To be safe with binary search, follow exactly the pattern what we do in the previous three versions especially the standdard and all-check ones. If you cannot master both of them (it is not a shame), pick the standard one and always code your binary search standardly. 
+
+
+**IV). Math Feature of Adjacent Square**
+| O(T): O(sqrt(n)) | O(S): O(1) | Rt: 40ms | 
+```python
+    def isPerfectSquare(self, num: int) -> bool:
+        n, gap = 0, 1
+        while n < num:
+            n += gap
+            gap += 2
+        return n == num
+
+```
+Analysis: notice (n+1) **2 - n **2 = (n+1 - n) * (n+1 + n) = 2n + 1; therefore next square bigger than current one by a linear gap, instead of using multiply (slower than addition by nature), we grow the gap by a contant 2. 
+
+
+**V). Linear Method**
+| O(T): O(n) | O(S): O(1) | Rt: 48ms | 
+```python
+    def isPerfectSquare(self, num: int) -> bool:
+        i = 0
+        while i ** 2 < num:
+            i += 1
+        return i ** 2 == num
+```
+
+
+**VI). Newton's Method**
+| O(T): O(?) | O(S): O(1) | Rt: 24ms |
+note: not quite sure about the time complexity 
+```python
+    def isPerfectSquare(self, num: int) -> bool:
+        x = num
+        while x > num / x:
+            x = (x + num/x) // 2
+        return x ** 2 == num
+```
+Analysis: f(x) = x*x - num, f`(x) = 2*x; x1 = x0 - f(x0) / f`(x0); x = x - ((x*x - num) / (2*x)) => x = (x + num/x) // 2
+
+
+**VII). Bit Wise**
+| O(T): O(16) | O(S): O(1) | Rt: 28ms | 
+```python
+    def isPerfectSquare(self, num: int) -> bool:
+        rst, bit = 0, 1 << 15
+        for _ in range(16):
+            tmp = rst | bit
+            if tmp == num / tmp: return True
+            elif tmp < num / tmp: rst = tmp
+            bit >>= 1
+        return rst ** 2 == num
+```
+Comment: bit wise probing from most significant digit to less significant digits
+
+Alternative: concise bit wise solution with rollback | Rt: 28ms |
+```python
+    def isPerfectSquare(self, num: int) -> bool:
+        rst, bit = 0, 1 << 15
+        for _ in range(16):
+            #adopt all bits
+            rst |= bit
+            #exceed, cancel the newly adopted bits, actually a rollback of rst
+            if rst > num / rst: rst ^= bit
+            bit >>= 1
+        return rst ** 2 == num
+```
+Referrence: https://leetcode.com/problems/valid-perfect-square/discuss/83901/O(1)-Java-solution
+Comment: first adpot the bits, if not good, rollback the old version rst. "|" is used to adopt while "^" will cancel the adoption. Very clever solution, may not as readable as the first version. 

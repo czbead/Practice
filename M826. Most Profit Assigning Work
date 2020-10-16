@@ -1,0 +1,32 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). HashMap Brute Force**
+| O(T): O() | O(S): O() | Rt: 2160ms | 
+```python
+        l, dt = len(difficulty), {}
+        for i in range(l): dt[difficulty[i]] = max(dt.get(difficulty[i], 0), profit[i])
+        for i in range(1, 10**5): dt[i] = max(dt.get(i, 0), dt.get(i-1, 0))
+        return sum(dt[i] for i in worker)
+```
+
+
+**II). Two Pointer with Sort**
+| O(T): O() | O(S): O() | Rt: 424ms | 
+```python
+    def maxProfitAssignment(self, difficulty: List[int], profit: List[int], worker: List[int]) -> int:
+        l, dt = len(difficulty), {}
+        for i in range(l): dt[difficulty[i]] = max(dt.get(difficulty[i], 0), profit[i])
+        difficulty.sort(); worker.sort()
+        for i in range(1, l):
+            dt[difficulty[i]] = max(dt[difficulty[i]], dt[difficulty[i-1]])
+        
+        if worker[-1] < difficulty[0]: return 0
+        rst, j = 0, 0
+        for i in worker:
+            while j < l and difficulty[j] <= i: j += 1
+            if j == 0: continue
+            rst += dt[difficulty[j-1]]
+        return rst
+```
+
+Others: 2-D sort - https://leetcode.com/problems/most-profit-assigning-work/discuss/127031/C%2B%2BJavaPython-Sort-and-Two-pointer; bucket sort - https://leetcode.com/problems/most-profit-assigning-work/discuss/126964/C%2B%2B-4-lines-sort-bucket-sort-and-bucked-sort-with-two-pointers (pretty much the same with bucket rather than hashmap);
+

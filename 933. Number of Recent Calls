@@ -1,0 +1,54 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Queue**
+| O(T): O(1) | O(S): O(n) | Rt: 280ms | 
+```python
+    def __init__(self):
+        self.q = collections.deque([])
+
+    def ping(self, t: int) -> int:
+        self.q.append(t)
+        while self.q[0] and self.q[0] < t - 3000:
+            self.q.popleft()
+        return len(self.q)
+```
+Comment: this is my second try, still cannot understand the description. give up. 
+
+
+**II). Binary Search**
+| O(T): O(lgn) | O(S): O(n) | Rt: 316ms | 
+```python
+    def __init__(self):
+        self.lst = []
+
+    def ping(self, t: int) -> int:
+        self.lst.append(t)
+        return len(self.lst) - bisect.bisect_left(self.lst, t - 3000)
+```
+
+
+**III). Fixed Size List**
+| O(T): O(n) | O(S): O(n) | Rt: ms | TLE 
+```python
+    def __init__(self):
+        self.lst = [0] * 3002
+
+    def ping(self, t: int) -> int:
+        self.lst[t % 3002] = t
+        return sum(i > max(0, t - 3001) for i in self.lst)
+```
+
+
+**IV). Heap**
+| O(T): O(lgn) | O(S): O(n) | Rt: 312ms | 
+```python
+    def __init__(self):
+        self.lst = []
+        heapq.heapify(self.lst)
+
+    def ping(self, t: int) -> int:
+        heapq.heappush(self.lst, t)
+        while self.lst and self.lst[0] < t - 3000:
+            heapq.heappop(self.lst)
+        return len(self.lst)
+```
+

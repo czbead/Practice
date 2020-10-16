@@ -1,0 +1,78 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP**
+| O(T): O(n^(1.5)) | O(S): O(n) | Rt: 3168ms | 
+```python
+    def numSquares(self, n: int) -> int:
+        dp, j = [1] * (n+1), 1
+        for i in range(1, n+1):
+            if i == j * j:
+                dp[i], j = 1, j+1
+            else:
+                dp[i] = min(dp[k*k] + dp[i - k*k] for k in range(1, j))
+        return dp[-1]
+```
+Alternative:  | Rt: 3332ms |
+```python
+    def numSquares(self, n: int) -> int:
+        dp= [0] * (n+1)
+        for i in range(1, n+1):
+            j = int(i ** 0.5)
+            dp[i] = min(dp[i - k*k] + 1 for k in range(1, j+1))
+        return dp[-1]
+```
+Referrence: https://leetcode.com/problems/perfect-squares/discuss/71495/An-easy-understanding-DP-solution-in-Java/73784
+
+Triple: so called "Static DP". | Rt: 224ms |
+```python
+    dp = [0]
+    def numSquares(self, n: int) -> int:
+        while len(self.dp) <= n:
+            i = len(self.dp)
+            j = int(i ** 0.5)
+            self.dp.append(min(self.dp[i - k*k] + 1 for k in range(1, j+1)))
+        return self.dp[n]
+```
+Referrence: https://leetcode.com/problems/perfect-squares/discuss/71512/Static-DP-C%2B%2B-12-ms-Python-172-ms-Ruby-384-ms
+Comment: the global variable is reused when a larger input scale is previously computed for current smaller scale input. 
+
+**II). BFS**
+| O(T): O() | O(S): O() | Rt: 636ms | 
+```python
+    def numSquares(self, n: int) -> int:
+        if n <= 1: return n
+        sqrt = n ** 0.5
+        if sqrt % 1 == 0: return 1
+        arr = [i*i for i in range(1, int(sqrt+1))]
+        q = collections.deque(arr)
+        step, used = 1, set(arr)
+        while q:
+            size, step = len(q), step+1
+            for _ in range(size):
+                num = q.popleft()
+                for i in arr:
+                    new = i+num
+                    if new == n: return step
+                    if new in used: continue
+                    q.append(new); used.add(new)
+```
+
+Alternative: | Rt: 292ms |
+```python
+    def numSquares(self, n: int) -> int:
+        if n <= 1: return n
+        sqrt = n ** 0.5
+        if sqrt % 1 == 0: return 1
+        arr = [i*i for i in range(1, int(sqrt+1))]
+        target, step = {n}, 0
+        while target:
+            step, nxt = step+1, set()
+            for i in target:
+                for j in arr:
+                    if i < j: continue
+                    if i == j: return step
+                    nxt.add(i-j)
+            target = nxt
+```
+Reference: BFS -- https://leetcode.com/problems/perfect-squares/discuss/71475/Short-Python-solution-using-BFS;
+
+Mathematic -- https://leetcode.com/problems/perfect-squares/discuss/71488/Summary-of-4-different-solutions-(BFS-DP-static-DP-and-mathematics);

@@ -1,0 +1,17 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Triangle Inequality**
+| O(T): O(n) | O(S): O(1) | Rt: 44ms | 
+```python
+    def escapeGhosts(self, ghosts: List[List[int]], target: List[int]) -> bool:
+        x, y = target
+        return abs(x) + abs(y) < min(abs(x-i) + abs(y-j) for i, j in ghosts)
+```
+Referrence: https://leetcode.com/problems/escape-the-ghosts/discuss/116678/Why-interception-in-the-middle-is-not-a-good-idea-for-ghosts.
+
+Alternative: fast return. | Rt: 48ms |
+```python
+    def escapeGhosts(self, ghosts: List[List[int]], target: List[int]) -> bool:
+        x, y = target
+        you = abs(x) + abs(y)
+        return all(abs(x-i) + abs(y-j) > you for i, j in ghosts)
+```

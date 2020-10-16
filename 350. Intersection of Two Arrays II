@@ -1,0 +1,71 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter & Elements**
+| O(t): O(m+n) | O(m): O(m+n) | Rt: 48ms | 
+```python
+    def intersect(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        ct = collections.Counter
+        return (ct(nums1) & ct(nums2)).elements()
+```
+
+
+**II). Min Count**
+| O(t): O(m+n) | O(m): O(m+n) | Rt: 68ms | 
+```python
+    def intersect(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        rst = []
+        comm = set(nums2) & set(nums1)
+        for i in comm:
+            rst += [i] * min(nums1.count(i), nums2.count(i))
+        return rst
+```
+
+
+**III). Sort Pop**
+| O(t): O(nlgn + mlgm) | O(m): O(1) | Rt: 44ms | 
+```python
+    def intersect(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        rst = []
+        nums1.sort()
+        nums2.sort()
+        while nums1 and nums2:
+            if nums1[-1] == nums2[-1]: 
+                rst.append(nums1.pop())
+                nums2.pop()
+            elif nums1[-1] > nums2[-1]: nums1.pop()
+            else: nums2.pop()
+        return rst
+```
+
+
+**IV). One Counter**
+| O(t): O(m+n) | O(m): O(n) | Rt: 40ms | 
+```python
+    def intersect(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        rst, ct = [], collections.Counter(nums1)
+        for i in nums2:
+            if i in ct and ct[i] > 0: 
+                rst.append(i)
+                ct[i] -= 1
+        return rst
+```
+
+
+**V). Two Pointer after Sort**
+| O(t): O(nlgn + mlgm) | O(m): O(1) | Rt: 44ms | 
+```python
+    def intersect(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        rst = []
+        nums1.sort()
+        nums2.sort()
+        p = pp = 0
+        while p < len(nums1) and pp < len(nums2):
+            if nums1[p] < nums2[pp]: p += 1
+            elif nums1[p] > nums2[pp]: pp += 1
+            else:
+                rst.append(nums1[p])
+                p, pp = p+1, pp+1
+        return rst
+```
+Comment: similar to solution **Sort Pop**
+
+

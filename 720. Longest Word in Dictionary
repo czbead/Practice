@@ -1,0 +1,241 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort By Len**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 76ms | 
+```python
+    def longestWord(self, words: List[str]) -> str:
+        words.sort(key=len)
+        maxl, l, rst, s = 0, 0, [''], set([''])
+        for word in words:
+            curl = len(word)
+            #dictionary gap, drop all following words
+            if curl > l + 1: break
+            if word[:-1] in s: 
+                s.add(word)
+                if curl > maxl: maxl, rst = curl, [word]
+                elif curl == maxl: rst.append(word)
+                l = curl
+        rst.sort()
+        return rst[0]
+```
+Alternative: batch style. | Rt: 68ms |
+```python
+    def longestWord(self, words: List[str]) -> str:
+        words.sort(key=len)
+        dt = set([''])
+        for word in words:
+            if word[:-1] in dt: dt.add(word)
+        return max(sorted(dt), key=len)
+```
+
+
+**II). Sort and Set**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 76ms | 
+```python
+    def longestWord(self, words: List[str]) -> str:
+        words.sort()
+        maxl, rst, dt = 0, '', set([''])
+        for word in words:
+            if word[:-1] in dt: 
+                dt.add(word)
+                curl = len(word)
+                if curl > maxl: maxl, rst = curl, word
+        return rst
+```
+Alternative: batch style. | Rt: 64ms |
+```python
+    def longestWord(self, words: List[str]) -> str:
+        words.sort()
+        dt = set([''])
+        for word in words:
+            if word[:-1] in dt: dt.add(word)
+        return max(sorted(dt), key=len)
+```
+
+
+**III). Prefix Instead of Set**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 72ms | 
+```python
+    def longestWord(self, words: List[str]) -> str:
+        words.sort()
+        rst, prefix = [''], ''
+        for word in words: 
+            if word[:-1] == prefix[:len(word) - 1]: 
+                rst.append(word)
+                prefix = word
+        return max(sorted(rst), key=len)
+```
+Referrence: https://leetcode.com/problems/longest-word-in-dictionary/discuss/186128/O(1)-Space!-NlogN-Solution!-PythonC++
+Alternative: update result in the run. | Rt: 76ms |
+```python 
+    def longestWord(self, words: List[str]) -> str:
+        words.sort()
+        rst = prefix = ''
+        for word in words: 
+            if word[:-1] == prefix[:len(word) - 1]: 
+                prefix = word
+                if len(word) > len(rst): rst = word
+        return rst
+```
+
+
+**IV). Trie with Dict**
+| O(T): O(KMlgN) | O(S): O(26 * key_length * N) | Rt: 140ms | 
+note: N: number of key in the trie; M: longest word length; K: number of words
+```python
+class TrieNode:
+    def __init__(self, value=''):
+        self.children = collections.defaultdict(TrieNode)
+        self.iswordend  = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root 
+        for i in word: node = node.children[i]
+        node.iswordend = True
+
+class Solution: 
+    #this is for finding the general longest, we need to find the valid longest
+    # def dfs(self, node, cur, pre, longest):
+    #     pre += cur
+    #     if node.iswordend:
+    #         lenp, lenl = len(pre), len(longest[0])
+    #         if lenp < lenl: return
+    #         elif lenp > lenl: longest[0] = pre
+    #         elif pre < longest: longest[0] = pre
+    #     else: 
+    #         for k, vnode in node.children.items(): 
+    #             self.dfs(vnode, k, pre, longest)
+    #     return longest[0]
+    
+    def dfs(self, node, pre):
+        rst = pre
+        for kchar, vnode in node.children.items():
+            if vnode.iswordend:
+                valid = self.dfs(vnode, pre+kchar)
+                if len(valid) > len(rst): rst = valid
+                elif len(valid) == len(rst) and valid < rst: rst = valid
+        return rst
+    
+    def longestWord(self, words: List[str]) -> str:
+        trie = Trie()
+        for word in words: trie.insert(word)
+        return self.dfs(trie.root, '')
+```
+Referrence: https://leetcode.com/problems/longest-word-in-dictionary/discuss/203730/Python-Trie-%2B-DFS-(No-extensive-loops-or-complicated-TrieNode)
+Alternative: using dict instead of defaultdict.  | Rt: 148ms |
+```python
+class TrieNode:
+    def __init__(self, value=''):
+        self.children = {}
+        self.iswordend  = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root 
+        for i in word: 
+            if i not in node.children: node.children[i] = TrieNode()
+            node = node.children[i]
+        node.iswordend = True
+
+class Solution: 
+    def dfs(self, node, pre):
+        rst = pre
+        for kchar, vnode in node.children.items():
+            if vnode.iswordend:
+                valid = self.dfs(vnode, pre+kchar)
+                if len(valid) > len(rst): rst = valid
+                elif len(valid) == len(rst) and valid < rst: rst = valid
+        return rst
+    
+    def longestWord(self, words: List[str]) -> str:
+        trie = Trie()
+        for word in words: trie.insert(word)
+        return self.dfs(trie.root, '')
+```
+
+
+**V). Trie with Bucket Collect**
+| O(T): O() | O(S): O() | Rt: 300ms | 
+```python
+class TrieNode:
+    def __init__(self):
+        self.children = [None] * 26
+        self.iswordend  = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+        
+    def calpos(self, alpha):
+        return ord(alpha) - ord('a')
+
+    def insert(self, word):
+        node = self.root 
+        for i in range(len(word)): 
+            pos = self.calpos(word[i])
+            if node.children[pos] is None: node.children[pos] = TrieNode()
+            node = node.children[pos]
+        node.iswordend = True
+
+class Solution: 
+    def calchar(self, ind):
+        return chr(ord('a') + ind)
+    
+    def dfs(self, node, pre):
+        rst = pre
+        for ichar, vnode in enumerate(node.children):
+            if vnode is not None and vnode.iswordend:
+                valid = self.dfs(vnode, pre + self.calchar(ichar))
+                if len(valid) > len(rst): rst = valid
+        return rst
+    
+    def longestWord(self, words: List[str]) -> str:
+        trie = Trie()
+        for word in words: trie.insert(word)
+        return self.dfs(trie.root, '')
+```
+
+
+**VI). Trie with BFS**
+| O(T): O() | O(S): O() | Rt: 152ms | 
+```python
+class TrieNode:
+    def __init__(self, snapshot=''):
+        self.children = {}
+        self.word = ''
+        self.iswordend  = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root
+        for i in word: 
+            if i not in node.children: node.children[i] = TrieNode()
+            node = node.children[i]
+        node.iswordend = True
+        node.word = word
+        
+    def findmax(self):
+        maxwors = ['']
+        stack = [self.root]
+        while stack:
+            maxwords = [i.word for i in stack]
+            stack = [child for node in stack for child in node.children.values() if child.iswordend]
+        return min(maxwords)
+    
+class Solution: 
+    def longestWord(self, words: List[str]) -> str:
+        trie = Trie()
+        for word in words: trie.insert(word)
+        return trie.findmax()
+```
+
+

@@ -1,0 +1,48 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: 20ms | 
+```python
+    def validTicTacToe(self, board: List[str]) -> bool:
+        #0: win by 0 means not win
+        #1: win by 1 move
+        #2: win by more than 1 move  
+        def winby(board, target, count):
+            if count < 3: return 0
+            zipboard = list(zip(*board))
+            row = col = None
+            for i in range(3):
+                if board[i] == target: 
+                    if row is None: row = i
+                    else: return 2
+                if zipboard[i] == tuple(target):
+                    if col is None: col = i
+                    else: return 2
+            t, ct = target[0], 0
+            if all(board[i][i] == t for i in range(3)): 
+                ct += 1
+                if row is not None and col is not None: 
+                    if row != col: return 2
+                if row is None: row = col
+                if col is None: col = row
+            if all(board[i][2-i] == t for i in range(3)):
+                ct += 1
+                if row is not None and col is not None: 
+                    if row + col != 2: return 2
+            if row is None and col is None and ct == 0: return 0
+            return 1
+        
+        ctx = cto = 0
+        for row in board: 
+            for i in row:
+                if i == 'X': ctx += 1
+                elif i == 'O': cto += 1
+        if ctx != cto and ctx != cto+1: return False
+        xwin, owin = winby(board, 'XXX', ctx), winby(board, 'OOO', cto)
+        #(0, 0), (0, 1), (1, 0)
+        if xwin == owin == 0: return True
+        #X takes the last step
+        if ctx > cto and owin == 0 and xwin == 1: return True
+        #O takes the last step
+        if ctx == cto and xwin == 0 and owin== 1: return True
+        return False
+```

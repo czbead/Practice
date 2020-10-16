@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force - Set**
+| O(T): O(n) | O(S): O(n) | Rt: 148ms | 
+```python
+    def findRepeatedDnaSequences(self, s: str) -> List[str]:
+        dnaset, rst = set(), set()
+        for i in range(10, len(s)+1):
+            cur = s[i-10:i]
+            if cur in dnaset: rst.add(cur)
+            else: dnaset.add(cur)
+        return list(rst)
+```
+
+
+**II). Hashing Chunk with Bits**
+| O(T): O(n) | O(S): O(n) | Rt: 108ms | 
+```python
+    def findRepeatedDnaSequences(self, s: str) -> List[str]:
+        m, seen, added, rst = [0] * 26, set(), set(), []
+        m[ord('C') - ord('A')] = 1
+        m[ord('G') - ord('A')] = 2
+        m[ord('T') - ord('A')] = 3
+        if len(s) < 11: return []
+        cur = 0
+        for i in range(9): cur <<= 2; cur |= m[ord(s[i]) - ord('A')]
+        for i in range(9, len(s)):
+            cur <<= 2; cur |= m[ord(s[i]) - ord('A')]; cur &= 0xfffff
+            if cur not in seen: seen.add(cur)
+            elif cur not in added: rst.append(s[i-9:i+1]); added.add(cur)
+        return rst
+```
+Referrence: https://leetcode.com/problems/repeated-dna-sequences/discuss/53867/Clean-Java-solution-(hashmap-%2B-bits-manipulation)
+
+
+Others: another great bit manipulation solution: great observation. https://leetcode.com/problems/repeated-dna-sequences/discuss/53877/I-did-it-in-10-lines-of-C%2B%2B

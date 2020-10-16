@@ -1,0 +1,75 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter Intersection Elements**
+| O(T): O(mn) | O(S): O(mn) | Rt: 44ms | 
+```python
+    def commonChars(self, A: List[str]) -> List[str]:
+        return reduce(lambda x, y: x&y, map(collections.Counter, A)).elements()
+```
+
+
+**II). Set Intersection Count Min**
+| O(T): O(mn) | O(S): O(mn) | Rt: 40ms | 
+```python
+    def commonChars(self, A: List[str]) -> List[str]:
+        rst, aset = [], reduce(lambda x, y: x&y, map(set, A))
+        for i in aset: rst += [i] * min(word.count(i) for word in A)
+        return rst
+```
+Alternative: using i for _ in ragne(n) to create n i.  | Rt: 36ms |
+```python
+    def commonChars(self, A: List[str]) -> List[str]:
+        aset = reduce(lambda x, y: x&y, map(set, A))
+        return [i for i in aset for _ in range(min(word.count(i) for word in A))]
+```
+Triple: just use the first word.  | Rt: 40ms |
+```python
+    def commonChars(self, A: List[str]) -> List[str]:
+        return [i for i in set(A[0]) for _ in range(min(word.count(i) for word in A))]
+```
+Comment: less readable, notice you cannot code it as ```python[i for _ in range(min(word.count(i) for word in A)) for i in aset]``` although it is more readable.
+
+
+**III). Consider 26**
+| O(T): O(mn) | O(S): O(1) | Rt: 32ms | 
+```python
+    def commonChars(self, A: List[str]) -> List[str]:
+        rst = []
+        for i in range(26):
+            cur = chr(ord('a') + i)
+            allhave = all(cur in word for word in A)
+            if allhave: rst += [cur] * min(word.count(cur) for word in A)
+        return rst
+```
+
+
+**IV). Count Each Get Min**
+| O(T): O(mn) | O(S): O(1) | Rt: 60ms | 
+```python
+    def commonChars(self, A: List[str]) -> List[str]:
+        def count(word):
+            rst = [0] * 26
+            for i in word: rst[ord(i) - ord('a')] += 1
+            return rst
+        base = [100] * 26
+        getMin = lambda x, y: [min(i, j) for i, j in zip(x, y)]
+        for word in A: base = getMin(base, count(word))
+        return [chr(ord('a') + i) for i, v in enumerate(base) for _ in range(v)]
+```
+Comment: here we use lambda function to improve readability which will affact the efficiency a bit.
+
+
+**V). Shuffle**
+| O(T): O(mn) | O(S): O(m) | Rt: 60ms | 
+```python
+    def commonChars(self, A: List[str]) -> List[str]:
+        pre = list(A[0])
+        for word in A:
+            cur = []
+            for i in word:
+                if i in pre: cur.append(i); pre.remove(i)
+            pre = cur
+        return pre
+```
+Referrence: https://leetcode.com/problems/find-common-characters/discuss/332733/Python-Solution-Easy-to-Understand
+
+

@@ -1,0 +1,40 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP: LCS**
+| O(T): O(n*n) | O(S): O() | Rt: ms | TLE
+```python
+    def longestSubsequence(self, arr: List[int], difference: int) -> int:
+        l = len(arr)
+        dp, mx = [0] * l, 1
+        for i in range(l): dp[i] = 1
+        for i in range(l):
+            for j in range(i):
+                if arr[i] - arr[j] == difference:
+                    dp[i] = max(dp[i], dp[j] + 1)
+                    mx = max(mx, dp[i])
+        return mx
+```
+
+
+**II). DP with HashMap**
+| O(T): O(n) | O(S): O(n) | Rt: 592ms | 
+```python
+    def longestSubsequence(self, arr: List[int], difference: int) -> int:
+        dt, mx = {}, 1
+        for i in arr:
+            if i-difference in dt: 
+                dt[i] = dt[i-difference] + 1
+                mx = max(dt[i], mx)
+            else: dt[i] = 1
+        return mx
+```
+
+Alternative: | Rt: 640ms |
+```python
+    def longestSubsequence(self, arr: List[int], diff: int) -> int:
+        dt, mx = {}, 1
+        for i in arr:
+            dt[i] = dt.get(i-diff, 0) + 1
+            mx = max(dt[i], mx)
+        return mx
+```
+

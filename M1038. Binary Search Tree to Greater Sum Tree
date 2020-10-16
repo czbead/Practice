@@ -1,0 +1,60 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Right, Root, Left**
+| O(T): O(n) | O(S): O(h) | Rt: 36ms | 
+```python
+    def bstToGst(self, root: TreeNode) -> TreeNode:
+        def dfs(node, pre):
+            if not node: return
+            dfs(node.right, pre)
+            node.val += pre[0]
+            pre[0] = node.val
+            dfs(node.left, pre)
+            
+        dfs(root, [0])
+        return root
+```
+
+Alternative: | Rt: 24ms |
+```python
+    def bstToGst(self, root: TreeNode) -> TreeNode:
+        def dfs(node, pre):
+            if not node: return root
+            dfs(node.right, pre)
+            node.val += pre[0]
+            pre[0] = node.val
+            dfs(node.left, pre)
+            return root
+            
+        return dfs(root, [0])
+```
+
+Triple: wrong when cross test cases, it correct when apply individual test case.
+```python
+    def bstToGst(self, root: TreeNode, pre=[0]) -> TreeNode:
+        if not root: return root
+        self.bstToGst(root.right, pre)
+        root.val += pre[0]
+        pre[0] = root.val
+        self.bstToGst(root.left, pre)
+        return root
+``` 
+Comment: the pre variable in these solutions works as a global variable. 
+
+
+**II). Iterative: Stack Right**
+| O(T): O(n) | O(S): O(n) | Rt: 48ms | 
+```python
+    def bstToGst(self, root: TreeNode) -> TreeNode:
+        stack, node, accu = [], root, 0
+        while stack or node:
+            while node:
+                stack.append(node)
+                node = node.right
+            n = stack.pop()
+            n.val += accu
+            accu = n.val
+            node = n.left
+        return root
+```
+Referrence: https://leetcode.com/problems/binary-search-tree-to-greater-sum-tree/discuss/286725/JavaC%2B%2BPython-Revered-Inorder-Traversal
+

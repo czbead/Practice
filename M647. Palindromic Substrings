@@ -1,0 +1,108 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP**
+| O(T): O(n*n) | O(S): O(n*n) | Rt: 220ms | 
+```python
+        if not s: return
+        l = len(s)
+        dp = [[0] * l for _ in range(l)]
+        for i in range(l): dp[i][i] = 1
+        for i in range(1, l):
+            for j in range(i):
+                if s[i] == s[j] and (i-j <= 2 or dp[j+1][i-1]): dp[j][i] = 1
+        return sum(sum(row) for row in dp)
+```
+
+Alternative: | Rt: 236ms |
+```python
+    def countSubstrings(self, s: str) -> int:
+        if not s: return
+        l = len(s)
+        rst, dp = l, [[0] * l for _ in range(l)]
+        for i in range(l): dp[i][i] = 1
+        for i in range(1, l):
+            for j in range(i-1, -1, -1):
+                if s[i] == s[j] and (i-j <= 2 or dp[j+1][i-1]): 
+                    dp[j][i] = 1
+                    rst += 1
+        return rst
+```
+
+
+**II). Brute Force: Slide Window**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def countSubstrings(self, s: str) -> int:
+        def isPal(s, i, j):
+            while i < j:
+                if s[j] != s[i]: return False
+                i, j = i+1, j-1
+            return True
+        
+        if not s: return
+        l, step = len(s), 2
+        rst = l
+        while step <= l:
+            for i in range(l-step+1):
+                if isPal(s, i, i+step-1):
+                    rst += 1
+            step += 1
+        return rst
+```
+
+
+**III). Brute Force: Fixed Start**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+    def countSubstrings(self, s: str) -> int:
+        def isPal(s, i, j):
+            while i < j:
+                if s[j] != s[i]: return False
+                i, j = i+1, j-1
+            return True
+        
+        if not s: return
+        l = len(s)
+        rst = l
+        for i in range(l-1):
+            for j in range(i+1, l):
+                if isPal(s, i, j):
+                    rst += 1
+        
+        return rst
+```
+Comment: brute force is not always a bad idea if you can break out (or skip some case by continue) in a earlier stage. However, you simply cannot skip any case, you cannot break out either because you never know whether there is a sequence make the false case true, you need to explore all cases which makes it a "real and hard brute force".
+
+
+**IV). Extend Palindrom**
+| O(T): O() | O(S): O() | Rt: 112ms | 
+```python
+    def countSubstrings(self, s: str) -> int:
+        def extendPal(s, l, i, j):
+            count = 0
+            while i >=0 and j < l and s[i] == s[j]:
+                count += 1
+                i, j = i-1, j+1
+            return count
+            
+        if not s: return
+        count, l = 0, len(s)
+        for i in range(l):  #s[i] as the center point of palindrom
+            count += extendPal(s, l, i, i)  #palindrom of odd length
+            count += extendPal(s, l, i, i+1)  #palindrom of even length
+        return count
+```
+Referrence: https://leetcode.com/problems/palindromic-substrings/discuss/105689/Java-solution-8-lines-extendPalindrome
+
+Alternative: iterative version by using index sum. | Rt: 108ms |
+```python
+    def countSubstrings(self, s: str) -> int:
+        l, count = len(s), 0
+        #the sum of left and right pointer is in range [0 + 0, l-1 + l-1] => [0, 2l-2]
+        for summ in range(2*l - 1):
+            i, j = summ // 2, (summ+1) // 2
+            while i >= 0 and j < l and s[i] == s[j]:
+                count += 1
+                i, j = i-1, j+1
+        return count
+```
+Referrence: https://leetcode.com/problems/palindromic-substrings/discuss/105687/Python-Straightforward-with-Explanation-(Bonus-O(N)-solution)

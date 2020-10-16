@@ -1,0 +1,54 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force - Permutation**
+| O(T): O(nn) | O(S): O(nn) | Rt: 28ms | 
+```python
+    def largestTimeFromDigits(self, A: List[int]) -> str:
+        possible = itertools.permutations(A, 4)
+        isvalid = lambda x: x[0]*10 + x[1] < 24 and x[2]*10 + x[3] < 60
+        validTime = [i for i in possible if isvalid(i)]
+        if not validTime: return ''
+        rst = max(validTime, key = lambda x: (x[0]*10 + x[1], x[2]*10 + x[3]))
+        return f"{rst[0]}{rst[1]}:{rst[2]}{rst[3]}"
+```
+Alternative: one-liner.  | Rt: 28ms |
+```python
+    def largestTimeFromDigits(self, A: List[int]) -> str:
+        return max([f"{i[0]}{i[1]}:{i[2]}{i[3]}" for i in itertools.permutations(A, 4) if i[:2] < (2, 4) and i[2] < 6] or [''])
+```
+Referrence: https://leetcode.com/problems/largest-time-for-given-digits/discuss/200517/Python-1-line-Check-Permutations-O(24)
+
+
+**II). Sort and Permutation**
+| O(T): O(n^2lgn) | O(S): O(nn) | Rt: 20ms | 
+```python
+    def largestTimeFromDigits(self, A: List[int]) -> str:
+        for i in itertools.permutations(sorted(A, reverse=True), 4):
+            if i[0]*10 + i[1] < 24 and i[2]*10 + i[3] < 60: 
+                return f"{i[0]}{i[1]}:{i[2]}{i[3]}"
+        return ''
+```
+Alternative: lengthy one-liner.  | Rt: 28ms |
+```python
+    def largestTimeFromDigits(self, A: List[int]) -> str:
+        return next((f"{i[0]}{i[1]}:{i[2]}{i[3]}" for i in itertools.permutations(sorted(A, reverse=True), 4) if i[0]*10 + i[1] < 24 and i[2]*10 + i[3] < 60), '') 
+```
+Comment: pay attention to the default value of next. 
+
+
+**III). Brute Force**
+| O(T): O(n^3) | O(S): O(1) | Rt: 28ms | 
+```python
+    def largestTimeFromDigits(self, A: List[int]) -> str:
+        rst = ''
+        for i in range(4):
+            for j in range(4):
+                for k in range(4):
+                    if (i == j or i == k or j == k): continue
+                    #0, 1, 2, 3, all add up, get 6    
+                    l = 6 - i -j - k
+                    cur = f"{A[i]}{A[j]}:{A[k]}{A[l]}"
+                    if cur[:2] > '23' or cur[3] > '5': continue
+                    rst = max(rst, cur)
+        return rst
+```
+Referrence: https://leetcode.com/problems/largest-time-for-given-digits/discuss/200693/Java-11-liner-O(64)-w-comment-6-ms.

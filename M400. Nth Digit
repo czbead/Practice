@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Range**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def findNthDigit(self, n: int) -> int:
+        #define range based on number size: 1~9; 10~99; 100~999; ... 
+        #st is the start of each range
+        #size is the breadth of number in a specific range: 1, 2, 3 ... or len(str(st))
+        #count is the amount of number in each range
+        #amount is the the amount of digit in each range
+        #amount = count * sizeof(number is a specific range, use st)
+        st, size, count, amount = 1, 1, 9, 9
+        while n > amount:
+            n -= amount
+            #1, 10, 100
+            st *= 10
+            size += 1
+            #1~9: 9; 10~99: 90; 100~999: 900; ...
+            count *= 10
+            amount = size * count
+        offset, digitindex = divmod(n-1, size)  #take st into account
+        num = st + offset
+        return str(num)[digitindex]
+```
+Referrence: https://leetcode.com/problems/nth-digit/discuss/88363/Java-solution
+Comment: greate oberservation required by this problem. 
+
+Alternative: | Rt: 28ms |
+```python
+    def findNthDigit(self, n: int) -> int:
+        #count = next_st - st = 10 * st - st = st * 9
+        st, size = 1, 1
+        while n > st * 9 * size:
+            n -= st * 9 * size
+            #1, 10, 100
+            st *= 10
+            size += 1
+        offset, digitindex = divmod(n-1, size)  
+        num = st + offset
+        return str(num)[digitindex]
+```

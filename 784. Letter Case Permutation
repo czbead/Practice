@@ -1,0 +1,49 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Permutate Previous**
+| O(T): O(2 ^ n) | O(S): O(n) | Rt: 36ms | 
+note: n denotes the amount of alpha in the input
+```python
+    def letterCasePermutation(self, S: str) -> List[str]:
+        rst = [S]
+        for i, v in enumerate(S):
+            if v.isalpha():
+                rst = [s[:i] + j + s[i+1:] for j in (v.upper(), v.lower()) for s in rst]
+        return rst
+```
+
+
+**II). Grow Base on Previous**
+| O(T): O(2 ^ n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def letterCasePermutation(self, S: str) -> List[str]:
+        rst = [S]
+        for i, v in enumerate(S):
+            if v.isalpha():
+            	#v == s[i], you can use both
+                rst += [s[:i] + v.swapcase() + s[i+1:] for s in rst]
+        return rst
+```
+
+
+**III). Alpha By Alpha**
+| O(T): O(2 ^ n) | O(S): O(n) | Rt: 48ms | 
+```python
+    def letterCasePermutation(self, S: str) -> List[str]:
+        rst = ['']
+        for i in S:
+            if i.isalpha(): rst = [s + j for j in (i.lower(), i.upper()) for s in rst]
+            else: rst = [s + i for s in rst]
+        return rst
+```
+
+
+**IV). Itertools Product**
+| O(T): O() | O(S): O() | Rt: 52ms | 
+```python
+    def letterCasePermutation(self, S: str) -> List[str]:
+        s = [(i.upper(), i.lower()) if i.isalpha() else i for i in S]
+        return [''.join(lst) for lst in itertools.product(*s)]
+```
+Referrence: https://leetcode.com/problems/letter-case-permutation/discuss/115544/Easy-Python-2-line-solution
+
+Others: there are a lot of backtract and recursion solution in Java and C, I found it is totally different world comparing to Pythonic thinking therefore not translate them here. 

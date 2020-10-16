@@ -1,0 +1,11 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**Naive** | Rt: 362ms |
+```sql
+select * from cinema 
+    where lower(description) <> 'boring' and id % 2 = 1 
+        order by rating desc
+```
+Alternative: using "not like" insead of "!=" to be compatible with "very boring", "so boring", "boring, dislike" and so on
+```sql
+	description not like "%boring%"
+```

@@ -1,0 +1,46 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Special Case with Z**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def alphabetBoardPath(self, target: str) -> str:
+        alpha = [0] * 26
+        for i in range(26): alpha[i] = (i // 5, i % 5)
+        rst, st = '', 0
+        for i in target:
+            end = ord(i) - ord('a')
+            x, y = alpha[end]        #destination
+            m, n = alpha[st]      #start point
+            if st == 25: 
+                rst += 'U' * (5 - x)
+                rst += 'R' * y
+            elif end == 25:
+                rst += 'L' * n
+                rst += 'D' * (5 - m)
+            else:
+                rst += abs(x-m) * ('D' if x > m else 'U')
+                rst += abs(y-n) * ('R' if y > n else 'L')
+            rst += '!'
+            st = end
+        return rst
+```
+
+
+**II). Priority Order**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def alphabetBoardPath(self, target: str) -> str:
+        rst, i, j = '', 0, 0
+        for c in target:
+            a = ord(c) - ord('a')
+            x, y = a // 5, a % 5
+            #L go before D, U go before R
+            if y < j: rst += 'L' * (j - y)
+            if x > i: rst += 'D' * (x - i)
+            else: rst += 'U' * (i - x)
+            if y > j: rst += 'R' * (y - j)
+            rst += '!'
+            i, j = x, y
+        return rst
+```
+Referrence: https://leetcode.com/problems/alphabet-board-path/discuss/345278/C%2B%2BJava-O(n)
+

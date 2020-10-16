@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Seary with Two Pointer**
+| O(T): O(lgn + k) | O(S): O(1) | Rt: 328ms | 
+```python
+    def findClosestElements(self, arr: List[int], k: int, x: int) -> List[int]:
+        index = bisect.bisect(arr, x)
+        l, r = index - 1, index
+        while l >= 0 and r < len(arr):
+            if x - arr[l] <= arr[r] - x: l -= 1
+            else: r += 1
+            #exclude boundary
+            if r - l - 1 == k: return arr[l+1:r]
+        if l < 0: return arr[:k] 
+        return arr[-k:]
+```
+
+
+**II). Binary Search**
+| O(T): O(lgn) | O(S): O(1) | Rt: 304ms | 
+```python
+    def findClosestElements(self, arr: List[int], k: int, x: int) -> List[int]:
+        l, r = 0, len(arr)-k
+        while l < r:
+            m = (l + r) // 2
+            #take arr[m: m+k] as a whle represented by (arr[m] + arr[m+k]) // 2 (call it y)
+            #2x > 2 * y => x > y, we want to find x, then should let l forward
+            if x - arr[m] > arr[m+k] - x: l = m+1
+            else: r = m
+        return arr[l:l+k]
+```
+Referrence: https://leetcode.com/problems/find-k-closest-elements/discuss/106426/JavaC%2B%2BPython-Binary-Search-O(log(N-K)-%2B-K)
+Comment: the best way to understand this solution is taking the arr[m:m+k] as a whole -- assume it is a number represented by (arr[m] + arr[m+k]) // 2. Now the problem changes to be: find x in the array. 
+
+
+Others: here is a two pointer solution - https://leetcode.com/problems/find-k-closest-elements/discuss/202785/Very-simple-Java-O(n)-solution-using-two-pointers

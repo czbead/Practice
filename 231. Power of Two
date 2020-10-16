@@ -1,0 +1,36 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Devide**
+| O(t): O(logn) | O(m): O(1) | Rt: 28ms | 
+```python
+    def isPowerOfTwo(self, n: int) -> bool:
+        while n > 1: n /= 2
+        return n == 1
+```
+
+
+**II). Recursion**
+| O(t): O(logn) | O(m): O(1) | Rt: 32ms | 
+```python
+    def isPowerOfTwo(self, n: int) -> bool:
+        if n < 1: return False
+        elif n == 1: return True
+        return n % 2 == 0 and self.isPowerOfTwo(n // 2)
+```
+
+
+**III). Bit Wise**
+| O(t): O(1) | O(m): O(1) | Rt: 28ms | 
+```python
+    def isPowerOfTwo(self, n: int) -> bool:
+        return n >= 1 and n & (n-1) == 0
+```
+
+
+**IV). Bin Count '1'**
+| O(t): O(n) | O(m): O(1) | Rt: 24ms | 
+```python
+    def isPowerOfTwo(self, n: int) -> bool:
+        return n >= 1 and bin(n).count('1') == 1
+```
+
+Others: there is another "math solution". Personally, I don't think it has anthing to do with coding techniques.

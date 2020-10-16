@@ -1,0 +1,49 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Chaining**
+| O(T): O(n * n) | O(S): O(1) | Rt: 496ms | 
+```python
+    def dailyTemperatures(self, T: List[int]) -> List[int]:
+        l = len(T)
+        rst = [0] * l
+        for i in range(l-2, -1, -1):
+            if T[i] < T[i+1]: rst[i] = 1
+            else:
+                j = i+1
+                while rst[j] != 0 and T[i] >= T[j+rst[j]]:
+                    j = j + rst[j]
+                if rst[j] == 0: rst[i] = 0
+                else: rst[i] = j + rst[j] - i
+        return rst
+```
+
+
+**II). Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 500ms | 
+```python
+    def dailyTemperatures(self, T: List[int]) -> List[int]:
+        l = len(T)
+        rst, stack = [0] * l, [l-1]
+        for i in range(l-2, -1, -1):
+            while stack and T[stack[-1]] <= T[i]:
+                stack.pop()
+            if not stack: rst[i] = 0
+            else: rst[i] = stack[-1] - i
+            stack.append(i)
+        return rst
+```
+
+Alternative: better stack solution. | Rt: 484ms |
+```python
+    def dailyTemperatures(self, T: List[int]) -> List[int]:
+        l = len(T)
+        rst, stack = [0] * l, []
+        for i in range(l):
+            while stack and T[stack[-1]] < T[i]:
+                pre = stack.pop()
+                rst[pre] = i - pre
+            #allow item unsolved and push them to stack for further resolving
+            stack.append(i)
+        return rst
+```
+Referrence: https://leetcode.com/problems/daily-temperatures/discuss/109832/Java-Easy-AC-Solution-with-Stack
+Comment: this is a great solution, normally we cannot allow a previous item unsolved and go forward. In this solution, we allow unsure item remains in a container(stack) for further resolving. 

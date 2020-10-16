@@ -1,0 +1,68 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS Paint: From Border to Core**
+| O(T): O(mn) | O(S): O(1) | Rt: 144ms | 
+```python
+    def closedIsland(self, grid: List[List[int]]) -> int:
+        def paint(grid, r, c, i, j):
+            if i < 0 or i == r or j < 0 or j == c or grid[i][j]: return
+            grid[i][j] = 1
+            for x, y in [(i+1, j), (i-1, j), (i, j+1), (i, j-1)]:
+                paint(grid, r, c, x, y)
+            
+        r, c, rst = len(grid), len(grid[0]), 0
+        for i in range(r):
+            for j in range(c):
+                if (i == 0 or j == 0 or i == r-1 or j == c-1) and grid[i][j] == 0:
+                    paint(grid, r, c, i, j)
+        
+        for i in range(r):
+            for j in range(c):
+                if grid[i][j] == 0:
+                    rst += 1
+                    paint(grid, r, c, i, j)
+        return rst
+```
+
+
+**II). DFS**
+| O(T): O() | O(S): O() | Rt: 136ms | 
+```python
+    def closedIsland(self, grid: List[List[int]]) -> int:
+        def isclosed(grid, r, c, i, j):
+            if i < 0 or i == r or j < 0 or j == c: return False
+            if grid[i][j] == 1: return True
+            grid[i][j] = 1
+            up = isclosed(grid, r, c, i-1, j)
+            down = isclosed(grid, r, c, i+1, j)
+            left = isclosed(grid, r, c, i, j-1)
+            right = isclosed(grid, r, c, i, j+1)
+            return up & down and left and right
+            
+        r, c, rst = len(grid), len(grid[0]), 0
+        for i in range(r):
+            for j in range(c):
+                if grid[i][j] == 0:
+                    if isclosed(grid, r, c, i, j): rst += 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/number-of-closed-islands/discuss/425150/JavaC++-with-picture-Number-of-Enclaves/384204
+
+Alternative: here is my original wrong solution. **WRONG WARNING**
+```python
+    def closedIsland(self, grid: List[List[int]]) -> int:
+        def isclosed(grid, r, c, i, j):
+            if i < 0 or i == r or j < 0 or j == c: return False
+            if grid[i][j] == 1: return True
+            grid[i][j] = 1
+            for x, y in [(i+1, j), (i-1, j), (i, j+1), (i, j-1)]:
+                if not isclosed(grid, r, c, x, y): return False
+            return True
+            
+        r, c, rst = len(grid), len(grid[0]), 0
+        for i in range(r):
+            for j in range(c):
+                if grid[i][j] == 0:
+                    if isclosed(grid, r, c, i, j): rst += 1
+        return rst
+```
+Comment: not matter colsed or not, should paint a island all, cannot return in the middle. 

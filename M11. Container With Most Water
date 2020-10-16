@@ -1,0 +1,27 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer -- Go For Higher**
+| O(T): O(n) | O(S): O(1) | Rt: 132ms | 
+```python
+    def maxArea(self, height: List[int]) -> int:
+        l, r = 0, len(height) - 1
+        rst = 0 
+        while l < r:
+            rst = max(rst, (r - l) * min(height[l], height[r]))
+            if height[l] < height[r]: l += 1
+            else: r -= 1
+        return rst
+```
+Comment: only go for the higher side can possible get greater volume, each candidate pair will be visited, therefore will ensure the final best. This is a greedy-like thinking. 
+Alternative: | Rt: 124ms |
+```python
+    def maxArea(self, height: List[int]) -> int:
+        l, r = 0, len(height) - 1
+        rst = 0 
+        while l < r:
+            cur = 0
+            if height[l] < height[r]: l, cur = l + 1, (r-l) * height[l]
+            else: r, cur = r - 1, (r-l) * height[r]
+            rst = max(rst, cur)
+        return rst
+```
+

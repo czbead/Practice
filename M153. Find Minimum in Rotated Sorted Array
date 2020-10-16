@@ -1,0 +1,25 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search**
+| O(T): O(lgn) | O(S): O(1) | Rt: 52ms | 
+```python
+    def findMin(self, nums: List[int]) -> int:
+        l, r = 0, len(nums)-1
+        while l < r:
+            m = l + (r-l)//2
+            if nums[m] > nums[r]: l = m+1
+            else: r = m
+        return nums[l]
+```
+Alternative: improved version. | Rt: 60ms |
+```python
+    def findMin(self, nums: List[int]) -> int:
+        l, r = 0, len(nums)-1
+        while l < r:
+            #means from l to r are sorted ascending sequence
+            if nums[l] < nums[r]: return nums[l]
+            m = l + (r-l)//2
+            if nums[m] > nums[r]: l = m+1
+            else: r = m
+        return nums[l]
+```
+Referrence: https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/discuss/48493/Compact-and-clean-C%2B%2B-solution

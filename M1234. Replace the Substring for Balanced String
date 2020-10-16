@@ -1,0 +1,18 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sliding Window**
+| O(T): O(n) | O(S): O(n) | Rt: 412ms | 
+```python
+    def balancedString(self, s: str) -> int:
+        ct, le = collections.Counter(s), len(s)
+        n, st, rst = le//4, 0, le
+        for i in range(le):
+            ct[s[i]] -= 1
+            #reduce windown size; the window is the substrong gonna update
+            #maximize the size of items out of window, minimize the size of windown size, minimize update substring
+            while st < le and all(ct[k] <= n for k in ct):
+                rst = min(rst, i-st+1)
+                ct[s[st]] += 1
+                st += 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/replace-the-substring-for-balanced-string/discuss/408978/JavaC%2B%2BPython-Sliding-Window

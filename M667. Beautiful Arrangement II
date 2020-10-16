@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Pick Left when K is Odd; Pick Right when K is Even**
+| O(T): O(n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def constructArray(self, n: int, k: int) -> List[int]:
+        rst, l, r = [], 1, n
+        while k > 1:
+            if k & 1: 
+                rst.append(l)
+                l += 1
+            else: 
+                rst.append(r)
+                r -= 1
+            k -= 1
+        return rst + list(range(l, r+1))
+```
+Referrence: https://leetcode.com/problems/beautiful-arrangement-ii/discuss/106948/C%2B%2B-Java-Clean-Code-4-liner
+
+
+**II). Reverse**
+| O(T): O() | O(S): O() | Rt: 1468ms | 
+```python
+    def constructArray(self, n: int, k: int) -> List[int]:
+        rst = list(range(1, n+1))
+        for i in range(1, k):
+            #each reverse reduce k by 1, only need reverse k-1 rounds
+            rst[i:] = reversed(rst[i:])
+        return rst
+```
+Referrence: https://leetcode.com/problems/beautiful-arrangement-ii/discuss/106955/Short%2Bsimple-with-explanation
+
+
+**III). Only Take Care the Last K Item**
+| O(T): O(n) | O(S): O(1) | Rt: 48ms | 
+```python
+    def constructArray(self, n: int, k: int) -> List[int]:
+        rst = list(range(1, n-k+1))
+        l, r, xor = n-k+1, n, 1
+        while l <= r:
+            if xor: rst.append(r); r -= 1
+            else: rst.append(l); l += 1
+            xor ^= 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/beautiful-arrangement-ii/discuss/106965/Python-Straightforward-with-Explanation

@@ -1,0 +1,27 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). So Far the Best Deal**
+| O(t): O(n) | O(m): O(1) | Rt: 68ms | 
+```python
+    def maxProfit(self, prices: List[int]) -> int:
+        rst, minp = 0, float('inf')
+        for p in prices:
+            minp = min(minp, p)
+            rst = max(rst, p-minp)
+        return rst
+```
+Comment: a non-typical DP problem, I think it is kind of greedy as well.
+
+**II). Kadane's Algorithm**
+| O(t): O(n) | O(m): O(1) | Rt: 64ms | 
+```python
+    def maxProfit(self, prices: List[int]) -> int:
+        offset = [j-i for i, j in zip(prices, prices[1:])]
+        rst = cur = 0
+        for i in offset:
+            cur += i
+            if cur < 0: cur = 0
+            rst = max(rst, cur)
+        return rst
+```
+Referrence: https://leetcode.com/problems/best-time-to-buy-and-sell-stock/discuss/39038/Kadane's-Algorithm-Since-no-one-has-mentioned-about-this-so-far-%3A)-(In-case-if-interviewer-twists-the-input)
+Comment: I admit I may not come up with this solution. It is very smart transfermation there.

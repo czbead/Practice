@@ -1,0 +1,82 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat by Deepcopy**
+| O(T): O(n*n) | O(S): O(n*n) | Rt: 36ms | 
+```python
+    def rotate(self, matrix: List[List[int]]) -> None:
+        if not matrix: return
+        n = len(matrix)
+        data = copy.deepcopy(matrix)
+        for i in range(n):
+            for j in range(n):
+                matrix[i][j] = data[n-1-j][i]
+```
+
+
+**II). Cheat by a Flat List**
+| O(T): O(n*n) | O(S): O(n*n) | Rt: 36ms | 
+```python
+    def rotate(self, matrix: List[List[int]]) -> None:
+        if not matrix: return
+        n = len(matrix)
+        data = [i for row in matrix for i in row]
+        for i in range(n):
+            matrix[i] = reversed([data[i] for i in range(i, len(data), n)])
+```
+Alternative: column wise collect. | Rt: 32ms |
+```python
+    def rotate(self, matrix: List[List[int]]) -> None:
+        if not matrix: return
+        n = len(matrix)
+        data = [i for row in matrix for i in row]
+        iterd = iter(data)
+        for i in range(n):
+            for j in range(n):
+                matrix[j][n-1-i] = next(iterd)
+```
+
+
+**III). Swap and Reverse**
+| O(T): O(n*n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def rotate(self, matrix: List[List[int]]) -> None:
+        n = len(matrix)
+        for i in range(n):
+            for j in range(i+1, n):
+                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+        for row in matrix: row.reverse()
+```
+Alternative: reverse first, swap next. | Rt: 28ms |
+```python
+    def rotate(self, matrix: List[List[int]]) -> None:
+        n = len(matrix)
+        matrix.reverse()    #reverse rows, not items
+        for i in range(n):
+            for j in range(i+1, n):
+                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+```
+Referrence: https://leetcode.com/problems/rotate-image/discuss/18872/A-common-method-to-rotate-the-image
+Comment: can use j in range(i) which take the up triangle (half of the square). This solution takes the below half triangle area. 
+Triple: all swap. | Rt: 32ms |
+```python
+    def rotate(self, matrix: List[List[int]]) -> None:
+        n = len(matrix)
+        for i in range(n):
+            for j in range(i+1, n):
+                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+        for row in matrix:
+            for i in range(n//2):
+                row[i], row[-1-i] = row[-1-i], row[i]
+```
+Forth: better style. | Rt: 28ms |
+```python
+    def rotate(self, matrix: List[List[int]]) -> None:
+        n = len(matrix)
+        for i in range(n):
+            for j in range(i+1, n):
+                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+        for row in matrix:
+            for i in range(n//2):
+                row[i], row[~i] = row[~i], row[i]
+```
+Comment: ~ (tilde sign) operator is "bitwise complement operator" or "invert operator" in python. see link for more details: https://stackoverflow.com/questions/8305199/the-tilde-operator-in-python
+

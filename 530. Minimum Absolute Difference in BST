@@ -1,0 +1,93 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). In-order**
+| O(T): O(n) | O(S): O(h) | Rt: 52ms | 
+```python
+    def getMinimumDifference(self, root: TreeNode) -> int:
+        def inorder(node, pre, rst):
+            if not node: return 
+            inorder(node.left, pre, rst)
+            if pre[0] is not None: rst[0] = min(rst[0], node.val - pre[0])
+            pre[0] = node.val
+            inorder(node.right, pre, rst)
+        if not root: return
+        pre, rst = [None], [float('inf')]
+        inorder(root, pre, rst)
+        return rst[0]
+```
+Alternative: | Rt: 56ms |
+```python
+    pre, rst = None, float('inf')
+    def getMinimumDifference(self, root: TreeNode) -> int:
+        if not root: return 
+        self.getMinimumDifference(root.left)
+        if self.pre is not None: self.rst = min(self.rst, root.val - self.pre)
+        self.pre = root.val
+        self.getMinimumDifference(root.right)
+        return self.rst
+```
+Comment: multiple state recursion can be implemented in two kinds of fashions -- Global Variable and Inner Parameter. Well, Global variable is easier while inner parameter is much safer. I have to remind you that "inner parameter" could be difficult for those who are not clear of two kinds of parameter passing modes: By Value and By Referrence. Here comes the critical point of a inner parameter passing recursion: **Passing reference rather than value which means the variable you passed into the recursion is a mutable object (that is why I passed list rather than default integer), only by passing referrence, the inner parameter can work as a container and carry the value into next recursive round. Passing value will finally get lost in the process.** Master inner parameter recursion implementation if you can, because it is considered a better practice. 
+
+
+**II). In-order Get All as List**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def getMinimumDifference(self, root: TreeNode) -> int:
+        lst = []
+        def inorder(node):
+            if not node: return 
+            inorder(node.left)
+            lst.append(node.val)
+            inorder(node.right)
+        inorder(root)
+        return min(j - i for i, j in zip(lst, lst[1:]))
+```
+Comment: really not recommend in real interview. just for practice.
+Alternative: | Rt: 48ms |
+```python
+    def getMinimumDifference(self, root: TreeNode) -> int:
+        inorder = lambda r: inorder(r.left) + [r.val] + inorder(r.right) if r else []
+        lst = inorder(root)
+        return min(j - i for i, j in zip(lst, lst[1:]))
+```
+
+
+**III). Pre-order Boundary**
+| O(T): O(n) | O(S): O(h) | Rt: 52ms | 
+```python
+    def getMinimumDifference(self, root: TreeNode) -> int:
+        #for each node, left child is its left boundary while right child is its right boundary
+        def preorder(node, lb, rb, rst):
+            if not node: return
+            val = node.val
+            rst[0] = min((rst[0], val - lb, rb - val))
+            preorder(node.left, lb, val, rst)
+            preorder(node.right, val, rb, rst)
+        if not root: return 
+        rst = [float('inf')]
+        preorder(root, -float('inf'), float('inf'), rst)
+        return rst[0]
+```
+Referrence: idea from https://leetcode.com/problems/minimum-absolute-difference-in-bst/discuss/99918/Java-No-In-order-Traverse-Solution-just-pass-upper-bound-and-lower-bound
+
+
+**IV). In-order Iteration**
+| O(T): O(n) | O(S): O(h) | Rt: 56ms | 
+```python
+    def getMinimumDifference(self, root: TreeNode) -> int:
+        pre, rst = -float('inf'), float('inf')
+        node, s = root, []
+        while s or node:
+            #moving toward the left-most, and stack parent nodes
+            while node:
+                s.append(node)
+                node = node.left
+            #step back, get the parent of the current left
+            node = s[-1]   
+            rst = min(rst, s.pop().val - pre)
+            #pre first is leftval, then to parentval
+            pre = node.val
+            #node first is parentnode, then to rightnode, exactly in-order
+            node = node.right
+        return rst
+```
+Referrence: https://leetcode.com/problems/minimum-absolute-difference-in-bst/discuss/99927/3-Python-solutions%3A-recuriter-inorder-and-preorder.-O(n)O(log(n))

@@ -1,0 +1,50 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Native with String Helper**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 68ms | 
+```python
+    def selfDividingNumbers(self, left: int, right: int) -> List[int]:
+        rst = []
+        for i in range(left, right + 1):
+            if i < 10: rst.append(i)
+            else:
+                digits = [int(j) for j in str(i)]
+                if 0 in digits: continue
+                if all(i % j == 0 for j in digits): rst.append(i)
+        return rst
+```
+
+
+**II). Navie Immediate False Return**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 40ms | 
+```python
+    def selfDividingNumbers(self, left: int, right: int) -> List[int]:
+        def isSelfDiv(num):
+            n = num
+            while num:
+                cur = num % 10
+                if cur == 0 or n % cur != 0: return False
+                num //= 10
+            return True
+        
+        rst = []
+        for i in range(left, right + 1):
+            if i < 10: rst.append(i)
+            elif isSelfDiv(i): rst.append(i)
+        return rst 
+```
+Alternative: no special case version even faster. | Rt: 32ms |
+```python
+    def selfDividingNumbers(self, left: int, right: int) -> List[int]:
+        def isSelfDiv(num):
+            n = num
+            while num:
+                cur = num % 10
+                if cur == 0 or n % cur != 0: return False
+                num //= 10
+            return True
+        
+        rst = []
+        for i in range(left, right + 1):
+            if isSelfDiv(i): rst.append(i)
+        return rst   
+```

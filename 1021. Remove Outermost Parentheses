@@ -1,0 +1,87 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Find the Start and End Index**
+| O(T): O(n) | O(S): O(n) | Rt: 44ms | 
+```python
+    def removeOuterParentheses(self, S: str) -> str:
+        lst, ct = [], 0
+        for i, v in enumerate(S):
+        	#record start index
+            if ct == 0: lst.append(i)
+            if v == '(': ct += 1
+            else: ct -= 1
+            #record end index
+            if ct == 0: lst.append(i)
+            #[i: j+1] is the valid parenthese, retreat one step
+        chunks = [S[i+1:j] for i, j in zip(lst[0::2], lst[1::2])]
+        return ''.join(chunks)
+```
+Alternative: collect in the run. | Rt: 24ms |
+```python
+    def removeOuterParentheses(self, S: str) -> str:
+        rst, ct, st = [], 0, 0
+        for i, v in enumerate(S):
+            if v == '(': ct += 1
+            else: ct -= 1
+            if ct == 0: 
+                rst.append(S[st+1:i])
+                st = i + 1
+        return ''.join(rst)
+```
+Comment: the latter version maybe more readable and ez-understanding. Actually they are the same idea in different style. 
+
+
+**II). Build a Mapping Array**
+| O(T): O(n) | O(S): O(n) | Rt: 40ms | 
+```python
+    def removeOuterParentheses(self, S: str) -> str:
+        bitmap = [0] * len(S)
+        for i in range(len(S) - 1):
+            if S[i+1] == S[i] == '(': bitmap[i+1] = bitmap[i] + 1
+            elif S[i+1] != S[i]: bitmap[i+1] = bitmap[i]
+            #S[i+1] == S[i] == ')'
+            else: bitmap[i+1] = bitmap[i] - 1
+        return ''.join(S[i] for i, v in enumerate(bitmap) if v)
+```
+Alternative: one item check instead of pair of items check.  | Rt: 40ms |
+```python
+    def removeOuterParentheses(self, S: str) -> str:
+        ct, bitmap = 0, [0] * len(S)
+        for i, v in enumerate(S):
+            if v == '(':
+                bitmap[i] = ct
+                ct += 1
+            else:
+                ct -= 1
+                bitmap[i] = ct
+        print(bitmap)
+        return ''.join([S[i] for i, v in enumerate(bitmap) if v])
+```
+
+
+**III). Collect**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def removeOuterParentheses(self, S: str) -> str:
+        rst, ct = [], 0
+        for i in S:
+            if i == ')': ct -= 1
+            if ct: rst.append(i)
+            if i == '(': ct += 1
+        return ''.join(rst)
+```
+Referrence: idea from https://leetcode.com/problems/remove-outermost-parentheses/discuss/358358/Shortest-Python-Solution
+Alternative: | Rt: 32ms |
+```python
+    def removeOuterParentheses(self, S: str) -> str:
+        rst, ct = [], 0
+        for i in S:
+            if i == '(':
+                if ct: rst.append(i)
+                ct += 1
+            elif i == ')': 
+                ct -= 1
+                if ct: rst.append(i)
+        return ''.join(rst)
+```
+Referrence: idea from https://leetcode.com/problems/remove-outermost-parentheses/discuss/273884/Ridiculously-Simple-JAVA-O(n)-Solution-%2B-Explanation-0ms-Beats-100-Time-and-Memory
+

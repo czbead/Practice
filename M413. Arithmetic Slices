@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(n) | Rt: 40ms | 
+```python
+    def numberOfArithmeticSlices(self, A: List[int]) -> int:
+        if not A or len(A) < 3: return 0
+        gap = [j-i for i, j in zip(A, A[1:])]
+        accusum = lambda x: (1+x) * x // 2
+        rst, ct, pre = 0, 1, gap.pop()
+        while gap:
+            if gap[-1] == pre: ct += 1; gap.pop()
+            else:
+                rst += accusum(ct-1)
+                pre, ct = gap.pop(), 1
+        if ct > 1: rst += accusum(ct-1)
+        return rst
+```
+Alternative: O(1) space version. | Rt: 24ms |
+```python
+    def numberOfArithmeticSlices(self, A: List[int]) -> int:
+        if not A or len(A) < 3: return 0
+        accusum = lambda x: (1+x) * x // 2
+        rst, ct, pre = 0, 1, A[1] - A[0]
+        for i in range(2, len(A)):
+            if A[i] - A[i-1] == pre: ct += 1
+            else:
+                rst += accusum(ct-1)
+                ct, pre = 1, A[i]-A[i-1]
+        rst += accusum(ct-1)
+        return rst
+```
+Triple: without accusum function. | Rt: 24ms |
+```python
+    def numberOfArithmeticSlices(self, A: List[int]) -> int:
+        if not A or len(A) < 3: return 0
+        rst, ct, pre = 0, 1, A[1] - A[0]
+        for i in range(2, len(A)):
+            if A[i] - A[i-1] == pre: rst, ct = rst+ct, ct+1
+            else: ct, pre = 1, A[i]-A[i-1]
+        return rst
+```
+Referrence: https://leetcode.com/problems/arithmetic-slices/discuss/90058/Simple-Java-solution-9-lines-2ms
+

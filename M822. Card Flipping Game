@@ -1,0 +1,16 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Opt Out both Sides Share Same Value**
+| O(T): O() | O(S): O() | Rt: 112ms | 
+```python
+    def flipgame(self, fronts: List[int], backs: List[int]) -> int:
+        same, l = set(), len(fronts)
+        for i in range(l):
+            if fronts[i] == backs[i]: same.add(fronts[i])
+        rst = float('inf')
+        for i in range(l):
+            if fronts[i] not in same: rst = min(rst, fronts[i])
+            if backs[i] not in same: rst = min(rst, backs[i])
+        if rst == float('inf'): return 0
+        return rst
+```
+Referrence: https://leetcode.com/problems/card-flipping-game/discuss/125810/Java-solution-using-HashSet-(The-description-in-the-problem-really-confuses-me...)

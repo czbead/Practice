@@ -1,0 +1,46 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer: Find Left and Right**
+| O(T): O(n) | O(S): O(n) | Rt: 188ms | 
+```python
+    def pushDominoes(self, dominoes: str) -> str:
+        l, doms = len(dominoes), list(dominoes)
+        index = [i for i in range(l) if dominoes[i] != '.']
+        if not index: return dominoes
+        ll, i, j = len(index), 0, 0
+        while i < l:
+            if doms[i] == '.':
+                while j < ll and index[j] <= i: j += 1
+                if j == 0:
+                    if doms[index[j]] == 'L': doms[i] = 'L'
+                elif j == ll: 
+                    if doms[index[j-1]] == 'R': doms[i] = 'R'
+                else:
+                    if doms[index[j]] == doms[index[j-1]]: doms[i] = doms[index[j]]
+                    elif doms[index[j]] == 'L' and doms[index[j-1]] == 'R':
+                        if index[j] - i < i - index[j-1]: doms[i] = 'L'
+                        elif i - index[j-1] < index[j] - i: doms[i] = 'R'
+            i += 1
+        return ''.join(doms)
+```
+
+Alternative: one pass solution. | Rt: 104ms |
+```python
+    def pushDominoes(self, dominoes: str) -> str:
+        rst, j, dominoes = [], 0, 'L' + dominoes + 'R'
+        l = len(dominoes)
+        for i in range(1, l):
+            if dominoes[i] == '.': continue
+            #add the boundary item, a little bit tricky, skip the head and tail
+            if j: rst.append(dominoes[j])
+            #amount of element between index j and i(i, j not included), they are all '.'
+            count = i - j - 1
+            #L ... L or R ... R; -> 'L (L)*count L' or 'R (R)*count R'
+            if dominoes[i] == dominoes[j]: rst.append(count * dominoes[i])
+            #... L ... R ...; the '.' between L and R remains;
+            elif dominoes[i] == 'R' and dominoes[j] == 'L': rst.append(count * '.')
+            #... R ... L ...; first half as R while last half as L, middle remains if existed
+            else: rst.append((count // 2) * 'R' + '.' * (count % 2) + (count // 2) * 'L')
+            j = i
+        return ''.join(rst)
+```
+Referrence: https://leetcode.com/problems/push-dominoes/discuss/132332/C%2B%2BJavaPython-Two-Pointers

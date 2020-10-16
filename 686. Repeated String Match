@@ -1,0 +1,27 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(n) | Rt: 108ms | 
+```python
+    def repeatedStringMatch(self, A: str, B: str) -> int:
+        base = (len(B) + len(A) - 1) // len(A)
+        if B in A * base: return base
+        elif B in A * (base + 1): return base + 1
+        else: return -1
+```
+Alternative:  | Rt: 96ms |
+```python
+    def repeatedStringMatch(self, A: str, B: str) -> int:
+        base = -(-len(B) // len(A))
+        if B in A * base: return base
+        elif B in A * (base + 1): return base + 1
+        else: return -1
+```
+Comment: remember the "c = -(-a // b) " trick, it returns you the math.ceil(a / b). If a chunk A is a rotated version of chunk B, at most one more piece of A altogether has to contain B if not just math.ceil(len(A) / len(B)) * A. Just remember it, too complicated to prove it. 
+Triple: two-liner fashion.  | Rt: 100ms |
+```python
+    def repeatedStringMatch(self, A: str, B: str) -> int:
+        base = -(-len(B) // len(A))
+        return base * (B in A * base) or (base + 1) * (B in A * (base + 1)) or -1
+```
+Referrence: https://leetcode.com/problems/repeated-string-match/discuss/108090/Intuitive-Python-2-liner/110360
+

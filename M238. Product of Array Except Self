@@ -1,0 +1,50 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O(n*n) | O(S): O(1) | Rt: ms | TLE
+```python
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        rst = []
+        for i in range(len(nums)):
+            prod = 1
+            for j in range(len(nums)):
+                if j == i: continue
+                prod *= nums[j]
+            rst.append(prod)
+        return rst
+```
+
+
+**II). Cross Accumulate Traverse**
+| O(T): O(n) | O(S): O(1) | Rt: 120ms | 
+```python
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        rst, l = [1], len(nums)
+        for i in range(l-1):
+            rst.append(rst[-1]*nums[i])
+        p = nums[-1]
+        for i in range(l-2, -1, -1):
+            rst[i], p = rst[i] * p, p * nums[i]
+        return rst
+```
+Alternative:  | Rt: 132ms |
+```python
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        le = len(nums)
+        l, r = [1] * le, [1] * le
+        for i in range(le-1): l[i+1] *= nums[i] * l[i]
+        for i in range(le-2, -1, -1): r[i] *= nums[i+1] * r[i+1]
+        for i in range(le): l[i] *= r[i]
+        return l
+```
+Triple: | Rt: 124ms |
+```python
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        le = len(nums)
+        rst, accul, accur = [0] * le, 1, 1
+        for i in range(le):
+            rst[i], accul = accul, accul * nums[i]
+        for i in range(le-1, -1, -1):
+            rst[i], accur = rst[i] * accur, accur * nums[i]
+        return rst
+```
+Referrence: https://leetcode.com/problems/product-of-array-except-self/discuss/65627/O(n)-time-and-O(1)-space-C++-solution-with-explanation/150957; https://leetcode.com/problems/product-of-array-except-self/discuss/65622/Simple-Java-solution-in-O(n)-without-extra-space

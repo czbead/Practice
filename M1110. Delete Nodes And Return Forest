@@ -1,0 +1,36 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive Delete**
+| O(T): O(n) | O(S): O(h) | Rt: 60ms | 
+```python
+    def delNodes(self, root: TreeNode, to_delete: List[int]) -> List[TreeNode]:
+        def delnode(node, dels, rst):
+            if not node: return None
+            node.left, node.right = delnode(node.left, dels, rst), delnode(node.right, dels, rst)
+            if node.val in dels: 
+                if node.left: rst.append(node.left)
+                if node.right: rst.append(node.right)
+                return None
+            return node
+        
+        rst, dels = [], set(to_delete)
+        if root and root.val not in dels: rst.append(root)
+        delnode(root, dels, rst)
+        return rst
+```
+
+Alternative: | Rt: 72ms |
+```python
+    def delNodes(self, root: TreeNode, to_delete: List[int]) -> List[TreeNode]:
+        def delnode(node, dels, rst):
+            if not node: return None
+            node.left, node.right = delnode(node.left, dels, rst), delnode(node.right, dels, rst)
+            if node.val in dels: 
+                if node.left: rst.append(node.left)
+                if node.right: rst.append(node.right)
+                return None
+            return node
+        
+        rst, dels = [], set(to_delete)
+        if delnode(root, dels, rst): rst.append(root)
+        return rst
+```

@@ -1,0 +1,66 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS**
+| O(T): O() | O(S): O() | Rt: 484ms | 
+```python
+    def loudAndRich(self, richer: List[List[int]], quiet: List[int]) -> List[int]:
+        def dfs(graph, quiet, rst, i):
+            if rst[i] is not None: return 
+            rst[i] = i
+            for j in graph[i]:
+                dfs(graph, quiet, rst, j)
+                if quiet[rst[j]] < quiet[rst[i]]: rst[i] = rst[j]
+        
+        n = len(quiet)
+        rst = [None] * n
+        graph = collections.defaultdict(list)
+        for i, j in richer: graph[j].append(i)
+        for i in range(n):
+            dfs(graph, quiet, rst, i)
+        return rst
+```
+Referrence: https://leetcode.com/problems/loud-and-rich/discuss/137918/C%2B%2BJavaPython-Concise-DFS
+
+Alternative: a traditional version. | Rt: 504ms |
+```python
+    def loudAndRich(self, richer: List[List[int]], quiet: List[int]) -> List[int]:
+        def dfs(graph, quiet, rst, i, visited):
+            if visited[i]: return 
+            visited[i] = 1
+            for j in graph[i]:
+                dfs(graph, quiet, rst, j, visited)
+                if quiet[rst[j]] < quiet[rst[i]]: rst[i] = rst[j]
+        
+        n = len(quiet)
+        rst, graph, visited = list(range(n)), collections.defaultdict(list), [0] * n
+        for i, j in richer: graph[j].append(i)
+        for i in range(n):
+            dfs(graph, quiet, rst, i, visited)
+        return rst
+```
+
+
+**II). Topological Sorting**
+| O(T): O(n) | O(S): O(n) | Rt: 480ms | 
+```python
+    def loudAndRich(self, richer: List[List[int]], quiet: List[int]) -> List[int]:
+        n = len(quiet) 
+        rst, degree, graph = list(range(n)), [0] * n, [[] for _ in range(n)]
+        #degree[i]: how many people richer than i
+        for i, j in richer: 
+            degree[j] += 1
+            graph[i].append(j)
+        q = collections.deque([])
+        for i in range(n):
+            #nobody is richer than i, 
+            if degree[i] == 0: q.append(i)
+        while q:
+            i = q.popleft()
+            for j in graph[i]:
+                if quiet[rst[i]] < quiet[rst[j]]: rst[j] = rst[i]
+                #don't need to delete j from the graph
+                degree[j] -= 1
+                if degree[j] == 0: q.append(j)
+        return rst
+```
+Referrence: https://leetcode.com/problems/loud-and-rich/discuss/138088/C%2B%2B-with-topological-sorting
+

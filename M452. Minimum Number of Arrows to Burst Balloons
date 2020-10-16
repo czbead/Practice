@@ -1,0 +1,48 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy: Sort**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 472ms | 
+```python
+    def findMinArrowShots(self, points: List[List[int]]) -> int:
+        if not points: return 0
+        points.sort()
+        rst, a, b = 0, -float('inf'), -float('inf')
+        for i, j in points:
+            if i <= b:  #overlapped or touched
+                a, b = max(a, i), min(b, j)
+            else:  #separate with gap
+                rst += 1
+                a, b = i, j
+        return rst
+```
+Alternative: sort by end val. | Rt: 504ms |
+```python
+    def findMinArrowShots(self, points: List[List[int]]) -> int:
+        if not points: return 0
+        points.sort(key=lambda x: (x[1], x[0]))
+        rst, a, b = 0, -float('inf'), -float('inf')
+        for i, j in points:
+            if i <= b:
+                a, b = max(a, i), min(b, j)
+            else:
+                rst += 1
+                a, b = i, j
+        return rst
+```
+Comment: for this problem, we can sort by both keys, it is almost work the same. Narrow down the overlapped range until a new separate range pop out. 
+
+
+**II). Shoot Right Boundary**
+| O(T): O() | O(S): O() | Rt: 428ms | 
+```python
+    def findMinArrowShots(self, points: List[List[int]]) -> int:
+        if not points: return 0
+        points.sort(key=lambda x: x[1])
+        rst, shoot = 0, -float('inf')
+        for i, j in points:
+            if i > shoot:  #out of right bound
+                rst += 1
+                shoot = j
+        return rst
+```
+Referrence: https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/discuss/93703/Share-my-explained-Greedy-solution
+Comment: always shoot the right bound, because it can destroy as many ballons as possible. 

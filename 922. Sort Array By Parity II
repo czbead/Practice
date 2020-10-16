@@ -1,0 +1,97 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Collect Odd and Even**
+| O(T): O(n) | O(S): O(n) | Rt: 220ms | 
+```python
+    def sortArrayByParityII(self, A: List[int]) -> List[int]:
+        odd, even = [i for i in A if i % 2], [i for i in A if i % 2 == 0]
+        A[0::2], A[1::2] = even, odd
+        return A
+```
+Alternative: pop style.  | Rt: 224ms |
+```python
+    def sortArrayByParityII(self, A: List[int]) -> List[int]:
+        odd, even = [i for i in A if i&1], [i for i in A if not i&1]
+        rst = []
+        while odd: rst.append(even.pop()); rst.append(odd.pop())
+        return rst
+```
+Triple: zip style.  | Rt: 224ms |
+```python
+    def sortArrayByParityII(self, A: List[int]) -> List[int]:
+        odd, even = [i for i in A if i&1], [i for i in A if not i&1]
+        return [i for pair in zip(even, odd) for i in pair]
+```
+Referrence: https://leetcode.com/problems/sort-array-by-parity-ii/discuss/181261/Python-easy-2-liner/257860
+Forth: range style.  | Rt: 212ms |
+```python
+    def sortArrayByParityII(self, A: List[int]) -> List[int]:
+        odd, even = [i for i in A if i&1], [i for i in A if not i&1]
+        return [odd.pop() if i & 1 else even.pop() for i in range(len(A))]
+```
+Referrence: https://leetcode.com/problems/sort-array-by-parity-ii/discuss/181261/Python-easy-2-liner
+
+
+**II). Collect Two Wrong Case Index**
+| O(T): O(n) | O(S): O(n) | Rt: 236ms | 
+```python
+    def sortArrayByParityII(self, A: List[int]) -> List[int]:
+        oddE = [i for i, v in enumerate(A) if i % 2 and not v % 2]
+        evenO = [i for i, v in enumerate(A) if not i % 2 and v % 2]
+        for i in range(len(oddE)): A[oddE[i]], A[evenO[i]] = A[evenO[i]], A[oddE[i]]
+        return A
+```
+
+
+**III). One Pass, Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 244ms | in-place
+```python
+    def sortArrayByParityII(self, A: List[int]) -> List[int]:
+        p, pp = 0, 1
+        while pp < len(A):
+            if A[p] & 1 == 0: p += 2
+            elif A[pp] & 1: pp += 2
+            else: 
+                A[p], A[pp] = A[pp], A[p]
+                p, pp = p + 2, pp + 2
+        return A
+```
+Alternative:  | Rt: 224ms |
+```python
+    def sortArrayByParityII(self, A: List[int]) -> List[int]:
+        p, pp = 0, 1
+        while pp < len(A):
+            while p < len(A) and A[p] & 1 == 0: p += 2
+            while pp < len(A) and A[pp] & 1: pp += 2
+            #essential, because last round both index will exceed the boundary by 1 step
+            if p >= len(A) or pp >= len(A): break
+            A[p], A[pp] = A[pp], A[p]
+            p, pp = p + 2, pp + 2
+        return A
+```
+Comment: you may have noticed that the inner while version always require extra care for the boundary while the naive version is much simpler to compose. However, the navie probably are slightly slower than the inner while one. 
+Triple: concise version.  | Rt: 228ms |
+```python
+    def sortArrayByParityII(self, A: List[int]) -> List[int]:
+        p, pp = 0, 1
+        while p < len(A) - 1:
+            if A[p] & 1:
+                A[p], A[pp] = A[pp], A[p]
+                pp += 2
+            else: p += 2
+        return A
+```
+Referrence: https://leetcode.com/problems/sort-array-by-parity-ii/discuss/319267/(Python-O(n)-T-and-O(1)-S)-easy-to-understand-with-explanation.
+Comment: slightly concise but harder to read and understand. Actually the same idea with the previous two version. 
+
+
+**IV). Bucket Collect with 2 Pointer**
+| O(T): O(n) | O(S): O(n) | Rt: 236ms | 
+```python
+    def sortArrayByParityII(self, A: List[int]) -> List[int]:
+        p, pp, rst = 0, 1, [None] * len(A)
+        for i in A:
+            if i & 1: rst[pp], pp = i, pp+2
+            else: rst[p], p = i, p+2
+        return rst
+```
+

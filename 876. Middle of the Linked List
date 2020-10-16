@@ -1,0 +1,25 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Fash Slow Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def middleNode(self, head: ListNode) -> ListNode:
+        fast = slow = head
+        while fast and fast.next:
+            fast = fast.next.next
+            slow = slow.next
+        return slow
+```
+
+
+**II). Naive -- Two Pass**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def middleNode(self, head: ListNode) -> ListNode:
+        l, h = 0, head
+        while h: l, h= l + 1, h.next
+        mid = l // 2
+        while mid: head, mid = head.next, mid - 1
+        return head
+```
+Referrence: idea from https://leetcode.com/problems/middle-of-the-linked-list/discuss/155148/Java-O(n)-time-and-O(1)-space-solution-without-using-fastslow-pointer
+

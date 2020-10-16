@@ -1,0 +1,28 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Prime Multiply Previous Ugly**
+| O(T): O(kn) | O(S): O(n) | Rt: 313ms | 
+```python
+    def nthSuperUglyNumber(self, n: int, primes: List[int]) -> int:
+        l = len(primes)
+        ugly, index = [1] * n, [0] * l
+        for i in range(1, n):
+            ugly[i] = min(primes[j] * ugly[index[j]] for j in range(l))
+            for j in range(l):
+                while primes[j] * ugly[index[j]] <= ugly[i]: index[j] += 1
+        return ugly[-1]
+```
+Referrence: https://leetcode.com/problems/super-ugly-number/discuss/76291/Java-three-methods-23ms-36-ms-58ms(with-heap)-performance-explained
+
+Alternative: | Rt: 1444ms |
+```python
+    def nthSuperUglyNumber(self, n: int, primes: List[int]) -> int:
+        l = len(primes)
+        ugly, index = [1] * n, [0] * l
+        for i in range(1, n):
+            ugly[i] = float('inf')
+            for j in range(l):
+                if primes[j] * ugly[index[j]] == ugly[i-1]: index[j] += 1
+                ugly[i] = min(ugly[i], primes[j] * ugly[index[j]])
+        return ugly[-1]
+```
+Referrence: https://leetcode.com/problems/super-ugly-number/discuss/76291/Java-three-methods-23ms-36-ms-58ms(with-heap)-performance-explained/79888

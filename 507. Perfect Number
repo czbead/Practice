@@ -1,0 +1,23 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sum Of Devidor**
+| O(T): O(sqrt(n)) | O(S): O(1) | Rt: 32ms | 
+```python
+    def checkPerfectNumber(self, num: int) -> bool:
+        if num < 2: return False
+        summ, top = 1, int(num ** 0.5)
+        for i in range(2, top + 1): 
+            if num % i == 0: summ += i + (num // i)
+            #if summ > num: return False
+        # if top ** 2 == num: summ -= top
+        return summ == num
+```
+Question: just curious why this solution can pass. What i*i == num? It will be counted twice??
+Alternative: | Rt: 32ms |
+```python
+    def checkPerfectNumber(self, num: int) -> bool:
+        if num < 2: return False
+        return sum(i + num//i for i in range(2, int(num ** 0.5) + 1) if not num % i) == num - 1
+```
+
+Others: you can use set to avoid i*i == num being counted twice, cost O(sqrt(n)) space. Here is another interesting post: https://leetcode.com/problems/perfect-number/discuss/98636/Python-Straightforward-with-Explanation
+

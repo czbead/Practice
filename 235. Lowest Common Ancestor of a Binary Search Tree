@@ -1,0 +1,42 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Iterative**
+| O(t): O(n) | O(m): O(1) | Rt: 80ms | 
+```python
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        if p.val > q.val: p, q = q, p
+        while root:
+            if root.val < p.val: root = root.right
+            elif root.val > q.val: root = root.left
+            #find the first root which min(p,q)<=root.val<=max(p,q)
+            else: return root
+```
+Alternative: 
+```python
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        while root:
+            if (root.val - p.val) * (root.val - q.val) > 0:
+                root = root.right if root.val < p.val else root.left
+            else: return root
+```
+Referrence: https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/discuss/64963/3-lines-with-O(1)-space-1-Liners-Alternatives
+
+
+
+**II). Recursion**
+| O(t): O(n) | O(m): O(1) | Rt: 76ms | 
+```python
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        if p.val > q.val: p, q = q, p
+        if root.val < p.val: return self.lowestCommonAncestor(root.right, p, q)
+        elif root.val > q.val: return self.lowestCommonAncestor(root.left, p, q)
+        else: return root
+```
+Alternative: | Rt: 76ms |
+```python
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        lca = self.lowestCommonAncestor
+        if (root.val - p.val) * (root.val - q.val) > 0:
+            return lca(root.right, p, q) if root.val < p.val else lca(root.left, p, q)
+        return root
+```
+

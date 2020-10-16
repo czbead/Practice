@@ -1,0 +1,23 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedily Reduce N**
+| O(T): O(n) | O(S): O(1) | Rt: 444ms | 
+```python
+    def leastInterval(self, tasks: List[str], n: int) -> int:
+        m = [0] * 26
+        #bucket count
+        for i in tasks: m[ord(i) - ord('A')] += 1
+        base, maxv = len(tasks), max(m)
+        maxcnt = m.count(maxv)
+        
+        #reduce n by the appearance of maxv
+        n -= (maxcnt - 1)
+        remain = base - maxv * maxcnt
+        slots = n * (maxv - 1)
+        #don't need any 'idle' intervals
+        if remain >= slots: return base
+        #need to insert extra 'idle' intervals
+        return base + (slots - remain)
+```
+Referrence: https://leetcode.com/problems/task-scheduler/discuss/104500/Java-O(n)-time-O(1)-space-1-pass-no-sorting-solution-with-detailed-explanation
+
+

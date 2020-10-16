@@ -1,0 +1,42 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort by Counnt**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 96ms | 
+```python
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        ct = collections.Counter(nums)
+        keys = list(ct)  #get keys as list
+        keys.sort(key=lambda x: ct[x], reverse=True)
+        return keys[:k]
+```
+
+
+**II). Bucket Sort Frequency**
+| O(T): O(n) | O(S): O(n) | Rt: 116ms | 
+```python
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        rst, l = [], len(nums)
+        bucket = [[] for _ in range(l + 1)]
+        ct = collections.Counter(nums)
+        for i in ct: bucket[ct[i]].append(i)
+        while k:
+            k -= len(bucket[-1])
+            rst.extend(bucket.pop())
+        return rst
+```
+Referrence: https://leetcode.com/problems/top-k-frequent-elements/discuss/81602/Java-O(n)-Solution-Bucket-Sort
+Comment: the problem issued in the referrence can be coverd by adding key one by one and update the k in the run. This is really a great solution. Usually we apply counting sort to bounded input directly. However, we apply bucket sort (the same as counting sort) to the frequency of input (Counter of each each item). The clever point is: we must be sure the input is bounded before we apply a counting sort. Many coder give up counting sort on this problem because the input is clearly not bounded. One step forward, the frequence of item in the input must be bounded by the size of the input. This is the real charm of this solution. 
+
+
+**III). Min Heap**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 104ms | 
+```python
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        heap = []; heapq.heapify(heap)
+        ct = collections.Counter(nums)
+        for i in ct: 
+            heapq.heappush(heap, (ct[i], i))
+            if len(heap) == k+1: heapq.heappop(heap)
+        return [j for i, j in heap]
+```
+Referrence: https://leetcode.com/problems/top-k-frequent-elements/discuss/81635/3-Java-Solution-using-Array-MaxHeap-TreeMap
+Comment: the order of the output doesn't matter.

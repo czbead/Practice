@@ -1,0 +1,38 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Two Pointer**
+| O(T): O(nlgn + mlgm) | O(S): O(1) | Rt: 180ms | 
+```python
+    def findContentChildren(self, g: List[int], s: List[int]) -> int:
+        g.sort(); s.sort()
+        rst, gi, si = 0, 0, 0
+        while gi < len(g) and si < len(s):
+            while si < len(s) and s[si] < g[gi]: si += 1 
+            if si == len(s): return rst
+            rst, gi, si = rst + 1, gi + 1, si + 1
+        return rst
+```
+Alternative: | Rt: 176ms |
+```python
+    def findContentChildren(self, g: List[int], s: List[int]) -> int:
+        g.sort(); s.sort()
+        rst = gi = si = 0
+        while gi < len(g) and si < len(s):
+            if s[si] >= g[gi]: rst, gi = rst + 1, gi + 1
+            si += 1
+        return rst
+```
+
+
+**II). Pop**
+| O(T): O(nlgn + mlgm) | O(S): O(1) | Rt: 172ms | 
+```python
+    def findContentChildren(self, g: List[int], s: List[int]) -> int:
+        g.sort(reverse=True); s.sort(reverse=True)
+        rst = 0
+        while g and s:
+            if s.pop() >= g[-1]: 
+                rst += 1
+                g.pop()
+        return rst
+```
+

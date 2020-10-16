@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def isSubPath(self, head: ListNode, root: TreeNode) -> bool:
+        if not head: return True
+        if not root: return False
+        if root.val != head.val:
+            return self.isSubPath(head, root.left) or self.isSubPath(head, root.right)
+        return self.isSubPath(head.next, root.left) or self.isSubPath(head.next, root.right) or self.isSubPath(head, root.left) or self.isSubPath(head, root.right)
+```
+Comment: this is a wrong solution.
+
+
+**II). Double Recursive**
+| O(T): O(n*n) | O(S): O(h) | Rt: 124ms | 
+```python
+    def isSubPath(self, head: ListNode, root: TreeNode) -> bool:
+        def dfs(head, root):
+            if not head: return True
+            if not root: return False
+            return root.val == head.val and (dfs(head.next, root.left) or dfs(head.next, root.right))
+        
+        if not head: return True
+        if not root: return False
+        return dfs(head, root) or self.isSubPath(head, root.left) or self.isSubPath(head, root.right)
+```
+Referrence: https://leetcode.com/problems/linked-list-in-binary-tree/discuss/524881/Python-Recursive-Solution-O(N)-Time
+
+Others: KMP DP - https://leetcode.com/problems/linked-list-in-binary-tree/discuss/524881/Python-Recursive-Solution-O(N)-Time
+

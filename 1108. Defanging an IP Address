@@ -1,0 +1,23 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Replace**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def defangIPaddr(self, address: str) -> str:
+        return address.replace('.', '[.]')
+```
+
+
+**II). Conditional Replacement**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def defangIPaddr(self, address: str) -> str:
+        return ''.join('[.]' if i == '.' else i for i in address)
+```
+
+
+**III). Join Split**
+| O(T): O(n) | O(S): O(n) | Rt: 20ms | 
+```python
+    def defangIPaddr(self, address: str) -> str:
+        return '[.]'.join(address.split('.'))
+```

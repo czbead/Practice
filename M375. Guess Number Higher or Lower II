@@ -1,0 +1,46 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). MinMax: DP with DFS**
+| O(T): O() | O(S): O() | Rt: 1268ms | 
+```python
+    def getMoneyAmount(self, n: int) -> int:
+        def dfs(dp, l, r):
+            if l >= r: return 0
+            if dp[l][r]: return dp[l][r]
+            minCost = float('inf')
+            #to pay the max cost case, it always guess wrong until only one number left (have to be right)
+            for guess in range(l, r+1):
+                maxCost = guess + max(dfs(dp, l, guess-1), dfs(dp, guess+1, r))
+                minCost = min(minCost, maxCost)
+            dp[l][r] = minCost
+            return minCost
+        
+        dp = [[0] * (n+1) for _ in range(n+1)]
+        return dfs(dp, 1, n)
+```
+Referrence: https://leetcode.com/problems/guess-number-higher-or-lower-ii/discuss/84764/Simple-DP-solution-with-explanation~~
+
+Alternative: make it short. | Rt: 1396ms |
+```python
+    def getMoneyAmount(self, n: int) -> int:
+        def dfs(dp, l, r):
+            if l >= r: return 0
+            if dp[l][r]: return dp[l][r]
+            dp[l][r] = min(g + max(dfs(dp, l, g-1), dfs(dp, g+1, r)) for g in range(l, r+1))
+            return dp[l][r]
+        
+        dp = [[0] * (n+1) for _ in range(n+1)]
+        return dfs(dp, 1, n)
+```
+
+
+**II). MinMax: DP**
+| O(T): O(n*n) | O(S): O(n*n) | Rt: 556ms | 
+```python
+    def getMoneyAmount(self, n: int) -> int:
+        dp = [[0] * (n+1) for _ in range(n+1)]
+        for j in range(2, n+1):
+            for i in range(j-1, 0, -1):
+                dp[i][j] = min(k + max(dp[i][k-1], dp[k+1][j]) for k in range(i, j))
+        return dp[1][n]
+```
+Referrence: https://leetcode.com/problems/guess-number-higher-or-lower-ii/discuss/84787/Java-DP-solution

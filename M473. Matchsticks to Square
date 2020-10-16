@@ -1,0 +1,164 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking (DFS)**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def makesquare(self, nums: List[int]) -> bool:
+        def backtrack(nums, st,  sides):
+            if st == len(nums): 
+                if sides[0] == sides[1] == sides[2] == sides[3]: return True
+                return False
+            for i in range(4):
+                sides[i] += nums[st]
+                if backtrack(nums, st+1, sides): return True
+                sides[i] -= nums[st]  #backtracking
+            return False
+            
+        if not nums or sum(nums) % 4: return False
+        sides = [0, 0, 0, 0]
+        return backtrack(nums, 0, sides)
+```
+Comment: this is the naive brute force solution without any pruning, that is why it gets a TLE
+Alternative: prune optimization -- using target to break out invalid case. | Rt: ms | TLE
+```python
+    def makesquare(self, nums: List[int]) -> bool:
+        def backtrack(nums, i, sides, target):
+            if i == len(nums): 
+                if sides[0] == sides[1] == sides[2] == target: return True
+                return False
+            for j in range(4):
+                if sides[j] + nums[i] > target: continue
+                sides[j] += nums[i]
+                if backtrack(nums, i+1, sides, target): return True
+                sides[j] -= nums[i]  #backtracking
+            return False
+            
+        if not nums or len(nums) < 4: return False
+        summ = sum(nums)
+        if summ % 4 != 0: return False
+        return backtrack(nums, 0, [0]*4, summ//4)
+```
+Comment: I dont know why this test case will cause a TLE: [1569462,2402351,9513693,2220521,7730020,7930469,1040519,5767807,876240,350944,4674663,4809943,8379742,3517287,8034755]
+
+Triple: prune optimization -- sort the nums in descending order. | Rt: 1764 ms |
+```python
+    def makesquare(self, nums: List[int]) -> bool:
+        def backtrack(nums, i, sides, target):
+            if i == len(nums): 
+                if sides[0] == sides[1] == sides[2] == target: return True
+                return False
+            for j in range(4):
+            	#prune the computing tree, 
+                if sides[j] + nums[i] > target: continue
+                sides[j] += nums[i]
+                if backtrack(nums, i+1, sides, target): return True
+                sides[j] -= nums[i]  #backtracking
+            return False
+            
+        if not nums or len(nums) < 4: return False
+        summ = sum(nums)
+        if summ % 4 != 0: return False
+        nums.sort(reverse=True)
+        return backtrack(nums, 0, [0]*4, summ//4)
+```
+Referrence: https://leetcode.com/problems/matchsticks-to-square/discuss/95729/Java-DFS-Solution-with-Explanation
+Comment: this can accelerate the process because it prune the recursion tree efficiently. Put two longest match on the same side most likely will be pruned very early in the process. 
+
+Forth: or simpler. | Rt: 1708ms |
+```python
+    def makesquare(self, nums: List[int]) -> bool:
+        def backtrack(nums, i, sides, target):
+            if i == len(nums): return True
+            for j in range(4):
+                if sides[j] + nums[i] > target: continue
+                sides[j] += nums[i]
+                if backtrack(nums, i+1, sides, target): return True
+                sides[j] -= nums[i]  #backtracking
+            return False
+            
+        if not nums or len(nums) < 4: return False
+        summ = sum(nums)
+        if summ % 4 != 0: return False
+        nums.sort(reverse=True)
+        return backtrack(nums, 0, [0]*4, summ//4)
+``` 
+Comment: this is a np-complete problem, it is understandable that there may not exist a efficent solution. That is why the input size is extremely small (<=15); Even this solution -- no matter call it backtracking or DFS (backtracking is a kind of DFS) -- is a kind of brute force solution with prune. 
+
+Fifth: further optimization. | Rt: 60ms |
+```python
+    def makesquare(self, nums: List[int]) -> bool:
+        def backtrack(nums, i, sides, target):
+            if i == len(nums): return sides[0] == sides[1] == sides[2] == target
+            for j in range(4):
+                if sides[j] + nums[i] > target: continue
+                #if previous sides has been current side length and didn't return True
+                #this side length must lead to Faslse, no need to proceed
+                if sides[j] in sides[:j]: continue
+                
+                sides[j] += nums[i]
+                if backtrack(nums, i+1, sides, target): return True
+                sides[j] -= nums[i]  #backtracking
+            return False
+            
+        if not nums or len(nums) < 4: return False
+        summ = sum(nums)
+        if summ % 4 != 0: return False
+        target = summ // 4
+        nums.sort(reverse=True)
+        #all matches should be used in the game
+        #if longest match exceed the target side length, it must be False
+        if nums[0] > target: return False
+        return backtrack(nums, 0, [0]*4, target)
+```
+Referrence: https://leetcode.com/problems/matchsticks-to-square/discuss/95744/cpp-6ms-solution-with-DFS
+
+Sixth: a different angle. | Rt: 6564ms |
+```python
+    def makesquare(self, nums: List[int]) -> bool:
+        def backtrack(nums, used, count, sides, target):
+            if count == len(nums): return True
+            for i in range(len(used)):
+                if used[i]: continue
+                for j in range(4):
+                    if sides[j] in sides[:j]: continue
+                    if sides[j] + nums[i] > target: continue
+                    used[i] = 1
+                    sides[j] += nums[i]
+                    if backtrack(nums, used, count+1, sides, target): return True
+                    used[i] = 0
+                    sides[j] -= nums[i]
+                return False
+            return False
+            
+        if not nums or len(nums) < 4: return False
+        summ = sum(nums)
+        if summ % 4 != 0: return False
+        target = summ // 4
+        if max(nums) > target: return False
+        return backtrack(nums, [0] * len(nums), 0, [0]*4, target)
+```
+Seventh: optimized with sort. | Rt: 96ms |
+```python
+    def makesquare(self, nums: List[int]) -> bool:
+        def backtrack(nums, used, count, sides, target):
+            if count == len(nums): return True
+            for i in range(len(used)):
+                if used[i]: continue
+                for j in range(4):
+                    if sides[j] in sides[:j]: continue
+                    if sides[j] + nums[i] > target: continue
+                    used[i] = 1
+                    sides[j] += nums[i]
+                    if backtrack(nums, used, count+1, sides, target): return True
+                    used[i] = 0
+                    sides[j] -= nums[i]
+                return False
+            return False
+            
+        if not nums or len(nums) < 4: return False
+        summ = sum(nums)
+        if summ % 4 != 0: return False
+        target = summ // 4
+        nums.sort(reverse=True)
+        if nums[0] > target: return False
+        return backtrack(nums, [0] * len(nums), 0, [0]*4, target)
+```

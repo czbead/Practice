@@ -1,0 +1,27 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP Count with Index Chainning**
+| O(T): O(n*n) | O(S): O(n) | Rt: 436ms | 
+```python
+    def largestDivisibleSubset(self, nums: List[int]) -> List[int]:
+        nums.sort()
+        l = len(nums)
+        if l == 1: return nums
+        dp_ct, mx, mx_i = [1] * l, 0, None
+        pre = [-1] * l
+        for i in range(1, l):
+            for j in range(i-1, -1, -1):
+                if nums[i] % nums[j] == 0 and 1 + dp_ct[j] > dp_ct[i]:
+                    dp_ct[i], pre[i] = dp_ct[j] + 1, j
+            if dp_ct[i] > mx: 
+                mx, mx_i = dp_ct[i], i
+                
+        rst, i = [], mx_i
+        for _ in range(mx):
+            rst.append(nums[i])
+            i = pre[i]
+        return rst           
+```
+Referrence: https://leetcode.com/problems/largest-divisible-subset/discuss/84006/Classic-DP-solution-similar-to-LIS-O(n2)
+
+Others: Set solution - https://leetcode.com/problems/largest-divisible-subset/discuss/84002/4-lines-in-Python
+

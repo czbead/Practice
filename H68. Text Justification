@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Array Collect**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def fullJustify(self, words: List[str], maxWidth: int) -> List[str]:
+        rst, arr, curlen = [], [], 0
+        for word in words:
+            if curlen + len(word) <= maxWidth:
+                arr.append(word)
+                curlen += len(word) + 1
+            else:
+                if len(arr) == 1: line = arr[0] + ' ' * (maxWidth-curlen+1)
+                else:
+                    div, mod = divmod(maxWidth - curlen + len(arr), len(arr)-1)
+                    line = ''
+                    for i in range(len(arr)-1):
+                        line += arr[i]
+                        line += ' ' * div
+                        if i < mod: line += ' '
+                    line += arr[-1]
+                rst.append(line)
+                arr, curlen = [word], len(word) + 1
+        if arr: rst.append(' '.join(arr) + ' ' * (maxWidth-curlen+1))
+        return rst
+```
+
+Alternative: space distribution; | Rt: 32ms |
+```python
+    def fullJustify(self, words: List[str], maxWidth: int) -> List[str]:
+        rst, arr, curlen = [], [], 0
+        for word in words:
+            if curlen + len(word) + len(arr) > maxWidth:
+                l = len(arr)
+                if l == 1: line = arr[0] + ' '*(maxWidth-curlen)
+                else:
+                    for i in range(maxWidth-curlen):
+                        arr[i%(l-1)] += ' '
+                    line = ''.join(arr)
+                rst.append(line)
+                arr, curlen = [], 0
+            arr.append(word); curlen += len(word)
+        rst.append(' '.join(arr).ljust(maxWidth))
+        return rst
+```
+Referrence: https://leetcode.com/problems/text-justification/discuss/24891/Concise-python-solution-10-lines.

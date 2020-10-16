@@ -1,0 +1,65 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter and Set**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def uniqueOccurrences(self, arr: List[int]) -> bool:
+        ctv = collections.Counter(arr).values()
+        return len(set(ctv)) == len(ctv)
+```
+Comment: this is "batch style" solution -- go through all then decide. Actually, a efficient way is immediate return once meet a False cases. Is it possible to achieve a immediate False return? No, because you never know what the next comming element is which has the potential to make a current False case True. Well if you have n False case while only less than n elements left in the sequence, congradulation! You certainly can return at that moment. I bet it is doesn't worth a try. 
+
+Alternative: counter free solution. | Rt: 40ms |
+```python
+    def uniqueOccurrences(self, arr: List[int]) -> bool:
+        dt = {}
+        for i in arr: dt[i] = dt.get(i, 0) + 1
+        dtv = dt.values()
+        return len(set(dtv)) == len(dtv)
+```
+
+
+**II). Bucket Collect**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def uniqueOccurrences(self, arr: List[int]) -> bool:
+        m = [0] * 2001
+        for i in arr: m[i+1000] += 1
+        vs = [i for i in m if i]
+        return len(set(vs)) == len(vs)
+```
+Comment: this trick actually names "counting sort". I used to called "collect sort" for "limited state". Obviously, here we don't care the order at all. Therefore, I call it bucket collect instead. we don't even care the original values, we only need their counts. 
+
+
+**III). Nested Bucket Collect -- O(1) Space**
+| O(T): O(n) | O(S): O(1) | Rt: 36ms | 
+```python
+    def uniqueOccurrences(self, arr: List[int]) -> bool:
+        m = [0] * 2001
+        for i in arr: m[i+1000] += 1
+        mm = [0] * 1000
+        for i in m:
+            if i: 
+                mm[i-1] += 1
+                if mm[i-1] > 1: return False
+        return True
+```
+Comment: here we apply the "if False: immediate return". Every element should **at most** hit 1, no more is allowed.
+Alternative: batch style -- concise.  | Rt: ms |
+```python
+    def uniqueOccurrences(self, arr: List[int]) -> bool:
+        m = [0] * 2001
+        for i in arr: m[i+1000] += 1
+        mm = [0] * 1000
+        for i in m: mm[i-1] += i != 0
+        return all(i <= 1 for i in mm)
+```
+Triple: batch style -- better readability.  | Rt: 40ms |
+```python
+    def uniqueOccurrences(self, arr: List[int]) -> bool:
+        m = [0] * 2001
+        for i in arr: m[i+1000] += 1
+        mm = [0] * 1000
+        for i in m: 
+            if i: mm[i-1] += 1
+        return all(i <= 1 for i in mm)
+```

@@ -1,0 +1,18 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP with BFS**
+| O(T): O() | O(S): O() | Rt: 936ms | 
+```python
+    def knightDialer(self, N: int) -> int:
+        moves = {0:(4, 6), 1:(6, 8), 2:(7, 9), 3:(4, 8), 4:(0, 3, 9), 5:(), 
+                6:(0, 1, 7), 7:(2, 6), 8:(1, 3), 9:(2, 4)}   
+        rst, m = 0, [1] * 10
+        for _ in range(N-1):
+            nxt = [0] * 10
+            for i in range(10):
+                for j in moves[i]:
+                    nxt[j] = (nxt[j] + m[i]) % (10 ** 9 + 7)
+            m = nxt
+        return sum(m) % (10 ** 9 + 7)
+```
+Referrence: https://leetcode.com/problems/knight-dialer/discuss/189287/O(n)-time-O(1)-space-DP-solution-%2B-Google-interview-question-writeup
+

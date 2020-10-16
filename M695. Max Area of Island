@@ -1,0 +1,70 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS**
+| O(T): O() | O(S): O() | Rt: 168ms | 
+```python
+    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
+        def dfs(grid, visited, r, c, i, j):
+            area = 1
+            for di, dj in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                x, y = i + di, j + dj
+                if 0<=x<r and 0<=y<c and grid[x][y] and (x, y) not in visited:
+                    visited.add((x, y))
+                    area += dfs(grid, visited, r, c, x, y)
+            return area
+        
+        if not grid or not grid[0]: return 0
+        r, c = len(grid), len(grid[0])
+        mx, visited = 0, set()
+        for i in range(r):
+            for j in range(c):
+                if not grid[i][j] or (r, c) in visited: continue
+                visited.add((i, j))
+                mx = max(mx, dfs(grid, visited, r, c, i, j))
+        return mx
+```
+
+Alternative: | Rt: 128ms |
+```python
+    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
+        def dfs(grid, dirs, r, c, i, j):
+            area = 1
+            for di, dj in dirs:
+                x, y = i + di, j + dj
+                if 0<=x<r and 0<=y<c and grid[x][y]:
+                    grid[x][y] = 0
+                    area += dfs(grid, dirs, r, c, x, y)
+            return area
+        
+        if not grid or not grid[0]: return 0
+        r, c = len(grid), len(grid[0])
+        dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        mx = 0
+        for i in range(r):
+            for j in range(c):
+                if not grid[i][j]: continue
+                grid[i][j] = 0
+                mx = max(mx, dfs(grid, dirs, r, c, i, j))
+        return mx
+```
+
+Triple: | Rt: 136ms |
+```python
+    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
+        def dfs(grid, r, c, i, j):
+            if i < 0 or i >= r or j < 0 or j >= c or not grid[i][j]: return 0
+            area = 1; grid[i][j] = 0
+            area += dfs(grid, r, c, i-1, j)
+            area += dfs(grid, r, c, i+1, j)
+            area += dfs(grid, r, c, i, j-1)
+            area += dfs(grid, r, c, i, j+1)
+            return area
+        
+        if not grid or not grid[0]: return 0
+        r, c = len(grid), len(grid[0])
+        mx = 0
+        for i in range(r):
+            for j in range(c):
+                if not grid[i][j]: continue
+                mx = max(mx, dfs(grid, r, c, i, j))
+        return mx
+```

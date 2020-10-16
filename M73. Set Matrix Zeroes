@@ -1,0 +1,82 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). M + N Space**
+| O(T): O(mn) | O(S): O(m + n) | Rt: 140ms | 
+```python
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        rs, cs, r, c = set(), set(), len(matrix), len(matrix[0])
+        for i in range(r):
+            for j in range(c):
+                if not matrix[i][j]: rs.add(i); cs.add(j)
+        for i in range(r):
+            for j in range(c):
+                if i in rs or j in cs: matrix[i][j] = 0
+```
+
+
+**II). Constant Space**
+| O(T): O(mn) | O(S): O(1) | Rt: 132ms | 
+```python
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        r, c, firstrow, firstcol = len(matrix), len(matrix[0]), False, False
+        for i in range(r):
+            for j in range(c):
+                if matrix[i][j] == 0: 
+                    if  i== 0: firstrow = True
+                    if j == 0: firstcol = True
+                    matrix[i][0] = matrix[0][j] = 0
+        for i in range(r-1, -1, -1):
+            for j in range(c-1, -1, -1):
+                if not matrix[i][0] or not matrix[0][j]:
+                    if i == 0:
+                        if firstrow: matrix[i][j] = 0
+                    elif j == 0:
+                        if firstcol: matrix[i][j] = 0
+                    else: matrix[i][j] = 0
+```
+Referrence: https://leetcode.com/problems/set-matrix-zeroes/discuss/26014/Any-shorter-O(1)-space-solution
+Comment: first row and first column are special case, the solution takes care of them by two bool variable which is more clear than the post solution in the referrence. 
+Alternative: take care first row and first column separately. | Rt: 136ms |
+```python
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        r, c, firstrow, firstcol = len(matrix), len(matrix[0]), False, False
+        for i in range(r):
+            for j in range(c):
+                if matrix[i][j] == 0: 
+                    if  i== 0: firstrow = True
+                    if j == 0: firstcol = True
+                    matrix[i][0] = matrix[0][j] = 0
+
+        for i in range(1, r):
+            for j in range(1, c):
+                if not matrix[i][0] or not matrix[0][j]: matrix[i][j] = 0
+        if firstrow:
+            for j in range(c): matrix[0][j] = 0
+        if firstcol:
+            for i in range(r): matrix[i][0] = 0
+```
+
+
+**III). Paint with Empty String**
+| O(T): O(mn) | O(S): O(1) | Rt: 148ms | 
+```python
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        def paint(ma, i, j):
+            dx, dy = 0, 1
+            for _ in range(4):
+                x, y, dx, dy = i, j, dy, -dx
+                while 0 <= x+dx < len(ma) and 0 <= y+dy < len(ma[0]):
+                    x, y = x+dx, y+dy
+                    #don't paint 0 or ''
+                    if ma[x][y]: ma[x][y] = ''
+                
+        r, c = len(matrix), len(matrix[0])
+        for i in range(r):
+            for j in range(c):
+                if matrix[i][j] == 0: paint(matrix, i, j)
+                    
+        for i in range(r):
+            for j in range(c):
+                #paint boht 0 and ''
+                if not matrix[i][j]: matrix[i][j] = 0
+```
+

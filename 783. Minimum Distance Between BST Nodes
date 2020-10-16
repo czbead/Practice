@@ -1,0 +1,94 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). In-order Traverse**
+| O(T): O(n) | O(S): O(h) | Rt: 28ms | 
+```python
+    def minDiffInBST(self, root: TreeNode) -> int:
+        def inorder(node, pre, rst):
+            if not node: return
+            inorder(node.left, pre, rst)
+            pre[0], rst[0] = node.val, min(rst[0], node.val - pre[0])
+            inorder(node.right, pre, rst)
+            
+        pre, rst = [-float('inf')], [float('inf')]
+        inorder(root, pre, rst)
+        #BST size >= 2, solid result guaranted.
+        return rst[0]
+```
+Alternative.  woth global variable. | Rt: 28ms |
+```python
+    pre, rst = -float('inf'), float('inf')
+    def minDiffInBST(self, root: TreeNode) -> int:
+        if not root: return
+        self.minDiffInBST(root.left)
+        self.pre, self.rst = root.val, min(self.rst, root.val - self.pre)
+        self.minDiffInBST(root.right)
+        return self.rst
+```
+
+
+**II). Collect As List**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def minDiffInBST(self, root: TreeNode) -> int:
+        def inorder(node, rst):
+            if not node: return 
+            inorder(node.left, rst)
+            rst.append(node.val)
+            inorder(node.right, rst)
+            
+        rst = []
+        inorder(root, rst)
+        return min(j - i for i, j in zip(rst, rst[1:]))
+```
+
+
+**III). Post-order Traverse**
+| O(T): O(n) | O(S): O(h) | Rt: 32ms | 
+```python
+    def minDiffInBST(self, root: TreeNode) -> int:
+        def postorder(node):
+            if not node: return float('inf'), float('inf'), -float('inf')
+            l, lmin, lmax = postorder(node.left)
+            r, rmin, rmax = postorder(node.right)
+            val = node.val
+            return min(l, r, val - lmax, rmin - val), min(val, lmin), max(val, rmax)
+        return postorder(root)[0]
+```
+Referrence: https://leetcode.com/problems/minimum-distance-between-bst-nodes/discuss/187735/Python-easy-to-understand-post-order-DFS-solution
+Comment: compute from both end, record the sofar min and max values. Not trivial to understand, even harder to come up with. 
+
+
+**IV). In-order Iteration with Visit State**
+| O(T): O(n) | O(S): O(n) | Rt: 16ms | 
+```python
+    def minDiffInBST(self, root: TreeNode) -> int:
+        rst, pre, s = float('inf'), -float('inf'), [(root, 0)]
+        while s:
+            node, visited = s.pop()
+            if not node: continue
+            if not visited:
+            	#adjust order
+                s += [(node.right, 0), (node, 1), (node.left, 0)]
+                continue
+            pre, rst = node.val, min(rst, node.val - pre)
+        return rst
+```
+Comment: in this iteration solution, all node will be visited in the order of in-order traverse (actually a sorted list from the perspective of value)
+
+
+**V). In-order Iteration with Pure Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 20ms | 
+```python
+    def minDiffInBST(self, root: TreeNode) -> int:
+        pre, rst, stack = -float('inf'), float('inf'), []
+        while stack or root:
+            while root:
+                stack.append(root)
+                root = root.left
+            node = stack.pop()
+            pre, rst = node.val, min(rst, node.val - pre)
+            root = node.right
+        return rst
+```
+Comment: the inner while loop saves left -> parent in order, not included the right, but each time we pop a parent node, we switch to its right child, therefore the right child will be taken care after parent node, it is parent -> right. Put the inner while and pop together we have: left -> parent -> right, a perfect in-order traverse.     
+

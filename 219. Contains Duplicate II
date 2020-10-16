@@ -1,0 +1,52 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Dict**
+| O(t): O(n) | O(m): O(n) | Rt: 88ms | 
+```python
+    def containsNearbyDuplicate(self, nums: List[int], k: int) -> bool:
+        dt = {}
+        for i, v in enumerate(nums):
+            if v in dt and i - dt[v] <= k: return True
+            else: dt[v] = i
+        return False
+```
+Comment: at beginning, I use defaultdict(list) and append the index of each element which is unnecessary because we only need to remember the last state.
+
+
+**II). Nested Loop**
+| O(t): O(nk) | O(m): O(1) | Rt: 96ms | 
+```python
+    def containsNearbyDuplicate(self, nums: List[int], k: int) -> bool:
+    	#without this check, will get a TLE
+        if len(set(nums)) == len(nums): return False
+        for i in range(len(nums)):
+            for j in range(i+1, min(len(nums), i+k+1)):
+                if nums[j] == nums[i]: return True
+        return False
+```
+Alternative: | Rt: 88ms |
+```python
+    def containsNearbyDuplicate(self, nums: List[int], k: int) -> bool:
+        #without this check, will get a TLE
+        if len(set(nums)) == len(nums): return False
+        for i in range(len(nums)):
+            for j in range(i+1, len(nums)):
+                if nums[j] == nums[i] and j - i <= k: return True
+        return False
+```
+
+
+**III). Sliding Window with Set**
+| O(t): O(n) | O(m): O(k) | Rt: 100ms | 
+```python
+    def containsNearbyDuplicate(self, nums: List[int], k: int) -> bool:
+        window = set()
+        for i, v in enumerate(nums):
+            if len(window) > k: window.remove(nums[i-k-1])
+            if v in window: return True
+            window.add(v)
+        return False
+```
+Referrence: https://leetcode.com/problems/contains-duplicate-ii/discuss/141077/Python-sliding-window-solution
+Comment: the set delete and add and "in" operation all in O(1) time complexity.
+Referrence: https://stackoverflow.com/questions/7351459/time-complexity-of-python-set-operations
+

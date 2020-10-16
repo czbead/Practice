@@ -1,0 +1,46 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def getDecimalValue(self, head: ListNode) -> int:
+        rst = 0
+        while head:
+            rst = (rst << 1) + head.val
+            head = head.next
+        return rst
+```
+Alternative: all bit wise.  | Rt: 32ms |
+```python
+    def getDecimalValue(self, head: ListNode) -> int:
+        rst = 0
+        while head:
+            rst = (rst << 1) | head.val
+            head = head.next
+        return rst
+```
+
+
+**II). Stringify**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def getDecimalValue(self, head: ListNode) -> int:
+        rst = []
+        while head:
+            rst.append(str(head.val))
+            head = head.next
+        return int(''.join(rst), 2)
+```
+
+
+**III). List**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def getDecimalValue(self, head: ListNode) -> int:
+        rst = []
+        while head:
+            rst.append(head.val)
+            head = head.next
+        l = len(rst)
+        return sum(1 << (l-1-i) * rst[i] for i in range(l) if rst[i])
+```
+

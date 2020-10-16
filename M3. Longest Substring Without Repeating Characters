@@ -1,0 +1,84 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Set Collect**
+| O(T): O(n) | O(S): O(n) | Rt: 64ms | 
+```python
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        i, rst, left, se = 0, 0, 0, set()
+        while i < len(s):
+            if s[i] not in se: 
+                se.add(s[i])
+                i += 1
+            else:
+                rst = max(rst, len(se))
+                while se and s[i] in se: 
+                    se.remove(s[left])
+                    left += 1    #left will never overflow due to the se empty check 
+        return max(rst, len(se))
+```
+Referrence: https://leetcode.com/problems/longest-substring-without-repeating-characters/discuss/211683/Python-3-Clean-and-Correct
+Alternative: using extra substring.  | Rt: 76ms | 
+```python
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        i, rst, sub, se = 0, 0, '', set()
+        while i < len(s):
+            if s[i] not in se: 
+                se.add(s[i])
+                sub, i = sub + s[i], i + 1
+            else:
+                se.remove(sub[0])
+                rst, sub = max(rst, len(sub)), sub[1:]
+        return max(rst, len(sub))
+```
+
+
+**II). Dict Last Index**
+| O(T): O(n) | O(S): O(n) | Rt: 56ms | 
+```python
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        rst, dt, st = 0, {}, 0
+        for i, v in enumerate(s):
+            if v in dt: st = max(st, dt[v] + 1)
+            rst, dt[v] = max(rst, i-st+1), i
+        return rst
+```
+
+
+**III). Buck Collect Index**
+| O(T): O(n) | O(S): O(1) | Rt: 68ms | 
+```python
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        rst, st, m = 0, 0, [-1] * 129
+        for i, v in enumerate(s):
+            st = max(st, m[ord(v)] + 1)
+            rst, m[ord(v)] = max(rst, i-st+1), i
+        return rst
+```
+
+
+**IV). Deque Collect**
+| O(T): O(n*n) | O(S): O(n) | Rt: 148ms | 
+```python
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        i, rst, q = 0, 0, collections.deque([])
+        while i < len(s):
+            if s[i] not in q: 
+                q.append(s[i])
+                i += 1
+            else: 
+                rst = max(rst, len(q))
+                while q and s[i] in q: q.popleft() 
+        return max(rst, len(q))
+```
+
+
+**V). String Collect**
+| O(T): O(n*n) | O(S): O(n) | Rt: 64ms | 
+```python
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        i, rst, sub = 0, 0, ''
+        while i < len(s):
+            if s[i] not in sub: sub, i = sub + s[i], i + 1
+            else: rst, sub = max(rst, len(sub)), sub[1:]
+        #last round check is critical, 
+        return max(rst, len(sub))
+```

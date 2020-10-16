@@ -1,0 +1,109 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Resolve Index Collect**
+| O(T): O(n) | O(S): O(n) | Rt: 64ms | 
+```python
+    def convert(self, s: str, numRows: int) -> str:
+        l = len(s)
+        if l <= numRows or numRows == 1: return s
+        rst, gap = [], 2 * (numRows - 1)
+        for i in range(numRows):
+            for j in range(i, l, gap):
+                if i == 0 or i == numRows - 1: rst.append(s[j])
+                else: 
+                    rst.append(s[j]) 
+                    #gap = 4, the pairs are (1, 3), (5, 7), (i, (-i)%gap + (i//gap)*gap)
+                    compInd = (-j % gap) + (j//gap)*gap  
+                    if compInd < l: rst.append(s[compInd])
+        return ''.join(rst)
+```
+Alternative: | 80ms |
+```python
+    def convert(self, s: str, numRows: int) -> str:
+        l = len(s)
+        if l <= numRows or numRows == 1: return s
+        rst, gap = [], 2 * (numRows - 1)
+        for i in range(numRows):
+            if i == 0 or i == numRows - 1: 
+                for j in range(i, l, gap): rst.append(s[j])
+            else:
+                a, b = [], []
+                for j in range(i, l, gap): a.append(s[j])
+                for j in range(gap-i, l, gap): b.append(s[j])
+                for x, y in zip(a, b): rst.append(x); rst.append(y)
+                if len(a) > len(b): rst.append(a[-1])
+        return ''.join(rst)
+```
+Triple: concise version.  | Rt: 72ms |
+```python
+    def convert(self, s: str, numRows: int) -> str:
+        l = len(s)
+        if l <= numRows or numRows == 1: return s
+        rst, gap = [], 2 * (numRows - 1)
+        for i in range(numRows):
+            for j in range(i, l, gap):
+                rst.append(s[j])
+                #ex, gap == 4, (1, 3), (5, 7)
+                compInd = (j - i) + gap - i 
+                if i != 0 and i != numRows -1 and compInd < l: rst.append(s[compInd])
+        return ''.join(rst)
+```
+Referrence: complement index idea from https://leetcode.com/problems/zigzag-conversion/discuss/3417/A-10-lines-one-pass-o(n)-time-o(1)-space-accepted-solution-with-detailed-explantation
+
+
+**II). Collect Row by Row**
+| O(T): O(n) | O(S): O(n) | Rt: 64ms | 
+```python
+    def convert(self, s: str, numRows: int) -> str:
+        if len(s) <= numRows or numRows == 1: return s
+        di, rowi, row = -1, 0, [[] for _ in range(numRows)]
+        for i in s:
+            row[rowi].append(i)
+            if rowi == numRows - 1 or rowi == 0: di = -di
+            rowi += di
+        return ''.join([i for r in row for i in r])
+```
+Alternative: | Rt: 56ms |
+```python
+    def convert(self, s: str, numRows: int) -> str:
+        if len(s) <= numRows or numRows == 1: return s
+        rang, row = 2 * (numRows - 1), [[] for _ in range(numRows)]
+        for i, v in enumerate(s):
+            if i % rang < numRows: row[i%rang].append(v)
+            else: row[rang - (i % rang)].append(v)
+        return ''.join([i for r in row for i in r])
+```
+Triple: | Rt: 56ms |
+```python
+    def convert(self, s: str, numRows: int) -> str:
+        if len(s) <= numRows or numRows == 1: return s
+        i, row, l = 0, [[] for _ in range(numRows)], len(s)
+        while i < l:
+            for j in range(numRows): 
+                if i >= l: break
+                row[j].append(s[i]) 
+                i += 1
+            for j in range(numRows-2, 0, -1): 
+                if i >= l: break
+                row[j].append(s[i])
+                i += 1
+        return ''.join([i for r in row for i in r])
+```
+Referrence: https://leetcode.com/problems/zigzag-conversion/discuss/3403/Easy-to-understand-Java-solution
+Forth: while style. | Rt: 64ms |
+```python
+    def convert(self, s: str, numRows: int) -> str:
+        if len(s) <= numRows or numRows == 1: return s
+        i, row, l = 0, [[] for _ in range(numRows)], len(s)
+        while i < l:
+            r = 0
+            while r < numRows and i < l: 
+                row[r].append(s[i]) 
+                i, r = i+1, r+1
+            r = numRows - 2
+            while r > 0 and i < l: 
+                row[r].append(s[i])
+                i, r = i+1, r-1
+        return ''.join([i for r in row for i in r])
+```
+Comment: you can use string to concat each row, keep in mind the string is immutable object.
+

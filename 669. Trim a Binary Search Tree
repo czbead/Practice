@@ -1,0 +1,55 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 44ms | 
+```python
+    def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode:
+        if not root: return 
+        val = root.val
+        if val > R: return self.trimBST(root.left, L, R)
+        elif val < L: return self.trimBST(root.right, L, R)
+        root.left = self.trimBST(root.left, L, R)
+        root.right = self.trimBST(root.right, L, R)
+        return root
+```
+Comment: The lesson I learn from this problem is that not all BST problem has to use in-order traverse. The other lesson I learn from last BST problem is that -- keep in-order traverse in mind whenever there is a BST in a problem. A truth overule another truth. 
+Alternative: | Rt: 60ms |
+```python
+    def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode:
+        if not root: return 
+        root.left = self.trimBST(root.left, L, R)
+        root.right = self.trimBST(root.right, L, R)
+        if not (L <= root.val <= R): root = root.left if root.val > R else root.right
+        return root
+``` 
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(lgn) | Rt: 48ms | 
+```python
+    def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode:
+        #find the real root for the return tree
+        while root and not (L <= root.val <= R):
+            if root.val < L: root = root.right
+            elif root.val > R: root = root.left
+        stack = [root]  
+        while stack:
+            node = stack[-1]
+            if not node: 
+                stack.pop()
+                continue
+            update = 0
+            if node.left and node.left.val < L: 
+                node.left = node.left.right
+                update += 1
+            if node.right and node.right.val > R: 
+                node.right = node.right.left
+                update += 1
+            if not update: 
+                stack.pop()
+                stack.append(node.left)
+                stack.append(node.right)
+        return root
+```
+Comment: each round involves two levels (root and its children) because you need access to its parent when you decide to delete a node (concat the parent with its descendants.)
+
+

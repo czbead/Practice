@@ -1,0 +1,42 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy: Put the Most Frequent Alpha in Slots First**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 24ms | 
+```python
+    def reorganizeString(self, S: str) -> str:
+        s, l = list(S), len(S)
+        ct = collections.Counter(s)
+        #cannot only sort by ct[x], "abbabbaaab" is the edge case
+        #when ct[x] equals, have to sort by alpha, otherwise it is a mess
+        s.sort(key=lambda x: (ct[x], x), reverse=True)
+        if ct[s[0]] > (l + 1) // 2: return ''
+        rst, iters = [None] * l, iter(s)
+        for i in range(0, l, 2): rst[i] = next(iters)
+        for i in range(1, l, 2): rst[i] = next(iters)
+        return ''.join(rst)
+```
+Comment: As long as the the count of most frequent alpha letter doesn't exceed (l + 1) // 2, there always is a valid organization. Once the max_frequence > (l + 2) // 2, no valid answer, return '' directly. 
+
+
+**II). Bucket: Only Care the Most Frequenct Alpha**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def reorganizeString(self, S: str) -> str:
+        l = len(S)
+        m, mx_alpha, mx_count = [0] * 26, None, 0
+        for i in S: 
+            index = ord(i) - ord('a')
+            m[index] += 1
+            if m[index] > mx_count:
+                mx_count = m[index]
+                mx_alpha = index
+        if mx_count > (l + 1) // 2: return ''
+        rst, slots = [None] * l, list(range(0, l, 2)) + list(range(1, l, 2))
+        iterslot = iter(slots)
+        for _ in range(mx_count): rst[next(iterslot)] = chr(mx_alpha + ord('a'))
+        m[mx_alpha] = 0
+        for i in range(26):
+            for _ in range(m[i]):
+                rst[next(iterslot)] = chr(i + ord('a'))
+        return ''.join(rst)
+```
+Referrence: https://leetcode.com/problems/reorganize-string/discuss/232469/Java-No-Sort-O(N)-0ms-beat-100

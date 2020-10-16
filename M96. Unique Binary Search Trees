@@ -1,0 +1,44 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP Symmetry: only the r-l Gap Matters**
+| O(T): O() | O(S): O() | Rt: 32ms | 
+```python
+    def numTrees(self, n: int) -> int:
+        dt = {0: 1, 1: 1, 2: 2}
+        if n < 3: return dt[n]
+        for i in range(3, n+1):
+            #i is the root
+            dt[i] = sum(dt[l] * dt[i-1-l] for l in range(0, i))
+        return dt[n]
+```
+
+Alternative: | Rt: 24ms |
+```python
+    def numTrees(self, n: int) -> int:
+        dt = {0: 1, 1: 1, 2: 2}
+        if n < 3: return dt[n]
+        for i in range(3, n+1):
+            #i is the root
+            dt[i] = sum(dt[l] * dt[i-1-l] for l in range(0, i//2)) * 2
+            if i & 1: dt[i] += dt[i//2] * dt[i//2]
+        return dt[n]
+```
+
+Triple: | Rt: 28ms |
+```python
+    def numTrees(self, n: int) -> int:
+        m = [0] * (n+1); m[0], m[1] = 1, 1
+        for i in range(2, n+1):
+            m[i] = sum(m[l] * m[i-1-l] for l in range(0, i//2)) * 2
+            if i & 1: m[i] += m[i//2] * m[i//2]
+        return m[n]
+```
+
+Forth: | Rt: 28ms |:
+```python
+    def numTrees(self, n: int) -> int:
+        m = [0] * (n+1); m[0], m[1] = 1, 1
+        for i in range(2, n+1):
+            m[i] = sum(m[l] * m[i-1-l] for l in range(i)) 
+        return m[n]
+```
+

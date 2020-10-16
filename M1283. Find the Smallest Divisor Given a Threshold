@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Linear Approaching**
+| O(T): O(n) | O(S): O(1) | Rt: ms | TLE
+```python
+    def smallestDivisor(self, nums: List[int], threshold: int) -> int:
+        i = -(-sum(nums) // threshold)
+        while True:
+            s = sum(-(-j//i) for j in nums)
+            if s <= threshold: return i
+            i += 1
+```
+
+
+**II). Binary Approaching**
+| O(T): O(n) | O(S): O(1) | Rt: 352ms | 
+```python
+    def smallestDivisor(self, nums: List[int], threshold: int) -> int:
+        total = mx = 0
+        for i in nums: 
+            total += i
+            mx = max(mx, i)
+        l, r = -(-total//threshold), mx
+        while l < r:
+            m = (l + r) // 2
+            s = sum(-(-i//m) for i in nums)
+            if s > threshold: l = m+1
+            else: r = m
+        return l
+```

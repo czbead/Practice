@@ -1,0 +1,57 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Collect All Then Paint**
+| O(T): O(mn) | O(S): O(mn) | Rt: 72ms | 
+```python
+    def floodFill(self, image: List[List[int]], sr: int, sc: int, newColor: int) -> List[List[int]]:
+        oriCol = image[sr][sc]
+        if oriCol == newColor: return image
+        row, col, surs, nodes = len(image), len(image[0]), set([(sr, sc)]), [(sr, sc)]
+        while nodes:
+            nodes = [(x, y) for i, j in nodes for x, y in 
+                     [(i+1, j), (i-1, j), (i, j-1), (i, j+1)] 
+                     if 0<=x<row and 0<=y<col 
+                     and image[x][y] == oriCol and (x, y) not in surs]
+            surs.update(nodes)
+        for i, j in surs: image[i][j] = newColor
+        return image
+```
+Comment: new coming points will be store in a individual container for further probing. 
+
+
+**II). Paint Round By Round**
+| O(T): O(mn) | O(S): O(mn) | Rt: 68ms | 
+```python
+    def floodFill(self, image: List[List[int]], sr: int, sc: int, newColor: int) -> List[List[int]]:
+        oriCol = image[sr][sc]
+        if oriCol == newColor: return image
+        row, col, surs = len(image), len(image[0]), [(sr, sc)]
+        while surs:
+            for i, j in surs: image[i][j] = newColor
+            surs = [(x, y) for i, j in surs for x, y in 
+                     [(i+1, j), (i-1, j), (i, j-1), (i, j+1)] 
+                     if 0<=x<row and 0<=y<col 
+                     and image[x][y] == oriCol]
+        return image
+```
+Comment: could use pop to do the painting one by one as well. 
+
+
+**III). Recursion**
+| O(T): O(mn) | O(S): O(lgmn) | Rt: 80ms | 
+```python
+    def floodFill(self, image: List[List[int]], sr: int, sc: int, newColor: int) -> List[List[int]]:
+        def recur(image, i, j, oriCol, newCol):
+            if 0<=i<len(image) and 0<=j<len(image[0]) and image[i][j] == oriCol:
+                image[i][j] = newCol
+                recur(image, i-1, j, oriCol, newCol)
+                recur(image, i+1, j, oriCol, newCol)
+                recur(image, i, j+1, oriCol, newCol)
+                recur(image, i, j-1, oriCol, newCol)
+                
+        if image[sr][sc] == newColor: return image
+        recur(image, sr, sc, image[sr][sc], newColor)
+        return image
+```
+Comment: the trick is paint the current point first before calculating its surrencding points that will prevent repaintint the same point over and over again -- dead loop. 
+
+

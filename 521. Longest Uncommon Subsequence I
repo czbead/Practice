@@ -1,0 +1,8 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). **
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def findLUSlength(self, a: str, b: str) -> int:
+        return -1 if a == b else max(len(a), len(b))
+```
+Comment: this problem got me twice. Anyway, a longer string can never be a subsequence of the other. This is the trick.

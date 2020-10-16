@@ -1,0 +1,73 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter with Tuple**
+| O(T): O(n) | O(S): O(n) | Rt: 236ms | 
+```python
+    def numEquivDominoPairs(self, dominoes: List[List[int]]) -> int:
+        dominoes = [tuple(i) if i[0] <= i[1] else tuple(reversed(i)) for i in dominoes]
+        ct = collections.Counter(dominoes)
+        return sum(v * (v - 1) // 2 for v in ct.values())
+```
+Commnt: list and set are both unhashable, Counter is actually a hashtable.
+Alternative: | Rt: 240ms |
+```python
+    def numEquivDominoPairs(self, dominoes: List[List[int]]) -> int:
+        dominoes = [(i, j) if i <= j else (j, i) for i, j in dominoes]
+        ct = collections.Counter(dominoes)
+        return sum(v * (v - 1) // 2 for v in ct.values())
+```
+
+
+**II). Counter with Decimal**
+| O(T): O(1) | O(S): O(n) | Rt: 260ms | 
+```python
+    def numEquivDominoPairs(self, dominoes: List[List[int]]) -> int:
+        concat = lambda i, j: i * 10 + j 
+        dominoes = [concat(i, j) if i <= j else concat(j, i) for i, j in dominoes]
+        ct = collections.Counter(dominoes)
+        return sum(v * (v - 1) // 2 for v in ct.values())
+```
+Alternative: without counter using counting sort instead.  | O(S): O(1) | Rt: 248ms |
+```python
+    def numEquivDominoPairs(self, dominoes: List[List[int]]) -> int:
+        m = [0] * 100
+        concat = lambda i, j: i * 10 + j 
+        dominoes = [concat(i, j) if i <= j else concat(j, i) for i, j in dominoes]
+        for i in dominoes: m[i] += 1
+        return sum(i * (i-1) // 2 for i in m)
+```
+Comment: of course, you can use string concat instead of decimal concat as well. 
+
+
+**III). Sum Up in the Run**
+| O(T): O(n) | O(S): O(n) | Rt: 256ms | 
+```python
+    def numEquivDominoPairs(self, dominoes: List[List[int]]) -> int:
+        dominoes = [tuple(i) if i[0] <= i[1] else tuple(reversed(i)) for i in dominoes]
+        rst, dt = 0, {}
+        for i in dominoes:
+            tmp = dt.get(i, 0)
+            rst, dt[i] = rst + tmp, tmp + 1
+        return rst
+```
+Alternative: decimal version. | Rt: 276ms |
+```python
+    def numEquivDominoPairs(self, dominoes: List[List[int]]) -> int:
+        concat = lambda i, j: i * 10 + j 
+        dominoes = [concat(i, j) if i <= j else concat(j, i) for i, j in dominoes]
+        rst, dt = 0, {}
+        for i in dominoes:
+            tmp = dt.get(i, 0)
+            rst, dt[i] = rst + tmp, tmp + 1
+        return rst
+```
+Triple: counting sort version.  | O(S): O(1) | Rt: 312ms |
+```python
+    def numEquivDominoPairs(self, dominoes: List[List[int]]) -> int:
+        rst, m = 0, [0] * 100
+        concat = lambda i, j: i * 10 + j 
+        dominoes = [concat(i, j) if i <= j else concat(j, i) for i, j in dominoes]
+        for i in dominoes: rst, m[i] = rst + m[i], m[i] + 1
+        return rst
+```
+Comment: for all "pairing problems", this sumup in the run trick is really worth mastering. 
+

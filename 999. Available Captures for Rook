@@ -1,0 +1,97 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Probe 4 Direction**
+| O(T): O(mn) | O(S): O(1) | Rt: 32ms | 
+```python
+    def numRookCaptures(self, board: List[List[str]]) -> int:
+        rx, ry = next((i, j) for i in range(8) for j in range(8) if board[i][j] == 'R')
+        rst = 0
+        for i, j in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+            x, y = rx + i, ry + j
+            while 0<=x<8 and 0<=y<8:
+                if board[x][y] == 'p': rst += 1; break
+                elif board[x][y] == 'B': break
+                #empty square, board[x][y] == '.'; step foward until met bound or hit p or B
+                else:  x, y = x + i, y + j
+        return rst
+```
+Referrence: idea from https://leetcode.com/problems/available-captures-for-rook/discuss/242932/JavaPython-Solution
+Comment: genius solution, pay attention to the else statement, it stick to the original "direction" and step straightly forward.
+Alternative: better readable version.  | Rt: 40ms |
+```python
+    def numRookCaptures(self, board: List[List[str]]) -> int:
+        def forward(rx, ry, dx, dy):
+            ct, x, y = 0, rx + dx, ry + dy
+            while 0<=x<8 and 0<=y<8 and board[x][y] != 'B':
+                if board[x][y] == 'p': ct += 1; break
+                x, y = x + dx, y + dy
+            return ct
+        
+        rx, ry = next((i, j) for i in range(8) for j in range(8) if board[i][j] == 'R')
+        rst = 0
+        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+            rst += forward(rx, ry, dx, dy)
+        return rst
+```
+Referrence: idea from https://leetcode.com/problems/available-captures-for-rook/discuss/242924/C%2B%2BJava-search-and-capture
+
+
+**II). Clean Row and Column**
+| O(T): O(mn) | O(S): O(m+n) | Rt: 32ms | 
+```python
+    def numRookCaptures(self, board: List[List[str]]) -> int:
+        i, j = next((i, j) for i in range(8) for j in range(8) if board[i][j] == 'R')
+        row, col = [i for i in board[i] if i != '.'], [row[j] for row in board if row[j] != '.']
+        rst, rind, cind = 0, row.index('R'), col.index('R')
+        
+        if rind > 0 and row[rind - 1] == 'p': rst += 1
+        if cind > 0 and col[cind - 1] == 'p': rst += 1
+        if rind + 1 < len(row) and row[rind + 1] == 'p': rst += 1
+        if cind + 1 < len(col) and col[cind + 1] == 'p': rst += 1
+        return rst
+```
+
+
+**III). Two Pointer**
+| O(T): O(mn) | O(S): O(m+n) | Rt: 24ms | 
+```python
+    def numRookCaptures(self, board: List[List[str]]) -> int:
+        def countP(lst, i):
+            rst, l, r = 0, i, i
+            while l >= 0 and lst[l] != 'B':
+                if lst[l] == 'p': rst += 1; break
+                l -= 1
+            while r < 8 and lst[r] != 'B':
+                if lst[r] == 'p': rst += 1; break
+                r += 1
+            return rst
+            
+        i, j = next((i, j) for i in range(8) for j in range(8) if board[i][j] == 'R')
+        row, col = board[i], [row[j] for row in board]
+        return countP(row, j) + countP(col, i)
+```
+
+
+**IV). Stringify**
+| O(T): O(mn) | O(S): O(m+n) | Rt: 32ms | 
+```python
+    def numRookCaptures(self, board: List[List[str]]) -> int:   
+        i, j = next((i, j) for i in range(8) for j in range(8) if board[i][j] == 'R')
+        row, col = board[i], [row[j] for row in board]
+        rstr, cstr = ''.join(row).replace('.', ''), ''.join(col).replace('.', '')
+        return ('pR' in rstr) + ('Rp' in rstr) + ('pR' in cstr) + ('Rp' in cstr)
+```
+Referrence: idea from https://leetcode.com/problems/available-captures-for-rook/discuss/242932/JavaPython-Solution/299542
+
+
+**V). Cut into 4 Piece**
+| O(T): O(mn) | O(S): O(m+n) | Rt: 32ms | 
+```python
+    def numRookCaptures(self, board: List[List[str]]) -> int:   
+        i, j = next((i, j) for i in range(8) for j in range(8) if board[i][j] == 'R')
+        row, col = board[i], [row[j] for row in board]
+        rstr, cstr = ''.join(row).replace('.', ''), ''.join(col).replace('.', '')
+        a, b, c, d = *rstr.split('R', 1), *cstr.split('R', 1)
+        return sum(i.startswith('p') for i in [a[::-1], b, c[::-1], d])
+```
+Referrence: idea from https://leetcode.com/problems/available-captures-for-rook/discuss/246691/Clean-Python-solution
+

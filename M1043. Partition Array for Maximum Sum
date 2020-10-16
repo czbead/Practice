@@ -1,0 +1,32 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP K Size Window**
+| O(T): O(n) | O(S): O(n) | Rt: 808ms | 
+```python
+    def maxSumAfterPartitioning(self, A: List[int], K: int) -> int:
+        l = len(A)
+        dp = [0] * (l+1)
+        for i in range(l):
+            mxn = 0
+            #i-k+1 >= 0 => k <= i+1
+            for k in range(1, min(K, i+1)+1):
+                mxn = max(mxn, A[i-k+1])
+                dp[i] = max(dp[i], dp[i-k] + k * mxn)
+        return dp[-2]
+```
+Referrence: https://leetcode.com/problems/partition-array-for-maximum-sum/discuss/290863/JavaC%2B%2BPython-DP
+
+Alternative: | Rt: 956ms |
+```python
+    def maxSumAfterPartitioning(self, A: List[int], K: int) -> int:
+        l = len(A)
+        dp = [0] * (l+1)
+        for i in range(1, l+1):
+            mxn = 0
+            #i-k >= 0 => k <= i
+            #look back check at most k length items, greedily update the sum
+            for k in range(1, min(K, i)+1):
+                mxn = max(mxn, A[i-k])
+                dp[i] = max(dp[i], dp[i-k] + k * mxn)
+        return dp[-1]
+```
+

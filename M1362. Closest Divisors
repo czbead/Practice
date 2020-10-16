@@ -1,0 +1,13 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O(n ** 0.5) | O(S): O(1) | Rt: 200ms | 
+```python
+    def closestDivisors(self, num: int) -> List[int]:
+        def gen(num):
+            return next((i, num//i) for i in range(int(num ** 0.5), 0, -1) if num % i == 0)
+        
+        a, b = gen(num+1)
+        c, d = gen(num+2)
+        if b-a < d-c: return [a, b]
+        return [c, d]
+```

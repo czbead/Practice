@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP -- Pop**
+| O(T): O(n) | O(S): O(1) | Rt: 84ms | 
+```python
+    def canJump(self, nums: List[int]) -> bool:
+        if len(nums) < 2: return True
+        ct = 0; nums.pop()
+        while nums:
+            if nums[-1] > ct: ct = 0
+            else: ct += 1
+            nums.pop()
+        return ct == 0
+```
+Alternative: not modify the input by pointer. | Rt: 84ms |
+```python
+    def canJump(self, nums: List[int]) -> bool:
+        if len(nums) < 2: return True
+        ct = 0
+        for i in range(len(nums) - 2, 0, -1):
+            if nums[i] > ct: ct = 0
+            else: ct += 1
+        return nums[0] > ct
+```
+
+
+**II). Greedy**
+| O(T): O(n) | O(S): O(1) | Rt: 96ms | 
+```python
+    def canJump(self, nums: List[int]) -> bool:
+        if len(nums) < 2: return True
+        farest = 0
+        for i in range(len(nums)):
+            if farest < i: return False  #cannot reach this position
+            farest = max(farest, i + nums[i])
+        return True
+```
+Referrence: https://leetcode.com/problems/jump-game/discuss/20923/Java-Solution-easy-to-understand/187271

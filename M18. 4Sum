@@ -1,0 +1,78 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Reduce to Two Sum**
+| O(T): O(n^3) | O(S): O(1) | Rt: 92ms | 
+```python
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+        nums.sort()
+        rst, leng = [], len(nums)
+        for i in range(leng - 3):
+            if i == 0 or nums[i] != nums[i-1]:
+                if sum(nums[i: i+4]) > target: break
+                if nums[i] + sum(nums[-3:]) < target: continue
+                for j in range(i+1, leng - 2):
+                    #be careful with the j repeat skip condition
+                    if j == i+1 or nums[j] != nums[j-1]:
+                        tmpsum = nums[i] + nums[j]
+                        if tmpsum + nums[j+1] + nums[j+2] > target: break
+                        if tmpsum + nums[-1] + nums[-2] < target: continue
+                        l, r, tar = j+1, leng - 1, target - tmpsum
+                        while l < r:
+                            cur = nums[l] + nums[r]
+                            if cur < tar: 
+                                l += 1
+                                while l < r and nums[l] == nums[l-1]: l += 1
+                            elif cur > tar: 
+                                r -= 1
+                                while l < r and nums[r] == nums[r+1]: r -= 1
+                            else:
+                                rst.append((nums[i], nums[j], nums[l], nums[r]))
+                                l, r = l+1, r-1
+                                while l < r and nums[l] == nums[l-1]: l += 1
+                                while l < r and nums[r] == nums[r+1]: r -= 1
+        return rst
+```
+
+
+**II). K-Sum Solution**
+| O(T): O(n^(K-1)) | O(S): O(n) | Rt: 216ms | 
+```python
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+        def twoSum(nums, l, r, tar):
+            rst = []
+            while l < r:
+                cur = nums[l] + nums[r]
+                if cur < tar: 
+                    l += 1
+                    while l < r and nums[l] == nums[l-1]: l += 1
+                elif cur > tar: 
+                    r -= 1
+                    while l < r and nums[r] == nums[r+1]: r -= 1
+                else:
+                    rst.append([nums[l], nums[r]])
+                    l, r = l+1, r-1
+                    while l < r and nums[l] == nums[l-1]: l += 1
+                    while l < r and nums[r] == nums[r+1]: r -= 1
+            return rst
+        
+        def KSum(nums, l, r, tar, k):
+            if r - l + 1 < k or k < 2: return []
+            nums.sort()
+            if k == 2: return twoSum(nums, l, r, tar)
+            else:
+                rst = []
+                for i in range(l, r+1-(k-1)):
+                    if i == l or nums[i] != nums[i-1]:
+                        if sum(nums[l: l+k]) > tar: break  #even the min is too big
+                        if nums[i] + sum(nums[-(k-1):]) < tar: continue  #even the max is too small
+                        tmp = KSum(nums, i+1, r, tar-nums[i], k-1)
+                        rst += [[nums[i]] + lst for lst in tmp]
+                return rst
+        
+        return KSum(nums, 0, len(nums)-1, target, 4)
+```
+Comment: get the twoSum function inside the ksum will be faster but not as OOP style. 
+Referrence: https://leetcode.com/problems/4sum/discuss/8545/Python-140ms-beats-100-and-works-for-N-sum-(Ngreater2)
+
+
+Others: two twosum -- https://leetcode.com/problems/4sum/discuss/8653/On-average-O(n2)-and-worst-case-O(n3)-java-solution-by-reducing-4Sum-to-2Sum
+

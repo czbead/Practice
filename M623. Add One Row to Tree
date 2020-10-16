@@ -1,0 +1,71 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Iterative**
+| O(T): O(n) | O(S): O(1) | Rt: 56ms | 
+```python
+    def addOneRow(self, root: TreeNode, v: int, d: int) -> TreeNode:
+        if d == 1: 
+            rt = TreeNode(v)
+            rt.left = root
+            return rt
+        stack = [root]
+        for _ in range(d-2): 
+            stack = [j for i in stack for j in (i.left, i.right) if j]
+        for node in stack:
+            tmpl, tmpr = node.left, node.right
+            node.left, node.right = TreeNode(v), TreeNode(v)
+            node.left.left, node.right.right = tmpl, tmpr
+        return root
+```
+
+Alternative: with a dummy node. | Rt: 60ms |
+```python
+    def addOneRow(self, root: TreeNode, v: int, d: int) -> TreeNode:
+        dummy = TreeNode(None)
+        dummy.left = root
+        stack = [dummy]
+        for _ in range(d-1): 
+            stack = [j for i in stack for j in (i.left, i.right) if j]
+        for node in stack:
+            tmpl, tmpr = node.left, node.right
+            node.left, node.right = TreeNode(v), TreeNode(v)
+            node.left.left, node.right.right = tmpl, tmpr
+        return dummy.left
+```
+Referrence: https://leetcode.com/problems/add-one-row-to-tree/discuss/104582/Short-Python-BFS
+
+
+**II). Recursive**
+| O(T): O(n) | O(S): O(1) | Rt: 60ms | 
+```python
+    def addOneRow(self, root: TreeNode, v: int, d: int) -> TreeNode:
+        if d == 1: 
+            rt = TreeNode(v)
+            rt.left = root
+            return rt
+        if d == 2:
+            newleft, newright = TreeNode(v), TreeNode(v)
+            newleft.left, newright.right = root.left, root.right
+            root.left, root.right = newleft, newright
+            return root
+        if root.left:
+            root.left = self.addOneRow(root.left, v, d-1)
+        if root.right: 
+            root.right = self.addOneRow(root.right, v, d-1)
+        return root
+```
+
+Alternative: compact version. | Rt: 52ms |
+```python
+    def addOneRow(self, root: TreeNode, v: int, d: int) -> TreeNode:
+        if d < 2: 
+            rt = TreeNode(v)
+            if d: rt.left = root
+            else: rt.right = root
+            return rt
+        if not root: return
+        root.left = self.addOneRow(root.left, v, d-1)
+        root.right = self.addOneRow(root.right, v, d-1-(d==2))
+        return root
+```
+Referrence: https://leetcode.com/problems/add-one-row-to-tree/discuss/104555/C%2B%2B-Java-10-line-Solution-no-helper
+

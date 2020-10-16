@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Kadane's Algorithm**
+| O(t): O(n) | O(m): O(1) | Rt: 60ms | 
+```python
+    def maxSubArray(self, nums: List[int]) -> int:
+        rst, cur = -float('inf'), 0
+        for i in nums:
+        	#drop previous sequence
+            if cur < 0: cur = 0
+            cur += i
+            rst = max(rst, cur)
+        return rst
+```
+Elegant version: | Rt: 64ms |
+```python
+    def maxSubArray(self, nums: List[int]) -> int:
+        for i in range(1, len(nums)):
+            if nums[i-1] > 0:
+                nums[i] += nums[i-1]
+        return max(nums)
+```
+Explanation: if the previous sum can contribute to the current sum, add it since it has the potential to make a greater sum
+Referrence: https://leetcode.com/problems/maximum-subarray/discuss/20396/Easy-Python-Way
+
+**II). DP**
+| O(t): O(n) | O(m): O(n) | Rt: 68ms | 
+notes: can be O(1) Space if update the original array directly
+```python
+    def maxSubArray(self, nums: List[int]) -> int:
+        if not nums: return
+        dp = nums
+        for i in range(1, len(nums)):
+            dp[i] = max(dp[i], dp[i] + dp[i-1])
+        return max(dp)
+```
+
+Others: Devide and Couquer solution, I don't think DC is a good choice for this question. All the DC code in posts are not that readable.

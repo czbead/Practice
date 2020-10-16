@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Dict**
+| O(T): O(nm) | O(S): O(nm) | Rt: 36ms | 
+```python
+    def uniqueMorseRepresentations(self, words: List[str]) -> int:
+        morse = [".-","-...","-.-.","-..",".","..-.","--.","....","..",".---","-.-",".-..","--","-.","---",".--.","--.-",".-.","...","-","..-","...-",".--","-..-","-.--","--.."]
+        dt = {i: j for i, j in zip('abcdefghijklmnopqrstuvwxyz', morse)}
+        translate = lambda w: ''.join([dt[i] for i in w])
+        return len(set([translate(word) for word in words]))
+```
+
+
+**II). Just List**
+| O(T): O(mn) | O(S): O(mn) | Rt: 28ms | 
+```python
+    def uniqueMorseRepresentations(self, words: List[str]) -> int:
+        morse = [".-","-...","-.-.","-..",".","..-.","--.","....","..",".---","-.-",".-..","--","-.","---",".--.","--.-",".-.","...","-","..-","...-",".--","-..-","-.--","--.."]
+        translate = lambda w: ''.join([morse[ord(i) - ord('a')] for i in w])
+        return len(set([translate(word) for word in words]))
+```
+Alternative: Two-liner. | Rt: 32ms |
+```python
+    def uniqueMorseRepresentations(self, words: List[str]) -> int:
+        morse = [".-","-...","-.-.","-..",".","..-.","--.","....","..",".---","-.-",".-..","--","-.","---",".--.","--.-",".-.","...","-","..-","...-",".--","-..-","-.--","--.."]
+        return len({''.join(morse[ord(w) - ord('a')] for w in word) for word in words})
+```
+Referrence: https://leetcode.com/problems/unique-morse-code-words/discuss/120675/JavaC%2B%2BPython-Easy-and-Concise-Solution
+Comment: {} is more efficient than explicit set(). 
+

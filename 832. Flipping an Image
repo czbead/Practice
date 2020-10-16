@@ -1,0 +1,55 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). In-Place Do Both Together**
+| O(T): O(mn) | O(S): O(1) | Rt: 52ms | 
+```python
+    def flipAndInvertImage(self, A: List[List[int]]) -> List[List[int]]:
+        col = len(A[0])
+        half, isOdd = col // 2, col % 2
+        for row in A: 
+            for i in range(half): 
+                row[i], row[-1-i] = 1-row[-1-i], 1-row[i]
+            if isOdd: row[half] = 1 - row[half]
+        return A
+```
+Alternative: with XOR.  | Rt: 44ms |
+```python
+    def flipAndInvertImage(self, A: List[List[int]]) -> List[List[int]]:
+        half = (len(A[0]) + 1) // 2
+        for row in A: 
+            for i in range(half): 
+                row[i], row[-1-i] = row[-1-i] ^ 1, row[i] ^ 1
+        return A
+``` 
+
+
+**II). Revert Column of Matrix**
+| O(T): O(mn) | O(S): O(mn) | Rt: 52ms | 
+```python
+    def flipAndInvertImage(self, A: List[List[int]]) -> List[List[int]]:
+        a = list(zip(*A))
+        for i in range(len(a) // 2):
+            a[i], a[-1-i] = a[-1-i], a[i]
+        A = list(zip(*a))
+        for i in range(len(A)):
+            A[i] = list(A[i])
+            for j in range(len(A[0])):
+                A[i][j] ^= 1
+        return A
+```
+Comment: a nest list zip will get a nested tuple, therefore need to convert to list for both levels. This solution is just for fun and get clear understanding of zip. 
+
+
+**III). Reverse Row**
+| O(T): O(n) | O(S): O(mn) | Rt: 52ms | 
+```python
+    def flipAndInvertImage(self, A: List[List[int]]) -> List[List[int]]:
+        return [[i ^ 1 for i in reversed(row)] for row in A]
+```
+Alternative:  | Rt: 84ms |
+```python
+    def flipAndInvertImage(self, A: List[List[int]]) -> List[List[int]]:
+        return [[i ^ 1 for i in row[::-1]] for row in A]
+```
+Comment: [::-1] slice reverse is significantly slower than reversed function (need to create need space to save the result) and take extra space. 
+
+

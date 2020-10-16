@@ -1,0 +1,21 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**Left Join On** | Rt: 296ms | 
+```sql
+select FirstName, LastName, City, State from Person left join Address on Person.PersonId = Address.PersonId
+```
+
+**Left Join Using**  | Rt: 540ms | 
+```sql 
+select FirstName, LastName, City, State from Person left join Address using (PersonId)
+```
+
+**Natural Left Join**  | Rt: 517ms | 
+```sql 
+select FirstName, LastName, City, State from Person natural left join Address
+```
+
+Syntax Study:
+```sql
+SELECT    FROM     WHERE
+SELECT    FROM <table name 1> JOIN <table name 2>    ON
+```

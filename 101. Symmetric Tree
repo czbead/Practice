@@ -1,0 +1,65 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS Recursion**
+| O(t): O(n) | O(m): O(1) | Rt: 36ms | 
+note: n is decided by the smaller number of nodes in two trees
+```python
+    def isSymmetric(self, root: TreeNode) -> bool:
+        def dfs(l, r):
+            if l and r:
+                return l.val == r.val and dfs(l.left, r.right) and dfs(l.right, r.left)
+            else: return l is r
+        return dfs(root, root)
+```
+
+**II). DFS Iteration**
+| O(t): O(n) | O(m): O(n) | Rt: 32ms | 
+```python
+    def isSymmetric(self, root: TreeNode) -> bool:
+        stack = [(root, root)]
+        while stack:
+            l, r = stack.pop()
+            if not l and not r: continue
+            elif not l or not r: return False
+            elif l.val != r.val: return False
+            stack.append((l.left, r.right))
+            stack.append((l.right, r.left))
+        return True
+```
+Question: I don't know why 
+```python
+else: return l is r
+```
+cannot pass here. Personally, I think "is" should work fine. Anyway, I put it as follows to pass the test cases.
+```python 
+ if not l and not r: continue
+ elif not l or not r: return False
+```
+
+**III). Pair-wise BFS Iteration**
+| O(t): O(n) | O(m): O(n) | Rt: 32ms | 
+```python
+    def isSymmetric(self, root: TreeNode) -> bool:
+        q = collections.deque([(root, root)])
+        while q:
+            l, r = q.popleft()
+            if not l and not r: continue
+            elif not l or not r: return False
+            elif l.val != r.val: return False
+            q.append((l.left, r.right))
+            q.append((l.right, r.left))
+        return True
+```
+
+**IV). Row-wise BFS Iteration**
+| O(t): O(n) | O(m): O(n) | **Rt: 20ms** | 
+```python
+    def isSymmetric(self, root: TreeNode) -> bool:
+        nodes = [root]
+        while nodes:
+            vals = [node.val if node else None for node in nodes]
+            if vals != vals[::-1]: return False
+            nodes = [n for node in nodes if node for n in (node.left, node.right) ]
+        return True
+```
+referrence: https://leetcode.com/problems/symmetric-tree/discuss/33068/6line-AC-python/31878
+

@@ -1,0 +1,22 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS Peel Off Leaf**
+| O(T): O(n) | O(S): O(n) | Rt: 232ms | 
+```python
+    def findMinHeightTrees(self, n: int, edges: List[List[int]]) -> List[int]:
+        if n <= 1: return [0]
+        graph = [[] for _ in range(n)]
+        for i, j in edges:
+            graph[i].append(j)
+            graph[j].append(i)
+        leaf = [i for i in range(n) if len(graph[i]) == 1]
+        while n > 2: 
+            n, newlf = n - len(leaf), []
+            for i in leaf:
+                j = graph[i].pop()
+                graph[j].remove(i)
+                if len(graph[j]) == 1: newlf.append(j)
+            leaf = newlf
+        return leaf
+```
+Referrence: https://leetcode.com/problems/minimum-height-trees/discuss/76055/Share-some-thoughts
+Comment: find all leaf nodes (with degree 1). For each round, peel off the out-most layer (leaf nodes) simply because they cannot be root of MHT. The MHT root must be a "certer" node. And in the middle, there can be 1 or 2 "certer node" depends on real case. Keep doing the 'layer peel off process' until one or two nodes left -- they are the results. 

@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Level BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 440ms | 
+```python
+    def watchedVideosByFriends(self, watchedVideos: List[List[str]], friends: List[List[int]], id: int, level: int) -> List[str]:
+        q, used = {id}, set()
+        for _ in range(level):
+            used |= q
+            q = {j for i in q for j in friends[i] if j not in used}
+        ct = collections.Counter(j for i in q for j in watchedVideos[i])
+        return sorted(ct, key = lambda x: (ct[x], x))
+```
+Referrence: https://leetcode.com/problems/get-watched-videos-by-your-friends/discuss/470743/Python-6-lines-bfs-solution
+
+Alternative: naive version. | Rt: 368ms |
+```python
+    def watchedVideosByFriends(self, watchedVideos: List[List[str]], friends: List[List[int]], id: int, level: int) -> List[str]:
+        q, used, dt = {id}, set(), {}
+        while level:
+            level -= 1
+            used |= q
+            q = {j for i in q for j in friends[i] if j not in used}
+        for i in q:
+            for j in watchedVideos[i]:
+                dt[j] = dt.get(j, 0) + 1
+        rst = list(dt)
+        rst.sort(key = lambda x: (dt[x], x))
+        return rst
+```

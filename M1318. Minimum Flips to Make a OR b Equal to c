@@ -1,0 +1,31 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Bit Manipulation with Masking**
+| O(T): O(n) | O(S): O() | Rt: 36ms | 
+```python
+    def minFlips(self, a: int, b: int, c: int) -> int:
+        rst, mask = 0, 1
+        while a >= mask or b >= mask or c >= mask:
+            if c >= mask:
+                if c & mask == 0:
+                    rst += (a & mask == mask) + (b & mask == mask)
+                else:
+                    rst += a & mask == b & mask == 0
+            else:
+                rst += (a & mask == mask) + (b & mask == mask)
+            mask <<= 1
+        return rst
+```
+
+Alternative: | Rt: 48ms |
+```python
+    def minFlips(self, a: int, b: int, c: int) -> int:
+        rst, mask = 0, 1
+        while a >= mask or b >= mask or c >= mask:
+            if c < mask or c & mask == 0:
+                rst += (a & mask == mask) + (b & mask == mask)
+            else: rst += a & mask == b & mask == 0
+            mask <<= 1
+        return rst
+```
+
+Others: https://leetcode.com/problems/minimum-flips-to-make-a-or-b-equal-to-c/discuss/477690/JavaPython-3-Bit-manipulation-w-explanation-and-analysis.

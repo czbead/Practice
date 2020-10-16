@@ -1,0 +1,21 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O() | O(S): O() | Rt: 28ms | 
+```python
+    def removeComments(self, source: List[str]) -> List[str]:
+        rst, block, cur = [], False, ''
+        for i in source:
+            j, l = 0, len(i)
+            while j < l-1:
+                if block:
+                    if i[j] == '*' and i[j+1] == '/': block, j = False, j+1
+                else:
+                    if i[j] == i[j+1] == '/': break
+                    elif i[j] == '/' and i[j+1] == '*': block, j = True, j+1
+                    else: cur += i[j]
+                j += 1
+            if not block and j == l-1: cur += i[j]
+            if not block and cur: rst.append(cur); cur = ''
+        return rst
+```
+Referrence: https://leetcode.com/problems/remove-comments/discuss/109197/One-pass-solution-in-Java

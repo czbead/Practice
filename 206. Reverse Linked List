@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(t): O(n) | O(m): O(1) | Rt: 24ms | 
+```python
+    def reverseList(self, head: ListNode) -> ListNode:
+        pre = None
+        while head:
+            nxt = head.next
+            head.next = pre
+            pre = head
+            head = nxt
+        return pre
+```
+Alternative:
+```python
+    def reverseList(self, head: ListNode) -> ListNode:
+        pre = None
+        while head:
+        	#the order matters, you can clear tell the swap order in this style
+            head.next, pre, head = pre, head, head.next
+        return pre
+```
+Comment: 0. initialize the pre node. 1. keep the next node. 2. turn around. 3. pre move forward. 4. cur move forward.
+
+
+**II). Recursion**
+| O(t): O(n) | O(m): O(1) | Rt: 28ms | 
+```python
+    def reverseList(self, head: ListNode, pre: ListNode = None) -> ListNode:
+        if not head: return pre
+        nxt = head.next
+        head.next = pre
+        return self.reverseList(nxt, head)
+```
+

@@ -1,0 +1,19 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Reservoir Sampling**
+| O(T): O(n) | O(S): O(1) | Rt: 316ms | 
+```python
+class Solution:
+
+    def __init__(self, nums: List[int]):
+        self.num = nums
+
+    def pick(self, target: int) -> int:
+        rst, count = None, 0
+        for i in range(len(self.num)):
+            if self.num[i] != target: continue
+            count += 1
+            if random.randint(1, count) == count: rst = i
+        return rst
+```
+Referrence: https://leetcode.com/problems/random-pick-index/discuss/88072/Simple-Reservoir-Sampling-solution
+Comment: random.randint(0, count-1) == 0 or random.randint(0, count-1) == count - 1 or random.randint(1, count) == 1 all works in the picking process. You can pick any point among the range theoretically, we only choose the ends (start and end) because for the first sample there is nothing between (it is of 100% probability). 

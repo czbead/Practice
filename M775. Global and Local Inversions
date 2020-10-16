@@ -1,0 +1,22 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). No Non-Local Inversion**
+| O(T): O(n) | O(S): O(1) | Rt: 376ms | 
+```python
+    def isIdealPermutation(self, A: List[int]) -> bool:
+        mx = 0
+        for i in range(len(A) - 2):
+            mx = max(mx, A[i])
+            if mx > A[i+2]: return False
+        return True
+```
+Referrence: https://leetcode.com/problems/global-and-local-inversions/discuss/113644/Easy-and-Concise-Solution-C%2B%2BJavaPython
+
+
+**II). Only Local Inversion (Neighbor Swap) is Allowed**
+| O(T): O(n) | O(S): O(1) | Rt: 360ms | 
+```python
+    def isIdealPermutation(self, A: List[int]) -> bool:
+        return all(abs(A[i] - i) <= 1 for i in range(len(A)))
+```
+Referrence: https://leetcode.com/problems/global-and-local-inversions/discuss/113656/My-3-lines-C%2B%2B-Solution
+Comment: a neighbor could be either i-1 or i+1, that is why the absolution offset 1 works. 

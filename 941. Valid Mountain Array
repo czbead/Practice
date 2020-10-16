@@ -1,0 +1,47 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(1) | Rt: 208ms | 
+```python
+    def validMountainArray(self, A: List[int]) -> bool:
+        if not A or len(A) < 3: return False
+        l = len(A)
+        for i in range(l - 1): 
+            if A[i] > A[i+1]: break
+        if i == 0 or i == l-1: return False
+        return all(A[j-1] > A[j] for j in range(i+1, l))
+```
+Alternative:  | Rt: 220ms |
+```python
+    def validMountainArray(self, A: List[int]) -> bool:
+        if not A or len(A) < 3: return False
+        l, ind = len(A), A.index(max(A))
+        if ind == 0 or ind == l - 1: return False
+        return all(A[i+1] > A[i] for i in range(ind)) and all(A[j+1] < A[j] for j in range(ind, l-1))
+```
+Referrence: idea from https://leetcode.com/problems/valid-mountain-array/discuss/408623/Python-3
+
+
+**II). Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 216ms | 
+```python
+    def validMountainArray(self, A: List[int]) -> bool:
+        leng = len(A)
+        l, r = 0, leng - 1
+        while l + 1 < leng and A[l] < A[l + 1]: l += 1
+        while r - 1 >= 0 and A[r] < A[r - 1]: r -= 1
+        return l == r and l != 0 and l != leng - 1
+```
+
+
+**III). One Pass**
+| O(T): O(n) | O(S): O(1) | Rt: 200ms | 
+```python
+    def validMountainArray(self, A: List[int]) -> bool:
+        if not A or len(A) < 3 or A[0] >= A[1]: return False
+        isAsc, pre = True, -float('inf')
+        for i in A:
+            if isAsc and i < pre: isAsc = False
+            elif not isAsc and i >= pre: return False
+            pre = i
+        return not isAsc
+```

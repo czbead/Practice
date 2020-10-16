@@ -1,0 +1,20 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). PrePost Traversal Rebuild**
+| O(T): O(n) | O(S): O(n) | Rt: 36ms | 
+```python
+    def constructFromPrePost(self, pre: List[int], post: List[int]) -> TreeNode:
+        def build(dt, pre, i, j, post, m, n):
+            if i > j or m > n: return
+            root = TreeNode(pre[i])
+            if i == j: return root
+            #find the range of subtree
+            gap = dt[pre[i+1]] - m
+            root.left = build(dt, pre, i+1, i+gap+1, post, m, m+gap)
+            root.right = build(dt, pre, i+gap+2, j, post, m+gap+1, n)
+            return root
+        
+        l = len(pre)
+        m = {post[i]: i for i in range(l)}
+        return build(m, pre, 0, l-1, post, 0, l-1)
+```
+Referrence: https://leetcode.com/problems/construct-binary-tree-from-preorder-and-postorder-traversal/discuss/161286/C%2B%2B-O(N)-recursive-solution; https://leetcode.com/problems/construct-binary-tree-from-preorder-and-postorder-traversal/discuss/161268/C++JavaPython-One-Pass-Real-O(N)/174387;

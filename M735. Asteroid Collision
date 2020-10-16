@@ -1,0 +1,30 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 104ms | 
+```python
+    def asteroidCollision(self, asteroids: List[int]) -> List[int]:
+        stack = []
+        for i in asteroids:
+            if i < 0:
+                while stack and stack[-1] > 0:
+                    if -i > stack[-1]: stack.pop()
+                    elif -i == stack[-1]: stack.pop(); i = None; break
+                    else: i = None; break
+            if i: stack.append(i)
+        return stack
+```
+
+Alternative: let break go first always runs faster. | Rt: 80ms |
+```python
+    def asteroidCollision(self, asteroids: List[int]) -> List[int]:
+        stack = []
+        for i in asteroids:
+            if i < 0:
+                while stack and stack[-1] > 0:
+                    if -i < stack[-1]: i = None; break
+                    elif -i == stack[-1]: stack.pop(); i = None; break
+                    else: stack.pop()
+            if i: stack.append(i)
+        return stack
+```
+Comment: here is a similar solution using while-else, while-else is not common feature in all languages. https://leetcode.com/problems/asteroid-collision/discuss/109666/Python-O(n)-Stack-based-with-explanation;

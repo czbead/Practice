@@ -1,0 +1,49 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Row Wise Binary Search**
+| O(T): O(nlgm) | O(S): O(1) | Rt: 36ms | 
+```python
+    def searchMatrix(self, matrix, target):
+        def bs(lst, tar):
+            l, r = 0, len(lst)-1
+            while l < r:
+                m = l + (r - l) // 2
+                if lst[m] < tar: l = m + 1
+                else: r = m
+            return l
+        
+        if not matrix or not matrix[0]: return False
+        for row in matrix:
+            if row[0] > target: break
+            if row[-1] < target: continue
+            if row[bs(row, target)] == target: return True
+        return False
+```
+
+
+**II). Take it as BST Tree**
+| O(T): O(m+n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def searchMatrix(self, matrix, target):
+        if not matrix or not matrix[0]: return False
+        row, col = len(matrix), len(matrix[0])
+        r, c = 0, col - 1
+        while r < row and c >= 0:
+            if matrix[r][c] == target: return True
+            if matrix[r][c] > target: c -= 1
+            else: r += 1
+        return False
+```
+Referrence: https://leetcode.com/problems/search-a-2d-matrix-ii/discuss/66140/My-concise-O(m%2Bn)-Java-solution
+Comment: Take the 2-D array as a BST, the top-right corner as root, left adjacent item as left child, below adjacent item as right child. 
+Alternative: take the bottom left cornet as root. | Rt: 44ms | 
+```python
+    def searchMatrix(self, matrix, target):
+        if not matrix or not matrix[0]: return False
+        row, col = len(matrix), len(matrix[0])
+        r, c = row - 1, 0
+        while r >= 0 and c < col:
+            if matrix[r][c] == target: return True
+            if matrix[r][c] > target: r -= 1
+            else: c += 1
+        return False
+```

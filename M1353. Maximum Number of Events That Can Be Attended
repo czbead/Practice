@@ -1,0 +1,16 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Event Scheduling**
+| O(T): O(nlgn) | O(S): O() | Rt: 880ms | 
+```python
+    def maxEvents(self, events: List[List[int]]) -> int:
+        events.sort(reverse=True)
+        rst, d, arr = 0, 0, []
+        while events or arr:
+            if not arr: d = events[-1][0]
+            while events and events[-1][0] <= d:
+                heapq.heappush(arr, events.pop()[1])
+            while arr and arr[0] < d: heapq.heappop(arr)
+            if arr: rst, d = rst+1, d+1; heapq.heappop(arr)
+        return rst
+```
+Referrence: https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended/discuss/510263/JavaC%2B%2BPython-Priority-Queue

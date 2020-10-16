@@ -1,0 +1,27 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtrack**
+| O(T): O() | O(S): O() | Rt: 672ms | 
+```python
+    def addOperators(self, num: str, target: int) -> List[str]:
+        def backtrack(n, tar, path, st, summ, last, rst):
+            if st == len(n):
+                if summ == tar: rst.append(path)
+                return
+            for i in range(st, len(n)):
+                #edge case, n[st] == '0', only one way to split
+                if n[st] == '0' and i > st: break
+                nstr = n[st: i+1]
+                nval = int(nstr)
+                if not path:
+                    backtrack(n, tar, nstr, i+1, nval, nval, rst)
+                else:
+                    backtrack(n, tar, path+'+'+nstr, i+1, summ+nval, nval, rst)
+                    backtrack(n, tar, path+'-'+nstr, i+1, summ-nval, -nval, rst)
+                    backtrack(n, tar, path+'*'+nstr, i+1, summ-last+last*nval, last*nval, rst)
+        
+        if not num: return []
+        rst = []
+        backtrack(num, target, '', 0, 0, 0, rst)
+        return rst
+```
+Reference: https://leetcode.com/problems/expression-add-operators/discuss/71895/Java-Standard-Backtrace-AC-Solutoin-short-and-clear

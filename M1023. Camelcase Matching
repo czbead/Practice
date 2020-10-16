@@ -1,0 +1,53 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer**
+| O(T): O(mn) | O(S): O(1) | Rt: 72ms | 
+```python
+    def camelMatch(self, queries: List[str], pattern: str) -> List[bool]:
+        def check(pattern, s, l):
+            i = 0
+            for c in s:
+                if i < l and c == pattern[i]: i += 1
+                elif ord(c) < 97: return False
+            return i == l
+        
+        l = len(pattern)
+        return [check(pattern, q, l) for q in queries]
+```
+
+
+**II). Trie**
+| O(T): O(mn) | O(S): O(m) | Rt: 44ms | 
+```python
+    def camelMatch(self, queries: List[str], pattern: str) -> List[bool]:
+        def check(trie, s):
+            cur = trie
+            for i in s:
+                if ord(i) < 97: 
+                    if i in cur: cur = cur[i]
+                    else: return False
+                else: 
+                    if i in cur: cur = cur[i]
+            return len(cur) == 0
+        
+        trie = {}
+        cur = trie
+        for i in pattern: cur[i] = {}; cur = cur[i]
+        return [check(trie, q) for q in queries]
+```
+
+Alternative: | Rt: 44ms |
+```python
+    def camelMatch(self, queries: List[str], pattern: str) -> List[bool]:
+        def check(trie, s):
+            cur = trie
+            for i in s:
+                if i in cur: cur = cur[i]
+                elif ord(i) < 97: return False 
+            return len(cur) == 0
+        
+        trie = {}
+        cur = trie
+        for i in pattern: cur[i] = {}; cur = cur[i]
+        return [check(trie, q) for q in queries]
+```
+Comment: Trie is not really a good choice for a linear structured dictionary, I dont know why this problem tagged as Trie. 

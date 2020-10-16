@@ -1,0 +1,9 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+    def queryString(self, S: str, N: int) -> bool:
+        return all(bin(i)[2:] in S for i in range(N, N//2, -1))
+```
+Referrence: https://leetcode.com/problems/binary-string-with-substrings-representing-1-to-n/discuss/260847/JavaC%2B%2BPython-O(S)
+Comment: according to the post, the program will converge very fast because N shouldn't be too big if it is True. 

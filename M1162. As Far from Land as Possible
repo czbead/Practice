@@ -1,0 +1,22 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS**
+| O(T): O(n*n) | O(S): O(n*n) | Rt: 568ms | 
+```python
+    def maxDistance(self, grid: List[List[int]]) -> int:
+        l, q = len(grid), collections.deque()
+        for i in range(l):
+            for j in range(l):
+                if grid[i][j]:
+                    q.append((i, j))
+        if not q or len(q) == l * l: return -1
+        distance = -1
+        while q:
+            size, distance = len(q), distance+1
+            for _ in range(size):
+                i, j = q.popleft()
+                for x, y in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]:
+                    if 0<=x<l and 0<=y<l and grid[x][y] == 0:
+                        grid[x][y] = 1
+                        q.append((x, y))
+        return distance
+```

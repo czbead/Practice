@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def shipWithinDays(self, weights: List[int], D: int) -> int:
+        l, mx, su = len(weights), -1, 0
+        for i in weights: mx, su = max(mx, i), su + i
+        base = max(mx, -(-su//l))
+        while True:
+            summ, d = 0, 1
+            for i in range(l):
+                summ += weights[i]
+                if summ > base:
+                    summ, d = weights[i], d+1
+                if d > D: break
+            if d <= D: return base
+            base += 1
+```
+
+
+**II). Binary Search**
+| O(T): O() | O(S): O() | Rt: 540ms | 
+```python
+    def shipWithinDays(self, weights: List[int], D: int) -> int:
+        def computeDay(arr, thres, D):
+            summ, d = 0, 1
+            for i in arr:
+                summ += i
+                if summ > thres:
+                    summ, d = i, d+1
+                    if d > D: return -1
+            return d
+        
+        l, mx, su = len(weights), -1, 0
+        for i in weights: mx, su = max(mx, i), su + i
+        l, r = max(mx, -(-su//l)), su
+        while l < r:
+            m = l + (r - l) // 2
+            d = computeDay(weights, m, D)
+            if d == -1: l = m + 1
+            else: r = m
+        return l
+```
+Comment: from linear brute force to binary search brute force. 
+

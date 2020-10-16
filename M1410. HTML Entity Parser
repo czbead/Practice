@@ -1,0 +1,36 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Replace**
+| O(T): O(n) | O(S): O() | Rt: 48ms | 
+```python
+    def entityParser(self, text: str) -> str:
+        text = text.replace('&quot;', '\"')
+        text = text.replace('&apos;', '\'')
+        text = text.replace('&gt;', '>')
+        text = text.replace('&lt;', '<')
+        text = text.replace('&frasl;', '/')
+        text = text.replace('&amp;', '&')
+        return text
+```
+
+Alternative: | Rt: 304ms |
+```python
+    def entityParser(self, text: str) -> str:
+        rst, i = [], 0
+        m = {'&quot;': '\"', '&apos;': '\'', '&gt;': '>', '&lt;': '<', '&frasl;': '/', '&amp;': '&'}
+        while i < len(text):
+            matched = False
+            if text[i] == '&':
+                for k in m:
+                    if text[i: i+len(k)] == k: 
+                        rst.append(m[k])
+                        i += len(k)
+                        matched = True
+                        break
+            if not matched:
+                rst.append(text[i])
+                i += 1
+        return ''.join(rst)
+```
+
+Others: two pointer - https://leetcode.com/problems/html-entity-parser/discuss/575416/C%2B%2B-two-pointers-O(n)-or-O(1)
+

@@ -1,0 +1,59 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP Naive**
+| O(T): O(mn) | O(S): O(mn) | Rt: 48ms | 
+```python
+    def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
+        r, c = len(obstacleGrid), len(obstacleGrid[0])
+        dp = [[1] * c for _ in range(r)]
+        for i in range(r):
+            for j in range(c):
+                if obstacleGrid[i][j]: dp[i][j] = 0
+                elif i == 0: dp[i][j] = dp[i][j-1]
+                elif j == 0: dp[i][j] = dp[i-1][j]
+                else: dp[i][j] = dp[i-1][j] + dp[i][j-1]
+        return dp[-1][-1]
+```
+Alternative: more readable. | Rt: 44ms |
+```python
+    def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
+        r, c = len(obstacleGrid), len(obstacleGrid[0])
+        dp = [[0] * c for _ in range(r)]; dp[0][0] = 1
+        for i in range(r):
+            for j in range(c):
+                if obstacleGrid[i][j]: dp[i][j] = 0
+                elif i == j == 0: continue
+                elif i == 0: dp[i][j] = dp[i][j-1]
+                elif j == 0: dp[i][j] = dp[i-1][j]
+                else: dp[i][j] = dp[i-1][j] + dp[i][j-1]
+        return dp[-1][-1]
+```
+Triple: avoid boundary check. | Rt: 44ms |
+```python
+    def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
+        r, c = len(obstacleGrid), len(obstacleGrid[0])
+        dp = [[0] * (c+1) for _ in range(r+1)]
+        dp[0][1] = 1
+        for i in range(1, r+1):
+            for j in range(1, c+1):
+                #if it is 1, remain 0 on default
+                if not obstacleGrid[i-1][j-1]: dp[i][j] = dp[i-1][j] + dp[i][j-1]
+        return dp[-1][-1]
+```
+Referrence: https://leetcode.com/problems/unique-paths-ii/discuss/23248/My-C%2B%2B-Dp-solution-very-simple!
+
+
+**II). DP 1-D List**
+| O(T): O(mn) | O(S): O(n) | Rt: 36ms | 
+```python
+    def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
+        c = len(obstacleGrid[0])
+        dp = [0] * c; dp[0] = 1
+        for row in obstacleGrid:
+            for j in range(c):
+                if row[j]: dp[j] = 0
+                elif j > 0: dp[j] = dp[j] + dp[j-1]
+        return dp[-1]
+```
+Referrence: https://leetcode.com/problems/unique-paths-ii/discuss/23250/Short-JAVA-solution
+Comment: dp[j] -> dp[i-1][j]; dp[j-1] -> dp[i][j-1]
+

@@ -1,0 +1,40 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). HashMap with Runsum**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def removeZeroSumSublists(self, head: ListNode) -> ListNode:
+        dummy = ListNode(-1)
+        dummy.next = head
+        while True:
+            pre, cur = dummy, dummy.next
+            summ, his = 0, {0: pre}
+            while cur:
+                summ += cur.val
+                if summ in his: 
+                    his[summ].next = cur.next
+                    break
+                else: his[summ] = cur
+                pre, cur = cur, cur.next
+            if not cur: break
+        return dummy.next
+```
+
+Alternative: one pass. | Rt: 44ms |
+```python
+    def removeZeroSumSublists(self, head: ListNode) -> ListNode:
+        dummy = ListNode(-1)
+        dummy.next = head
+        pre, cur = dummy, dummy.next
+        summ, his, stack = 0, {0: pre}, [0]
+        while cur:
+            summ += cur.val
+            if summ in his: 
+                his[summ].next = cur.next
+                while stack[-1] != summ: 
+                    del his[stack.pop()]
+            else: 
+                his[summ] = cur
+                stack.append(summ)
+            pre, cur = cur, cur.next
+        return dummy.next
+```

@@ -1,0 +1,56 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack**
+| O(T): O() | O(S): O() | Rt: 28ms | 
+```python
+    def decodeAtIndex(self, S: str, K: int) -> str:
+        def gen(s):
+            i, l = 0, len(s)
+            while i < l:
+                j = i
+                while j < l and s[j].isalpha(): j += 1
+                alpha = s[i:j]
+                time = 1
+                while j < l and s[j].isdigit(): time, j = time * int(s[j]), j+1
+                i = j
+                yield alpha, time
+        
+        s1, s2, accu = [], [], []
+        for chunk, time in gen(S+'1'):
+            s1.append(chunk)
+            s2.append(time)
+            a = 0
+            if accu: a += accu[-1]
+            a += len(chunk)
+            if a >= K: 
+                if accu: K = K - accu[-1]
+                return chunk[K-1]
+            accu.append(a * time)
+            if accu[-1] >= K: break
+                
+        K -= 1
+        while True:
+            a = accu.pop() // s2.pop()
+            K %= a
+            if not accu: return s1[-1][K]
+            if accu and K >= accu[-1]: return s1[-1][K-accu[-1]]
+            s1.pop()
+```
+
+Alternative:
+```python
+    def decodeAtIndex(self, S: str, K: int) -> str:
+        accu = 0 
+        for i in range(len(S)):
+            if S[i].isdigit(): accu *= int(S[i])
+            else: accu += 1
+            if accu >= K: break
+                
+        for j in range(i, -1, -1):
+            if S[j].isdigit():
+                accu //= int(S[j])
+                K %= accu
+            else:
+                if K == accu or K == 0: return S[j]
+                else: accu -= 1
+```
+Referrence: https://leetcode.com/problems/decoded-string-at-index/discuss/156747/C%2B%2BPython-O(N)-Time-O(1)-Space

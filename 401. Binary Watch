@@ -1,0 +1,23 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Traverse Time**
+| O(T): O(1) | O(S): O(1) | Rt: 24ms |
+note: it is constant time for any num. 
+```python
+    def readBinaryWatch(self, num: int) -> List[str]:
+        return [f'{h}:{m:02}' for h in range(12) for m in range(60)
+               if bin(h).count('1') + bin(m).count('1') == num]
+```
+Referrence: https://leetcode.com/problems/binary-watch/discuss/88458/Simple-Python%2BJava
+Comment: it is a clever solution. Instead of traverse all possible combination of bits, it traverse the hour and minute combinations. It saves a lot of effort because if you head for bit combinations, almost all cases are edge cases, there are so many cases to take care of. This problem really asks for ability of "thinking out of box". Each LED light means a binary '1' digit in binary world, this is the core of this solution.
+Alternative: longish but clear implementation. | Rt: 32ms |
+```python
+    def readBinaryWatch(self, num: int) -> List[str]:
+        rst = []
+        for h in range(12):
+            for m in range(60):
+                if bin(h).count('1') + bin(m).count('1') == num:
+                    rst.append(f'{h}:{m:02}')
+        return rst
+```
+
+Others: DFS (too complicated), or exhausive method (for fun only).

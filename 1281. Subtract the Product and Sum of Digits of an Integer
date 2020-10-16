@@ -1,0 +1,62 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Navie**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 40ms | 
+```python
+    def subtractProductAndSum(self, n: int) -> int:
+        def getdigit(n):
+            rst = []
+            while n:
+                rst.append(n%10)
+                n //= 10
+            return rst
+        #the getdigit function get the reverse digits, doesn't matter for product and sum
+        digit = getdigit(n)
+        product, summ = 1, 0
+        for i in digit: product, summ = product * i, summ + i
+        return product - summ
+```
+Alternative: fast and concise version.  | O(S): O(1) | Rt: 20ms |
+```python
+    def subtractProductAndSum(self, n: int) -> int:
+        product, summ = 1, 0
+        while n: product, summ, n = product * (n%10), summ + (n%10), n//10
+        return product - summ
+```
+Triple: using divmod.  | Rt: 20ms |
+```python
+    def subtractProductAndSum(self, n: int) -> int:
+        product, summ = 1, 0
+        while n: 
+            n, i = divmod(n, 10)
+            product, summ = product * i, summ + i
+        return product - summ
+```
+
+
+**II). Stringify**
+| O(T): O(lgn) | O(S): O(lgn) | Rt: 16ms | 
+```python
+    def subtractProductAndSum(self, n):
+        nn = map(int, str(n))
+        return reduce(operator.mul, nn) - sum(nn)     
+```
+Referrence: https://leetcode.com/problems/subtract-the-product-and-sum-of-digits-of-an-integer/discuss/446372/JavaC%2B%2BPython-Straight-Forward-Solution
+Comment: only works for python, not work under python3
+
+Alternative: python3 version.  | Rt: 36ms |
+```python
+    def subtractProductAndSum(self, n: int) -> int:
+        from functools import reduce
+        nn = [int(i) for i in str(n)]
+        return reduce(operator.mul, nn) - sum(nn)
+```
+
+Triple: ord version.  | Rt: 24ms |
+```python
+    def subtractProductAndSum(self, n: int) -> int:
+        prod, summ = 1, 0
+        for i in str(n):
+            num = ord(i) - ord('0')
+            prod, summ = prod * num, summ + num
+        return prod - summ
+```

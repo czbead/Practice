@@ -1,0 +1,34 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search Forward**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 24ms | 
+```python
+    def summaryRanges(self, nums: List[int]) -> List[str]:
+        if not nums: return
+        i, rst, leng = 0, [], len(nums)
+        while i < leng:
+            l, r = i, leng-1
+            while l < r:
+                m = l + (r - l + 1) // 2  #tilt toward right bound
+                if nums[m] - nums[l] == m - l: l = m 
+                else: r = m - 1
+            if l == i: rst.append(str(nums[i]))
+            else: rst.append(str(nums[i]) + '->' + str(nums[l]))
+            i = l + 1
+        return rst
+```
+Comment: worst case O(nlgn), best case O(lgn) time complexity.
+
+
+**II). Naive Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def summaryRanges(self, nums: List[int]) -> List[str]:
+        if not nums: return
+        st, rst, leng = 0, [], len(nums)
+        for i in range(1, leng+1):   #to avoid the last round compute, go beyond bound one more step
+            if i == leng or nums[i] != nums[i-1] + 1:
+                if i == st + 1: rst.append(str(nums[st]))
+                else: rst.append(f'{str(nums[st])}->{str(nums[i-1])}')
+                st = i
+        return rst
+```

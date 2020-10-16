@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Endless Edge Case**
+| O(T): O() | O(S): O() | Rt: 28ms | 
+```python
+    def validIPAddress(self, IP: str) -> str:
+        if '.' in IP:
+            arr = IP.split('.')
+            if len(arr) != 4: return 'Neither'
+            for i in arr:
+                if i == '' or i.startswith('-'): return 'Neither'
+                if i.startswith('0'):
+                    if len(i) != 1: return 'Neither'
+                else:
+                    try: n = int(i)
+                    except: return 'Neither'
+                    if n > 255 or n < 0: return 'Neither'
+            return 'IPv4'
+        else:
+            arr = IP.split(':')
+            if len(arr) != 8: return 'Neither'
+            for i in arr:
+                if i == '0': continue
+                if len(i) > 4 or i == '' or i.startswith('-'): return 'Neither'
+                for j in i:
+                    if j.isdigit(): continue
+                    elif ord(j.lower()) - ord('a') > 5: return "Neither"
+            return "IPv6"
+        return "Neither"
+```

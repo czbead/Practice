@@ -1,0 +1,85 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Trie**
+| O(T): O() | O(S): O() | Rt: 2888ms | 
+```python
+class Node:
+    def __init__(self):
+        self.sub = [None] * 26
+        self.isword = ''
+        
+class Trie:
+    def __init__(self):
+        self.root = Node()
+        
+    def insert(self, word):
+        cur = self.root
+        for w in word:
+            i = ord(w) - ord('a')
+            if cur.sub[i] is None: cur.sub[i] = Node()
+            cur = cur.sub[i]
+        cur.isword = word
+        
+    def searchNode(self, node, char):
+        if node is None: return None
+        i = ord(char) - ord('a')
+        return node.sub[i]
+            
+    def genTop3(self, node):
+        def dfs(node, rst):
+            if node is None: return 
+            if node.isword: rst.append(node.isword)
+            for n in node.sub: 
+                if len(rst) == 3: return
+                dfs(n, rst)
+        
+        rst = []
+        dfs(node, rst)
+        return rst
+
+class Solution:
+    def suggestedProducts(self, products: List[str], searchWord: str) -> List[List[str]]:
+        trie, rst = Trie(), []
+        for i in products: trie.insert(i)
+        cur = trie.root
+        for i in searchWord:
+            cur = trie.searchNode(cur, i)
+            rst.append(trie.genTop3(cur))
+        return rst
+```
+
+
+**II). Sort and Filter**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 80ms | 
+```python
+    def suggestedProducts(self, products: List[str], searchWord: str) -> List[List[str]]:
+        l = len(searchWord)
+        products.sort()       
+        rst = [[] for _ in range(l)]
+        for i, c in enumerate(searchWord):
+            products = [product for product in products if len(product) > i and product[i] == c]
+            if not products: break
+            rst[i] = products[:3]
+        return rst   
+```
+
+
+**III). Sort and Binary Search**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 68ms | 
+```python
+    def suggestedProducts(self, products: List[str], searchWord: str) -> List[List[str]]:
+        l = len(searchWord)
+        products.sort()  
+        rst, prefix = [[] for _ in range(l)], ''
+        for i in range(l):
+            prefix += searchWord[i]
+            ind = bisect.bisect_left(products, prefix)
+            for product in products[ind:ind+3]:
+                if product.startswith(prefix):
+                    rst[i].append(product)
+                else: break
+            if not rst[i]: break
+            products = products[ind:]
+        return rst
+```
+Referrence: https://leetcode.com/problems/search-suggestions-system/discuss/436674/C%2B%2BJavaPython-Sort-and-Binary-Search-the-Prefix
+

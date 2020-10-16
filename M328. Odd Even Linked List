@@ -1,0 +1,30 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def oddEvenList(self, head: ListNode) -> ListNode:
+        oddh, evenh = ListNode(1), ListNode(2)
+        ohead, ehead = oddh, evenh
+        while head:
+            oddh.next = head
+            evenh.next = head.next
+            oddh, evenh = oddh.next, evenh.next
+            if not evenh: break
+            head = evenh.next
+        oddh.next = ehead.next
+        return ohead.next
+```
+Alternative: without dummy head nodes. | Rt: 32ms |
+```python
+    def oddEvenList(self, head: ListNode) -> ListNode:
+        if not head or not head.next: return head
+        odd, even, evenh = head, head.next, head.next
+        while even and even.next: 
+            odd.next = even.next
+            odd = odd.next
+            even.next = odd.next
+            even = even.next
+        odd.next = evenh
+        return head
+```
+Referrence: https://leetcode.com/problems/odd-even-linked-list/discuss/78079/Simple-O(N)-time-O(1)-space-Java-solution.

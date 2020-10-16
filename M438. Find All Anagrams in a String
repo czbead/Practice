@@ -1,0 +1,37 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer with Slide Window**
+| O(T): O(n) | O(S): O(1) | Rt: 100ms | 
+```python
+    def findAnagrams(self, s: str, p: str) -> List[int]:
+        rst, st, l = [], 0, len(p)
+        m, cur = [0] * 26, [0] * 26 
+        for i in p: m[ord(i) - ord('a')] += 1
+        for i in range(len(s)):
+            cur[ord(s[i]) - ord('a')] += 1
+            if i - st + 1 == l:
+                if cur == m: rst.append(st)
+                cur[ord(s[st]) - ord('a')] -= 1
+                st += 1
+        return rst
+```
+Alternative: using a count rather than a list for current state. | Rt: 108ms |
+```python
+    def findAnagrams(self, s: str, p: str) -> List[int]:
+        rst, st, l = [], 0, len(p)
+        m, count = [0] * 26, 0
+        for i in p: m[ord(i) - ord('a')] += 1
+        for i in range(len(s)):
+            ind = ord(s[i]) - ord('a')
+            if m[ind] > 0: count += 1
+            m[ind] -= 1
+            if i - st + 1 == l:
+                if count == l: rst.append(st)
+                ind = ord(s[st]) - ord('a')
+                #I am doubt about this: why >= 0 item has to be in p?
+                if m[ind] >= 0: count -= 1
+                m[ind] += 1
+                st += 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/find-all-anagrams-in-a-string/discuss/92015/ShortestConcise-JAVA-O(n)-Sliding-Window-Solution/96632
+Comment: Let me explain the doubt in the in-line comment. The window is of size len(p). Idealy, when the window wrapped string is a valid anagram of p, all vals in m list should be all 0s (those items with positive vals reduce to 0). What if it is not a anagram of p? How may 1s we deduct from the m list overall? We did len(p) minus 1 operations in total. What's the sum of m vals? It is len(p). If there are still positive vals in m list, then there must be negative vals as well and the sum of all of them are 0. Actually, those letters appeared in p must have vals >= 0 while those not in p have vals <= 0; If positive vals exists in m list, those negative val letters must not in p. This point is not as trivial, spend some time you will figure it out. If you cannot master this "count instead of state list" trick, just use a state list as shown in the first version, won't cost too much overhead.

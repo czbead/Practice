@@ -1,0 +1,88 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive by Deep Copy**
+| O(T): O(mn) | O(S): O(mn) | Rt: 32ms | 
+```python
+    def gameOfLife(self, board: List[List[int]]) -> None:
+        def countLive(matrix, d, i, j, r, c):
+            ct = 0
+            for di, dj in d:
+                x, y = i+di, j+dj
+                if 0 <= x < r and 0 <= y < c and matrix[x][y]:
+                    ct += 1
+            return ct
+        
+        if not board or not board[0]: return 
+        dummy, r, c = copy.deepcopy(board), len(board), len(board[0])
+        d = [(i, j) for i, j in itertools.product([-1, 0, 1], [-1, 0, 1]) if i!=0 or j!=0]
+        for i in range(r): 
+            for j in range(c):
+                cnt = countLive(dummy, d, i, j, r, c)
+                if board[i][j]: 
+                    if cnt < 2 or cnt > 3: board[i][j] = 0
+                else:
+                    if cnt == 3: board[i][j] = 1
+```
+
+
+**II). Isotope**
+| O(T): O(mn) | O(S): O(1) | Rt: 36ms | 
+```python
+    def gameOfLife(self, board: List[List[int]]) -> None:
+        def countLive(matrix, d, i, j, r, c):
+            ct = 0
+            for di, dj in d:
+                x, y = i+di, j+dj
+                if 0 <= x < r and 0 <= y < c and matrix[x][y]:
+                    ct += 1
+            return ct
+        
+        if not board or not board[0]: return 
+        r, c = len(board), len(board[0])
+        d = [(i, j) for i, j in itertools.product([-1, 0, 1], [-1, 0, 1]) if i!=0 or j!=0]
+        for i in range(r): 
+            for j in range(c):
+                cnt = countLive(board, d, i, j, r, c)
+                if board[i][j]: 
+                    if cnt < 2 or cnt > 3: board[i][j] = -1
+                else:
+                    if cnt == 3: board[i][j] = None
+                        
+        for i in range(r): 
+            for j in range(c):
+                if board[i][j] is None: board[i][j] = 1
+                elif board[i][j] == -1: board[i][j] = 0
+```
+Comment: in bool's term, -1 equals to 1 and None equals to 0. These pairs work like isotope.
+
+
+**III). Copress info into Extra Bit**
+| O(T): O(mn) | O(S): O(1) | Rt: 24ms | 
+```python
+    def gameOfLife(self, board: List[List[int]]) -> None:
+        def countLive(matrix, d, i, j, r, c):
+            ct = 0
+            for di, dj in d:
+                x, y = i+di, j+dj
+                if 0 <= x < r and 0 <= y < c:
+                    ct += matrix[x][y]&1
+            return ct
+        
+        if not board or not board[0]: return 
+        r, c = len(board), len(board[0])
+        d = [(i, j) for i, j in itertools.product([-1, 0, 1], [-1, 0, 1]) if i!=0 or j!=0]
+        for i in range(r): 
+            for j in range(c):
+                cnt = countLive(board, d, i, j, r, c)
+                if board[i][j]: 
+                    if cnt == 2 or cnt == 3: board[i][j] = 3  #"11", original: 1; update: 1
+                    #otherwise: "01": original: 1; update: 0
+                else:
+                    if cnt == 3: board[i][j] = 2  #"10": original: 0; update: 1
+                    #otherwise. "00", remain 0
+                        
+        for i in range(r): 
+            for j in range(c):
+                board[i][j] >>= 1
+```
+Referrence: https://leetcode.com/problems/game-of-life/discuss/73223/Easiest-JAVA-solution-with-explanation
+Comment: cannot use the leading bit as original and the ending bit as update, think about why. Be careful about this point (this solution is as simple as it is like).

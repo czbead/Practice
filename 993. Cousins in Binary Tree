@@ -1,0 +1,92 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 32ms | 
+```python
+    def isCousins(self, root: TreeNode, x: int, y: int) -> bool:
+        def dfs(node, par, dep, rst):
+            if not node: return
+            val, dep = node.val, dep+1
+            if val == x: rst[0] = (par, dep)
+            elif val == y: rst[1] = (par, dep)
+            dfs(node.left, val, dep, rst)
+            dfs(node.right, val, dep, rst)
+            
+        rst = [None, None]
+        dfs(root, -1, -1, rst)
+        return rst[0][0] != rst[1][0] and rst[0][1] == rst[1][1]
+```
+Comment: the defact of recursion you cannot interrupt in the middle of a run which means you cannot immediate return when you alreay get enough info. 
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def isCousins(self, root: TreeNode, x: int, y: int) -> bool:
+        tx, ty, s = None, None, [(root, -1, -1)]
+        while s:
+            node, dep, par = s.pop()
+            if not node: continue
+            val, dep = node.val, dep + 1
+            if val == x: tx = (dep, par)
+            elif val == y: ty = (dep, par)
+            if tx and ty: return tx[0] == ty[0] and tx[1] != ty[1]
+            s.append((node.left, dep, val))
+            s.append((node.right, dep, val))
+        return False
+```
+Alternative: using dict to collect tuple.  | Rt: 32ms |
+```python
+    def isCousins(self, root: TreeNode, x: int, y: int) -> bool:
+        dt, s = {}, [(root, -1, -1)]
+        while s:
+            node, dep, par = s.pop()
+            if not node: continue
+            val, dep = node.val, dep + 1
+            if val == x or val == y: dt[val] = (dep, par)
+            if len(dt) > 1: break
+            s.append((node.left, dep, val))
+            s.append((node.right, dep, val))
+        return dt[x][0] == dt[y][0] and dt[x][1] != dt[y][1]
+        
+```
+
+
+**III). Generator**
+| O(T): O(n) | O(S): O(h) | Rt: 28ms | 
+```python
+    def isCousins(self, root: TreeNode, x: int, y: int) -> bool:
+        def gen(node, par, dep):
+            if not node: return
+            val, dep = node.val, dep+1
+            if val == x: yield (par, dep)
+            elif val == y: yield (par, dep)
+            yield from gen(node.left, val, dep)
+            yield from gen(node.right, val, dep)
+            
+        genxy = gen(root, -1, -1, )
+        a, b = next(genxy), next(genxy)
+        return a[0] != b[0] and a[1] == b[1]
+```
+Comment: generator allow you to control the progress of the program, immediate return when available. Of course, you can easily implement a RFS generator or LFS generator using stack.
+
+
+**IV). Iteration BFS Row-Wise**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def isCousins(self, root: TreeNode, x: int, y: int) -> bool:
+        row = [root] if root else None
+        while row:
+            nxt, ct = [], 0
+            for node in row:
+                if node.val == x or node.val == y: ct += 1
+                if node.left: nxt.append(node.left)
+                if node.right: nxt.append(node.right)
+                #check fake cousins, 
+                if node.left and node.right and {node.left.val, node.right.val} == {x, y}: return False
+            #find real cousins.
+            if ct == 2: return True
+            row = nxt
+        return False
+```
+Referrence: idea from https://leetcode.com/problems/cousins-in-binary-tree/discuss/239376/Java-BFS-time-and-space-beat-100
+

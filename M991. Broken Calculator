@@ -1,0 +1,12 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy**
+| O(T): O() | O(S): O() | Rt: 24ms | 
+```python
+    def brokenCalc(self, X: int, Y: int) -> int:
+        count = 0
+        while Y > X:
+            if Y & 1: Y += 1   
+            else: Y //= 2
+            count += 1
+        return count + X - Y  
+```

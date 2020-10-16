@@ -1,0 +1,71 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(t): O(n) | O(m): O(n) | Rt: 28ms | 
+```python
+    def plusOne(self, digits: List[int]) -> List[int]:
+        def lst2num(lst):
+            rst = 0
+            for i in lst:
+                rst = rst * 10 + i
+            return rst
+        def num2lst(num):
+            rst = []
+            while num:
+                rst.append(num % 10)
+                num //= 10
+            return rst[::-1]
+        return num2lst(lst2num(digits) + 1)
+```
+Alternative: same idea with string conversion. | Rt: 24ms |
+```python
+    def plusOne(self, digits: List[int]) -> List[int]:
+        def lst2num(lst):
+            rst = 0
+            for i in lst:
+                rst = rst * 10 + i
+            return rst
+        
+        return  [int(i) for i in str(lst2num(digits) + 1)]
+```
+
+**II). List-oriented**
+| O(t): O(n) | O(m): O(1) | Rt: 32ms | 
+```python
+    def plusOne(self, digits: List[int]) -> List[int]:
+        digits[-1] += 1
+        carry = 0
+        for i in range(len(digits) - 1, -1, -1):
+            cur = digits[i] + carry
+            carry = cur // 10
+            digits[i] = cur % 10
+            
+        if carry: digits.insert(0, 1)
+        return digits
+```
+Alternative: same idea with reversing. | Rt: 32ms |
+```python
+    def plusOne(self, digits: List[int]) -> List[int]:
+        digits.reverse()
+        #initialize the plus one with carry
+        carry = 1
+        for i, v in enumerate(digits):
+            cur = carry + v
+            digits[i] = cur % 10
+            carry = cur // 10
+        if carry: digits.append(1)
+        digits.reverse()
+        return digits
+```
+
+**III). Recursion**
+| O(t): O(n) | O(m): O(n) | Rt: 28ms | 
+```python
+    def plusOne(self, digits: List[int]) -> List[int]:
+        if not digits: return [1]
+        if digits[-1] == 9:
+        	#plus one iteration works as a carry
+            return self.plusOne(digits[:-1]) + [0]
+        else:
+            digits[-1] += 1
+            return digits
+```

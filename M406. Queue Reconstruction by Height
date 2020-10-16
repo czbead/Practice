@@ -1,0 +1,25 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy**
+| O(T): O() | O(S): O(n) | Rt: 100ms | 
+```python
+    def reconstructQueue(self, people: List[List[int]]) -> List[List[int]]:
+        #H: desc; K: asc;
+        people.sort(key=lambda tu: (-tu[0], tu[1]))
+        rst = []
+        for i, j in people:
+            rst.insert(j, [i, j])
+        return rst
+```
+Referrence: https://leetcode.com/problems/queue-reconstruction-by-height/discuss/89359/Explanation-of-the-neat-Sort%2BInsert-solution
+Comment: Because we sort the input in the order: height desc, k asc; the tall guys will get in position first; when the less tall comming guys arrives, all previous guys are taller than him. There are k guys taller than him, therefore should put him in position k in current sequence. For those guys with same height, it is trivial -- the smaller k it is, goes first.  
+
+Alternative: | Rt: 100ms |
+```python
+    def reconstructQueue(self, people: List[List[int]]) -> List[List[int]]:
+        #H: desc; K: asc;
+        people.sort(key=lambda tu: (-tu[0], tu[1]))
+        rst = []
+        for p in people:
+            rst.insert(p[1], p)
+        return rst
+```

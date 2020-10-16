@@ -1,0 +1,59 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 24ms | 
+```python
+    def sumNumbers(self, root: TreeNode) -> int:
+        def traverse(node, pre, rst):
+            if not node: return
+            if not node.left and not node.right: 
+                rst[0] += pre + node.val
+                return
+            pre = (pre + node.val) * 10
+            traverse(node.left, pre, rst)
+            traverse(node.right, pre, rst)
+            
+        rst = [0]
+        traverse(root, 0, rst)
+        return rst[0]
+```
+Alternative: concise version. | Rt: 20ms |
+```python
+    def sumNumbers(self, root: TreeNode, pre=0) -> int:
+        if not root: return 0
+        pre = pre*10 + root.val
+        if not root.left and not root.right: return pre
+        return self.sumNumbers(root.left, pre) + self.sumNumbers(root.right, pre)
+```
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def sumNumbers(self, root: TreeNode) -> int:
+        rst, s = 0, [(root, 0)]
+        while s:
+            node, accu = s.pop()
+            if not node: continue
+            accu = accu + node.val
+            if not node.left and not node.right: rst += accu; continue
+            #for this problem, order doesn't matter
+            s.append((node.left, accu*10)); s.append((node.right, accu*10))
+        return rst
+```
+Alternative: iteration with backtracking. | Rt: 28ms |
+```python
+    def sumNumbers(self, root: TreeNode) -> int:
+        rst, stack, num, prenode = 0, [], 0, None
+        while root or stack:
+            while root: 
+                stack.append(root)
+                num = num * 10 + root.val
+                root = root.left
+            if stack[-1].right and stack[-1].right != prenode:
+                root = stack[-1].right; continue
+            node = stack.pop()
+            if not node.left and not node.right: rst += num
+            prenode = node
+            num //= 10  #backtracking
+        return rst
+```

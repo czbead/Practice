@@ -1,0 +1,52 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(t): O(n) | O(m): O(1) | Rt: 16ms | 
+```python
+    def invertTree(self, root: TreeNode) -> TreeNode:
+        if not root: return root
+        root.left, root.right = root.right, root.left
+        self.invertTree(root.left)
+        self.invertTree(root.right)
+        return root
+```
+Alternative: elegant version | Rt: 24ms | 
+```python
+    def invertTree(self, root: TreeNode) -> TreeNode:
+        if not root: return 
+        root.left, root.right = self.invertTree(root.right), self.invertTree(root.left)
+        return root
+```
+Referrence: https://leetcode.com/problems/invert-binary-tree/discuss/62714/3-4-lines-Python
+
+
+**II). Iteration-DFS**
+| O(t): O(n) | O(m): O(1) | Rt: 28ms | 
+```python
+    def invertTree(self, root: TreeNode) -> TreeNode:
+        s = [root]
+        while s:
+            node = s.pop()
+            #better readability by separating these two conditions, the continue is critical
+            if not node: continue
+            node.left, node.right = node.right, node.left
+            #s.extend([node.right, node.left]) works as well
+            s.append(node.right)
+            s.append(node.left)
+        return root
+```
+
+
+**III). Iteration-BFS**
+| O(t): O(n) | O(m): O(1) | Rt: 28ms | 
+```python
+    def invertTree(self, root: TreeNode) -> TreeNode:
+        q = collections.deque([root])
+        while q:
+            node = q.popleft()
+            if not node: continue
+            node.left, node.right = node.right, node.left
+            q.append(node.left)
+            q.append(node.right)
+        return root
+```
+

@@ -1,0 +1,94 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive List**
+| O(t): O(n) | O(m): O(n) | Rt: 68ms | 
+```python
+    def isPalindrome(self, head: ListNode) -> bool:
+        lst =[]
+        while head:
+            lst.append(head.val)
+            head = head.next
+        return lst == list(reversed(lst))
+```
+
+
+**II). Reverse First Half**
+| O(t): O(n) | O(m): O(1) | Rt: 64ms | 
+```python
+    def isPalindrome(self, head: ListNode) -> bool:
+        slow, fast, pre = head, head, None
+        while fast and fast.next:
+            fast = fast.next.next
+            #reverse first half
+            nxt = slow.next
+            slow.next = pre
+            pre = slow
+            slow = nxt
+        #so far, pre is the reversed list head, slow is the head of non-reversed
+        
+        rev, sec = pre, slow  #even length
+        if fast: sec = slow.next  #odd length, step over the middle node
+        while rev:
+            if rev.val != sec.val: return False
+            rev, sec = rev.next, sec.next
+        return True
+```
+Alternative: concise elegant version. | Rt: 64ms | 
+```python
+    def isPalindrome(self, head: ListNode) -> bool:
+        slow, fast, pre = head, head, None
+        while fast and fast.next:
+            fast = fast.next.next
+            slow.next, pre, slow = pre, slow, slow.next
+
+        rev, sec = pre, slow
+        if fast: sec = slow.next 
+        while rev and rev.val == sec.val:
+            rev, sec = rev.next, sec.next
+        return rev is sec 
+```
+Referrence: https://leetcode.com/problems/palindrome-linked-list/discuss/64500/11-lines-12-with-restore-O(n)-time-O(1)-space
+
+
+
+**III). Reverse Second Half**
+| O(t): O(n) | O(m): O(1) | Rt: 64ms | 
+```python
+    def isPalindrome(self, head: ListNode) -> bool:
+        slow = fast = head
+        while fast and fast.next:
+            fast = fast.next.next
+            slow = slow.next
+        
+        pre = None
+        while slow:
+            slow.next, pre, slow = pre, slow, slow.next
+            
+        rev = pre
+        while rev:  #rev is the shorter one 
+            if rev.val != head.val: return False
+            rev, head = rev.next, head.next
+        return True
+```
+Referrence: https://leetcode.com/problems/palindrome-linked-list/discuss/64689/Python-easy-to-understand-solution-with-comments-(operate-nodes-directly).
+Attention: the check two lists codes of this version cannot code up like the **solution II**, because head may have next concrete node while rev's next is None, they don't end at the same time. Make sure you truely understand the difference of both reverse solutions. Otherwise, I suggest you insist on **solution II** which is safer.
+
+
+**IV). Stack Half**
+| O(t): O(n) | O(m): O(n) | Rt: 72ms | 
+```python
+    def isPalindrome(self, head: ListNode) -> bool:
+        slow = fast = head
+        while fast and fast.next:
+            fast = fast.next.next
+            slow = slow.next
+        
+        stack = []
+        while slow:
+            stack.append(slow.val)
+            slow = slow.next
+            
+        while stack:
+            if stack.pop() != head.val: return False
+            head = head.next
+        return True 
+```

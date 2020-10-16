@@ -1,0 +1,87 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(n) | Rt: 36ms | 
+```python
+    dt = {}
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        if not head: return
+        root = Node(head.val)
+        self.dt[head] = root
+        root.next = self.copyRandomList(head.next)
+        if head.random: root.random = self.dt[head.random]
+        return root
+```
+Alternative: no global variable. | Rt: 32ms |
+```python
+    def copyRandomList(self, head: 'Node', dt={}) -> 'Node':
+        if not head: return
+        root = Node(head.val)
+        dt[head] = root
+        root.next = self.copyRandomList(head.next)
+        if head.random: root.random = dt[head.random]
+        return root
+```
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        if not head: return
+        pre = rst = Node(head.val)
+        cur, rand = head.next, {head:rst}
+        while cur:
+            node = Node(cur.val)
+            pre.next = node
+            rand[cur] = node
+            pre, cur = node, cur.next
+        new, cur = rst, head
+        while cur:
+            if cur.random: new.random = rand[cur.random]
+            new, cur = new.next, cur.next
+        return rst
+```
+Alternative: | Rt: 32ms |
+```python
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        if not head: return
+        cur, dt = head, {}
+        while cur:
+            dt[cur] = Node(cur.val)
+            cur = cur.next
+        cur = head
+        while cur:
+            if cur.next: dt[cur].next = dt[cur.next]
+            if cur.random: dt[cur].random = dt[cur.random]
+            cur = cur.next
+        return dt[head]
+```
+Referrence: https://leetcode.com/problems/copy-list-with-random-pointer/discuss/43488/Java-O(n)-solution
+
+
+**III). Without Hashmap**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        if not head: return
+        cur = head
+        while cur:
+            node = Node(cur.val)
+            node.next = cur.next
+            cur.next = node
+            cur = node.next
+            
+        cur = head
+        while cur:
+            if cur.random: 
+                cur.next.random = cur.random.next
+            cur = cur.next.next
+                
+        root = rcur = head.next
+        while rcur.next:
+            head.next = head.next.next
+            rcur.next = rcur.next.next
+            head, rcur = head.next, rcur.next
+        return root
+```
+Referrence: https://leetcode.com/problems/copy-list-with-random-pointer/discuss/43491/A-solution-with-constant-space-complexity-O(1)-and-linear-time-complexity-O(N)

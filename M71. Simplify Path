@@ -1,0 +1,44 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force - Pattern Match**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def simplifyPath(self, path: str) -> str:
+        rst, sign = [], ''
+        for i in path + '/':
+            if i == '/': 
+                if sign == '..': 
+                    if rst: rst.pop()
+                elif sign and sign != '.': rst.append(sign)
+                sign = ''
+            else: sign += i
+    
+        return '/' + '/'.join(rst)
+```
+
+
+**II). Split - Pattern Match**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def simplifyPath(self, path: str) -> str:
+        rst = []
+        for i in path.split('/'):
+            if i == '' or i == '.': continue
+            elif i == '..':
+                if rst: rst.pop()
+            else: rst.append('/' + i)
+            
+        return ''.join(rst) if rst else '/'
+```
+Alternative: better style. | Rt: 32ms |
+```python
+    def simplifyPath(self, path: str) -> str:
+        rst = []
+        for i in path.split('/'):
+            if i == '' or i == '.': continue
+            elif i == '..':
+                if rst: rst.pop()
+            else: rst.append(i)
+            
+        return '/' + '/'.join(rst)
+```
+Referrence: https://leetcode.com/problems/simplify-path/discuss/25691/9-lines-of-Python-code

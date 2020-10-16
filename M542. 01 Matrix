@@ -1,0 +1,114 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS**
+| O(T): O(mn) | O(S): O(mn) | Rt: 728ms | 
+```python
+    def updateMatrix(self, matrix: List[List[int]]) -> List[List[int]]:
+        if not matrix or not matrix[0]: return 
+        r, c = len(matrix), len(matrix[0])
+        que, visited = collections.deque([]), set()
+        for i in range(r):
+            for j in range(c):
+                if matrix[i][j] == 0:
+                    que.append((i, j))
+                    visited.add((i, j))
+        while que: 
+            i, j = que.pop()
+            for x, y in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]:
+                if 0<=x<r and 0<=y<c and (x, y) not in visited:
+                    matrix[x][y] = matrix[i][j] + 1
+                    visited.add((x, y))
+                    que.appendleft((x, y))
+        return matrix
+```
+
+Alternative: return a little bit earlier. | Rt: 716ms |
+```python
+    def updateMatrix(self, matrix: List[List[int]]) -> List[List[int]]:
+        if not matrix or not matrix[0]: return 
+        r, c = len(matrix), len(matrix[0])
+        que, visited = collections.deque([]), set()
+        for i in range(r):
+            for j in range(c):
+                if matrix[i][j] == 0:
+                    que.append((i, j))
+                    visited.add((i, j))
+        while len(visited) < r * c: 
+            i, j = que.pop()
+            for x, y in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]:
+                if 0<=x<r and 0<=y<c and (x, y) not in visited:
+                    matrix[x][y] = matrix[i][j] + 1
+                    visited.add((x, y))
+                    que.appendleft((x, y))
+        return matrix
+```
+
+Triple: return immediately. | Rt: 704ms |
+```python
+    def updateMatrix(self, matrix: List[List[int]]) -> List[List[int]]:
+        if not matrix or not matrix[0]: return 
+        r, c = len(matrix), len(matrix[0])
+        que, visited = collections.deque([]), set()
+        for i in range(r):
+            for j in range(c):
+                if matrix[i][j] == 0:
+                    que.append((i, j))
+                    visited.add((i, j))
+        if len(visited) == r * c: return matrix
+        
+        while que: 
+            i, j = que.pop()
+            for x, y in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]:
+                if 0<=x<r and 0<=y<c and (x, y) not in visited:
+                    matrix[x][y] = matrix[i][j] + 1
+                    visited.add((x, y))
+                    if len(visited) == r * c: return matrix
+                    que.appendleft((x, y))
+```
+
+Forth: Update/ Mark matrix instead of using "visited". | Rt: 656ms |
+```python
+    def updateMatrix(self, matrix: List[List[int]]) -> List[List[int]]:
+        if not matrix or not matrix[0]: return 
+        r, c = len(matrix), len(matrix[0])
+        que, ct = collections.deque([]), 0
+        for i in range(r):
+            for j in range(c):
+                if matrix[i][j] == 0: que.append((i, j)); 
+                else: matrix[i][j] = None; ct += 1
+        if ct == 0: return matrix
+        
+        while True: 
+            i, j = que.pop()
+            for x, y in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]:
+                if 0<=x<r and 0<=y<c and matrix[x][y] is None:
+                    matrix[x][y] = matrix[i][j] + 1
+                    ct -= 1
+                    if ct == 0: return matrix
+                    que.appendleft((x, y))
+```
+Comment: we don't need to run out of que to decide to return. The DFS solution is much harder than BFS. 
+
+
+**II). DP: Paint Back and Forth**
+| O(T): O(n) | O(S): O(1) | Rt: 600ms | 
+```python
+    def updateMatrix(self, matrix: List[List[int]]) -> List[List[int]]:
+        if not matrix or not matrix[0]: return
+        r, c = len(matrix), len(matrix[0])
+        for i in range(r):
+            for j in range(c):
+                if matrix[i][j] == 0: continue
+                #the value is decided by neighbors, not its own value
+                matrix[i][j] = float('inf')
+                if i > 0: matrix[i][j] = min(matrix[i][j], matrix[i-1][j] + 1)
+                if j > 0: matrix[i][j] = min(matrix[i][j], matrix[i][j-1] + 1) 
+                    
+        for i in range(r-1, -1, -1):
+            for j in range(c-1, -1, -1):
+                if matrix[i][j] == 0: continue
+                if i < r-1: matrix[i][j] = min(matrix[i][j], matrix[i+1][j] + 1)
+                if j < c-1: matrix[i][j] = min(matrix[i][j], matrix[i][j+1] + 1)
+        return matrix
+```
+Referrence: https://leetcode.com/problems/01-matrix/discuss/101051/Simple-Java-solution-beat-99-(use-DP)
+Comment: the value of each cell is decided by its four neighbors (has nothing to do with its own value). First round, go from top-left to bottom-right, apply the influence of top and left neighbors to the cell (we remove its own value because it may disturb the influences), after this round, each cell has the top-left optimal (shortest distance) value. In the second round, we apply the influence of right and down neighbors while keeping the value of previous round (we didn't remove the value any more), then update the cell value accordingly. After second round, it is top-left-right-down optimal value, exactly what we want from it. 

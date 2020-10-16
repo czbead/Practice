@@ -1,0 +1,17 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive**
+| O(T): O() | O(S): O() | Rt: 1228ms | 
+```python
+    def nthPersonGetsNthSeat(self, n: int) -> float:
+        if n == 1: return 1.0
+        #case 1: first person take his own seat
+        #case 2: first person take second persons seat, will lead the second person into the same situation as person one
+        return 1/n + (n-2) / n * self.nthPersonGetsNthSeat(n-1)
+```
+
+Alternative: | Rt: 28ms |
+```python
+    def nthPersonGetsNthSeat(self, n: int) -> float:
+        return 1.0 if n == 1 else 0.5
+```
+

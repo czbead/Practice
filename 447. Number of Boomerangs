@@ -1,0 +1,47 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O(n*n) | O(S): O(n) | Rt: 1404ms | 
+```python
+    def numberOfBoomerangs(self, points: List[List[int]]) -> int:
+        getDis = lambda p1, p2: (p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2
+        rst = 0
+        for i in points:
+            dt = {}
+            for j in points:
+                cur = getDis(i, j)
+                dt[cur] = dt.get(cur, 0) + 1
+            #rst += sum(2 * dt[i] * (dt[i] - 1) // 2 for i in dt if dt[i] > 1), they are the same.
+            rst += sum(dt[i] * (dt[i] - 1) for i in dt)
+        return rst
+```
+
+
+**II). Nested Dict**
+| O(T): O(n*n) | O(S): O(n*n) | Rt: 1220ms | 
+```python
+    def numberOfBoomerangs(self, points: List[List[int]]) -> int:
+        getDis = lambda p1, p2: (p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2
+        l, dts = len(points), collections.defaultdict(dict)
+        for i in range(l):
+            for j in range(i + 1, l):
+                cur = getDis(points[i], points[j])
+                dts[i][cur] = dts[i].get(cur, 0) + 1
+                dts[j][cur] = dts[j].get(cur, 0) + 1
+        rst = sum(dts[dt][i] * (dts[dt][i] - 1) for dt in dts for i in dts[dt])
+        return rst
+```
+Comment: the distance between each pair of points only calculated once. 
+Alternative: List of Dict.  | Rt: 1064ms |
+```python
+    def numberOfBoomerangs(self, points: List[List[int]]) -> int:
+        getDis = lambda p1, p2: (p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2
+        l, dts = len(points), [{} for _ in range(len(points))]
+        for i in range(l):
+            for j in range(i + 1, l):
+                cur = getDis(points[i], points[j])
+                dts[i][cur] = dts[i].get(cur, 0) + 1
+                dts[j][cur] = dts[j].get(cur, 0) + 1
+        rst = sum(dt[i] * (dt[i] - 1) for dt in dts for i in dt)
+        return rst
+``` 
+

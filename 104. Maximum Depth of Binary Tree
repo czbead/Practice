@@ -1,0 +1,84 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS Recursion with State**
+| O(t): O(n) | O(m): O(1) | Rt: 36ms | 
+note: n is decided by the longest path of the tree
+```python
+    def maxDepth(self, root: TreeNode) -> int:
+        def dfs(node, depth):
+            if not node: return depth
+            return max(dfs(node.left, depth + 1), dfs(node.right, depth + 1))
+        return dfs(root, 0)
+```
+Comment: top-down fashion with depth info passed to the lower level. Root node is of depth 0.
+
+
+**II). DFS Recursion without State**
+| O(t): O(n) | O(m): O(1) | Rt: 40ms | 
+```python
+    def maxDepth(self, root: TreeNode) -> int:
+        if not root: return 0
+        return 1 + max(self.maxDepth(root.left), self.maxDepth(root.right))
+```
+Comment: bottom-up fashion, go straight down to the leaf level and then build depth info bottom up. Leaf nodes are of depth 0.
+
+One-liner: | Rt: 40ms |
+```python
+    def maxDepth(self, root: TreeNode) -> int:
+        return 1 + max(self.maxDepth(root.left), self.maxDepth(root.right)) if root else 0
+```
+Referrence: https://leetcode.com/problems/maximum-depth-of-binary-tree/discuss/34212/1-line-Ruby-and-Python
+
+Alternative: state aside. | Rt: 40ms |
+```python
+    rst = 0
+    def maxDepth(self, root: TreeNode) -> int:
+        if not root: return 0
+        else: 
+            depth = max(self.maxDepth(root.left), self.maxDepth(root.right)) + 1
+            if depth > self.rst: self.rst = depth
+            return depth
+        return self.rst
+```
+
+
+**III). Pair-wise DFS Iteration**
+| O(t): O(n) | O(m): O(n) | Rt: 44ms | 
+```python
+    def maxDepth(self, root: TreeNode) -> int:
+        rst, stack = 0, [(root, 0)]
+        while stack:
+            node, de = stack.pop()
+            if not node: rst = max(rst, de)
+            else:
+                stack.append((node.right, de + 1))
+                stack.append((node.left, de + 1))
+        return rst
+```
+
+
+**IV). Pair-wise BFS Iteration**
+| O(t): O(n) | O(m): O(n) | Rt: 40ms | 
+```python
+    def maxDepth(self, root: TreeNode) -> int:
+        rst, q = 0, collections.deque([(root, 0)])
+        while q:
+            node, de = q.popleft()
+            if not node: rst = max(rst, de)
+            else:
+                q.append((node.left, de + 1))
+                q.append((node.right, de + 1))
+        return rst
+```
+
+
+**V). Row-wise BFS Iteration**
+| O(t): O(n) | O(m): O(n) | **Rt: 36ms** | 
+```python
+    def maxDepth(self, root: TreeNode) -> int:
+        rst, nodes = 0, [root]
+        while nodes:
+            nodes = [n for node in nodes if node for n in (node.left, node.right)]
+            if nodes: rst += 1
+        return rst
+```
+Comment: pair-wise BFS/DFS iteration methods are conventional techniques. However, a row-wise variation iterative BFS solution is almost always more efficient whenever row-wise BFS is applicable. Theoretically, row-wise is real BFS while pair-wise BFS is kind of fake. A breadth is a row. Pair-wise BFS breaks down a breadth into several pairs which takes several phases to finish.

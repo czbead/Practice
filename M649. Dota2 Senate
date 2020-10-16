@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Full Vote**
+| O(T): O(n) | O(S): O(n) | Rt: 48ms | 
+```python
+    def predictPartyVictory(self, senate: str) -> str:
+        ct, stack = 0, list(senate)
+        while True:
+            nxt, l = [], len(stack)
+            for i in stack:
+                if i == 'R': 
+                    ct += 1
+                    if ct >= l: return "Radiant"
+                    if ct > 0: nxt.append('R')
+                else:
+                    ct -= 1
+                    if ct <= -l: return "Dire"
+                    if ct < 0: nxt.append('D')
+            stack = nxt
+```
+
+
+**II). Two Queue**
+| O(T): O(n) | O(S): O(n) | Rt: 48ms | 
+```python
+    def predictPartyVictory(self, senate: str) -> str:
+        l = len(senate)
+        R, D = collections.deque([]), collections.deque([])
+        for i, v in enumerate(senate):
+            if v == 'R': R.append(i)
+            else: D.append(i)
+        
+        while R and D:
+            r, d = R.popleft(), D.popleft()
+            if r < d: R.append(r + l)
+            else: D.append(d + l)
+        
+        if R: return "Radiant"
+        return "Dire"
+```
+Referrence: https://leetcode.com/problems/dota2-senate/discuss/105858/JavaC%2B%2B-Very-simple-greedy-solution-with-explanation
+

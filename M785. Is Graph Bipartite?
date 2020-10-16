@@ -1,0 +1,41 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Color Three State Paint Graph**
+| O(T): O(n) | O(S): O(n) | Rt: 180ms | 
+```python
+    def isBipartite(self, graph: List[List[int]]) -> bool:
+        def cando(graph, color, node, assign):
+            if color[node]: return color[node] == assign
+            color[node] = assign
+            for i in graph[node]:
+                if not cando(graph, color, i, -assign): return False
+            return True
+        
+        l = len(graph)
+        color = [0] * l
+        for i in range(l):
+            if color[i] == 0 and not cando(graph, color, i, 1): return False
+        return True
+```
+Referrence: https://leetcode.com/problems/is-graph-bipartite/discuss/115487/Java-Clean-DFS-solution-with-Explanation
+
+
+**II). BFS Coloring**
+| O(T): O(n) | O(S): O(n) | Rt: 180ms | 
+```python
+    def isBipartite(self, graph: List[List[int]]) -> bool:
+        l = len(graph)
+        color = [0] * l
+        for i in range(l):
+            if color[i]: continue
+            q = collections.deque([(i, 1)])
+            while q:
+                n, col = q.popleft()
+                for j in graph[n]:
+                    if color[j]:
+                        if color[j] != -col: return False
+                    else: 
+                        color[j] = -col
+                        q.append((j, -col))
+        return True
+```
+Referrence: https://leetcode.com/problems/is-graph-bipartite/discuss/115487/Java-Clean-DFS-solution-with-Explanation

@@ -1,0 +1,73 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion -- In-order Validate**
+| O(T): O(n) | O(S): O(h) | Rt: 40ms | 
+```python
+    def isValidBST(self, root: TreeNode) -> bool:
+        def dfs(node, pre):
+            if not node: return True
+            l = dfs(node.left, pre)
+            if not l: return False
+            if node.val <= pre[0]: return False
+            pre[0] = node.val
+            return dfs(node.right, pre)
+        
+        return dfs(root, [-float('inf')])
+```
+Alternative: I think this is correct but the OJ don't pass it. Wired running status.
+```python
+    def isValidBST(self, root: TreeNode, pre=None) -> bool:
+        if not root: return True
+        if not self.isValidBST(root.left, pre): return False
+        if pre and root.val <= pre.val: return False
+        return self.isValidBST(root.right, root)
+```
+Referrence: https://leetcode.com/problems/validate-binary-search-tree/discuss/32104/C%2B%2B-in-order-traversal-and-please-do-not-rely-on-buggy-INT_MAX-INT_MIN-solutions-any-more
+
+
+**II). Generator**
+| O(T): O(n) | O(S): O(1) | Rt: 44ms | 
+```python
+    def isValidBST(self, root: TreeNode) -> bool:
+        def genval(node):
+            if node.left: yield from genval(node.left)
+            yield node.val
+            if node.right: yield from genval(node.right)
+                
+        if not root: return True
+        pre = -float('inf')
+        for val in genval(root):
+            if val <= pre: return False
+            pre = val
+        return True
+```
+
+
+**III). Iteration**
+| O(T): O(n) | O(S): O(1) | Rt: 36ms | 
+```python
+class Solution:
+    def isValidBST(self, root: TreeNode) -> bool:
+        stack, pre = [], -float('inf')
+        while stack or root: 
+            while root:
+                stack.append(root)
+                root = root.left
+            node = stack.pop()
+            if node.val <= pre: return False
+            pre = node.val
+            root = node.right
+        return True
+```
+
+
+**IV). Recursion - Top Down**
+| O(T): O(n) | O(S): O(1) | Rt: 44ms | 
+```python
+    def isValidBST(self, root: TreeNode) -> bool:
+        def dfs(root, minv, maxv):
+            if not root: return True
+            if root.val <= minv or root.val >= maxv: return False
+            return dfs(root.left, minv, root.val) and dfs(root.right, root.val, maxv)
+        return dfs(root, -float('inf'), float('inf'))
+```
+Referrence: https://leetcode.com/problems/validate-binary-search-tree/discuss/32109/My-simple-Java-solution-in-3-lines

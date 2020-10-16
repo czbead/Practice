@@ -1,0 +1,88 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion with Outer State**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def sumOfLeftLeaves(self, root: TreeNode) -> int:
+        def dfs(node, isLeft):
+            if not node: return 
+            elif not node.left and not node.right and isLeft: self.lsum += node.val
+            dfs(node.left, True)
+            dfs(node.right, False)
+
+        self.lsum = 0
+        dfs(root, False)
+        return self.lsum
+```
+
+
+**II). Iteration - DFS**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def sumOfLeftLeaves(self, root: TreeNode) -> int:
+        lsum, s = 0, [(root, 0)]
+        while s:
+            node, is_left = s.pop()
+            if not node: continue
+            if not node.left and not node.right and is_left: lsum += node.val
+            s.append((node.right, 0))
+            s.append((node.left, 1))
+        return lsum
+```
+
+
+**III). Iteration - BFS**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def sumOfLeftLeaves(self, root: TreeNode) -> int:
+        lsum, q = 0, collections.deque([(root, 0)]) if root else None
+        while q:
+            node, is_left = q.popleft()
+            if not node.left and not node.right and is_left: lsum += node.val
+            if node.left: q.append((node.left, 1))
+            if node.right: q.append((node.right, 0))
+        return lsum
+```
+
+
+**IV). Recursion with Implicit Inner State**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def sumOfLeftLeaves(self, root: TreeNode) -> int:
+        def dfs(node, isLeft):
+            if not node: return 0
+            elif not node.left and not node.right and isLeft: return node.val
+            return dfs(node.left, True) + dfs(node.right, False)
+        return dfs(root, False)
+```
+
+
+**V). Recursion without Extra**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def sumOfLeftLeaves(self, root: TreeNode) -> int:
+        if not root: return 0
+        sumL = self.sumOfLeftLeaves
+        rst = sumL(root.left) + sumL(root.right)
+        if root.left and not root.left.left and not root.left.right: 
+        	rst += root.left.val
+        return rst
+```
+Comment: may not be very readable, long arm jurisdiction in the left check.
+
+
+**VI). Recursion with Explicit State**
+| O(T): O(n) | O(S): O(1) | Rt: ms | 
+```python
+    def sumOfLeftLeaves(self, root: TreeNode) -> int:
+        def dfs(node, isLeft, lsum):
+            if not node: return 
+            dfs(node.left, True, lsum)
+            dfs(node.right, False, lsum)
+            if not node.left and not node.right and isLeft: lsum += node.val
+            return lsum
+        return dfs(root, False, 0)
+```
+Comment: this is a wrong solution, anyone could tell me how to make it work, great appreciations.
+
+
+

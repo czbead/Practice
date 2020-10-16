@@ -1,0 +1,12 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 100ms | 
+```python
+    def removeCoveredIntervals(self, intervals: List[List[int]]) -> int:
+        intervals.sort()
+        count, prej = 0, -1
+        for i, j in intervals:
+            if j > prej: 
+                count, prej = count+1, j
+        return count
+```

@@ -1,0 +1,46 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(t): O(lgn) | O(m): O(1) | Rt: 32ms | 
+```python
+    def isUgly(self, num: int) -> bool:
+        if num == 0: return False
+        if num == 1: return True
+        if num % 5 == 0: return self.isUgly(num // 5)
+        if num % 3 == 0: return self.isUgly(num // 3)
+        if num % 2 == 0: return self.isUgly(num // 2)
+        return False
+```
+
+
+**II). Iteration**
+| O(t): O(lgn) | O(m): O(1) | Rt: 32ms | 
+```python
+    def isUgly(self, num: int) -> bool:
+        if num == 0: return False
+        while num % 5 == 0 or num % 3 == 0 or num % 2 == 0:
+            if num % 5 == 0: num //= 5
+            if num % 3 == 0: num //= 3
+            if num % 2 == 0: num //= 2
+        return num == 1
+```
+
+
+**III). Loop Factor**
+| O(t): O(lgn) | O(m): O(1) | Rt: 16ms | 
+```python
+    def isUgly(self, num: int) -> bool:
+        if num == 0: return False
+        for i in [5, 3, 2]:
+            while num % i == 0:
+                num //= i
+        return num == 1
+```
+
+
+**IV). Find the Most**
+| O(t): O(1) | O(m): O(1) | Rt: 32ms | 
+```python
+    def isUgly(self, num: int) -> bool:
+        return 30**32 % num == 0 if num > 0 else False
+```
+Referrence: https://leetcode.com/problems/ugly-number/discuss/69232/Python%3A-1-line-solution

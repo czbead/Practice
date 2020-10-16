@@ -1,0 +1,42 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Buildin Datetime**
+| O(T): O(1) | O(S): O(1) | Rt: 32ms | 
+```python
+import datetime
+class Solution:
+    def dayOfYear(self, date: str) -> int:
+        y, m, d = map(int, date.split('-'))
+        return (datetime.datetime(y, m, d) - datetime.datetime(y, 1, 1)).days + 1
+```
+Alternative: strptime. | Rt: 44ms |
+```python
+from datetime import datetime
+class Solution:
+    def dayOfYear(self, date: str) -> int:
+        y = int(date.split('-', 1)[0])
+        return (datetime.strptime(date, '%Y-%m-%d') - datetime(y, 1, 1)).days + 1
+```
+
+
+**II). Naive Brute Force**
+| O(T): O(1) | O(S): O(1) | Rt: 20ms | 
+```python
+    def dayOfYear(self, date: str) -> int:
+        mons = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        y, m, d = map(int, date.split('-'))
+        isleap = y % 400 == 0 or (y % 4 == 0 and y % 100 != 0)
+        base = sum(mons[:m-1]) + d
+        return base + 1 if isleap and m > 2 else base
+```
+Alternative: feb as a variable.  | Rt: 28ms |
+```python
+    def dayOfYear(self, date: str) -> int:
+        y, m, d = map(int, date.split('-'))
+        isleap = y % 400 == 0 or (y % 4 == 0 and y % 100 != 0)
+        feb = isleap + 28
+        mons = [31, feb, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        return sum(mons[:m-1]) + d
+```
+Referrence: idea from https://leetcode.com/problems/day-of-the-year/discuss/355880/Simple-Java-Solution-easy-to-understand-GregorianCalendar/322038
+
+

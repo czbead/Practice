@@ -1,0 +1,9 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). **
+| O(T): O() | O(S): O() | Rt: 192ms | 
+```python
+    def circularPermutation(self, n: int, start: int) -> List[int]:
+        return [start ^ i ^ i >> 1 for i in range(1 << n)]
+```
+Referrence: https://leetcode.com/problems/circular-permutation-in-binary-representation/discuss/414203/JavaC%2B%2BPython-4-line-Gray-Code
+Comment: come back to problem 89 gray code to learn more details.

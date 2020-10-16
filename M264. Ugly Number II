@@ -1,0 +1,48 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def nthUglyNumber(self, n: int) -> int:
+        sn, ct, cur = set([2, 3, 5]), 1, 1 
+        while ct < n:
+            cur += 1
+            if cur in sn: 
+                ct += 1
+                for i in list(sn):
+                    sn.add(cur * i)  
+        return cur
+```
+
+
+**II). Three Pointer**
+| O(T): O(n) | O(S): O(n) | Rt: 156ms | 
+```python
+    def nthUglyNumber(self, n: int) -> int:
+        if n < 1: return 
+        k = [1] * n
+        p2 = p3 = p5 = 0
+        for i in range(1, n):
+            k[i] = min(k[p2] * 2, k[p3] * 3, k[p5] * 5)
+            #cannot use elif, becaude case '6' forward two pointer at the same time, '30' forward all pointer
+            if k[i] == k[p2] * 2: p2 += 1
+            if k[i] == k[p3] * 3: p3 += 1
+            if k[i] == k[p5] * 5: p5 += 1
+        return k[-1]
+```
+Referrence: https://leetcode.com/problems/ugly-number-ii/discuss/69364/My-16ms-C%2B%2B-DP-solution-with-short-explanation
+Comment: every 'ugly number' must be the product of factors 2s, 3s, 5s (except the initial state 1). To forward the next "ugly" candidate in a sorted order, we get the mininum of 3 candidates every round. Once a candidate is taken, we should forward its pointer to prevent duplication. This solution is too clever for me to reach so far.
+
+Alternative:  | Rt: 252ms |
+```python
+    def nthUglyNumber(self, n: int) -> int:
+        if n < 1: return 
+        k = [1]
+        p2 = p3 = p5 = 0
+        for _ in range(n-1):
+            tmp = min(k[p2] * 2, k[p3] * 3, k[p5] * 5)
+            if tmp == k[p2] * 2: p2 += 1
+            if tmp == k[p3] * 3: p3 += 1
+            if tmp == k[p5] * 5: p5 += 1
+            k.append(tmp)
+        return k[-1]
+```

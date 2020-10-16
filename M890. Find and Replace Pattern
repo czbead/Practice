@@ -1,0 +1,47 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bucket Match**
+| O(T): O(mn) | O(S): O(m) | Rt: 32ms | 
+```python
+    def findAndReplacePattern(self, words: List[str], pattern: str) -> List[str]:
+        rst, l = [], len(set(pattern))
+        for word in words:
+            m, valid, ct = [None] * 26, True, 0
+            for i, j in zip(word, pattern):
+                index = ord(i) - ord('a')
+                if m[index] is None: m[index], ct = j, ct+1
+                elif m[index] != j: valid = False; break
+                if ct > l: valid = False; break
+            if valid: rst.append(word)
+        return rst
+```
+Others: a bidirection mapping solution - https://leetcode.com/problems/find-and-replace-pattern/discuss/161376/Java-two-maps-solution
+
+
+**II). Set**
+| O(T): O(mn) | O(S): O(m) | Rt: 24ms | 
+```python
+    def findAndReplacePattern(self, words: List[str], pattern: str) -> List[str]:
+        l = len(set(pattern))
+        return [word for word in words if len(set(word)) == l == len(set(zip(word, pattern)))]
+```
+Referrence: https://leetcode.com/problems/find-and-replace-pattern/discuss/161775/Short-python-isomorphism-solution
+
+Alternative: Normalize both sides. | Rt: 28ms |
+```python
+    def findAndReplacePattern(self, words: List[str], pattern: str) -> List[str]:
+        def mask(s):
+            m = {}
+            return [m.setdefault(i, len(m)) for i in s]
+        
+        p = mask(pattern)
+        return[i for i in words if mask(i) == p]
+```
+Comment: the setdefault code block works the same as the following one.
+```python
+        def mask(s):
+            m = {}
+            for i in s:
+                if i not in m: m[i] = len(m)
+            return [m[i] for i in s]
+```
+Referrence: https://leetcode.com/problems/find-and-replace-pattern/discuss/161288/C%2B%2BJavaPython-Normalise-Word

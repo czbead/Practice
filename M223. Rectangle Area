@@ -1,0 +1,14 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(1) | O(S): O(1) | Rt: 52ms | 
+```python
+    def computeArea(self, A: int, B: int, C: int, D: int, E: int, F: int, G: int, H: int) -> int:
+        # if C < A: A, C = C, A
+        # if D < B: D, B = B, D
+        # if G < E: G, E = E, G
+        # if H < F: H, F = F, H
+        rst = (G - E) * (H - F) + (C - A) * (D - B)
+        if E >= C or A >= G or B >= H or F >= D: return rst
+        overlap = min(G-E, C-A, G-A, C-E) * min(D-B, H-F, H-B, D-F)
+        return rst - overlap
+```

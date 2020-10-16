@@ -1,0 +1,24 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search**
+| O(T): O(n) | O(S): O(1) | Rt: 160ms | 
+```python
+    def findBestValue(self, arr: List[int], target: int) -> int:
+        mx, su, l = 1, 0, len(arr)
+        for i in arr:
+            mx, su = max(mx, i), su+i
+        if l == 1: return arr[0]
+        if su <= target: return mx
+        l, r, best, rst = 0, mx, float('inf'), 0
+        while l <= r:
+            m = (l+r) // 2
+            s = sum(i if i <= m else m for i in arr)
+            if s == target: return m
+            cur = abs(target - s)
+            if cur < best: best, rst = cur, m
+            elif cur == best: rst = min(rst, m)
+            if s < target: l = m + 1
+            else: r = m - 1
+        return rst
+```
+
+Others: sort solution - https://leetcode.com/problems/sum-of-mutated-array-closest-to-target/discuss/463306/JavaC%2B%2BPython-Just-Sort-O(nlogn)

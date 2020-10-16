@@ -1,0 +1,58 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force - Backtracking**
+| O(T): O() | O(S): O(n) | Rt: 1020ms | 
+```python
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        def backtrack(dt, lst, st):
+            if not lst: return True
+            for i in lst: 
+                if i in st: return False
+                st.add(i)
+                if not backtrack(dt, dt[i], st): return False
+                st.remove(i)
+            return True
+        
+        dt = collections.defaultdict(list)
+        for i, j in prerequisites: dt[i].append(j)
+        return backtrack(dt, list(dt), set())
+```
+
+
+**II). DFS: Detect Cycle**
+| O(T): O() | O(S): O() | Rt: 876ms | 
+```python
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        def dfsHasCycle(dt, taken, st):
+            if st in taken: return True
+            taken.add(st)
+            for i in dt[st]:
+                if dfsHasCycle(dt, taken, i): return True
+            taken.remove(st)
+            return False
+        
+        dt = collections.defaultdict(list)
+        for i, j in prerequisites: dt[i].append(j)
+        for i in range(numCourses):
+            if dfsHasCycle(dt, set(), i): return False
+        return True
+```
+
+
+**III). Toplogical Sort**
+| O(T): O() | O(S): O(n) | Rt: 96ms | 
+```python
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        dt, indegree = collections.defaultdict(list), [0] * numCourses
+        for i, j in prerequisites:
+            dt[i].append(j)
+            indegree[j] += 1
+        
+        q = collections.deque([i for i in range(numCourses) if indegree[i] == 0])
+        while q:
+            cur, numCourses = q.popleft(), numCourses-1
+            for i in dt[cur]:
+                indegree[i] -= 1
+                if indegree[i] == 0: q.append(i)
+        return numCourses == 0
+```
+Referrence: https://leetcode.com/problems/course-schedule/discuss/58509/C++-BFSDFS/195152

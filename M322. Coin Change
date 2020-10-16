@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP**
+| O(T): O(mn) | O(S): O(n) | Rt: 1356ms | 
+```python
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        dp = [float('inf')] * (amount + 1)
+        dp[0] = 0
+        for i in range(1, amount+1):
+            for j in coins:
+                if j <= i: dp[i] = min(dp[i], dp[i-j] + 1)
+        return -1 if dp[-1] == float('inf') else dp[-1]
+```
+Alternative: | Rt: 1208ms |
+```python
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        dp = [float('inf')] * (amount + 1)
+        dp[0] = 0
+        for coin in coins:
+            for i in range(coin, amount+1):
+                dp[i] = min(dp[i], dp[i-coin] + 1)
+        return -1 if dp[-1] > amount else dp[-1]
+```
+Referrence: https://leetcode.com/problems/coin-change/discuss/77360/C%2B%2B-O(n*amount)-time-O(amount)-space-DP-solution
+
+
+**II). BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 600ms | 
+```python
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        if amount == 0: return 0
+        cnt, start, seen = 0, [0], set([0]) 
+        while start:
+            cnt, nxt = cnt + 1, []
+            for s in start:
+                for c in coins:
+                    if s+c <= amount and s+c not in seen:
+                        if s+c == amount: return cnt
+                        seen.add(s+c); nxt.append(s+c)
+            start = nxt
+        return -1
+```
+Referrence: https://leetcode.com/problems/coin-change/discuss/77361/Fast-Python-BFS-Solution
+Comment: this is a great solution which only calculate possible coin combination sums within amount which is far more sparce than the input amount. In this solution, we don't need to calculate every amount coin combinations (skip those impossible amount naturally). 

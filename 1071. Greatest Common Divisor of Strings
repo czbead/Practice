@@ -1,0 +1,101 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+        if str1 == str2: return str1
+        l1, l2 = len(str1), len(str2)
+        if l1 >= l2 and str1[:l2] == str2: return self.gcdOfStrings(str1[l2:], str2)
+        elif l2 > l1 and str2[:l1] == str1: return self.gcdOfStrings(str1, str2[l1:])
+        else: return ''
+```
+Alternative:  | Rt: 20ms |
+```python
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+        if str1 == str2: return str1
+        l1, l2 = len(str1), len(str2)
+        if l1 < l2: str1, str2, l1, l2 = str2, str1, l2, l1
+        if str1[:l2] != str2: return ''
+        return self.gcdOfStrings(str1[l2:], str2)
+```
+Triple:  | Rt: 28ms |
+```python
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+        l1, l2 = len(str1), len(str2)
+        if l1 < l2: str1, str2, l1, l2 = str2, str1, l2, l1
+        if l1 % l2 == 0:
+            if str1 != str2 * (l1 // l2): return ''
+            return str2
+        else:
+            cur = l1 // l2
+            if str1[:cur * l2] != str2 * cur: return ''
+            return self.gcdOfStrings(str1[cur * l2:], str2)
+```
+Comment: can use startswith to do the prefix check. 
+
+
+**II). Mod for String**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+        def strmod(s1, s2):
+            l1, l2 = len(s1), len(s2)
+            if l1 < l2:
+                if s2[:l1] == s1: return s1
+                return '!'
+            if s1[:l2] == s2: return strmod(s1[l2:], s2)
+            else: return '!'
+            
+        while str2:
+            str1, str2 = str2, strmod(str1, str2)
+            if str2 == '!': return ''
+        return str1
+```
+Alternative:  | Rt: 20ms |
+```python
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+        def strmod(s1, s2):
+            l1, l2 = len(s1), len(s2)
+            if l1 < l2:
+                if s2[:l1] == s1: return s1
+                return '!'
+            if s1[:(l1//l2)*l2] == s2*(l1//l2): return strmod(s1[(l1//l2)*l2:], s2)
+            else: return '!'
+            
+        while str2:
+            str1, str2 = str2, strmod(str1, str2)
+            if str2 == '!': return ''
+        return str1
+```
+
+
+**III). GCD of String Length**
+| O(T): O(n) | O(S): O(n) | Rt: 36ms | 
+```python
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+        def gcd(a, b):
+            while b: 
+                a, b = b, a % b
+            return a
+        l1, l2 = len(str1), len(str2)
+        g = gcd(l1, l2); rst = str1[:g]
+        return rst if str1 == rst * (l1//g) and str2 == rst * (l2//g) else '' 
+```
+Referrence: idea from https://leetcode.com/problems/greatest-common-divisor-of-strings/discuss/303781/JavaPython-3-3-codes-each%3A-Recursive-iterative-and-regex-w-brief-comments-and-analysis.
+
+
+**IV). Exclude All GCD 0**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+        def gcd(a, b):
+            while b: 
+                a, b = b, a % b
+            return a
+        if str1 + str2 != str2 + str1: return ''
+        g = gcd(len(str1), len(str2))
+        return str1[:g]
+```
+Comment: the magic is all about the if condition, it excludes all empty string cases for you in one step. All you need to do is get the gcd of both lenghth and slice it.
+
+

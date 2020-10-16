@@ -1,0 +1,33 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Resovle Result Index**
+| O(T): O(m+n) | O(S): O(m+n) | Rt: 160ms | 
+```python
+    def multiply(self, num1: str, num2: str) -> str:
+        if num1 == '0' or num2 =='0': return '0'
+        l1, l2 = len(num1), len(num2)
+        num = [0] * (l1 + l2)
+        for i in range(l1-1, -1, -1):
+            for j in range(l2-1, -1, -1):
+                cur = (ord(num1[i]) - ord('0')) * (ord(num2[j]) - ord('0')) + num[i + j + 1]
+                carry, num[i+j+1] = divmod(cur, 10) 
+                num[i+j] += carry
+        if not num[0]: num = num[1:]
+        return ''.join(map(str, num))
+```
+Referrence: https://leetcode.com/problems/multiply-strings/discuss/17605/Easiest-JAVA-Solution-with-Graph-Explanation
+Alternative: a intuitive version. | Rt: 112ms |
+```python
+    def multiply(self, num1: str, num2: str) -> str:
+        if num1 == '0' or num2 =='0': return '0'
+        l1, l2 = len(num1), len(num2)
+        num = [0] * (l1 + l2)
+        for i in range(l1-1, -1, -1):
+            for j in range(l2-1, -1, -1):
+                num[i+j+1] += (ord(num1[i]) - ord('0')) * (ord(num2[j]) - ord('0'))
+        carry = 0
+        for i in range(l1+l2-1, -1, -1): carry, num[i] = divmod(num[i]+carry, 10)
+        if not num[0]: num = num[1:]
+        return ''.join(map(str, num))
+```
+Referrence: https://leetcode.com/problems/multiply-strings/discuss/17608/AC-solution-in-Java-with-explanation
+

@@ -1,0 +1,66 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Get all Prime**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def numPrimeArrangements(self, n: int) -> int:
+        lst = [1] * (n+1)
+        lst[0] = lst[1] = 0
+        for i in range(2, n+1):
+            if lst[i]:
+                for j in range(i + i, n+1, i): lst[j] = 0
+        primect = sum(lst)
+        #anr(n, n) = n!
+        return (math.factorial(primect) * math.factorial(n - primect)) % (10 ** 9 + 7)
+```
+Alternative:  | Rt: 28ms |
+```python
+    def numPrimeArrangements(self, n: int) -> int:
+        def fac(n):
+            rst = 1
+            while n: rst, n = rst * n, n-1
+            return rst
+        lst = [1] * (n+1)
+        for i in range(2, n+1):
+            if lst[i]:
+                for j in range(i + i, n+1, i): lst[j] = 0
+        # remove 0, 1
+        ct = sum(lst) - 2
+        return (fac(ct) * fac(n - ct)) % (10 ** 9 + 7)
+```
+
+
+**II). Extended Slice**
+| O(T): O(n) | O(S): O(n) | Rt: 16ms | 
+```python
+    def numPrimeArrangements(self, n: int) -> int:
+        def fac(n):
+            rst = 1
+            while n: rst, n = rst * n, n-1
+            return rst
+        lst = [1] * (n+1)
+        for i in range(2, n+1):
+        	#how to calculate how many 0 we should assign here
+            if lst[i]: lst[(i+i)::i] = [0] * ((n-i)//i)
+        # remove 0, 1
+        ct = sum(lst) - 2
+        return (fac(ct) * fac(n - ct)) % (10 ** 9 + 7)
+```
+Question: How many 0s we should assign to a list from index "st" to index 'end' by gap 'g'? (the 'st' index is the first insert index). the formula is: (end - st + g) // g. 
+In the program context, st = i + i; end = n; gap = i; we have (n - (i + i) + i) // i == (n - i) // i 
+Comment: extended slice solution for exhuasting prime is the fastest in my perspective (much faster than styles sharing the same algorithm). But extended slice is a feature of Python, not existed for other languages. 
+
+
+**III). Enumerate Prime**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def numPrimeArrangements(self, n: int) -> int:
+        def fac(n):
+            rst = 1
+            while n: rst, n = rst * n, n-1
+            return rst
+        primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97]
+        ct = bisect.bisect(primes, n)
+        return (fac(ct) * fac(n - ct)) % (10 ** 9 + 7)
+```
+
+Comment for all: none of above solutions are overflow-safe in common programming language (Python is free of big nubmer overflow). However, it is easy to make it safe, just apply mod Bound in each multiplication. 

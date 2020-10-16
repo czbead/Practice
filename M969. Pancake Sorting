@@ -1,0 +1,26 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy: Max Value to the Right**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+    def pancakeSort(self, A: List[int]) -> List[int]:
+        def reverse(A, i):
+            l, r = 0, i
+            while l < r:
+                A[l], A[r] = A[r], A[l]
+                l, r = l+1, r-1
+        
+        rst, l = [], len(A)
+        for i in range(l-1, 0, -1):
+            #find the index of currment max val
+            index = A.index(i+1)
+            if index != i: 
+                #reverse the maxval to the front
+                rst.append(index+1)
+                reverse(A, index)
+                #reverse the maxval to the end of current context
+                rst.append(i+1)
+                reverse(A, i)
+        return rst
+```
+Referrence: https://leetcode.com/problems/pancake-sorting/discuss/214200/Java-flip-the-largest-number-to-the-tail
+

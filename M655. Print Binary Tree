@@ -1,0 +1,22 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Get Height First, Two Pointer Next**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def printTree(self, root: TreeNode) -> List[List[str]]:
+        def getdepth(node):
+            if not node: return 0
+            return max(getdepth(node.left), getdepth(node.right)) + 1
+        
+        def genTree(node, row, i, j, rst):
+            if not node: return
+            m = (i + j) // 2
+            rst[row][m] = str(node.val)
+            genTree(node.left, row+1, i, m-1, rst)
+            genTree(node.right, row+1, m+1, j, rst)
+        
+        depth = getdepth(root)
+        r, c = depth, (2 ** depth) - 1 
+        rst = [[''] * c for _ in range(r)]
+        genTree(root, 0, 0, c, rst)
+        return rst
+```

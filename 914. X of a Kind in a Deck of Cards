@@ -1,0 +1,65 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greatest Common Divider**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 136ms | 
+```python
+        ctv = set(collections.Counter(deck).values())
+        #guaranteed have at least one element
+        if len(ctv) == 1: return False if ctv.pop() < 2 else True
+        return functools.reduce(math.gcd, ctv) >= 2
+```
+Alternative: self-implement gcd function.  | Rt: 144ms |
+```python
+    def hasGroupsSizeX(self, deck: List[int]) -> bool:
+        def gcd(a, b):
+            while b: a, b = b, a % b
+            return a
+        
+        ctv = set(collections.Counter(deck).values())
+        #guaranteed have at least one element
+        if len(ctv) == 1: return False if ctv.pop() < 2 else True
+        return functools.reduce(gcd, ctv) >= 2
+```
+Triple: lambda gcd.  | Rt: 132ms |
+```python
+    def hasGroupsSizeX(self, deck: List[int]) -> bool:
+        gcd = lambda x, y: gcd(y, x%y) if y else x
+        
+        ctv = set(collections.Counter(deck).values())
+        #guaranteed have at least one element
+        if len(ctv) == 1: return False if ctv.pop() < 2 else True
+        return functools.reduce(gcd, ctv) >= 2
+```
+
+
+**II). Immediate Return without Reduce**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 128ms | 
+```python
+    def hasGroupsSizeX(self, deck: List[int]) -> bool:
+        gcd = lambda x, y: gcd(y, x%y) if y else x
+        ctv = iter(set(collections.Counter(deck).values()))
+        gcdv = next(ctv)
+        for i in ctv:
+            if gcdv < 2: return False
+            gcdv = gcd(gcdv, i)
+        return gcdv >= 2
+```
+
+
+**III). Buck Collect**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 148ms | 
+```python
+    def hasGroupsSizeX(self, deck: List[int]) -> bool:
+        gcd = lambda x, y: gcd(y, x%y) if y else x
+        m = [0] * 10000
+        for i in deck: m[i] += 1
+        vals = set(m)
+        vals.remove(0)
+        ival = iter(vals)
+        gcdv = next(ival)
+        for i in ival:
+            if gcdv < 2: return False
+            gcdv = gcd(gcdv, i)
+        return gcdv >= 2
+```
+
+

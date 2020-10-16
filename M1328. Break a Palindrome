@@ -1,0 +1,33 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Brute Force**
+| O(T): O() | O(S): O() | Rt: 48ms | 
+```python
+    def breakPalindrome(self, p: str) -> str:
+        if len(p) == 1: return ''
+        for i in range(len(p)):
+            if p[i] != 'a' and p[:i] != p[i+1:]: return p[:i] + 'a' + p[i+1:]
+        return p[:-1] + 'b'
+```
+
+
+**II). Two Pointer**
+| O(T): O() | O(S): O() | Rt: 60ms | 
+```python
+    def breakPalindrome(self, p: str) -> str:
+        if len(p) == 1: return ''
+        l, r = 0, len(p)-1
+        while l <= r:
+            if p[l] != 'a' and l != r: return p[:l] + 'a' + p[l+1:] 
+            else: l, r = l+1, r-1
+        return p[:-1] + 'b'
+```
+
+Alternative: | Rt: 32ms |
+```python
+    def breakPalindrome(self, p: str) -> str:
+        if len(p) == 1: return ''
+        for i in range(len(p) // 2):
+            if p[i] != 'a': return p[:i] + 'a' + p[i+1:]
+        return p[:-1] + 'b'
+```
+Referrence: https://leetcode.com/problems/break-a-palindrome/discuss/489774/JavaC%2B%2BPython-Easy-and-Concise

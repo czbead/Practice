@@ -1,0 +1,15 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy with Sort and Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 52ms | 
+```python
+    def bagOfTokensScore(self, tokens: List[int], P: int) -> int:
+        tokens.sort()
+        rst, cnt, l, r = 0, 0, 0, len(tokens)-1
+        while l <= r:
+            if P >= tokens[l]: cnt, P, l = cnt+1, P-tokens[l], l+1
+            elif cnt: cnt, P, r = cnt-1, P+tokens[r], r-1
+            else: break
+            rst = max(rst, cnt)
+        return rst
+```
+Referrence: https://leetcode.com/problems/bag-of-tokens/discuss/197669/Python-two-pointers-O(N*logN)-time-O(1)-space

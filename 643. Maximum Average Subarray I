@@ -1,0 +1,48 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Sliding Window**
+| O(T): O(nk) | O(S): O(k) | Rt: ms | TLE 
+```python
+    def findMaxAverage(self, nums: List[int], k: int) -> float:
+        return max(sum(nums[i: i + k]) for i in range(len(nums) - k + 1)) / k
+```
+
+
+**II). Prefix Sums**
+| O(T): O(n) | O(S): O(n) | Rt: 948ms | 
+```python
+    def findMaxAverage(self, nums: List[int], k: int) -> float:
+        sums = [0] + nums
+        for i in range(1, len(sums)): sums[i] += sums[i-1]
+        return max(sums[i+k] - sums[i] for i in range(len(sums) - k)) / k
+```
+
+
+**III). Conditional Forward**
+| O(T): O(n) | O(S): O(1) | Rt: ms | TLE
+```python
+    def findMaxAverage(self, nums: List[int], k: int) -> float:
+        maxsum, st, end, l = -float('inf'), 0, k, len(nums)
+        #be careful about the edge case when len(nums) == k
+        while end <= l:
+            if end < l and nums[end] >= nums[st]: st, end = st + 1, end + 1
+            else: 
+                maxsum = max(maxsum, sum(nums[st: end]))
+                #the next chunk sum is less than the current chunk, skip it. 
+                st, end = st + 2, end + 2
+        return maxsum / k
+```
+
+
+**IV). Step Forward**
+| O(T): O(n) | O(S): O(1) | Rt: 924ms | 
+```python
+    def findMaxAverage(self, nums: List[int], k: int) -> float:
+        maxsum = cur = sum(nums[:k])
+        for i in range(k, len(nums)):
+            cur += nums[i] - nums[i-k] 
+            if cur > maxsum: maxsum = cur
+        return maxsum / k
+```
+Comment: the charm of this solution is that we don't need to calculate chunk sum every block, instead, we keep the presum as a state and keep update it by one sigle number. 
+
+

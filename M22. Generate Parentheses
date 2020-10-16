@@ -1,0 +1,63 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking**
+| O(T): O() | O(S): O(n) | Rt: 36ms | 
+```python
+    def generateParenthesis(self, n: int) -> List[str]:
+        def genpen(cur, l, r, n, rst):
+            if len(cur) == 2*n: rst.append(cur); return
+            if l < n: genpen(cur+'(', l+1, r, n, rst)
+            if r < l: genpen(cur+')', l, r+1, n, rst)
+        
+        rst = []
+        genpen('', 0, 0, n, rst)
+        return rst
+```
+Alternative: | Rt: 32ms |
+```python
+    def generateParenthesis(self, n: int) -> List[str]:
+        def genpen(cur, l, r, n, rst):
+        	#l == r == n works as well
+            if len(cur) == 2*n: rst.append(cur); return 
+            if l < n: genpen(cur+'(', l+1, r, n, rst)
+            if r < l: genpen(cur+')', l, r+1, n, rst)
+            return rst
+    
+        return genpen('', 0, 0, n, [])
+```
+Triple: how many left. the previous two versions are: how many have. | Rt: 24ms |
+```python
+    def generateParenthesis(self, n: int) -> List[str]:
+        def genpen(cur, l, r, n, rst):
+        	#l == 0 and r ==0 works as well
+            if len(cur) == 2*n: rst.append(cur); return 
+            if l > 0: genpen(cur+'(', l-1, r, n, rst)
+            if r > l: genpen(cur+')', l, r-1, n, rst)
+            return rst
+    
+        return genpen('', n, n, n, [])
+```
+Referrence: https://www.youtube.com/watch?v=sz1qaKt0KGQ
+Analysis: Choice:n left bracket, n right bracket; Constraint: you can put left bracket as long as you have any left. you cannot put a right bracket if there is not enough left mathcing with it; Exit: when the thing you put together (whatever it is as long as it meets the constaints.) hit the length of of 2*n, collect it as part of the result.
+
+
+**II). DP**
+| O(T): O() | O(S): O() | Rt: 20ms | 
+```python
+    def generateParenthesis(self, n: int) -> List[str]:
+        dp = [[] for _ in range(n+1)]
+        dp[0].append('')
+        for i in range(n+1):
+            for j in range(i):
+                dp[i] += ['(' + x + ')' + y for x in dp[j] for y in dp[i-1-j]]
+        return dp[n]
+```
+Analysis: 
+		f(0) = ‘’
+        f(1) = (f(0))f(0)
+        f(2) = (f(0))f(1) + (f(1))f(0)
+        f(3) = (f(0))f(2) + (f(1))f(1) + (f(2))f(0)
+        In general
+        f(n) = ( f(0) ) f(n-1) + ( f(1) ) f(n-2) + ( f(2) ) f(n-3) + ...... + ( f(n-1) ) f(0)
+Referrence: https://leetcode.com/problems/generate-parentheses/discuss/10127/An-iterative-method; https://leetcode.com/problems/generate-parentheses/discuss/10127/An-iterative-method./11044; https://leetcode.com/problems/generate-parentheses/discuss/10369/Clean-Python-DP-Solution;
+
+

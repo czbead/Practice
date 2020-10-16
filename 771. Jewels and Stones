@@ -1,0 +1,51 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Count Jewel**
+| O(T): O(mn) | O(S): O(1) | Rt: 32ms | 
+```python
+    def numJewelsInStones(self, J: str, S: str) -> int:
+        return sum(S.count(i) for i in J)
+```
+
+
+**II). Counter**
+| O(T): O(n+m) | O(S): O(n) | Rt: 20ms | 
+```python
+    def numJewelsInStones(self, J: str, S: str) -> int:
+        ct = collections.Counter(S)
+        return sum(ct[i] for i in J)
+```
+Comment: one pass on S, should be much faster. 
+Alternative: | Rt: 32ms |
+```python
+    def numJewelsInStones(self, J: str, S: str) -> int:
+        dt = collections.defaultdict(int)
+        for s in S: dt[s] += 1
+        return sum(dt[j] for j in J)
+```
+Triple: | Rt: 28ms |
+```python
+    def numJewelsInStones(self, J: str, S: str) -> int:
+        dt = {}
+        for s in S: dt[s] = dt.get(s, 0) + 1
+        return sum(dt[j] for j in J if j in dt)
+```
+
+
+**III). Jewel Set**
+| O(T): O(n + m) | O(S): O(n) | Rt: 28ms | 
+```python
+    def numJewelsInStones(self, J: str, S: str) -> int:
+        return sum(i in set(J) for i in S)
+```
+
+
+**IV). Limit State**
+| O(T): O(m + n) | O(S): O(1) | Rt: 40ms | 
+```python
+    def numJewelsInStones(self, J: str, S: str) -> int:
+        m = [0] * 128
+        for s in S: m[ord(s)] += 1
+        return sum(m[ord(j)] for j in J)
+```
+Comment: since the S and J are not too huge in this problem, you cannot see the power of this solution. 
+

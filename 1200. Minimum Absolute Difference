@@ -1,0 +1,51 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 384ms | 
+```python
+    def minimumAbsDifference(self, arr: List[int]) -> List[List[int]]:
+        arr.sort()
+        pairs = [(i, j) for i, j in zip(arr, arr[1:])]
+        diffs = [j - i for i, j in pairs]
+        mindiff = min(diffs)
+        return [pairs[i] for i in range(len(pairs)) if diffs[i] == mindiff]
+```
+Alternative:  | Rt: 368ms |
+```python
+    def minimumAbsDifference(self, arr: List[int]) -> List[List[int]]:
+        arr.sort()
+        mindiff = min(j-i for i, j in zip(arr, arr[1:]))
+        return [(i, j) for i, j in zip(arr, arr[1:]) if j-i == mindiff]
+```
+Comment: I tried to get the zip out therefore we can reuse it. However, it didn't work unless you convert the zip object to list. Even with the zip object converted to list, it is slower than this version (build zip object on the fly)
+
+Comment: it seems the range of input is too big to apply counting sort. 
+
+
+**II). Build On the Fly**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 340ms | 
+```python
+    def minimumAbsDifference(self, arr: List[int]) -> List[List[int]]:
+        arr.sort()
+        rst, mindiff = [], float('inf')
+        for i, j in zip(arr, arr[1:]):
+            if j - i < mindiff: mindiff, rst = j - i, [(i, j)]
+            elif j - i == mindiff: rst.append((i, j))
+        return rst
+```
+
+
+**III). O(1) Space**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 400ms | 
+```python
+    def minimumAbsDifference(self, arr: List[int]) -> List[List[int]]:
+        arr.sort()
+        rst, mindiff, l = [], float('inf'), len(arr)
+        for i in range(l - 1): mindiff = min(mindiff, arr[i+1] - arr[i])
+        for i in range(l - 1): 
+            if arr[i+1] - arr[i] == mindiff: rst.append((arr[i], arr[i+1]))
+        return rst
+```
+Comment: please be aware that build-in in-place sort DO takes some extra space, we claim in-place sort O(1) in theory. 
+
+
+

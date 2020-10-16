@@ -1,0 +1,33 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(t): O(n) | O(m): O(1) | Rt: 36ms | in-place
+```python
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        dumh = head
+        while dumh and dumh.next:
+            if dumh.val == dumh.next.val:
+                dumh.next = dumh.next.next
+            else: dumh = dumh.next
+        return head
+```
+Alternative: | Rt: 36ms |
+```python
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        dumh = head
+        while dumh:
+            while dumh.next and dumh.val == dumh.next.val:
+                dumh.next = dumh.next.next
+            dumh = dumh.next
+        return head
+```
+
+**II). Recursion**
+| O(t): O(n) | O(m): O(1) | Rt: 40ms | 
+```python
+    def deleteDuplicates(self, head: ListNode) -> ListNode:
+        if not head or not head.next: return head
+        if head.val == head.next.val: return self.deleteDuplicates(head.next)
+        else: 
+            head.next = self.deleteDuplicates(head.next)
+            return head
+```

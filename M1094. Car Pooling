@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy: Hash St and End**
+| O(T): O(n) | O(S): O(n) | Rt: 72ms | 
+```python
+    def carPooling(self, trips: List[List[int]], capacity: int) -> bool:
+        dt_st, dt_end = {}, {}
+        for n, st, end in trips:
+            dt_st[st] = dt_st.get(st, 0) + n
+            dt_end[end] =  dt_end.get(end, 0) + n
+        for i in range(1000):
+            capacity += dt_end.get(i, 0)
+            capacity -= dt_st.get(i, 0)
+            if capacity < 0: return False
+        return True
+```
+
+Alternative: | Rt: 60ms |
+```python
+    def carPooling(self, trips: List[List[int]], capacity: int) -> bool:
+        sts, ends = [0] * 1000, [0] * 1000
+        for n, st, end in trips:
+            sts[st] += n
+            ends[end] +=  n
+        for i in range(1000):
+            capacity += ends[i]
+            capacity -= sts[i]
+            if capacity < 0: return False
+        return True
+```
+
+Triple: | Rt: 68ms |
+```python
+    def carPooling(self, trips: List[List[int]], capacity: int) -> bool:
+        add = [0] * 1000
+        for n, st, end in trips:
+            add[st] += n
+            add[end] -=  n
+        for i in range(1000):
+            capacity -= add[i]
+            if capacity < 0: return False
+        return True
+```
+Referrence: https://leetcode.com/problems/car-pooling/discuss/317611/C%2B%2BJava-O(n)-Thousand-and-One-Stops

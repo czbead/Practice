@@ -1,0 +1,60 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy with MinHeap**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 32ms | 
+```python
+    def longestDiverseString(self, a: int, b: int, c: int) -> str:
+        rst, arr = '', [(-a, 'a'), (-b, 'b'), (-c, 'c')]
+        heapq.heapify(arr)
+        while True:
+            ct, char = heapq.heappop(arr)
+            if ct == 0: break
+            if rst and rst[-1] == char:
+                ct1, char1 = heapq.heappop(arr)
+                if ct1 == 0: break
+                rst += char1
+                ct1 += 1
+                heapq.heappush(arr, (ct, char))
+                heapq.heappush(arr, (ct1, char1))
+            else:
+                rst += char * min(-ct, 2)
+                ct += min(-ct, 2)
+                heapq.heappush(arr, (ct, char))
+        return rst
+```
+
+Alternative: | Rt: 32ms |
+```python
+    def longestDiverseString(self, a: int, b: int, c: int) -> str:
+        rst, arr = '', [(-a, 'a'), (-b, 'b'), (-c, 'c')]
+        heapq.heapify(arr)
+        while True:
+            ct, char = heapq.heappop(arr)
+            if ct == 0: break
+            if rst and rst[-1] == char:
+                ct1, char1 = heapq.heapreplace(arr, (ct, char))
+                if ct1 == 0: break
+                rst += char1
+                ct1 += 1
+                heapq.heappush(arr, (ct1, char1))
+            else:
+                rst += char * min(-ct, 2)
+                ct += min(-ct, 2)
+                heapq.heappush(arr, (ct, char))
+        return rst
+```
+
+
+**II). Rotate Until Sorted**
+| O(T): O() | O(S): O() | Rt: 24ms | 
+```python
+    def longestDiverseString(self, a: int, b: int, c: int, ca='a', cb='b', cc='c') -> str:
+        if a < b: return self.longestDiverseString(b, a, c, cb, ca, cc)
+        if b < c: return self.longestDiverseString(a, c, b, ca, cc, cb)
+        if b == 0: return ca * min(a, 2)
+        takea = min(a, 2)
+        cta = a - takea
+        takeb = 1
+        if b >= cta: takeb = min(b, 2)
+        return ca * takea + cb * takeb + self.longestDiverseString(cta, b-takeb, c, ca, cb, cc)
+```
+Referrence: https://leetcode.com/problems/longest-happy-string/discuss/564277/C%2B%2BJava-a-greater-b-greater-c

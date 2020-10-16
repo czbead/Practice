@@ -1,0 +1,90 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking**
+| O(T): O() | O(S): O() | Rt: 76ms | 
+```python
+    def solveNQueens(self, n: int) -> List[List[str]]:
+        def validDia(grid, used, i, j):
+            return all(abs(x-i) != abs(y-j) for x, y in used)
+        
+        def formatGrid(grid):
+            return [''.join(row) for row in grid]
+        
+        def backtrack(grid, n, col, used, i, rst):
+            if i == n: rst.append(formatGrid(grid)); return
+            for j in range(n):
+                if not col[j] and validDia(grid, used, i, j):
+                    col[j], grid[i][j] = 1, 'Q'
+                    used.add((i, j))
+                    backtrack(grid, n, col, used, i+1, rst)
+                    col[j], grid[i][j] = 0, '.'
+                    used.remove((i, j))
+        
+        used, c, g, rst = set(), [0] * n, [['.'] * n for _ in range(n)], []
+        backtrack(g, n, c, used, 0, rst)
+        return rst
+```
+
+Alternative: | Rt: 128ms |
+```python
+    def solveNQueens(self, n: int) -> List[List[str]]:
+        def isValid(grid, used, i, j):
+            return all(abs(x-i) != abs(y-j) and j != y for x, y in used) 
+        
+        def formatGrid(grid):
+            return [''.join(row) for row in grid]
+        
+        def backtrack(grid, used, i, rst):
+            if i == len(grid): rst.append(formatGrid(grid)); return
+            for j in range(n):
+                if isValid(grid, used, i, j):
+                    grid[i][j] = 'Q'
+                    used.add((i, j))
+                    backtrack(grid, used, i+1, rst)
+                    grid[i][j] = '.'
+                    used.remove((i, j))
+        
+        used, g, rst = set(), [['.'] * n for _ in range(n)], []
+        backtrack(g, used, 0, rst)
+        return rst
+```
+
+Triple: | Rt: 140ms |
+```python
+    def solveNQueens(self, n: int) -> List[List[str]]:
+        def isValid(grid, used, i, j):
+            return all(abs(x-i) != abs(y-j) and j != y for x, y in used) 
+    
+        def backtrack(grid, used, i):
+            if i == len(grid): return [[''.join(row) for row in grid]]
+            arr = []
+            for j in range(n):
+                if isValid(grid, used, i, j):
+                    grid[i][j] = 'Q'
+                    used.add((i, j))
+                    arr += backtrack(grid, used, i+1)
+                    grid[i][j] = '.'
+                    used.remove((i, j))
+            return arr
+        
+        used, g = set(), [['.'] * n for _ in range(n)]
+        return backtrack(g, used, 0)
+```
+
+Forth: | Rt: 52ms |
+```python
+    def solveNQueens(self, n: int) -> List[List[str]]:
+        def backtrack(n, grid, col, rcdif, rcsum, r, rst):
+            if r == n: return rst.append([''.join(row) for row in grid]); return
+            for c in range(n):
+                if c not in col and r-c not in rcdif and r+c not in rcsum:
+                    grid[r][c] = 'Q'
+                    col.add(c); rcdif.add(r-c); rcsum.add(r+c)
+                    backtrack(n, grid, col, rcdif, rcsum, r+1, rst)
+                    grid[r][c] = '.'
+                    col.remove(c); rcdif.remove(r-c); rcsum.remove(r+c)
+        
+        rst, g, c, d, s = [], [['.'] * n for _ in range(n)], set(), set(), set()
+        backtrack(n, g, c, d, s, 0, rst)
+        return rst
+```
+Referrence: https://leetcode.com/problems/n-queens/discuss/19810/Fast-short-and-easy-to-understand-python-solution-11-lines-76ms

@@ -1,0 +1,143 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Slice**
+| O(t): O(n) | O(m): O(n) | Rt: 64ms | 
+```python
+    def rotate(self, nums: List[int], k: int) -> None:
+        k = k % len(nums)
+        nums[:] = nums[-k:] + nums[:-k]
+```
+Comment: the ```nums[:]=``` will update the list nums refers (points) to directly while ```nums=``` the "nums" variable (referrence) just simply points (refers) to another real list in memory.
+
+
+**II). Pop Insert**
+| O(t): O(n*n) | O(m): O(1) | Rt: 128ms | 
+note: k is at most n after k % len(nums)
+```python
+    def rotate(self, nums: List[int], k: int) -> None:
+        k = k % len(nums)
+        for _ in range(k):
+            nums.insert(0, nums.pop())
+```
+
+
+**III). TLE Swap**
+| O(t): O(n*n) | O(m): O(1) | Rt: ms | 
+```python
+    def rotate(self, nums: List[int], k: int) -> None:
+        for _ in range(k % len(nums)):
+            pre = nums[-1]
+            for i in range(len(nums)):
+                tmp = nums[i]
+                nums[i] = pre
+                pre = tmp
+```
+
+
+**IV). Reverse**
+| O(t): O(n) | O(m): O(n) | Rt: 56ms | 
+```python
+    def rotate(self, nums: List[int], k: int) -> None:
+        k = k % len(nums)
+        nums[:] = list(reversed(nums[:-k])) + list(reversed(nums[-k:]))
+        nums.reverse()
+```
+Alternative: O(1) space complexity | Rt: 56ms |
+```python
+    def rotate(self, nums: List[int], k: int) -> None:
+        #range [l, r), left include, right exclude
+        def reverse(lst, l, r):
+            r -= 1
+            while l < r:
+                lst[l], lst[r] = lst[r], lst[l]
+                l, r = l+1, r-1
+            
+        leng = len(nums)
+        k = k % leng
+        reverse(nums, leng-k, leng)
+        reverse(nums, 0, leng-k)
+        # nums.reverse()
+        reverse(nums, 0, leng)
+```
+
+
+**V). Duplicate**
+| O(t): O(n) | O(m): O(n) | Rt: 64ms | 
+```python
+    def rotate(self, nums: List[int], k: int) -> None:
+        leng = len(nums)
+        k = k % leng
+        copy = [0] * leng
+        for i in range(leng):
+            copy[(i+k)%leng] = nums[i]
+        nums[:] = copy
+```
+
+
+**VI). Cyclic Replacements**
+| O(t): O(n) | O(m): O(1) | Rt: 68ms | 
+```python
+    def rotate(self, nums: List[int], k: int) -> None:
+        def round(nums, st, k, ct):
+            #during each round, save the original index and val of the start point
+            prei, prev = st, nums[st]
+            while ct < len(nums):
+                #the index of the val that should be put in current (st) position
+                nxti = (st - k) % len(nums)
+                #circle end, because the head bite the end now
+                if nxti == prei: 
+                    nums[st] = prev
+                    #return the states for the next potential round
+                    return (ct + 1, st - 1)
+                else:
+                    #safely step forward
+                    nums[st] = nums[nxti]
+                    st = nxti
+                    ct += 1
+    
+        k = k % len(nums)
+        if k == 0: return
+        ct = st = 0
+        while ct < len(nums):
+            #k is foot length, st is the starting index, ct is the amount of modified points so far
+            ct, st = round(nums, st, k, ct)
+```
+Comment: when ```len(nums) % (k % len(nums)) != 0```, the process need only one round. Otherwise, it needs k rounds
+
+
+
+**VII). Swap Last K (Iteration)**
+| O(t): O(n) | O(m): O(1) | Rt: 52ms | 
+```python
+    def rotate(self, nums: List[int], k: int) -> None:
+        st, remain, k = 0, len(nums), k % len(nums)
+        #when remain == k, each ele swap with itself
+        while k and remain > k:
+            for i in range(k):
+                nums[st+i], nums[i-k] = nums[i-k], nums[st+i]
+            st, remain = st+k, remain-k
+            k %= remain   
+```
+Referrence: https://leetcode.com/problems/rotate-array/discuss/54426/Summary-of-solutions-in-Python
+
+
+**VIII). Swap Last K (Recursion)**
+| O(t): O(n) | O(m): O(1) | Rt: 60ms | 
+```python
+    def rotate(self, nums: List[int], k: int) -> None:
+        def rotate(nums, st, k):
+            k %= len(nums) - st
+            if k == 0: return
+            for i in range(k):
+                nums[st+i], nums[i-k] = nums[i-k], nums[st+i]
+            rotate(nums, st+k, k) 
+        rotate(nums, 0, k)  
+```
+Alternative: | Rt: 60ms |
+```python
+    def rotate(self, nums: List[int], k: int, st: int = 0) -> None:
+        k %= len(nums) - st
+        if k == 0: return
+        for i in range(k):
+            nums[st+i], nums[i-k] = nums[i-k], nums[st+i]
+        self.rotate(nums, k, st+k) 
+```

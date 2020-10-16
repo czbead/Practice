@@ -1,0 +1,75 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer with HashMap and Binary Search**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def threeSumMulti(self, A: List[int], target: int) -> int:
+        l, dt = len(A), collections.defaultdict(list)
+        rst = 0
+        for i in range(l): dt[A[i]].append(i)
+        for i in range(l-2):
+            for j in range(i+1, l-1):
+                sum2 = A[i] + A[j]
+                if sum2 > target: continue
+                key = target - sum2
+                if key not in dt: continue
+                index = bisect.bisect(dt[key], j)
+                rst += len(dt[key]) - index
+        return rst % (10 ** 9 + 7)
+```
+
+Alternative: 
+```python
+    def threeSumMulti(self, A: List[int], target: int) -> int:
+        l, m = len(A), [[] for _ in range(101)]
+        rst = 0
+        for i in range(l): m[A[i]].append(i)
+        for i in range(l-2):
+            for j in range(i+1, l-1):
+                sum2 = A[i] + A[j]
+                if sum2 > target: continue
+                key = target - sum2
+                if not m[key]: continue
+                index = bisect.bisect(m[key], j)
+                rst += len(m[key]) - index
+        return rst % (10 ** 9 + 7)
+```
+
+
+**II). Counter**
+| O(T): O() | O(S): O() | Rt: 88ms | 
+```python
+    def threeSumMulti(self, A: List[int], target: int) -> int:
+        ct = collections.Counter(A)
+        rst = 0
+        for i in ct:
+            for j in ct:
+                if j < i: continue
+                k = target - i - j
+                if k < j: continue
+                if i == j == k: rst += ct[i] * (ct[i] - 1) * (ct[i] - 2) // 6
+                elif i == j < k: rst += ct[i] * (ct[i] - 1) // 2 * ct[k]
+                elif i < j == k: rst += ct[i] * ct[j] * (ct[j] - 1) // 2
+                elif i < j < k: rst += ct[i] * ct[j] * ct[k]
+        return rst % (10 ** 9 + 7)
+```
+Referrence: https://leetcode.com/problems/3sum-with-multiplicity/discuss/181131/C%2B%2BJavaPython-O(N-%2B-101-*-101)
+
+Alternative: | Rt: 72ms |
+```python
+    def threeSumMulti(self, A: List[int], target: int) -> int:
+        ct = collections.Counter(A)
+        keys, l = sorted(ct), len(ct)
+        rst = 0
+        for i in range(l):
+            for j in range(i, l):
+                k = target - keys[i] - keys[j]
+                if k < keys[j]: break
+                if j == i:
+                    if k == keys[i]: rst += ct[k] * (ct[k] - 1) * (ct[k] - 2) // 6
+                    else: rst += ct[keys[i]] * (ct[keys[i]] - 1) // 2 * ct[k]
+                else:
+                    if k == keys[j]: rst += ct[keys[i]] * (ct[k] - 1) * ct[k] // 2
+                    else: rst += ct[keys[i]] * ct[keys[j]] * ct[k]
+        return rst % (10 ** 9 + 7)
+```
+Comment: I don't think the solutions are correct, all the original indices are disordered in these solutions. None of the solutions posted are correct according to the problem's requirements especially "such that i < j < k and A[i] + A[j] + A[k] == target."; I don't think any linear time complexity algorithm is possible for this problem. All solutions posted messed up the original indices for their convenience. Let me put it straight, if the input is a descending list (perfectly valid input), the answer should be 0 (you cannot find any tuple met the above requirement). Anyway, don't waste your time on this misleading problem. 

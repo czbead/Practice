@@ -1,0 +1,12 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP: Math**
+| O(T): O() | O(S): O() | Rt: 32ms | 
+```python
+    def numTilings(self, N: int) -> int:
+        if N < 4: return [1, 2, 5][N-1]
+        a, b, c = 1, 2, 5
+        for _ in range(N-3):
+            a, b, c = b, c, c+c+a
+        return c % (10 ** 9 + 7)
+```
+Referrence: https://leetcode.com/problems/domino-and-tromino-tiling/discuss/116581/Detail-and-explanation-of-O(n)-solution-why-dpn2*dn-1%2Bdpn-3;

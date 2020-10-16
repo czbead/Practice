@@ -1,0 +1,87 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Get Leaf Sequence -- Recursion**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def leafSimilar(self, root1: TreeNode, root2: TreeNode) -> bool:
+        def getLeaf(node):
+            if not node: return []
+            if not node.left and not node.right: return [node.val]
+            return getLeaf(node.left) + getLeaf(node.right)
+        
+        return getLeaf(root1) == getLeaf(root2)
+```
+
+
+**II). Generator with Recursion**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def leafSimilar(self, root1: TreeNode, root2: TreeNode) -> bool:
+        def getLeaf(node):
+            if not node: return
+            if not node.left and not node.right: yield [node.val]
+            yield from getLeaf(node.left) 
+            yield from getLeaf(node.right)
+        
+        nxt1, nxt2 = getLeaf(root1), getLeaf(root2)
+        for i, j in itertools.zip_longest(nxt1, nxt2):
+            if i != j: return False
+        return True
+```
+
+
+**III). Generator with Stack**
+| O(T): O() | O(S): O() | Rt: 28ms | 
+```python
+    def leafSimilar(self, root1: TreeNode, root2: TreeNode) -> bool:
+        def getLeaf(node):
+            stack = []
+            while node or stack:
+                while node:
+                    stack.append(node)
+                    node = node.left
+                cur = stack.pop()
+                if not cur.left and not cur.right: yield cur.val
+                node = cur.right
+        
+        nxt1, nxt2 = getLeaf(root1), getLeaf(root2)
+        for i, j in itertools.zip_longest(nxt1, nxt2):
+            if i != j: return False
+        return True
+```
+
+
+**IV). Get Leaf Sequence -- Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def leafSimilar(self, root1: TreeNode, root2: TreeNode) -> bool:
+        def getLeaf(node):
+            rst, s = [], [(node, 0)]
+            while s:
+                node, visited = s.pop()
+                if not node: continue
+                if not visited: 
+                    s.extend([(node.right, 0), (node, 1), (node.left, 0)])
+                else:
+                    if not node.left and not node.right: rst.append(node.val)
+            return rst
+        return getLeaf(root1) == getLeaf(root2)
+```
+
+
+**V). Get Leaf Sequence -- Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def leafSimilar(self, root1: TreeNode, root2: TreeNode) -> bool:
+        def getLeaf(node):
+            rst, stack = [], []
+            while node or stack:
+                while node:
+                    stack.append(node)
+                    node = node.left
+                node = stack.pop()
+                if not node.right and not node.left: rst.append(node.val)
+                node = node.right
+            return rst
+        return getLeaf(root1) == getLeaf(root2)
+```
+

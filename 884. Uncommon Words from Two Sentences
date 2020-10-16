@@ -1,0 +1,15 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). One Counter**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def uncommonFromSentences(self, A: str, B: str) -> List[str]:
+        ct = collections.Counter(A.split() + B.split())
+        return [k for k in ct if ct[k] == 1]
+```
+Alternative: | Rt: 28ms |
+```python
+    def uncommonFromSentences(self, A: str, B: str) -> List[str]:
+        ct = collections.Counter((A + " " + B).split())
+        return [k for k in ct if ct[k] == 1]
+```
+

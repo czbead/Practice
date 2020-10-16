@@ -1,0 +1,77 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Find next Maximum Digit Greater than Current**
+| O(T): O(n * n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def maximumSwap(self, num: int) -> int:
+        if num < 10: return num
+        digit = [int(i) for i in str(num)]
+        l = len(digit)
+        if all(digit[i] >= digit[i+1] for i in range(l-1)): return num
+        for i in range(l-1):
+            mxi = i
+            for j in range(i+1, l):
+                #1993 -> 9913 rather than 9193
+                #98368 edge case; 
+                if digit[j] > digit[i] and digit[j] >= digit[mxi]: mxi = j
+            if mxi != i:
+                digit[i], digit[mxi] = digit[mxi], digit[i]
+                return int(''.join(map(str, digit)))
+```
+
+Alternative: without precheck. | Rt: 24ms |
+```python
+    def maximumSwap(self, num: int) -> int:
+        if num < 10: return num
+        digit = [int(i) for i in str(num)]
+        l = len(digit)
+        for i in range(l-1):
+            mxi = i
+            for j in range(i+1, l):
+                #1993 -> 9913 rather than 9193
+                #98368 edge case; 
+                if digit[j] > digit[i] and digit[j] >= digit[mxi]: mxi = j
+            if mxi != i:
+                digit[i], digit[mxi] = digit[mxi], digit[i]
+                return int(''.join(map(str, digit)))
+        return num
+```
+
+
+**II). Bucket Collect the Last Appearing Index**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def maximumSwap(self, num: int) -> int:
+        if num < 10: return num
+        digit = [int(i) for i in str(num)]
+        l = len(digit)
+        m = [0] * 10 
+        for i in range(l): m[digit[i]] = i
+        for i in range(l):
+        	#the j digit should be greater than i digit
+            for j in range(9, digit[i], -1):
+            	#the index of j digit should be after i digit
+                if m[j] > i: 
+                    digit[i], digit[m[j]] = digit[m[j]], digit[i]
+                    return int(''.join(map(str, digit)))
+        return num
+```
+Reference: https://leetcode.com/problems/maximum-swap/discuss/107068/Java-simple-solution-O(n)-time
+
+
+**III). Backward Traverse**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def maximumSwap(self, num: int) -> int:
+        if num < 10: return num
+        digit = list(str(num))
+        l = len(digit)
+        mxi, candidate_i, candidate_j = l-1, None, None 
+        for i in range(l-2, -1, -1):
+            if digit[i] > digit[mxi]: mxi = i
+            elif digit[i] < digit[mxi]: candidate_i, candidate_j = i, mxi
+        if candidate_i is None: return num
+        digit[candidate_i], digit[candidate_j] = digit[candidate_j], digit[candidate_i]
+        return int(''.join(digit))
+```
+Referrence: https://leetcode.com/problems/maximum-swap/discuss/107073/C%2B%2B-one-pass-simple-and-fast-solution%3A-1-3ms-O(n)-time
+

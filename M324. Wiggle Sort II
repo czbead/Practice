@@ -1,0 +1,51 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Index Mapping**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 180ms | 
+```python
+    def wiggleSort(self, nums: List[int]) -> None:
+        nsort, l = sorted(nums), len(nums)
+        m, r = (l+1) // 2 - 1, l - 1
+        for i in range(l):
+            if i & 1: nums[i] = nsort[r]; r -= 1  #odd index
+            else: nums[i] = nsort[m]; m -= 1  #even index
+```
+Referrence: https://leetcode.com/problems/wiggle-sort-ii/discuss/77678/3-lines-Python-with-Explanation-Proof
+
+ 
+**II). Three Way Partition**
+| O(T): O(n) | O(S): O(n) | Rt: 3680ms | 
+```python
+    def wiggleSort(self, nums: List[int]) -> None:
+        def findKthItem(arr, k):
+            def partition(arr, st, end):
+                ra = random.randint(st, end)
+                arr[ra], arr[end] = arr[end], arr[ra]
+                l = st
+                for r in range(st, end):
+                    if arr[r] < arr[end]:
+                        arr[l], arr[r] = arr[r], arr[l]
+                        l += 1
+                arr[l], arr[end] = arr[end], arr[l]
+                return l
+                
+            l, r = 0, len(arr)-1
+            while True:
+                p = partition(arr, l, r)
+                if p == k: return arr[p]
+                if p < k: l = p+1
+                else: r = p-1
+                    
+        l = len(nums)
+        k = (l+1) // 2
+        kth = findKthItem(nums, k-1)
+        small, great = [], []
+        for i in nums: 
+            if i < kth: small.append(i)
+            elif i > kth: great.append(i)
+        small = small + [kth] * (k-len(small))
+        great = [kth] * (l-k-len(great)) + great
+        for i in range(l):
+            if i & 1: nums[i] = great.pop()
+            else: nums[i] = small.pop()
+```
+Comment: the findkthitem function is O(1) time complexity and O(1) space complexity; if you cant get it, go to problem 215. 

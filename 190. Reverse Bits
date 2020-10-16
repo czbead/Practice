@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). String Cheat**
+| O(t): O(32) | O(m): O(n) | Rt: 24ms | 
+```python
+    def reverseBits(self, n):
+        return int('{0:032b}'.format(n)[::-1], 2)
+```
+
+
+**II). Bit Manipulation**
+| O(t): O(32) | O(m): O(1) | Rt: 20ms | 
+```python
+    def reverseBits(self, n):
+        rst = 0
+        for i in range(32):
+        	#get the last binary digit, from lowest to highest
+            bit = n >> i & 1
+            #take the current lowest as its conresponding high state
+            rst |= bit << (31 - i)
+        return rst
+```
+Comment: ```rst += bit << (31 - i)``` works as well, significantly slower.
+Alternative: elegant version. | Rt: 16ms |
+```python
+    def reverseBits(self, n):
+        rst = 0
+        for _ in range(32):
+        	#similar to: rst = rst * 10 + num, "<<" (left shift) equal to "*2" (multiply 2), bit operator '|' (bitwise or) equals to "+"
+            rst = rst << 1 | (n & 1)
+            n >>= 1
+        return rst
+```
+
+Others: **Divide and Conquer**. It is not hard to understand, just not intuitive to code it down simply because of the masking. Not quite readable.
+Referrence: https://leetcode.com/problems/reverse-bits/discuss/54932/Three-different-solutions-in-python

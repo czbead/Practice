@@ -1,0 +1,75 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def swapPairs(self, head: ListNode) -> ListNode:
+        def swap(h, pre):
+            if not h or not h.next: return
+            a, b  = h.next, h.next.next
+            a.next = h; h.next = b
+            if pre: pre.next = a
+            swap(b, h)
+            
+        if not head or not head.next: return head
+        h = head.next
+        swap(head, None)
+        return h
+```
+Comment: from start to end version. 
+Alternative: from end to start version. | Rt: 16ms |
+```python
+    def swapPairs(self, head: ListNode) -> ListNode:
+        if not head or not head.next: return head
+        nxt = self.swapPairs(head.next.next)
+        a = head.next
+        a.next = head; head.next = nxt
+        return a
+```
+Triple: | Rt: 28ms |
+```python
+    def swapPairs(self, head: ListNode, pre = None) -> ListNode:
+        if not head or not head.next: return head
+        a, nxt = head.next, head.next.next
+        if pre: pre.next = a
+        a.next = head; head.next = nxt
+        self.swapPairs(nxt, head)
+        return a
+```
+Forth: concise version. | Rt: 24ms |
+```python
+    def swapPairs(self, head: ListNode) -> ListNode:
+        if not head or not head.next: return head
+        a = head.next
+        head.next = self.swapPairs(a.next)
+        a.next = head
+        return a
+```
+
+
+**II). Iterative**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def swapPairs(self, head: ListNode) -> ListNode:
+        if not head or not head.next: return head
+        h, pre = head.next, None
+        while head and head.next:
+            sec, third = head.next, head.next.next
+            if pre: pre.next = sec
+            sec.next = head; head.next = third
+            head, pre = head.next, head
+        return h
+```
+Comment: by keep a previous pointer state
+Alternative: by dummy an extra node. | Rt: 32ms |
+```python
+    def swapPairs(self, head: ListNode) -> ListNode:
+        rt = h = ListNode(None); h.next = head
+        while h.next and h.next.next:
+            a, b = h.next, h.next.next
+            a.next = b.next; b.next = a; h.next = b
+            h = a
+        return rt.next
+```
+Referrence: https://leetcode.com/problems/swap-nodes-in-pairs/discuss/11046/My-simple-JAVA-solution-for-share
+
+

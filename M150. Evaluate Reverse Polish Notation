@@ -1,0 +1,65 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 96ms | 
+```python
+    def evalRPN(self, tokens: List[str]) -> int:
+        if not tokens: return
+        cur, nstack = None, []
+        for i in tokens:
+            try:
+                n = int(i)
+                nstack.append(n)
+            except:
+                b, a = nstack.pop(), nstack.pop()
+                if i == '+': cur = a + b
+                elif i == '-': cur = a - b
+                elif i == '*': cur = a * b
+                else: cur = int(a/b)
+                nstack.append(cur)
+        return nstack[-1]
+```
+Alternative: make it conciser. | Rt: 100ms |
+```python
+    def evalRPN(self, tokens: List[str]) -> int:
+        s = []
+        for i in tokens:
+            if i == '+': s.append(s.pop() + s.pop())
+            elif i == '*': s.append(s.pop() * s.pop())
+            elif i == '-': s.append(-(s.pop() - s.pop()))
+            elif i == '/': 
+                b, a = s.pop(), s.pop()
+                s.append(int(a/b))
+            else: s.append(int(i))  
+        return s[0]
+```
+Comment: python isdigit return false for negative number string. Therefore, we cannot use isdigit to do the number check here. 
+
+
+**II). Deque**
+| O(T): O(n) | O(S): O(1) | Rt: 104ms | 
+```python
+    def evalRPN(self, tokens: List[str]) -> int:
+        que = collections.deque(tokens)
+        while len(que) > 1:
+            a = que.popleft()
+            if a == '+': que.append(que.pop() + que.pop())
+            elif a == '*': que.append(que.pop() * que.pop())
+            elif a == '-': que.append(-(que.pop() - que.pop()))
+            elif a == '/': c, b = que.pop(), que.pop(); que.append(int(b/c))
+            else: que.append(int(a))
+        return que[0]
+```
+Alternative: | Rt: 108ms |
+```python
+    def evalRPN(self, tokens: List[str]) -> int:
+        que = collections.deque(tokens)
+        while isinstance(que[0], str):
+            a = que.popleft()
+            if a == '+': que.append(que.pop() + que.pop())
+            elif a == '*': que.append(que.pop() * que.pop())
+            elif a == '-': que.append(-(que.pop() - que.pop()))
+            elif a == '/': c, b = que.pop(), que.pop(); que.append(int(b/c))
+            else: que.append(int(a))
+        return que[0]
+```
+

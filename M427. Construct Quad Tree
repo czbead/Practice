@@ -1,0 +1,17 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(T): O(n*n) | O(S): O(1) | Rt: 140ms | 
+```python
+    def construct(self, grid: List[List[int]]) -> 'Node':
+        def build(grid, x, y, le):
+            if le == 1: return Node(grid[x][y], True, None, None, None, None)
+            topleft = build(grid, x, y, le//2)
+            topright = build(grid, x, y+le//2, le//2)
+            bottomleft = build(grid, x+le//2, y, le//2)
+            bottomright = build(grid, x+le//2, y+le//2, le//2)
+            if topleft.isLeaf and topright.isLeaf and bottomleft.isLeaf and bottomright.isLeaf and topleft.val == topright.val == bottomleft.val == bottomright.val:
+                return Node(topleft.val, True, None, None, None, None)
+            return Node(None, False, topleft, topright, bottomleft, bottomright)
+        return build(grid, 0, 0, len(grid))
+```
+Referrence: https://leetcode.com/problems/construct-quad-tree/discuss/154565/Java-recursive-solution

@@ -1,0 +1,98 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Semaphore**
+| O(T): O(1) | O(S): O(1) | Rt: 36ms | 
+```python
+from threading import Semaphore
+class Foo:
+    def __init__(self):
+        self.smp1 = Semaphore(0)
+        self.smp2 = Semaphore(0)
+        
+    def first(self, printFirst: 'Callable[[], None]') -> None:
+        printFirst()
+        self.smp1.release()
+
+    def second(self, printSecond: 'Callable[[], None]') -> None:
+        with self.smp1: printSecond()
+        self.smp2.release()
+
+    def third(self, printThird: 'Callable[[], None]') -> None:
+        with self.smp2: printThird()
+```
+
+
+**II). Event**
+| O(T): O(1) | O(S): O(1) | Rt: 44ms | 
+```python
+from threading import Event
+class Foo:
+    def __init__(self):
+        self.event1 = Event()
+        self.event2 = Event()
+        
+    def first(self, printFirst: 'Callable[[], None]') -> None:
+        printFirst()
+        self.event1.set()
+
+    def second(self, printSecond: 'Callable[[], None]') -> None:
+        self.event1.wait() 
+        printSecond()
+        self.event2.set()
+
+    def third(self, printThird: 'Callable[[], None]') -> None:
+        self.event2.wait() 
+        printThird()
+```
+
+
+**III). Lock**
+| O(T): O(1) | O(S): O(1) | Rt: 28ms | 
+```python
+from threading import Lock
+class Foo:
+    def __init__(self):
+        self.lock1 = Lock()
+        self.lock2 = Lock()
+        self.lock1.acquire()
+        self.lock2.acquire()
+        
+    def first(self, printFirst: 'Callable[[], None]') -> None:
+        printFirst()
+        self.lock1.release()
+
+    def second(self, printSecond: 'Callable[[], None]') -> None:
+        with self.lock1: printSecond()
+        self.lock2.release()
+
+    def third(self, printThird: 'Callable[[], None]') -> None:
+        with self.lock2: printThird()
+```
+
+
+**IV). Barrier**
+| O(T): O(1) | O(S): O(1) | Rt: 40ms | 
+```python
+from threading import Barrier
+class Foo:
+    def __init__(self):
+        self.barrier1 = Barrier(2)
+        self.barrier2 = Barrier(2)
+        
+    def first(self, printFirst: 'Callable[[], None]') -> None:
+        printFirst()
+        self.barrier1.wait()
+        
+    def second(self, printSecond: 'Callable[[], None]') -> None:
+        self.barrier1.wait() 
+        printSecond()
+        self.barrier2.wait()
+
+    def third(self, printThird: 'Callable[[], None]') -> None:
+        self.barrier2.wait() 
+        printThird()
+```
+
+Referrence: all solutions come from https://leetcode.com/problems/print-in-order/discuss/335939/5-Python-threading-solutions-(Barrier-Lock-Event-Semaphore-Condition)-with-explanation
+
+Others: one Condition solution not included. 
+

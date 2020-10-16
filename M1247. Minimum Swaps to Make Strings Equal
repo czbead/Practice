@@ -1,0 +1,15 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Pair Up**
+| O(T): O() | O(S): O() | Rt: 32ms | 
+```python
+    def minimumSwap(self, s1: str, s2: str) -> int:
+        xy, yx, l, rst = 0, 0, len(s1), 0
+        for i, j in zip(s1, s2):
+            if i == j: continue
+            if i == 'x': xy += 1
+            else: yx += 1    
+        if (xy + yx) & 1: return -1
+        return (xy+1) // 2 + (yx+1) // 2
+```
+Referrence: https://leetcode.com/problems/minimum-swaps-to-make-strings-equal/discuss/419639/Python3-4-liner-w-explanation
+

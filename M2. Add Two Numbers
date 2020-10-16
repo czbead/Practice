@@ -1,0 +1,169 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(n) | Rt: 60ms | 
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        carry =  0
+        cur = head = ListNode(0)
+        while l1 or l2 or carry:
+            v1, v2 = l1.val if l1 else 0, l2.val if l2 else 0
+            carry, val = divmod(v1 + v2 + carry, 10)
+            cur.next = ListNode(val)
+            cur = cur.next
+            if l1: l1 = l1.next
+            if l2: l2 = l2.next
+        return head.next  
+```
+Comment: this is "or" style
+Alternaive: "and" style version.  | Rt: 56ms |
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        carry =  0
+        cur = head = ListNode(None)
+        while l1 and l2:
+            carry, val = divmod(l1.val + l2.val + carry, 10)
+            cur.next = ListNode(val)
+            l1, l2, cur = l1.next, l2.next, cur.next
+        l = l1 or l2
+        while l and carry:
+            carry, val = divmod(l.val + carry, 10)
+            cur.next = ListNode(val)
+            l, cur = l.next, cur.next
+        if carry: cur.next = ListNode(carry)
+        if l: cur.next = l
+        return head.next
+```
+Triple: sum style.  | Rt: 64ms |
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        cur = rst = ListNode(None)
+        summ = 0
+        while l1 or l2 or summ > 9:
+            summ = summ // 10
+            if l1: summ, l1 = summ + l1.val, l1.next
+            if l2: summ, l2 = summ + l2.val, l2.next
+            cur.next = ListNode(summ % 10)
+            cur = cur.next
+        return rst.next
+```
+Forth: another sum version.  | Rt: 56ms |
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        cur = rst = ListNode(None)
+        summ = 0
+        while l1 or l2:
+            summ = summ // 10
+            if l1: summ, l1 = summ + l1.val, l1.next
+            if l2: summ, l2 = summ + l2.val, l2.next
+            cur.next = ListNode(summ % 10)
+            cur = cur.next
+        if summ > 9: cur.next = ListNode(1)
+        return rst.next
+```
+Referrence: https://leetcode.com/problems/add-two-numbers/discuss/1010/Is-this-Algorithm-optimal-or-what
+Fifth: using node.next = node = ListNode(val).  | Rt: 64ms |
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        cur = rst = ListNode(None)
+        summ = 0
+        while l1 or l2 or summ > 9:
+            summ = summ // 10
+            if l1: summ, l1 = summ + l1.val, l1.next
+            if l2: summ, l2 = summ + l2.val, l2.next
+            cur.next = cur = ListNode(summ % 10)
+        return rst.next
+```
+Referrence: https://leetcode.com/problems/add-two-numbers/discuss/1016/Clear-python-code-straight-forward/1585
+Comment: have an extra dummy node before real head is really helpful tick in real practice. "And" style is slightly lengthy but faster than "or" style generally.  
+
+
+**II). In place**
+| O(T): O(n) | O(S): O(1) | Rt: 56ms | 
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        carry = 0
+        pre = head = l1
+        while l1 and l2:
+            carry, l1.val = divmod(l1.val + l2.val + carry, 10)
+            pre, l1, l2 = l1, l1.next, l2.next
+        pre.next = l1 or l2
+        l1 = pre.next
+        while l1 and carry:
+            carry, l1.val = divmod(l1.val + carry, 10)
+            pre, l1 = l1, l1.next
+        #means l1 runs out of elements
+        if carry: pre.next = ListNode(1)
+        return head
+```
+Alternative: "or" style version.  | Rt: 52ms |
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        carry = 0
+        pre = head = l1
+        while l1 or l2 or carry:
+            if l1 and l2: 
+                carry, l1.val = divmod(l1.val + l2.val + carry, 10)
+                pre, l1, l2 = l1, l1.next, l2.next
+            elif l2: 
+                pre.next, l2 = l2, None
+                l1 = pre.next
+            elif l1: 
+                carry, l1.val = divmod(l1.val + carry, 10)
+                pre, l1 = l1, l1.next
+            else:
+                pre.next = ListNode(1); break
+        return head
+```
+Comment: In place solution is slightly lengthy but faster than extra space solution in general. 
+
+
+**III). Conversion**
+| O(T): O(n) | O(S): O(h) | Rt: 64ms | 
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        toint = lambda x: x.val + 10 * toint(x.next) if x else 0
+        def tolist(n):
+            rst = ListNode(n % 10)
+            if n > 9: rst.next = tolist(n // 10)
+            return rst
+        return tolist(toint(l1) + toint(l2))
+```
+Alternative: iterative tolist version.  | Rt: 68ms |
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        toint = lambda x: x.val + 10 * toint(x.next) if x else 0
+        dunum = num = toint(l1) + toint(l2)
+        cur = head = ListNode(None)
+        while dunum:
+            cur.next = cur = ListNode(dunum % 10)
+            dunum //= 10
+        return head.next if num else ListNode(0)
+```
+Referrence: https://leetcode.com/problems/add-two-numbers/discuss/1102/Python-for-the-win
+
+
+**IV). Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 64ms | 
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        if not l1 and not l2: return None
+        if not l1 or not l2: return l1 or l2
+        summ = l1.val + l2.val
+        h = ListNode(summ % 10)
+        h.next = self.addTwoNumbers(l1.next, l2.next)
+        if summ > 9: h.next = self.addTwoNumbers(h.next, ListNode(1))
+        return h
+```
+Referrence: https://leetcode.com/problems/add-two-numbers/discuss/1012/Recursive-8-line-C%2B%2B-solution
+Alternative: reuse linked list memory.  | Rt: 68ms |
+```python
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        if not l1 and not l2: return None
+        if not l1 or not l2: return l1 or l2
+        summ = l1.val + l2.val
+        l1.val = summ % 10
+        l1.next = self.addTwoNumbers(l1.next, l2.next)
+        if summ > 9: l1.next = self.addTwoNumbers(l1.next, ListNode(1))
+        return l1
+```
+

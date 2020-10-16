@@ -1,0 +1,11 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Find the Closest Distance Between the Circle and the Rec**
+| O(T): O() | O(S): O() | Rt: 24ms | 
+```python
+    def checkOverlap(self, radius: int, x: int, y: int, x1: int, y1: int, x2: int, y2: int) -> bool:
+        closest_x = 0 if x1<=x<=x2 else min(abs(x-x1), abs(x2-x))
+        closest_y = 0 if y1<=y<=y2 else min(abs(y-y1), abs(y2-y))
+        return closest_x ** 2 + closest_y ** 2 <= radius ** 2
+```
+Referrence: https://leetcode.com/problems/circle-and-rectangle-overlapping/discuss/563391/Java-3-lines-super-easy-math-solution
+

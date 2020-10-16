@@ -1,0 +1,44 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Prefix Sum, Two Pass**
+| O(T): O(n*n) | O(S): O(n) | Rt: 496ms | 
+```python
+    def maxSumTwoNoOverlap(self, A: List[int], L: int, M: int) -> int:
+        l = len(A)
+        presum = [0] * (l + 1)
+        #sum [i, j] include i not include j = presum[j] - presum[i]
+        for i in range(1, l+1): presum[i] += presum[i-1] + A[i-1]
+        rst = cur = 0
+        #L go first, M next
+        for i in range(L, l+1-M):
+            cur = presum[i] - presum[i-L]
+            for j in range(i, l+1-M):
+                summ = cur + presum[j+M] - presum[j]
+                rst = max(rst, summ)
+        #M go first, L next  
+        for i in range(M, l+1-L):
+            cur = presum[i] - presum[i-M]
+            for j in range(i, l+1-L):
+                summ = cur + presum[j+L] - presum[j]
+                rst = max(rst, summ)
+        return rst
+```
+
+Alternative: | Rt: 84ms |
+```python
+    def maxSumTwoNoOverlap(self, A: List[int], L: int, M: int) -> int:
+        l = len(A)
+        presum = [0] * (l); presum[0] = A[0]
+        for i in range(1, l): presum[i] = presum[i-1] + A[i]
+        rst, l_lead_mx, m_lead_mx = presum[M+L-1], presum[L-1], presum[M-1]
+        for i in range(L+M, l):
+            #L go first, M end with i
+            l_lead_mx = max(l_lead_mx, presum[i-M] - presum[i-M-L])
+            rst = max(rst, l_lead_mx + presum[i] - presum[i-M])
+            #M go first, L end with i
+            m_lead_mx = max(m_lead_mx, presum[i-L] - presum[i-L-M])
+            rst = max(rst, m_lead_mx + presum[i] - presum[i-L])
+        return rst
+```
+Referrence: https://leetcode.com/problems/maximum-sum-of-two-non-overlapping-subarrays/discuss/278251/JavaC%2B%2BPython-O(N)Time-O(1)-Space
+Comment: this is a genius solution, although not very eazy to read and understand. The solution is of O(n) time complexity. 
+

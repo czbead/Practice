@@ -1,0 +1,19 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP**
+| O(T): O(mn) | O(S): O(mn) | Rt: 220ms | 
+```python
+    def maximalSquare(self, matrix: List[List[str]]) -> int:
+        if not matrix or not matrix[0]: return 0
+        r, c = len(matrix), len(matrix[0])
+        rst, dp = 0, [[0] * c for _ in range(r)]
+        for i in range(r):
+            for j in range(c):
+                if matrix[i][j] == '0': dp[i][j] = 0
+                else:
+                    if i == 0 or j == 0: dp[i][j] = 1
+                    else: dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+                    rst = max(rst, dp[i][j])
+        return rst * rst
+```
+Referrence: https://leetcode.com/problems/maximal-square/discuss/61803/C%2B%2B-space-optimized-DP; https://leetcode.com/problems/maximal-square/discuss/61802/Extremely-Simple-Java-Solution-%3A);
+Comment: the first referrence link contain a O(n) space complexity version. The second link is a concise version, find it if you are interested. 

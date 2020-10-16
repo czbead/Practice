@@ -1,0 +1,62 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS: Brute Force with Prefix Sum**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def largestSumOfAverages(self, A: List[int], K: int) -> float:
+        def dfs(presum, leng, k, st, accu):
+            if k == 0: 
+                if st == leng: return accu
+                else: return 0
+            rst = 0
+            for i in range(st, leng-k+1):
+                cur = (presum[i] - presum[st-1]) / (i - st + 1)
+                rst = max(rst, dfs(presum, leng, k-1, i+1, accu + cur))
+            return rst
+            
+        l = len(A)
+        presum = [0] * (l + 1)
+        for i in range(1, l+1): presum[i] += presum[i-1] + A[i-1]
+        return dfs(presum, l+1, K, 1, 0)
+```
+
+Alternative: | Rt: ms | TLE
+```python
+    def largestSumOfAverages(self, A: List[int], K: int) -> float:
+        def dfs(presum, leng, k, st):
+            if k == 1: return (presum[-1] - presum[st-1]) / (leng-st)
+            rst = 0
+            for i in range(st, leng-k+1):
+                cur = (presum[i] - presum[st-1]) / (i - st + 1)
+                rst = max(rst, cur + dfs(presum, leng, k-1, i+1))
+            return rst
+            
+        l = len(A)
+        presum = [0] * (l + 1)
+        for i in range(1, l+1): presum[i] += presum[i-1] + A[i-1]
+        return dfs(presum, l+1, K, 1)
+```
+Referrence: https://leetcode.com/problems/largest-sum-of-averages/discuss/126280/Naive-Detailed-Step-by-Step-Approach-from-Recursive-to-DP-O(N)-solution
+
+Triple: cache the intermedia computing result. | Rt: 152ms |
+```python
+    def largestSumOfAverages(self, A: List[int], K: int) -> float:
+        def dfs(presum, leng, k, st, m):
+            if m[k][st] is not None: return m[k][st]
+            if k == 1: return (presum[-1] - presum[st-1]) / (leng-st)
+            rst = 0
+            for i in range(st, leng-k+1):
+                cur = (presum[i] - presum[st-1]) / (i - st + 1)
+                rst = max(rst, cur + dfs(presum, leng, k-1, i+1, m))
+            m[k][st] = rst
+            return rst
+            
+        l = len(A)
+        presum, m = [0] * (l + 1), [[None] * (l+1) for _ in range(K+1)]
+        for i in range(1, l+1): presum[i] += presum[i-1] + A[i-1]
+        return dfs(presum, l+1, K, 1, m)
+```
+Referrence: https://leetcode.com/problems/largest-sum-of-averages/discuss/126280/Naive-Detailed-Step-by-Step-Approach-from-Recursive-to-DP-O(N)-solution
+
+
+Others: here are the DP solutions - https://leetcode.com/problems/largest-sum-of-averages/discuss/126280/Naive-Detailed-Step-by-Step-Approach-from-Recursive-to-DP-O(N)-solution
+

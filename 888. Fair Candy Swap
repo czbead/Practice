@@ -1,0 +1,10 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive with Set**
+| O(T): O(m + n) | O(S): O(m + n) | Rt: 400ms | 
+```python
+    def fairCandySwap(self, A: List[int], B: List[int]) -> List[int]:
+        diff = (sum(B) - sum(A)) // 2
+        sa, sb = set(A), set(B)
+        return next((i, i + diff) for i in sa if i + diff in sb)
+```
+

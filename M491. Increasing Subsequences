@@ -1,0 +1,44 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking: Hashset prevent Duplications**
+| O(T): O(2^n) | O(S): O(2^n) | Rt: 236ms | 
+```python
+    def findSubsequences(self, nums: List[int]) -> List[List[int]]:
+        def backtrack(nums, path, st, rst):
+            if len(path) > 1: rst.append(path)
+            if st >= len(nums): return
+            used = set()
+            for i in range(st, len(nums)):
+                if nums[i] in used: continue
+                if not path or nums[i] >= path[-1]:
+                    used.add(nums[i])
+                    backtrack(nums, path+[nums[i]], i+1, rst)
+            
+        if not nums: return 
+        rst = []
+        backtrack(nums, [], 0, rst)
+        return rst
+```
+Referrence: https://leetcode.com/problems/increasing-subsequences/discuss/97147/Java-solution-beats-100
+Alternative: 
+```python
+    def findSubsequences(self, nums: List[int]) -> List[List[int]]:
+        def backtrack(nums, path, st, rst):
+            if len(path) > 1: rst.append(path[:])
+            #be careful this check is after the rst update statement
+            if st >= len(nums): return
+            #this is the critical part of this solution, prevent duplication start item
+            used = set()
+            for i in range(st, len(nums)):
+                if nums[i] in used: continue
+                if not path or nums[i] >= path[-1]:
+                    used.add(nums[i])
+                    path.append(nums[i])
+                    backtrack(nums, path, i+1, rst)
+                    path.pop()
+            
+        if not nums: return 
+        rst = []
+        backtrack(nums, [], 0, rst)
+        return rst
+```
+Comment: when we have a sorted array, we can do i == 0 or nums[i] != nums[i-1] as the precheck before get an item involve the loop. However, this input is unsorted, and the position matters which means you cannot sort it as well. The hashset is really a great point. 

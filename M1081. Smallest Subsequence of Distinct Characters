@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 36ms | 
+```python
+    def smallestSubsequence(self, text: str) -> str:
+        l = len(text)
+        last, stack = [0] * 26, []
+        for i in range(l): last[ord(text[i]) - ord('a')] = i
+        for i in range(l):
+            #greedy: if a letter appears, keep the first appearance as possible;
+            #it gives greater room for manipulate following sequence
+            if text[i] in stack: continue
+            #when the comming letter is smaller than the previous one in the sequence;
+            #we need to have both of them in the final result; there are two possibilities
+            # a). the pre letter appears in following text, we can correct (pre, cur) sequence to (cur, pre) by popping the pre letter;
+            # b). the pre letter won't appear in following text, we have to keep it;
+            while stack and text[i] < stack[-1] and last[ord(stack[-1]) - ord('a')] > i:
+                stack.pop()
+            stack.append(text[i])
+        return ''.join(stack)
+```
+Referrence: https://leetcode.com/problems/smallest-subsequence-of-distinct-characters/discuss/308210/JavaC%2B%2BPython-Stack-Solution-O(N)
+
+Alternative: more readable version. | Rt: 32ms |
+```python
+    def smallestSubsequence(self, text: str) -> str:
+        last, stack, s, l = {}, [], set(), len(text)
+        for i in range(l): last[text[i]] = i
+        for i in range(l):
+            if text[i] in s: continue
+            while stack and text[i] < stack[-1] and last[stack[-1]] > i:
+                c = stack.pop(); s.remove(c)
+            stack.append(text[i]); s.add(text[i])
+        return ''.join(stack)
+```

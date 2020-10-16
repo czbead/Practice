@@ -1,0 +1,64 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Hash R and L**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def balancedStringSplit(self, s: str) -> int:
+        #let's give it a new representation
+        rep = [-1 if i == 'R' else 1 for i in s]
+        rst = summ = 0
+        for i in rep:
+            summ += i
+            if summ == 0: rst += 1
+        return rst
+```
+Alternative: accumulate.  | Rt: 28ms |
+```python
+    def balancedStringSplit(self, s: str) -> int:
+        rep = [-1 if i == 'R' else 1 for i in s]
+        return sum(i == 0 for i in itertools.accumulate(rep))
+```
+Triple: accumulate count 0.  | Rt: 24ms |
+```python
+    def balancedStringSplit(self, s: str) -> int:
+        rep = [-1 if i == 'R' else 1 for i in s]
+        return list(itertools.accumulate(rep)).count(0)
+```
+
+
+**II). Pop Match**
+| O(T): O(n) | O(S): O(n) | Rt: 20ms | 
+```python
+    def balancedStringSplit(self, s: str) -> int:
+        rst = ctr = 0
+        s = list(s)
+        while s:
+            ctr += 1 if s.pop() == 'R' else -1
+            if ctr == 0: rst += 1
+        return rst
+```
+Comment: string has no pop function, should do the list conversion. To prevent to much memory overhead, we use counter instaed of another list.
+
+
+**III). Bucket Collect**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def balancedStringSplit(self, s: str) -> int:
+        rst, m = 0, [0, 0]
+        for i in s:
+            m[i == "L"] += 1
+            if m[0] == m[1]: rst += 1
+        return rst
+```
+
+
+**IV). Naive Counter**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def balancedStringSplit(self, s: str) -> int:
+        rst = ctl = 0
+        for i in s: 
+            ctl += 1 if i == 'L' else -1
+            if ctl == 0: rst += 1
+        return rst
+```
+Comment: of course, you can have two counter for both L and R, just not necessary. 

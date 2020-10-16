@@ -1,0 +1,55 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bisect**
+| O(T): O(n) | O(S): O(n) | Rt: 52ms | 
+```python
+    def intToRoman(self, num: int) -> str:
+        dt = {1000:'M', 900:'CM', 500:'D', 400:'CD', 100:'C', 90:'XC', 50:'L', 40:'XL', 10:'X', 9:'IX', 5:'V', 4:'IV', 1:'I'}
+        lst = [1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000]
+        rst, num = ['M'] * (num // 1000), num % 1000
+        while num:
+            i = bisect.bisect(lst, num)
+            rst.extend([dt[lst[i-1]]] * (num//lst[i-1]))
+            num = num % lst[i-1]
+        return ''.join(rst)
+```
+
+
+**II). Pop**
+| O(T): O() | O(S): O() | Rt: 48ms | 
+```python
+    def intToRoman(self, num: int) -> str:
+        dt = {1000:'M', 900:'CM', 500:'D', 400:'CD', 100:'C', 90:'XC', 50:'L', 40:'XL', 10:'X', 9:'IX', 5:'V', 4:'IV', 1:'I'}
+        lst = [1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000]
+        rst, num = ['M'] * (num // 1000), num % 1000
+        while num:
+            while lst and num < lst[-1]: lst.pop()
+            rst.extend([dt[lst[-1]]] * (num // lst[-1]))
+            num %= lst[-1];
+        return ''.join(rst)
+```
+Alternative:  | Rt: 52ms |
+```python
+    def intToRoman(self, num: int) -> str:
+        rlst = ['I', 'IV', 'V', 'IX', 'X', 'XL', 'L', 'XC', 'C', 'CD', 'D', 'CM', 'M']
+        lst = [1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000]
+        rst = []
+        while num:
+            while lst and num < lst[-1]: lst.pop(); rlst.pop()
+            rst.append(rlst[-1]); num -= lst[-1]
+        return ''.join(rst)
+```
+Triple: zip style.  | Rt: 48ms |
+```python
+    def intToRoman(self, num: int) -> str:
+        rlst = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I']
+        lst = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+        rst = ''
+        while num:
+            for i, j in zip(lst, rlst):
+                rst += j * (num // i)
+                num %= i
+        return rst
+```
+
+
+Others: a knowledge-based solution -- https://leetcode.com/problems/integer-to-roman/discuss/6274/Simple-Solution

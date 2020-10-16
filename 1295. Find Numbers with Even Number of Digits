@@ -1,0 +1,50 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Len String**
+| O(T): O(n) | O(S): O(1) | Rt: 52ms | 
+```python
+    def findNumbers(self, nums: List[int]) -> int:
+        return sum(len(str(i)) & 1 == 0 for i in nums)
+```
+
+
+**II). Counter**
+| O(T): O(n) | O(S): O(n) | Rt: 60ms | 
+```python
+    def findNumbers(self, nums: List[int]) -> int:
+        ct = collections.Counter(map(lambda x: len(str(x)), nums))
+        return sum(ct[k] for k in ct if not k&1)
+```
+Comment: suitable for senario like a lot of same length numbers. 
+
+
+**III). Range Filter**
+| O(T): O(n) | O(S): O(1) | Rt: 52ms | 
+```python
+    def findNumbers(self, nums: List[int]) -> int:
+        return sum(10<=i<=99 or 1000<=i<=9999 for i in nums)
+```
+Referrence: idea from https://leetcode.com/problems/find-numbers-with-even-number-of-digits/discuss/459489/JAVA-solution-with-100-better-space-and-Time
+
+
+**IV). Log**
+| O(T): O() | O(S): O() | Rt: 56ms | 
+```python
+    def findNumbers(self, nums: List[int]) -> int:
+    	#num len = int(math.log(i, 10)) + 1, it is even, so we can count odd as follows
+        return sum(int(math.log(i, 10)) & 1 for i in nums)
+```
+Referrence: idea from https://leetcode.com/problems/find-numbers-with-even-number-of-digits/discuss/460342/100-faster-in-runtime-and-memory-usage-Logarithmic-Solution
+
+
+**V). Navie**
+| O(T): O(n) | O(S): O(1) | Rt: 52ms | 
+```python
+    def findNumbers(self, nums: List[int]) -> int:
+        def getdig(n):
+            ct = 0
+            while n: ct, n = ct+1, n//10
+            return ct
+        return sum(getdig(i) & 1 == 0 for i in nums)
+```
+Referrence: idea from https://leetcode.com/problems/find-numbers-with-even-number-of-digits/discuss/458937/JAVA-MUST-READ-Solution-with-EXPLANATION-and-EXAMPLE-%3A)
+

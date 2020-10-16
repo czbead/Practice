@@ -1,0 +1,55 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat -  Split**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def countSegments(self, s: str) -> int:
+        return len(s.split())
+```
+
+
+**II). Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 36ms | 
+```python
+    def countSegments(self, s: str) -> int:
+        rst, i, l = 0, 0, len(s) 
+        while i < l:
+            if s[i] == ' ': i += 1
+            else:
+                rst, j = rst + 1, i + 1
+                while j < l and s[j] != ' ': j += 1
+                i = j + 1
+        return rst
+```
+Alternative: | Rt: 28ms |
+```python
+    def countSegments(self, s: str) -> int:
+        rst, i, l = 0, 0, len(s) 
+        while i < l:
+            while i < l and s[i] == ' ': i += 1
+            if i == l: return rst
+            rst, j = rst + 1, i + 1
+            while j < l and s[j] != ' ': j += 1
+            i = j + 1
+        return rst
+```
+
+
+**III). Segement**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def countSegments(self, s: str) -> int:
+        rst, s = 0, ' ' + s
+        for i in range(len(s) - 1):
+            if s[i + 1] != ' ' and s[i] == ' ': rst += 1
+        return rst
+```
+Alternative: to save space to O(1).  | Rt: 24ms |
+```python
+    def countSegments(self, s: str) -> int:
+        rst = 1 if s and s[0] != ' ' else 0
+        for i in range(len(s) - 1):
+            if s[i + 1] != ' ' and s[i] == ' ': rst += 1
+        return rst
+```
+
+

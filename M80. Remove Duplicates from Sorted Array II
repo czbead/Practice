@@ -1,0 +1,66 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer -- Naive Swap**
+| O(T): O(n) | O(S): O(1) | Rt: 52ms | 
+```python
+    def removeDuplicates(self, nums: List[int]) -> int:
+        if len(nums) < 3: return len(nums)
+        i = 2  #i point to the next insert index
+        for j in range(2, len(nums)):  #j point to next element
+            if nums[j] == nums[i-1]:   #i-1 point to the last "good" item
+                if nums[i-1] == nums[i-2]: continue  #already has two in stock, not keep this, step over it
+                else:   #only have one in stock, can keep this item
+                    if i == j: i += 1; continue  #no need to swap, just forward i pointer
+                    else: nums[i], nums[j], i = nums[j], nums[i], i+1  #do swap and forward i pointer
+            else: 
+                if i == j: i += 1; continue  #always keep new coming element; no need to swap; forward i pointer
+                else: nums[j], nums[i], i = nums[i], nums[j], i+1  
+        #return len, len = index + 1; from index 0 to index (i-1) is good; therefore return i-1+1 = i
+        return i
+```
+Alternative: concise version. | Rt: 52ms |
+```python
+    def removeDuplicates(self, nums: List[int]) -> int:
+        if len(nums) < 3: return len(nums)
+        i = 2
+        for j in range(2, len(nums)):
+            if nums[j] == nums[i-1] != nums[i-2] or nums[j] != nums[i-1]: 
+                nums[i], nums[j], i = nums[j], nums[i], i+1
+        return i
+```
+Triple: avoid unnecessary swap version. | Rt: 52ms |
+```python
+    def removeDuplicates(self, nums: List[int]) -> int:
+        if len(nums) < 3: return len(nums)
+        i = 2
+        for j in range(2, len(nums)):
+            if nums[j] == nums[i-1] != nums[i-2] or nums[j] != nums[i-1]: 
+                if j > i: nums[i], nums[j] = nums[j], nums[i]
+                i += 1
+        return i
+```
+Comment: this is my original solution, still far away from the optimal elegant one shown below. 
+
+
+**II). Two Pointer -- Collect**
+| O(T): O(n) | O(S): O(1) | Rt: 56ms | 
+```python
+    def removeDuplicates(self, nums: List[int]) -> int:
+        if len(nums) < 3: return len(nums)
+        i = 2
+        for j in range(2, len(nums)):
+            if nums[j] > nums[i-2]:  #winodow of length 2, take advantage of sorted feature
+                if j > i: nums[i] = nums[j]
+                i += 1
+        return i
+```
+Alternative: | Rt: 52ms |
+```python
+    def removeDuplicates(self, nums: List[int]) -> int:
+        i = 0
+        for j in nums: 
+            if i < 2 or j > nums[i-2]:
+                nums[i], i = j, i+1
+        return i
+```
+Referrence: https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/discuss/27976/3-6-easy-lines-C%2B%2B-Java-Python-Ruby
+

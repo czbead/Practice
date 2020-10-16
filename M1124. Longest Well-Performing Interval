@@ -1,0 +1,50 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Prefix Sum Range**
+| O(T): O(n*n) | O(S): O() | Rt: ms | TLE
+```python
+    def longestWPI(self, hours: List[int]) -> int:
+        l = len(hours)
+        h = [ 1 if i > 8 else -1 for i in hours]
+        presum = [0] * (l + 1)
+        for i in range(1, l+1): presum[i] += presum[i-1] + h[i-1]
+        rst = 0
+        for i in range(1, l+1):
+            #i - j > rst => j < i - rst, no need to try j after (i-rst)
+            #the first available j is the best, break out immediately
+            for j in range(i-rst):
+                if presum[i] - presum[j] > 0: 
+                    rst = max(rst, i-j)
+                    break
+        return rst
+```
+
+
+**II). Prefix Sum with HashMap**
+| O(T): O(n) | O(S): O(n) | Rt: 264ms | 
+```python
+    def longestWPI(self, hours: List[int]) -> int:
+        l = len(hours)
+        h = [1 if i > 8 else -1 for i in hours]
+        presum = [0] * (l + 1)
+        for i in range(1, l+1): presum[i] += presum[i-1] + h[i-1]
+        rst, pre = 0, {0: 0}
+        for i in range(1, l+1):
+            if presum[i] > 0: rst = max(rst, i)
+            elif presum[i] - 1 in pre: rst = max(rst, i-pre[presum[i] - 1])
+            if presum[i] < 0 and presum[i] not in pre: pre[presum[i]] = i
+        return rst
+```
+
+Alternative: | Rt: 204ms |
+```python
+    def longestWPI(self, hours: List[int]) -> int:
+        rst, l, runsum, pre = 0, len(hours), 0, {}
+        for i in range(l):
+            runsum += 1 if hours[i] > 8 else -1
+            if runsum > 0: rst = i+1
+            elif runsum-1 in pre: rst = max(rst, i-pre[runsum-1])
+            if runsum < 0 and runsum not in pre: pre[runsum] = i
+        return rst
+```
+Referrence: https://leetcode.com/problems/longest-well-performing-interval/discuss/334565/JavaC%2B%2BPython-O(N)-Solution-Life-needs-996-and-669
+

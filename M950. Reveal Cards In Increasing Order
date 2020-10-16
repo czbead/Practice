@@ -1,0 +1,14 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Queue: Simulation by Shuffle Index**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 44ms | 
+```python
+    def deckRevealedIncreasing(self, deck: List[int]) -> List[int]:
+        l = len(deck)
+        arr, q = [None] * l, collections.deque(range(l))
+        deck.sort()
+        for i in range(l):
+            arr[q.popleft()] = deck[i]
+            if q: q.append(q.popleft())
+        return arr
+```
+Referrence: https://leetcode.com/problems/reveal-cards-in-increasing-order/discuss/200526/Java-Queue-Simulation-Step-by-Step-Explanation; Here is a concise queue solution - https://leetcode.com/problems/reveal-cards-in-increasing-order/discuss/200515/JavaC%2B%2BPython-Simulate-the-Reversed-Process;

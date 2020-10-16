@@ -1,0 +1,74 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion DFS**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        def dfs(head):
+            if not head.next: return 1
+            pre = dfs(head.next)
+            if pre == n: 
+                head.next = head.next.next
+                return -1
+            elif pre == -1: return pre
+            return pre + 1
+        
+        return head if dfs(head) == -1 else head.next
+```
+Comment: because it is counted from the end, easy to think of this solution. 
+
+
+**II). Two Pointer**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        a = b = head
+        while n: b, n = b.next, n-1
+        if b is None: return head.next
+        while b.next: a, b = a.next, b.next
+        a.next = a.next.next
+        return head
+```
+Alternative: add an extra node to avoid edge case. | Rt: 32ms |
+```python
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        h = ListNode(None)
+        h.next = head
+        a = b = h
+        while n: b, n = b.next, n-1
+        while b.next: a, b = a.next, b.next
+        a.next = a.next.next
+        return h.next
+```
+Referrence: idea from https://leetcode.com/problems/remove-nth-node-from-end-of-list/discuss/8804/Simple-Java-solution-in-one-pass
+
+
+**III). Naive**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        a = b = head; ct = 0
+        while a.next: a, ct = a.next, ct + 1
+        pos = ct - n
+        if pos < 0: return head.next
+        for _ in range(pos): b = b.next
+        b.next = b.next.next
+        return head
+```
+
+
+**IV). Value Shift**
+| O(T): O(n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        def dfs(head):
+            if not head.next: return 1
+            pre = dfs(head.next)
+            if pre >= n: head.next.val = head.val
+            return pre + 1
+        
+        dfs(head)
+        return head.next
+```
+Referrence: https://leetcode.com/problems/remove-nth-node-from-end-of-list/discuss/8802/3-short-Python-solutions
+
+

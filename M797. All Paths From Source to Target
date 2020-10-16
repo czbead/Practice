@@ -1,0 +1,86 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking: DFS**
+| O(T): O() | O(S): O(n) | Rt: 108ms | 
+```python
+    def allPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:
+        def dfs(graph, visited, path, node, rst, dst):
+            if node == dst: rst.append(path[:]); return
+            for i in graph[node]:
+            	#essential for keep nodes with a specific path in order.
+                if visited[i] or i <= node: continue
+                visited[i] = 1
+                path.append(i)
+                dfs(graph, visited, path, i, rst, dst)
+                visited[i] = 0
+                path.pop()
+        
+        l = len(graph)
+        rst, visited = [], [0] * l 
+        visited[0] = 1
+        dfs(graph, visited, [0], 0, rst, l-1)
+        return rst
+```
+
+Alternative: each path is in asc order, no need to keep visited state. | Rt: 100ms |
+```python
+    def allPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:
+        def dfs(graph, path, node, rst, dst):
+            if node == dst: rst.append(path[:]); return
+            for i in graph[node]:
+                if i <= node: continue
+                path.append(i)
+                dfs(graph, path, i, rst, dst)
+                path.pop()
+        
+        l, rst = len(graph), []
+        dfs(graph, [0], 0, rst, l-1)
+        return rst
+```
+
+Triple: iterative dfs version using stack. | Rt: 104ms |
+```python
+    def allPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:
+        l = len(graph)
+        rst, stack = [], [[0]]
+        while stack:
+            path = stack.pop()
+            if path[-1] == l-1: rst.append(path); continue
+            for i in graph[path[-1]]:
+                stack.append(path + [i])
+        return rst
+```
+Referrence: https://leetcode.com/problems/all-paths-from-source-to-target/discuss/118765/short-python-iterative-dfs
+
+Others: here is a dfs solution with memory. https://leetcode.com/problems/all-paths-from-source-to-target/discuss/118713/Java-DFS-Solution
+
+
+**II). BFS**
+| O(T): O() | O(S): O() | Rt: 100ms | 
+```python
+    def allPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:
+        l = len(graph)
+        rst, q = [], collections.deque([(0, [0])])
+        while q:
+            node, path = q.popleft()
+            if node == l-1: rst.append(path); continue
+            for i in graph[node]:
+                if i <= node: continue
+                q.append((i, path + [i]))
+        return rst
+```
+Comment: since the path is in ascending order, it will never form a cycle, save us some effort for the "visited" state tracking. 
+
+Alternative: save the current node state. | Rt: 100ms |
+```python
+    def allPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:
+        l = len(graph)
+        rst, q = [], collections.deque([[0]])
+        while q:
+            path = q.popleft()
+            if path[-1] == l-1: rst.append(path); continue
+            for i in graph[path[-1]]:
+                #it seems the graph is well ordered
+                # if i <= path[-1]: continue
+                q.append(path + [i])
+        return rst
+```

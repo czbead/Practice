@@ -1,0 +1,18 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS Recursion**
+| O(T): O(n) | O(S): O(h) | Rt: 56ms | 
+```python
+    def findTilt(self, root: TreeNode) -> int:
+        def dfs(node, tilt):
+            if not node: return 0
+            l = dfs(node.left, tilt)
+            r = dfs(node.right, tilt)
+            tilt[0] += abs(l - r)
+            return node.val + l + r
+        tilt = [0]
+        dfs(root, tilt)
+        return tilt[0]
+```
+Comment: recursion function return and sum of current state and pass tilt of currrent state.
+
+

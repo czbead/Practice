@@ -1,0 +1,52 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n*n) | O(S): O(1) | Rt: 1912ms | 
+```python
+    def insertionSortList(self, head: ListNode) -> ListNode:
+        dummy = ListNode(-float('inf'))
+        while head:
+            nxt = head.next
+            cur = dummy
+            while cur.next and cur.next.val < head.val: cur = cur.next
+            head.next = cur.next
+            cur.next = head
+            head = nxt
+        return dummy.next
+```
+Alternative: improved version. | Rt: 208ms |
+```python
+    def insertionSortList(self, head: ListNode) -> ListNode:
+        if not head: return
+        dummy = ListNode(-float('inf'))
+        dummy.next = head
+        cur = head
+        while cur.next:
+            nxt = cur.next
+            if nxt.val > cur.val: cur = cur.next; continue
+            p = dummy
+            cur.next = nxt.next
+            while p.next.val < nxt.val: p = p.next
+            nxt.next = p.next
+            p.next = nxt
+        return dummy.next
+```
+
+
+**II). Two Stack**
+| O(T): O(n*n) | O(S): O(n) | Rt: 3448ms | 
+```python
+    def insertionSortList(self, head: ListNode) -> ListNode:
+        if not head: return
+        stack, s = [], []
+        while head:
+            nxt = head.next
+            while s and s[-1].val > head.val: stack.append(s.pop())
+            if s: s[-1].next = head
+            if stack: head.next = stack[-1]
+            else: head.next = None
+            s.append(head)
+            while stack: s.append(stack.pop())
+            head = nxt
+        if s: s[-1].next = None
+        return s[0]
+```

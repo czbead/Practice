@@ -1,0 +1,94 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Four Direction Walk**
+| O(T): O(mn) | O(S): O(1) | Rt: 28ms | 
+```python
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        if not matrix or not matrix[0]: return []
+        l, c = len(matrix), len(matrix[0])
+        mini, minj, maxi, maxj, rst = 0, 0, l, c, []
+        while mini <= maxi and minj <= maxj:
+            for j in range(minj, maxj): rst.append(matrix[mini][j])
+            mini += 1
+            for i in range(mini, maxi): rst.append(matrix[i][maxj-1])
+            maxj -= 1
+            for j in range(maxj-1, minj - 1, -1): rst.append(matrix[maxi-1][j])
+            maxi -= 1
+            for i in range(maxi-1, mini - 1, -1): rst.append(matrix[i][minj])
+            minj += 1
+        return rst[:l*c]
+```
+Alternative: boundary check. | Rt: 24ms |
+```python
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        if not matrix or not matrix[0]: return []
+        l, c = len(matrix), len(matrix[0])
+        mini, minj, maxi, maxj, rst = 0, 0, l-1, c-1, []
+        while True:
+            for j in range(minj, maxj+1): rst.append(matrix[mini][j])
+            mini += 1; 
+            if mini > maxi: break
+            for i in range(mini, maxi+1): rst.append(matrix[i][maxj])
+            maxj -= 1; 
+            if maxj < minj: break
+            for j in range(maxj, minj - 1, -1): rst.append(matrix[maxi][j])
+            maxi -= 1; 
+            if maxi < mini: break
+            for i in range(maxi, mini - 1, -1): rst.append(matrix[i][minj])
+            minj += 1; 
+            if minj > maxj: break
+        return rst
+```
+Referrence: https://leetcode.com/problems/spiral-matrix/discuss/20599/Super-Simple-and-Easy-to-Understand-Solution
+Comment: because the four boundary is dynamic in each round, you actually need to do the while condition check in each next for loop. To save such effort, we only take the first l*c element. (prune duplicates) Instead, you can check the rst size in each step as well, just too many checks. 
+
+
+**II). Dynamic Direction**
+| O(T): O(nm) | O(S): O(1) | Rt: 24ms | 
+```python
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        if not matrix or not matrix[0]: return []
+        r, c = len(matrix), len(matrix[0])
+        dct, dire = 0, [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        i, j, step, rst = 0, -1, [c, r-1], []
+        while step[dct&1]:
+            di, dj = dire[dct%4]
+            for _ in range(step[dct&1]): 
+                i, j = i + di, j + dj
+                rst.append(matrix[i][j])
+            step[dct&1], dct = step[dct&1] - 1, dct + 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/spiral-matrix/discuss/20573/A-concise-C%2B%2B-implementation-based-on-Directions
+
+
+**III). Adapt Index Move**
+| O(T): O(mn) | O(S): O(1) | Rt: 28ms | 
+```python
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        if not matrix or not matrix[0]: return []
+        r, c = len(matrix), len(matrix[0])
+        i, j, di, dj, rst = 0, 0, 0, 1, []
+        for _ in range(r*c):
+            rst.append(matrix[i][j])
+            matrix[i][j] = ''
+            #this is a probing, update direction di, dj before overflow
+            if matrix[(i+di)%r][(j+dj)%c] == '': di, dj = dj, -di
+            i, j = i + di, j + dj
+        return rst
+```
+Referrence: https://leetcode.com/problems/spiral-matrix/discuss/20606/Very-Easy-to-Understand-Python-Solution
+Alternative: | Rt: 24ms |
+```python
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        if not matrix or not matrix[0]: return []
+        r, c = len(matrix), len(matrix[0])
+        ds, step = 0, [c, r-1]
+        i, j, di, dj, rst = 0, -1, 0, 1, []
+        while step[ds]:
+            for _ in range(step[ds]):
+                i, j = i + di, j + dj
+                rst.append(matrix[i][j])
+            step[ds] -= 1
+            di, dj, ds = dj, -di, ds ^ 1
+        return rst
+```

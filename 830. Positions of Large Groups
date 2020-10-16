@@ -1,0 +1,70 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Count with One Index**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def largeGroupPositions(self, S: str) -> List[List[int]]:
+        rst, ct, pre, ind = [], 0, S[0], 0
+        for i in S: 
+            if i == pre: ct += 1
+            else:
+                if ct >= 3: rst.append((ind-ct, ind-1))
+                pre, ct = i, 1
+            ind += 1
+        if ct >= 3: rst.append((ind-ct, ind-1))
+        return rst
+```
+
+
+**II). Two Index**
+| O(T): O(n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def largeGroupPositions(self, S: str) -> List[List[int]]:
+        rst, st, l = [], 0, len(S)
+        for i in range(l):
+            if S[i] != S[st]: 
+                if i - st >= 3: rst.append((st, i - 1))
+                st = i
+        if l - st >= 3: rst.append((st, l-1))
+        # if i - st >= 2: rst.append((st, i))
+        return rst
+```
+Comment: here the st save the previous index while the leading index is condtrolled by range. 
+Alternative: rotating two pointer, traditional two index solution.  | Rt: 36ms |
+```python
+    def largeGroupPositions(self, S: str) -> List[List[int]]:
+        rst, st, end, l = [], 0, 0, len(S)
+        while end < l:
+            if S[end] != S[st]: 
+                if end - st >= 3: rst.append((st, end - 1))
+                st = end
+            end += 1
+        if end - st >= 3: rst.append((st, end - 1))
+        return rst
+```
+Triple: with inner while loop.  | Rt: 36ms |
+```python
+    def largeGroupPositions(self, S: str) -> List[List[int]]:
+        rst, i, j, l = [], 0, 0, len(S)
+        while j < l:
+            while j < l and S[j] == S[i]: j += 1
+            if j - i >= 3: rst.append((i, j - 1))
+            i = j
+        return rst
+```
+Comment: usually, with a inner loop will slow down the program a little bit. However, it save up the last round check. Also, a programatical automatic pointer could make the program faster like the first version -- a pointer controlled by range forwarding automatically.
+For all this kind of problem. Two simple pattern: a), a counter with a pointer (index); b), two pointer (index). A counter is a step length (offset) which actually can help you find the other ending index. The diff of two index is actually a counter. They are the same, just two different styles.  
+
+
+**III). Itertools, Groupby**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def largeGroupPositions(self, S: str) -> List[List[int]]:
+        rst, index = [], 0
+        for _, group in itertools.groupby(S):
+            cur = len(list(group))
+            if cur >= 3: rst.append((index, index + cur - 1))
+            index += cur
+        return rst
+```
+Referrence: https://leetcode.com/problems/positions-of-large-groups/discuss/176422/python-using-groupby
+

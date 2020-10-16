@@ -1,0 +1,46 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer**
+| O(t): O(n) | O(m): O(1) | Rt: 60ms | 
+```python
+    def twoSum(self, numbers: List[int], target: int) -> List[int]:
+        l, r = 0, len(numbers) - 1
+        while l < r:
+            cur = numbers[l] + numbers[r]
+            if cur < target: l += 1
+            elif cur > target: r -= 1
+            else: return [l+1, r+1]
+```
+Alternative: | Rt: 64ms |
+```python
+    def twoSum(self, numbers: List[int], target: int) -> List[int]:
+        l, r = 0, len(numbers) - 1
+        while l < r:
+            if numbers[l] + numbers[r] == target: return [l+1, r+1]
+            while l < r and numbers[l] + numbers[r] < target: l += 1
+            while l < r and numbers[l] + numbers[r] > target: r -= 1
+```
+
+**II). Naive Dict**
+| O(t): O(n) | O(m): O(n) | Rt: 56ms | 
+```python
+    def twoSum(self, numbers: List[int], target: int) -> List[int]:
+        dt = {}
+        for i, v in enumerate(numbers):
+            if v in dt: return [dt[v]+1, i+1]
+            dt[target - v] = i
+```
+
+
+**III). Binary Search**
+| O(t): O(nlgn) | O(m): O(1) | Rt: 92ms | 
+```python
+    def twoSum(self, numbers: List[int], target: int) -> List[int]:
+        for i in range(len(numbers) - 1):
+            remain = target - numbers[i]
+            l, r = i+1, len(numbers)-1
+            while l <= r:
+                mid = (l + r) // 2
+                if numbers[mid] == remain: return [i+1, mid+1]
+                if numbers[mid] < remain: l = mid + 1
+                else: r = mid - 1
+```

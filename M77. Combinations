@@ -1,0 +1,62 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking**
+| O(T): O() | O(S): O(1) | Rt: 568ms | 
+```python
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        def backtrack(nums, comb, st, end, k, rst):
+            if len(comb) == k: rst.append(comb); return
+            for i in range(st, end):
+                backtrack(nums, comb + [nums[i]], i+1, end, k, rst)
+        
+        rst, nums = [], list(range(1, n+1))
+        backtrack(nums, [], 0, n, k, rst)
+        return rst
+```
+Alternative: bound the range. | Rt: 116ms |
+```python
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        def backtrack(nums, comb, st, end, k, rst):
+            if not k: rst.append(comb); return
+            #here we bound the range of each round. the biggest value of each round is (end - k + 1)
+            #be careful for the index out of bound (that why we apply min)
+            for i in range(st, min(end-k+2, end)):
+                backtrack(nums, comb + [nums[i]], i+1, end, k-1, rst)
+        
+        rst, nums = [], list(range(1, n+1))
+        backtrack(nums, [], 0, n, k, rst)
+        return rst
+```
+Triple: no need for the nums. | Rt: 88ms |
+```python
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        def backtrack(comb, st, end, k, rst):
+            if not k: rst.append(comb); return
+            for i in range(st, end):
+                backtrack(comb + [i], i+1, end+1, k-1, rst)
+        
+        rst, nums = [], list(range(1, n+1))
+        backtrack([], 1, n-k+2, k, rst)
+        return rst
+```
+Referrence: https://leetcode.com/problems/combinations/discuss/27002/Backtracking-Solution-Java; https://leetcode.com/problems/combinations/discuss/27002/Backtracking-Solution-Java/173730
+
+
+**II). Recursion -- C(n,k)=C(n-1,k-1)+C(n-1,k)**
+| O(T): O() | O(S): O(h) | Rt: 88ms | 
+```python
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        if k == 0: return [[]]
+        if k == n: return [list(range(1, n+1))]
+        return [path + [n] for path in self.combine(n-1, k-1)] + self.combine(n-1, k)
+```
+Referrence: https://leetcode.com/problems/combinations/discuss/27019/A-short-recursive-Java-solution-based-on-C(nk)C(n-1k-1)%2BC(n-1k)
+
+
+**III). Iteration**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+Referrence: Backtracting Iteration -- https://leetcode.com/problems/combinations/discuss/26992/Short-Iterative-C%2B%2B-Answer-8ms; https://leetcode.com/problems/combinations/discuss/27029/AC-Python-backtracking-iterative-solution-60-ms; Iteration -- https://leetcode.com/problems/combinations/discuss/27032/Iterative-Java-solution;
+Comment: I cannot understand these greate solutions, especially how to transform a backtracking process to a iterative fashion. 
+

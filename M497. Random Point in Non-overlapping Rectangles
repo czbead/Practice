@@ -1,0 +1,23 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Prefix Area Sum**
+| O(T): O() | O(S): O() | Rt: ms |  cannot pass
+```python
+    def __init__(self, rects: List[List[int]]):
+        self.rects, self.areas, prefixsum = rects, [0], 0
+        for x1, y1, x2, y2 in rects:
+            prefixsum += (x2 - x1 + 1) * (y2 - y1 + 1)
+            self.areas.append(prefixsum)
+        
+        #self.areas[0] = 0; self.areas[1] = area[0]; self.areas[2] = area[0] + area[1]
+        #area[0] = area of rects[0]; area[1] = area of rects[1]
+
+    def pick(self) -> List[int]:
+        #minus 1, think about the most top-right pointer in the last rectangle
+        random_area = random.randint(0, self.areas[-1]-1) 
+        area_index = bisect.bisect(self.areas, random_area)
+        x1, y1, x2, y2 = self.rects[area_index-1]
+        remain_area = random_area - self.areas[area_index-1]
+        x, y = x1 + remain_area % (x2-x1+1), y1 + remain_area // (y2-y1+1)
+        return [x, y]
+```
+https://leetcode.com/problems/random-point-in-non-overlapping-rectangles/discuss/154147/Python-weighted-probability-solution

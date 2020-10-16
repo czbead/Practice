@@ -1,0 +1,58 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP: Math Combinatorics**
+| O(T): O(n) | O(S): O(n) | Rt: 28ms | 
+```python
+    def countNumbersWithUniqueDigits(self, n: int) -> int:
+        dp = [1] * (n+1)
+        for i in range(1, n+1): 
+            if i < 3: dp[i] = dp[i-1] * 9
+            else: dp[i] = dp[i-1]*(11-i)
+        return sum(dp)
+```
+Alternative: | Rt: 28ms |
+```python
+    def countNumbersWithUniqueDigits(self, n: int) -> int:
+        sums = dp = 1
+        for i in range(1, n+1):
+            factor = 11 - i  #1:9, 2:9, 3:8, 4:7, ... 
+            if factor > 9: factor = 9
+            dp *= factor
+            sums += dp
+        return sums
+```
+Triple: | Rt: 28ms |
+```python
+    def countNumbersWithUniqueDigits(self, n: int) -> int:
+        if n == 0: return 1
+        sums, dp = 10, 9
+        for i in range(2, n+1):
+            factor = 11 - i 
+            dp *= factor
+            sums += dp
+        return sums
+```
+Referrence: https://leetcode.com/problems/count-numbers-with-unique-digits/discuss/83041/JAVA-DP-O(1)-solution.
+
+
+**II). Backtracking**
+| O(T): O() | O(S): O() | Rt: 1476ms | 
+```python
+    def countNumbersWithUniqueDigits(self, n: int) -> int:
+        def backtrack(n, used, pos, rst):
+            if pos == n: return
+            for i in range(10):
+                if pos == 0 and i == 0: rst[0] += 1; continue   #count 0
+                if not used[i]:  #every digit is unique, use only once
+                    used[i] = 1
+                    #this is the critical point. we don't need to use all digits to form a valid number. say n == 3, 123 is valid, 1, 12, 23 are valid as well. 
+                    rst[0] += 1
+                    backtrack(n, used, pos+1, rst)
+                    used[i] = 0  #backtracking
+               
+        if n == 0: return 1  #special case
+        rst, used = [0], [0] * 10
+        backtrack(n, used, 0, rst)
+        return rst[0]
+```
+Referrence: https://leetcode.com/problems/count-numbers-with-unique-digits/discuss/83037/Very-simple-15-line-backtrack-solution
+Comment: this is not a typical backtracking solution. In a typical backtracking, we only "count" when we arrive a condition, say: index overflow. In this solution, we count as the backtracking process runs because all conditions that are not beyond the bound are valid. 

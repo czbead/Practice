@@ -1,0 +1,18 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP: MinMax**
+| O(T): O(n*n) | O(S): O(n*n) | Rt: 284ms | 
+```python
+    def stoneGame(self, piles: List[int]) -> bool:
+        l = len(piles)
+        #dp[i][j]: pick from [i, j] piles, the most Alex can get beyond Lee
+        dp = [[0]*l for _ in range(l)]
+        for i in range(l):
+            #no choice but to choose the only i-th pile
+            dp[i][i] = piles[i]
+            for j in range(i-1, -1, -1):
+                #two choice: pick j, then opponent choose from [j+1, i]; pick i, opponent choose from [j][i-1]
+                dp[j][i] = max(piles[j]-dp[j+1][i], piles[i]-dp[j][i-1])
+        return dp[0][-1] > 0
+```
+Referrence: https://leetcode.com/problems/stone-game/discuss/154610/DP-or-Just-return-true
+Comment: dp[0][-1] is the maximum amount of stones the first player can win over the other player. I am not sure this solution is correct although it passed all test cases. 

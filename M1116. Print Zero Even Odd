@@ -1,0 +1,34 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Semaphore**
+| O(T): O() | O(S): O() | Rt: 44ms | 
+```python
+from threading import Semaphore
+class ZeroEvenOdd:
+    def __init__(self, n):
+        self.n = n
+        self.zeroSmp = Semaphore(1)
+        self.oddSmp = Semaphore(0)
+        self.evenSmp = Semaphore(0)
+        
+    def zero(self, printNumber: 'Callable[[int], None]') -> None:
+        for i in range(self.n):
+            self.zeroSmp.acquire()
+            printNumber(0)
+            #here the i is 0-indexed while printed number sequence is 1-indexed
+            if i & 1: self.evenSmp.release()
+            else: self.oddSmp.release()
+        
+    def even(self, printNumber: 'Callable[[int], None]') -> None:
+        for i in range(2, self.n+1, 2):
+            self.evenSmp.acquire()
+            printNumber(i)
+            self.zeroSmp.release()
+        
+    def odd(self, printNumber: 'Callable[[int], None]') -> None:
+        for i in range(1, self.n+1, 2):
+            self.oddSmp.acquire()
+            printNumber(i)
+            self.zeroSmp.release()
+```
+Referrence: https://leetcode.com/problems/print-zero-even-odd/discuss/338141/JavaPython-3-Two-clean-codes-either-language.
+Others: https://leetcode.com/problems/print-zero-even-odd/discuss/337499/5-Python-solutions-using-threading-(Barrier-Condition-Event-Lock-Semaphore)-with-explanation

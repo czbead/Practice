@@ -1,0 +1,79 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Merge Sort**
+| O(T): O(nlgn) | O(S): O(lgn) | Rt: 228ms | 
+```python
+    def merge(self, h1, h2):
+        cur = dummy = ListNode(-1)
+        while h1 and h2:
+            if h1.val < h2.val:
+                cur.next, h1 = h1, h1.next
+            else:
+                cur.next, h2 = h2, h2.next
+            cur = cur.next
+        cur.next = h1 or h2
+        return dummy.next
+    
+    def sortList(self, head: ListNode) -> ListNode:
+        if not head or not head.next: return head
+        pres = slow = fast = head
+        while fast and fast.next:
+            pres = slow
+            slow = slow.next
+            fast = fast.next.next
+        pres.next = None  #cut off in the middle
+        first = self.sortList(head)
+        second = self.sortList(slow)
+        return self.merge(first, second)
+```
+Referrence: https://leetcode.com/problems/sort-list/discuss/46714/Java-merge-sort-solution
+
+
+**II). Bottom-up Merge Sort**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 260ms | 
+```python
+    def sortList(self, head: ListNode) -> ListNode:
+        def merge(l, r, prehead):
+            cur = prehead
+            while l and r:
+                if l.val < r.val:
+                    cur.next, l = l, l.next
+                else:
+                    cur.next, r = r, r.next
+                cur = cur.next
+            cur.next = l or r
+            #move to the end node, pre node of None.
+            while cur.next: cur = cur.next
+            return cur
+        
+        def forward_n_step(st, n):
+            if not st: return None, None
+            cur = st
+            #forward at most n step
+            while n and cur.next: cur, n = cur.next, n-1
+            #cut off the list, and record the next node
+            nxt, cur.next = cur.next, None
+            return st, nxt
+        
+        if not head or not head.next: return head
+        leng, cur = 0, head
+        while cur: leng , cur = leng + 1, cur.next
+        
+        #the tail of last mergesort result is the head of next mergesort
+        dummy = ListNode(-1)
+        dummy.next, step = head, 1
+        #the mergesort round will take care of 2 * step node sequence
+        #becasue the start is head (1), at most forward leng-1 step (1 + leng-1 = leng)
+        while step < leng:
+            nxt, tail = dummy.next, dummy
+            while nxt:
+                #why step-1, because nxt is the first step already
+                left, nxt = forward_n_step(nxt, step-1)
+                right, nxt = forward_n_step(nxt, step-1)
+                tail = merge(left, right, tail)
+                # tail.next = nxt
+            step <<= 1  #each round, the step length doubles
+        
+        return dummy.next 
+```
+Referrence: https://leetcode.com/problems/sort-list/discuss/46712/Bottom-to-up(not-recurring)-with-o(1)-space-complextity-and-o(nlgn)-time-complextity
+

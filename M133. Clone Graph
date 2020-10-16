@@ -1,0 +1,54 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion DFS**
+| O(T): O(n) | O(S): O(h) | Rt: 52ms | 
+```python
+    def cloneGraph(self, node: 'Node') -> 'Node':
+        def clone(node, visited):
+            if not node: return None
+            if node.val in visited: return visited[node.val]
+            n = Node(node.val)
+            visited[node.val] = n
+            for child in node.neighbors:
+                n.neighbors.append(clone(child, visited))
+            # n.neightbors = [clone(i, visited) for i in node.neighbors]
+            return n
+        return clone(node, {})
+```
+Referrence: https://leetcode.com/problems/clone-graph/discuss/42309/Depth-First-Simple-Java-Solution
+
+
+**II). DFS Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 40ms | 
+```python
+    def cloneGraph(self, node: 'Node') -> 'Node':
+        s, visited = [(node, None)], {}
+        while s:
+            anode, pre = s.pop()
+            if not anode: continue
+            if anode.val in visited: 
+                if pre: pre.neighbors.append(visited[anode.val]); continue
+            new = Node(anode.val)
+            visited[anode.val] = new
+            if pre: pre.neighbors.append(new)
+            s.extend([(i, new) for i in anode.neighbors])
+        return visited[node.val] if node else None
+```
+
+
+**III). BFS Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 36ms | 
+```python
+    def cloneGraph(self, node: 'Node') -> 'Node':
+        q, visited = collections.deque([(node, None)]), {}
+        while q:
+            anode, pre = q.popleft()
+            if not anode: continue
+            if anode.val in visited: 
+                if pre: pre.neighbors.append(visited[anode.val]); continue
+            new = Node(anode.val)
+            visited[anode.val] = new
+            if pre: pre.neighbors.append(new)
+            for i in anode.neighbors: q.append((i, new))
+        return visited[node.val] if node else None
+```
+

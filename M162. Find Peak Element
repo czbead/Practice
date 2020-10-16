@@ -1,0 +1,27 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Binary Search**
+| O(T): O(lgn) | O(S): O(1) | Rt: 48ms | 
+```python
+    def findPeakElement(self, nums: List[int]) -> int:
+        l, r = 0, len(nums)-1
+        while l < r:
+            m = l + (r-l) // 2
+            #cannot use m-1, because m always lean to the left side, m-1 can be nums[-1]
+            if nums[m] < nums[m+1]: l = m + 1
+            else: r = m
+        return l
+```
+Alternative: | Rt: 56ms |
+```python
+    def findPeakElement(self, nums: List[int]) -> int:
+        l, r = 0, len(nums)-1
+        while l < r:  #if equal, directly return 
+            m = l + (r-l) // 2
+            if nums[m-1] < nums[m] > nums[m+1]: return m
+            elif nums[m] < nums[m+1]: l = m + 1
+            else: r = m - 1
+        #why is r not l? because l can be traversed, but r may not be traversed because m always lean to left side. the answer is guaranteed, if not returned in the loop, must be the right bound, actually len(nums)-1
+        return r
+```
+Comment: I think most coder missed the point: "You may imagine that nums[-1] = nums[n] = -∞.". If both end are positive inf, the answer will be different. Why we can apply binary search in this problem (an unsorted sequence)? two reasons: 1. both end are negative inf (or positive inf); 2. a answer is guaranteed, and we can return anyone of them. If not satisfy these two conditions, a binary search solution is impossible. 
+

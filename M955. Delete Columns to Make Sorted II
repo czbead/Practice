@@ -1,0 +1,18 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Pair Match**
+| O(T): O() | O(S): O() | Rt: 40ms | 
+```python
+    def minDeletionSize(self, A: List[str]) -> int:
+        delcol, r, c = set(), len(A), len(A[0])
+        i, j = 1, 0
+        while i < r:
+            for j in range(c):
+                if j in delcol or A[i][j] == A[i-1][j]: continue
+                if A[i-1][j] > A[i][j]:   #start over again
+                    delcol.add(j)
+                    i = 0
+                break
+            i += 1
+        return len(delcol)
+```
+Referrence: https://leetcode.com/problems/delete-columns-to-make-sorted-ii/discuss/203171/C%2B%2B-12-ms-brute-force

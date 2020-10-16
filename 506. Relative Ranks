@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort Dict**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 68ms | 
+```python
+    def findRelativeRanks(self, nums: List[int]) -> List[str]:
+        med = ["Gold Medal", "Silver Medal", "Bronze Medal"]
+        dt = {v: i for i, v in enumerate(sorted(nums, reverse=True))}
+        return [med[dt[i]] if dt[i] < 3 else str(dt[i] + 1) for i in nums]
+```
+Alternative: better readability. | Rt: 68ms |
+```python
+    def findRelativeRanks(self, nums: List[int]) -> List[str]:
+        med = ["Gold Medal", "Silver Medal", "Bronze Medal"]
+        dt = {v: i for i, v in enumerate(sorted(nums, reverse=True))}
+        getRank = lambda x: med[x] if x < 3 else str(x + 1)
+        return [getRank(dt[i]) for i in nums]
+```
+
+
+**II). Find Index**
+| O(T): O(n*n) | O(S): O(n) | Rt: 348ms | 
+```python
+    def findRelativeRanks(self, nums: List[int]) -> List[str]:
+        med = ["Gold Medal", "Silver Medal", "Bronze Medal"]
+        rst, n = [], sorted(nums, reverse=True)
+        for i in nums:
+            ind = n.index(i)
+            cur = str(ind + 1)
+            if ind < 3: cur = med[ind]
+            rst.append(cur)
+        return rst
+```
+
+
+**III). Go Get IT**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 64ms | 
+```python
+    def findRelativeRanks(self, nums: List[int]) -> List[str]:
+        med = ["Gold Medal", "Silver Medal", "Bronze Medal"] + [str(i) for i in range(4, len(nums) + 1)]
+        n = sorted(nums, reverse=True)
+        dt = dict(zip(n, med))
+        return [dt[i] for i in nums]
+```

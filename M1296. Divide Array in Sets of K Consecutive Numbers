@@ -1,0 +1,15 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter**
+| O(T): O(n) | O(S): O(n) | Rt: 428ms | 
+```python
+    def isPossibleDivide(self, nums: List[int], k: int) -> bool:
+        if len(nums) % k: return False
+        ct = collections.Counter(nums)
+        for i in sorted(ct):
+            if ct[i] == 0: continue
+            tmp = ct[i]
+            for j in range(i, i+k):
+                ct[j] -= tmp
+                if ct[j] < 0: return False
+        return True
+```

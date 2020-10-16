@@ -1,0 +1,68 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Set**
+| O(T): O(n) | O(S): O(n) | Rt: 80ms | 
+```python
+    def longestConsecutive(self, nums: List[int]) -> int:
+        mx, nset = 0, set(nums)
+        for i in nums:
+            if i in nset:
+                nset.remove(i)
+                l, r = i-1, i+1
+                while l in nset:
+                    nset.remove(l)
+                    l -= 1
+                while r in nset:
+                    nset.remove(r)
+                    r += 1
+                mx = max(mx, r-l-1)
+        return mx
+```
+
+Alternative: | Rt: 72ms |
+```python
+    def longestConsecutive(self, nums: List[int]) -> int:
+        mx, dt, visited = 0, {i: 1 for i in nums}, set()
+        for i in nums:
+            if i not in visited:
+                visited.add(i)
+                j = i+1
+                while j in dt:
+                    dt[i] += dt[j]
+                    if j not in visited:
+                        visited.add(j)
+                        j += 1
+                    else: break
+            mx = max(dt[i], mx)
+        return mx
+```
+
+
+**II). Boundary Mark**
+| O(T): O(n) | O(S): O(n) | Rt: 100ms | 
+```python
+    def longestConsecutive(self, nums: List[int]) -> int:
+        mx, dt = 0, {}
+        for i in nums:
+            if i in dt: continue
+            l, r = dt.get(i-1, 0), dt.get(i+1, 0)
+            dt[i] = 1 + l + r
+            mx = max(mx, dt[i])
+            dt[i-l] = dt[i+r] = dt[i]
+        return mx
+```
+Referrence: https://leetcode.com/problems/longest-consecutive-sequence/discuss/41055/My-really-simple-Java-O(n)-solution-Accepted
+
+
+**III). From Boundary**
+| O(T): O() | O(S): O() | Rt: 980ms | 
+```python
+    def longestConsecutive(self, nums: List[int]) -> int:
+        mx, s = 0, set(nums)
+        for i in nums:
+            if i-1 not in s:
+                j = i+1
+                while j in nums: j += 1
+                mx = max(mx, j-i)
+        return mx     
+```
+Referrence: https://leetcode.com/problems/longest-consecutive-sequence/discuss/41057/Simple-O(n)-with-Explanation-Just-walk-each-streak

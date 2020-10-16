@@ -1,0 +1,40 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Cheat with Zip**
+| O(T): O(mn) | O(S): O(1) | Rt: 68ms | 
+```python
+    def transpose(self, A: List[List[int]]) -> List[List[int]]:
+        return zip(*A)
+```
+Comment: zip will return a tuple rather than a list, therefore the inner lists are actually tuples. I know leetcode is not harsh on this. The result is "Zip of tuples". list(zip(*A)) will gives you "List of tuples"; list(map(list, zip(*a))) will give you "List of Lists".
+
+
+**II). Map Index**
+| O(T): O(mn) | O(S): O(1) | Rt: 80ms | 
+```python
+    def transpose(self, A: List[List[int]]) -> List[List[int]]:
+        row, col = len(A), len(A[0])
+        a = [[None] * row for _ in range(col)]
+        for i in range(col):
+            for j in range(row):
+                a[i][j] = A[j][i]
+        return a
+```
+
+
+**III). Get Column as Row**
+| O(T): O(mn) | O(S): O(1) | Rt: 68ms | 
+```python
+    def transpose(self, A: List[List[int]]) -> List[List[int]]:
+        return [[A[i][j] for i in range(len(A))] for j in range(len(A[0]))]
+```
+Alternative: one-by-one collect.  | Rt: 72ms |
+```python
+    def transpose(self, A: List[List[int]]) -> List[List[int]]:
+        rst = []
+        for j in range(len(A[0])):
+            temp = []
+            for i in range(len(A)): temp.append(A[i][j])
+            rst.append(temp)
+        return rst
+```
+

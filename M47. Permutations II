@@ -1,0 +1,88 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Backtracking**
+| O(T): O() | O(S): O(1) | Rt: 68ms | 
+```python
+    def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+        def backtrack(nums, path, used, rst):
+            if len(path) == len(nums): rst.append(path); return
+            for i in range(len(nums)):
+                if used[i]: continue
+                #strictly restrict: for duplicates, only allow the first one to perform permutation
+                if i > 0 and nums[i] == nums[i-1] and not used[i-1]: continue
+                used[i] ^= 1
+                backtrack(nums, path+[nums[i]], used, rst)
+                used[i] ^= 1
+                    
+        nums.sort()    
+        rst, used = [], [0] * len(nums)
+        backtrack(nums, [], used, rst)
+        return rst
+```
+Referrence: https://leetcode.com/problems/permutations-ii/discuss/18594/Really-easy-Java-solution-much-easier-than-the-solutions-with-very-high-vote
+Alternative: | Rt: 56ms |
+```python
+    def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+        def backtrack(nums, path, used, rst):
+            if len(path) == len(nums): rst.append(path); return
+            for i in range(len(nums)):
+                if used[i]: continue
+                if i == 0 or nums[i] != nums[i-1] or used[i-1]: 
+                    used[i] ^= 1
+                    backtrack(nums, path+[nums[i]], used, rst)
+                    used[i] ^= 1
+                    
+        nums.sort()    
+        rst, used = [], [0] * len(nums)
+        backtrack(nums, [], used, rst)
+        return rst
+```
+Comment: the or condition version definitely will be faster because it forwards immediately once one condition is met while the and condition will always check all conditions.
+
+
+**II). Backtrack -- Swap**
+| O(T): O() | O(S): O() | Rt: ms | 
+```python
+
+```
+Referrence: https://leetcode.com/problems/permutations-ii/discuss/18596/A-simple-C%2B%2B-solution-in-only-20-lines; another one - https://leetcode.com/problems/permutations-ii/discuss/18648/Share-my-Java-code-with-detailed-explanantion
+Comment: this solution is really hard to figure out, I failed to code it out, it is always wrong for me. 
+
+
+**III). Backtract -- Counter**
+| O(T): O() | O(S): O() | Rt: 52ms | 
+```python
+    def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+        def backtrack(nums, path, ct, rst):
+            if len(path) == len(nums): rst.append(path); return
+            for i in ct:  #don't pick duplicates
+                if ct[i]:
+                    ct[i] -= 1
+                    backtrack(nums, path+[i], ct, rst)
+                    ct[i] += 1
+                        
+        rst, ct = [], collections.Counter(nums)
+        backtrack(nums, [], ct, rst)
+        return rst
+```
+Referrence: https://leetcode.com/problems/permutations-ii/discuss/18602/9-line-python-solution-with-1-line-to-handle-duplication-beat-99-of-others-%3A-)
+
+
+**IV). Iteration -- Insert**
+| O(T): O() | O(S): O() | Rt: 48ms | 
+```python
+    def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+        rst, l = [[]], len(nums)
+        for i in nums: 
+            nxt = []
+            for j in rst:
+                for k in range(len(j) + 1):
+                    #always allow the first duplicate perform permutation
+                    nxt.append(j[:k] + [i] + j[k:])
+                    #the duplicate item can only perform permutation once, break out here
+                    if k < len(j) and j[k] == i: break
+            rst = nxt
+        return rst
+```
+Referrence: https://leetcode.com/problems/permutations-ii/discuss/18602/9-line-python-solution-with-1-line-to-handle-duplication-beat-99-of-others-%3A-)
+
+

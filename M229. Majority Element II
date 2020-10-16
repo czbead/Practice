@@ -1,0 +1,33 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Boyer Moore Majority Vote Algorithm**
+| O(T): O(n) | O(S): O(1) | Rt: 120ms | 
+```python
+    def majorityElement(self, nums: List[int]) -> List[int]:
+        rst, a, b, cnta, cntb = [], None, None, 0, 0
+        for i in nums:
+            if a == i: cnta += 1
+            elif b == i: cntb += 1
+            elif cnta == 0: a, cnta = i, 1
+            elif cntb == 0: b, cntb = i, 1
+            else: cnta, cntb = cnta - 1, cntb - 1
+        return [i for i in (a, b) if nums.count(i) > len(nums) // 3]
+```
+Referrence: https://leetcode.com/problems/majority-element-ii/discuss/63520/Boyer-Moore-Majority-Vote-algorithm-and-my-elaboration
+Comment: the candidates that have the competence to "pair out" other candidates could be potential president. This post maybe helpful if you are confused about the algorithm: https://leetcode.com/problems/majority-element-ii/discuss/63537/My-understanding-of-Boyer-Moore-Majority-Vote; 
+
+
+**II). General [N/k] Majority**
+| O(T): O(n) | O(S): O(k) | Rt: 128ms | 
+```python
+    def majorityElement(self, nums: List[int]) -> List[int]:
+        rst, k, ct = [], 3, collections.Counter()
+        for i in nums:
+            ct[i] += 1
+            if len(ct) == k:  #remove one
+                for j in list(ct): 
+                    ct[j] -= 1
+                    if ct[j] == 0: del ct[j]
+        return [j for j in ct if nums.count(j) > len(nums) // k]
+```
+Referrence: https://leetcode.com/problems/majority-element-ii/discuss/63502/6-lines-general-case-O(N)-time-and-O(k)-space
+Comment: always pair out candidates when the volume of the candidate pool goes beyond the threshold (k-1).

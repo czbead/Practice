@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). BFS**
+| O(T): O(n) | O(S): O(n) | Rt: 92ms | 
+```python
+    def deepestLeavesSum(self, root: TreeNode) -> int:
+        rst, stack = 0, [root]
+        while stack: 
+            rst = sum(i.val for i in stack)
+            stack = [i for node in stack for i in (node.left, node.right) if i]
+        return rst
+```
+
+
+**II). DFS**
+| O(T): O(n) | O(S): O(h) | Rt: 104ms | 
+```python
+    def deepestLeavesSum(self, root: TreeNode) -> int:
+        def dfs(node, level):
+            if not node: return -1, -1
+            if not node.left and not node.right: return level, node.val
+            L_level, Lval = dfs(node.left, level+1)
+            R_level, Rval = dfs(node.right, level+1)
+            if L_level == R_level: return L_level, Lval+Rval
+            if L_level > R_level: return L_level, Lval
+            return R_level, Rval
+        
+        return dfs(root, 0)[1]
+```
+
+Alternative: | Rt: 100ms |
+```python
+    def deepestLeavesSum(self, root: TreeNode) -> int:
+        def dfs(node, level, rst):
+            if not node: return
+            if not node.left and not node.right: 
+                if level > rst[0]: rst[0], rst[1] = level, node.val
+                elif level == rst[0]: rst[1] += node.val
+                return
+            dfs(node.left, level+1, rst)
+            dfs(node.right, level+1, rst)
+        
+        rst = [-1, 0]
+        dfs(root, 0, rst)
+        return rst[1]
+```

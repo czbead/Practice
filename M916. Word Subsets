@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Bucket**
+| O(T): O() | O(S): O() | Rt: 984ms | 
+```python
+    def wordSubsets(self, A: List[str], B: List[str]) -> List[str]:
+        lb = len(B)
+        bm = [[0] * 26  for _ in range(lb)]
+        for i in range(lb):
+            for j in B[i]:
+                bm[i][ord(j) - ord('a')] += 1
+        bcode = [max(col) for col in zip(*bm)]
+        
+        rst = []
+        for word in A:
+            arr = [0] * 26
+            for i in word: 
+                arr[ord(i) - ord('a')] += 1
+            if all(arr[i] >= bcode[i] for i in range(26)): rst.append(word)
+        return rst
+```
+
+Alternative: shorter counter version. | Rt: 1120ms |
+```python
+    def wordSubsets(self, A: List[str], B: List[str]) -> List[str]:
+        ct = collections.Counter()
+        for i in B: ct |= collections.Counter(i)
+        return [word for word in A if collections.Counter(word) & ct == ct]
+```
+Referrence: https://leetcode.com/problems/word-subsets/discuss/175854/C%2B%2BJavaPython-Straight-Forward

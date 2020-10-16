@@ -1,0 +1,45 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP**
+| O(t): O(n) | O(m): O(n) | Rt: 36ms | 
+```python
+    def climbStairs(self, n: int) -> int:
+        if n <= 3: return n
+        dp = [None] * n
+        dp[0], dp[1] = 1, 2
+        for i in range(2, n):
+            dp[i] = dp[i-1] + dp[i-2]
+        return dp[-1]
+```
+
+**II). Limit State Machine**
+| O(t): O(n) | O(m): O(1) | Rt: 28ms | 
+```python
+    def climbStairs(self, n: int) -> int:
+        if n <= 3: return n
+        a, b= 1, 2
+        for i in range(n-1):
+            a, b = b, a + b
+        return a
+```
+Alternative: | Rt: 28ms |
+```python
+    def climbStairs(self, n: int) -> int:
+        a = b = 1
+        for _ in range(n):
+            a, b = b, a + b
+        return a
+```
+referrence: https://leetcode.com/problems/climbing-stairs/discuss/25296/3-4-short-lines-in-every-language
+
+**III). Fibnaccis**
+| O(t): O(n) | O(m): O(n) | Rt: 28ms | 
+note: recursion will get TLE, here provides a recursion version with dict
+```python
+    dt = {1: 1, 2: 2}
+    def climbStairs(self, n: int) -> int:
+        if n in self.dt: return self.dt[n]
+        else:
+            f = self.climbStairs(n-1) + self.climbStairs(n-2)
+            self.dt[n] = f
+            return f
+```

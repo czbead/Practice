@@ -1,0 +1,39 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Last Index**
+| O(T): O(n*n) | O(S): O(n) | Rt: 600ms | 
+```python
+    def findShortestSubArray(self, nums: List[int]) -> int:
+        ct = collections.Counter(nums)
+        deg = max(ct.values())
+        ele = [k for k in ct if ct[k] == deg]
+        l, revnum = len(nums), nums[::-1]
+        return min(l - revnum.index(i) - nums.index(i) for i in ele)
+```
+
+
+**II). Dict Index**
+| O(T): O(n) | O(S): O(n) | Rt: 232ms | 
+```python
+    def findShortestSubArray(self, nums: List[int]) -> int:
+        dt = collections.defaultdict(list)
+        for i, v in enumerate(nums): dt[v].append(i)
+        degree = max(len(v) for v in dt.values())
+        return min(dt[k][-1] - dt[k][0] + 1 for k in dt if len(dt[k]) == degree)
+```
+
+
+**III). Two Dict One Pass**
+| O(T): O(n) | O(S): O(n) | Rt: 256ms | 
+```python
+    def findShortestSubArray(self, nums: List[int]) -> int:
+        rst, deg, ct, first = 0, 0, collections.defaultdict(int), {}
+        for i, v in enumerate(nums):
+            first.setdefault(v, i)
+            ct[v] += 1
+            if ct[v] > deg: deg, rst = ct[v], i - first[v] + 1
+            elif ct[v] == deg: rst = min(rst, i - first[v] + 1)
+        return rst
+```
+Referrence: https://leetcode.com/problems/degree-of-an-array/discuss/124317/JavaC%2B%2BPython-One-Pass-Solution
+Comment: the dt.setdefault(v, i) work like a magic, dt[v] will remain the first i no matter how many different i value you run it with later. 
+

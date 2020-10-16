@@ -1,0 +1,49 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two Pointer String Matching with Generator**
+| O(T): O() | O(S): O() | Rt: 52ms | 
+```python
+    def expressiveWords(self, S: str, words: List[str]) -> int:
+        def gen(string):
+            st, l = 0, len(string)
+            for i in range(1, l):
+                if string[i-1] != string[i]:
+                    yield string[i-1], i-st
+                    st = i
+            yield string[st], l-st
+        
+        def isValid(express, word):
+            for i, j in itertools.zip_longest(gen(express), gen(word)):
+                if i is None or j is None: return False
+                if i[0] != j[0]: return False
+                #should be exactly matched
+                if i[1] < 3 and i[1] != j[1]: return False
+                if j[1] > i[1]: return False
+            return True
+        
+        return sum(isValid(S, word) for word in words)
+```
+
+Alternative: | Rt: 32ms |
+```python
+    def expressiveWords(self, S: str, words: List[str]) -> int:
+        def gen(string):
+            st, l = 0, len(string)
+            for i in range(1, l):
+                if string[i-1] != string[i]:
+                    yield string[i-1], i-st
+                    st = i
+            yield string[st], l-st     
+        
+        def isValid(template, word):
+            for i, j in itertools.zip_longest(template, gen(word)):
+                if i is None or j is None: return False
+                if i[0] != j[0]: return False
+                #should be exactly matched
+                if i[1] < 3 and i[1] != j[1]: return False
+                if j[1] > i[1]: return False
+            return True
+        
+        #the template for S only execute once, run once for all words
+        template = [i for i in gen(S)]
+        return sum(isValid(template, word) for word in words)
+```

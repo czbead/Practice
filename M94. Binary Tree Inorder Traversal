@@ -1,0 +1,139 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion - DFS**
+| O(T): O(n) | O(S): O(h) | Rt: 24ms | 
+```python
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        if not root: return []
+        rst = []
+        if root.left: rst += self.inorderTraversal(root.left)
+        rst += [root.val]
+        if root.right: rst += self.inorderTraversal(root.right)
+        return rst
+```
+Alternative: | Rt: 24ms |
+```python
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        if not root: return []
+        return self.inorderTraversal(root.left) + [root.val] + self.inorderTraversal(root.right)
+```
+Triple: | Rt: 28ms |
+```python
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        def dfs(node, rst):
+            if not node: return []
+            if node.left: dfs(node.left, rst)
+            rst.append(node.val)
+            if node.right: dfs(node.right, rst)
+            
+        rst = []
+        dfs(root, rst)
+        return rst
+```
+Forth: | Rt: 28ms |
+```python
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        def dfs(node, rst):
+            if not node: return []
+            if node.left: dfs(node.left, rst)
+            rst.append(node.val)
+            if node.right: dfs(node.right, rst)
+            return rst
+            
+        return dfs(root, [])
+```
+
+
+**II). Iteration**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        rst, s = [], [(root, 0)]
+        while s:
+            node, visited = s.pop()
+            if not node: continue
+            if not visited:
+                s.extend([(node.right, 0), (node, 1), (node.left, 0)])
+            else: rst.append(node.val)
+        return rst
+```
+Alternative: queue. | Rt: 28ms |
+```python
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        rst, q = [], collections.deque([(root, 0)])
+        while q:
+            node, visited = q.popleft()
+            if not node: continue
+            if not visited:
+                q.extendleft([(node.right, 0), (node, 1), (node.left, 0)])
+            else: rst.append(node.val)
+        return rst
+```
+
+
+**III). Pure Stack**
+| O(T): O(n) | O(S): O(n) | Rt: 16ms | 
+```python
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        rst, stack, node = [], [], root
+        while node or stack:
+            while node:
+                stack.append(node)
+                node = node.left
+
+            node = stack.pop()
+            rst.append(node.val)
+            node = node.right
+        return rst
+```
+Alternative: | Rt: 20ms |
+```python
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        def stackNode(node, stack):
+            while node:
+                stack.append(node)
+                node = node.left
+                
+        rst, stack = [], []
+        stackNode(root, stack)
+        while stack:
+            node = stack.pop()
+            rst.append(node.val)
+            stackNode(node.right, stack)
+        return rst
+```
+
+
+**IV). Generator**
+| O(T): O(n) | O(S): O(1) | Rt: 24ms | 
+```python
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        def genNode(node):
+            if node.left: yield from genNode(node.left)
+            yield node.val
+            if node.right: yield from genNode(node.right)
+                
+        if not root: return []
+        rst = []        
+        for v in genNode(root): rst.append(v)
+        return rst
+```
+Alternative: stack style. | Rt: 28ms |
+```python
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        def genVal(node, stack):
+            while node or stack:
+                while node:
+                    stack.append(node)
+                    node = node.left
+
+                node = stack.pop()
+                yield node.val
+                node = node.right
+
+        rst = []
+        for v in genVal(root, []): rst.append(v)
+        return rst
+```
+
+
+Others: Morris Traversal O(1) space -- https://leetcode.com/problems/binary-tree-inorder-traversal/discuss/148939/CPP-Morris-Traversal; https://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion-and-without-stack/; https://en.wikipedia.org/wiki/Threaded_binary_tree;

@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n) | O(S): O(1) | Rt: 468ms | 
+```python
+    def maxTurbulenceSize(self, A: List[int]) -> int:
+        if len(A) == 1: return 1
+        pre = -(A[1] - A[0])
+        rst, ct, l = 1, 1, len(A)
+        for i in range(1, l):
+            cur = A[i] - A[i-1]
+            if pre * cur < 0: ct += 1
+            else:
+                rst = max(rst, ct)
+                ct = 1
+                if cur != 0: ct += 1
+            pre = cur
+        #last round check
+        return max(rst, ct)
+```
+
+Alternative: dp two state. | Rt: 512ms |
+```python
+    def maxTurbulenceSize(self, A: List[int]) -> int:
+        rst = asc = desc = 1
+        for i in range(1, len(A)):
+            if A[i] < A[i-1]:
+                asc, desc = desc + 1, 1
+            elif A[i] > A[i-1]:
+                desc, asc = asc + 1, 1
+            else: desc = asc = 1
+            rst = max(rst, asc, desc)   
+        return rst
+```
+Referrence: https://leetcode.com/problems/longest-turbulent-subarray/discuss/221935/Java-O(N)-time-O(1)-space
+

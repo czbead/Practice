@@ -1,0 +1,27 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Play the Game**
+| O(T): O(n) | O(S): O(n) | Rt: 48ms | 
+```python
+    def smallestRepunitDivByK(self, K: int) -> int:
+        cur, ct, pre = 1 % K, 1, set()
+        while cur:
+            if cur in pre: return -1
+            pre.add(cur)
+            cur = (cur * 10 + 1) % K
+            ct += 1
+        return ct
+```
+
+Alternative: | Rt: 40ms |
+```python
+    def smallestRepunitDivByK(self, K: int) -> int:
+        cur, pre = 0, set()
+        for i in range(1, K+1):
+            cur = (cur * 10 + 1) % K
+            if cur == 0: return i
+            if cur in pre: return -1
+            pre.add(cur)
+        return -1
+```
+Referrence: https://leetcode.com/problems/smallest-integer-divisible-by-k/discuss/260875/Python-O(K)-with-Detailed-Explanations
+

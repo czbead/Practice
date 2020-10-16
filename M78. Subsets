@@ -1,0 +1,52 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Iterative Insert -- BFS**
+| O(T): O(2^n) | O(S): O(n) | Rt: 44ms | 
+```python
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        rst = [[]]
+        for i in nums: rst += [lst + [i] for lst in rst]
+        return rst
+```
+
+
+**II). Recursion**
+| O(T): O(2^n) | O(S): O(h) | Rt: 24ms | 
+```python
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        if not nums: return [[]]
+        pre = self.subsets(nums[:-1])
+        return pre + [i + [nums[-1]] for i in pre]
+```
+
+
+**III). Backtracking**
+| O(T): O(2^n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        def backtrack(nums, path, st, end, rst):
+            rst.append(path)
+            for i in range(st, end): 
+                backtrack(nums, path + [nums[i]], i+1, end, rst)
+                
+        rst = []
+        backtrack(nums, [], 0, len(nums), rst)
+        return rst
+```
+
+
+**IV). Bit Wise -- Bit Map**
+| O(T): O(2^n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        rst, l = [], 1 << len(nums)
+        for i in range(l):
+            tmp = []
+            for j in range(len(nums)):
+                if (i>>j) & 1: tmp.append(nums[j])
+                # if 1<<j & i: tmp.append(nums[j])
+            rst.append(tmp)
+        return rst
+```
+Referrence: https://leetcode.com/problems/subsets/discuss/27288/My-solution-using-bit-manipulation
+Comment: for each element, take it or not take it, can be simulated by a bit map, find the detailed explanation in the referrence post. 
+

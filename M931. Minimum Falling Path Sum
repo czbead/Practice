@@ -1,0 +1,29 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). 2-D DP**
+| O(T): O(n*n) | O(S): O(n*n) | Rt: 124ms | 
+```python
+    def minFallingPathSum(self, A: List[List[int]]) -> int:
+        l = len(A)
+        dp = [[0] * l for _ in range(l)]
+        for i in range(l): dp[0][i] = A[0][i]
+        for i in range(1, l):
+            for j in range(l):
+                pre = dp[i-1][j]
+                if j > 0: pre = min(pre, dp[i-1][j-1])
+                if j < l-1: pre = min(pre, dp[i-1][j+1])
+                dp[i][j] = pre + A[i][j]
+        #only last row concerns
+        return min(dp[-1])
+```
+
+Alternative: update the input. | Rt: 136ms |
+```python
+    def minFallingPathSum(self, A: List[List[int]]) -> int:
+        l = len(A)
+        for i in range(1, l):
+            for j in range(l):
+                A[i][j] += min(A[i-1][k] for k in (j-1, j, j+1) if 0<=k<l)
+        return min(A[-1])
+```
+Referrence: https://leetcode.com/problems/minimum-falling-path-sum/discuss/186666/C%2B%2BJava-4-lines-DP
+

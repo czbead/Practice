@@ -1,0 +1,93 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursive Delete**
+| O(T): O(lgn) | O(S): O(1) | Rt: 76ms | 
+```python
+class Solution:
+    
+    def getMinNode(self, node):
+        while node.left: node = node.left
+        return node
+        
+    def deleteNode(self, root: TreeNode, key: int) -> TreeNode:
+        if not root: return
+        if key == root.val:
+            if not root.left or not root.right: return root.left or root.right
+            #get the mininum node of the right branch (and its parent) or the maximum of left branch 
+            rmin = self.getMinNode(root.right)
+            root.val = rmin.val  #put rmin into root
+            root.right = self.deleteNode(root.right, rmin.val)  #update root's right branch
+        elif key < root.val: root.left = self.deleteNode(root.left, key)
+        else: root.right = self.deleteNode(root.right, key)
+        return root
+```
+Referrence: https://www.geeksforgeeks.org/binary-search-tree-set-2-delete/
+Alternative: instead of get minNode of right branch, can do maxNode or left branch as well. | Rt: ms |
+```python
+class Solution:
+    
+    def getMaxNode(self, node):
+        while node.right: node = node.right
+        return node
+        
+    def deleteNode(self, root: TreeNode, key: int) -> TreeNode:
+        if not root: return
+        if key == root.val:
+            if not root.left or not root.right: return root.left or root.right
+            #get the mininum node of the right branch (and its parent) or the maximum of left branch 
+            lmax = self.getMaxNode(root.left)
+            root.val = lmax.val
+            root.left = self.deleteNode(root.left, lmax.val)
+        elif key < root.val: root.left = self.deleteNode(root.left, key)
+        else: root.right = self.deleteNode(root.right, key)
+        return root
+```
+
+
+**II). Half Iterative Delete**
+| O(T): O(lgn) | O(S): O(1) | Rt: 72ms | 
+```python
+class Solution:
+    
+    def getMinNode(self, par, node):
+        while node.left: par, node = node, node.left
+        return par, node
+        
+    def deleteNode(self, root: TreeNode, key: int) -> TreeNode:
+        if not root: return
+        if key == root.val:
+            if not root.left or not root.right: return root.left or root.right
+            #get the mininum node of the right branch (and its parent) or the maximum of left branch 
+            par, rmin = self.getMinNode(root, root.right)
+            root.val = rmin.val
+            #this is edge case, be very careful
+            if par == root: par.right = rmin.right
+            else: par.left = rmin.right
+        elif key < root.val: root.left = self.deleteNode(root.left, key)
+        else: root.right = self.deleteNode(root.right, key)
+        return root
+```
+Comment: Personally, I think this solution is faster than the solution I, solution will do one more delete in the right branch which is done by assignment in this solution. 
+Alternative: find left branch max node version.  | Rt: ms |
+```python
+class Solution:
+    
+    def getMaxNode(self, par, node):
+        while node.right: par, node = node, node.right
+        return par, node
+        
+    def deleteNode(self, root: TreeNode, key: int) -> TreeNode:
+        if not root: return
+        if key == root.val:
+            if not root.left or not root.right: return root.left or root.right
+            #get the mininum node of the right branch (and its parent) or the maximum of left branch 
+            par, lmax = self.getMaxNode(root, root.left)
+            root.val = lmax.val
+            if par == root: par.left = lmax.left
+            else: par.right = lmax.left
+        elif key < root.val: root.left = self.deleteNode(root.left, key)
+        else: root.right = self.deleteNode(root.right, key)
+        return root
+```
+Comment: the citical point of BST delete node is: It is trivial to delete a node which has only one child. When the node we want to delete has both left and right subtrees, We have to convert this situation to a easier situation: delete a node which has only one branch. How to do the conversion? We need to find a "edge node" which has only one branch. After that, we "swap" the target node with the "edge node". And we have two choices for the "edge node" -- the left-most node of right branch or the right-most node of the left branch. The left-most node of target node's right branch is actually the minimum node that greater than target, the right-most node of target node's left branch is actually the maximum node that samller than target. Actually, they are "adjacent" nodes to our delete target in order -- we want to use the adjacent node to cover our target node -- naturally, the target node is deleted by this covering process and other node are in their right position accordingly.   
+
+

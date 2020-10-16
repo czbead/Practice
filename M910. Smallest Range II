@@ -1,0 +1,15 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort then Split**
+| O(T): O(nlgn) | O(S): O(1) | Rt: 160ms | 
+```python
+    def smallestRangeII(self, A: List[int], K: int) -> int:
+        A.sort()
+        rst = A[-1] - A[0]
+        #split at i, on the left of i (include i): +K; on the right of i (not include i): -K
+        for i in range(len(A)-1):
+            mx = max(A[i]+K, A[-1]-K)
+            mi = min(A[i+1]-K, A[0]+K)
+            rst = min(rst, mx-mi)
+        return rst
+```
+Referrence: https://leetcode.com/problems/smallest-range-ii/discuss/173389/simple-C%2B%2B-solution-with-explanation

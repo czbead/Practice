@@ -1,0 +1,59 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Recursion**
+| O(t): O(n) | O(m): O(1) | Rt: 36ms | 
+```python
+    def minDepth(self, root: TreeNode) -> int:
+        if not root: return 0
+        elif not root.left and not root.right: return 1
+        elif root.left and root.right: return 1 + min(self.minDepth(root.left), self.minDepth(root.right))
+        node = root.left or root.right
+        return 1 + self.minDepth(node)
+```
+
+
+**II). Iteration**
+| O(t): O(n) | O(m): O(1) | Rt: 36ms | 
+```python
+    def minDepth(self, root: TreeNode) -> int:
+        rst, s = 0, [root] if root else []
+        while s:
+            rst += 1
+            #probing leaf node
+            if any(node.left is None and node.right is None for node in s):
+                return rst
+            #next row non-None nodes 
+            s = [n for node in s if node for n in (node.left, node.right) if n]
+        return rst
+```
+
+
+**III). Pair Wise DFS Iteration**
+| O(t): O(n) | O(m): O(n) | Rt: 32ms | 
+```python
+    def minDepth(self, root: TreeNode) -> int:
+        if not root: return 0
+        rst, s = float('inf'), [(root, 0)]
+        while s:
+            node, le = s.pop()
+            le += 1
+            if not node.left and not node.right: rst = min(rst, le)
+            if node.right: s.append((node.right, le))
+            if node.left: s.append((node.left, le))
+        return rst
+```
+
+
+**IV). Pair Wise BFS Iteration**
+| O(t): O(n) | O(m): O(n) | Rt: 36ms | 
+```python
+    def minDepth(self, root: TreeNode) -> int:
+        if not root: return 0
+        rst, q = float('inf'), collections.deque([(root, 0)])
+        while q:
+            node, le = q.popleft()
+            le += 1
+            if not node.left and not node.right: rst = min (rst, le)
+            if node.right: q.append((node.right, le))
+            if node.left: q.append((node.left, le))
+        return rst
+```

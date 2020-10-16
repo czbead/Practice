@@ -1,0 +1,33 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Sort**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 276ms | 
+```python
+    def arrayPairSum(self, nums: List[int]) -> int:
+        nums.sort()
+        return sum(nums[i] for i in range(0, len(nums), 2))
+```
+Comment: the trick is make the offset of each pair minumum (reduce loss) which means better take two numbers next to each other
+Alternative: pythonic version. | Rt: 292ms |
+```python
+    def arrayPairSum(self, nums: List[int]) -> int:
+        return sum(sorted(nums)[::2])
+``` 
+
+
+**II). Limited State**
+| O(T): O(n) | O(S): O(1) | Rt: 368ms | 
+```python
+    def arrayPairSum(self, nums: List[int]) -> int:
+        rst, even, lst = 0, True, [0] * 20001
+        for i in nums: lst[i + 10000] += 1
+        for i in range(len(lst)):
+            while lst[i]:
+                if even: rst += i - 10000
+                even = not even
+                lst[i] -= 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/array-partition-i/discuss/102160/c%2B%2B-code-O(n)beats-100
+Comment: linear time sort using space. trade off solution.
+
+

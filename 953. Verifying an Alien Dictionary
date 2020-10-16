@@ -1,0 +1,59 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Translate then Compare with Sorted**
+| O(T): O(mnlgn) | O(S): O(mn) | Rt: 36ms | 
+```python
+    def isAlienSorted(self, words: List[str], order: str) -> bool:
+        dt = {i: j for i, j in zip(order, 'abcdefghijklmnopqrstuvwxyz')}
+        trans = [''.join(dt[w] for w in word) for word in words]
+        return trans == sorted(trans)
+```
+Comment: the alien language dict with string index wouldn't pass the test case because the index is decimal, say aa is '11' while b is '2', 'b' < 'aa' clearly wrong. 
+Alternative: dict with index number as tuple.  | Rt: 40ms |
+```python
+    def isAlienSorted(self, words: List[str], order: str) -> bool:
+        dt = {v: i for i, v in enumerate(order)}
+        trans = [tuple(dt[w] for w in word) for word in words]
+        return trans == sorted(trans)
+```
+Triple: sort by key.  | Rt: 40ms |
+```python
+    def isAlienSorted(self, words: List[str], order: str) -> bool:
+        dt = {v: i for i, v in enumerate(order)}
+        return words == sorted(words, key=lambda x: tuple(dt[i] for i in x))
+```
+
+
+**II). Pair Wise**
+| O(T): O(mn) | O(S): O(1) | Rt: 24ms | 
+```python
+    def isAlienSorted(self, words: List[str], order: str) -> bool:
+        dt = {v: i for i, v in enumerate(order)}
+        trans = lambda x: tuple(dt[i] for i in x)
+        return all(trans(words[i+1]) >= trans(words[i]) for i in range(len(words) - 1))
+```
+Comment: this solution is fast because it return false immediately without translating the following words
+Alterlative: translate all.  | Rt: 32ms |
+```python
+    def isAlienSorted(self, words: List[str], order: str) -> bool:
+        dt = {v: i for i, v in enumerate(order)}
+        trans = [tuple(dt[i] for i in word) for word in words]
+        return all(i <= j for i, j in zip(trans, trans[1:]))
+```
+Comment: you cannot have a column based solution simply because the words are not in same length and the condition can be very complicated. 
+
+
+**III). Naive**
+| O(T): O(mn) | O(S): O(mn) | Rt: 32ms | 
+```python
+    def isAlienSorted(self, words: List[str], order: str) -> bool:
+        def isgood(x, y, dt):
+            for i, j in zip(x, y):
+                if dt[i] < dt[j]: return True
+                elif dt[i] > dt[j]: return False
+            return len(x) <= len(y)
+        
+        dt = {v: i for i, v in enumerate(order)}
+        for i, j in zip(words, words[1:]):
+            if not isgood(i, j, dt): return False
+        return True
+```

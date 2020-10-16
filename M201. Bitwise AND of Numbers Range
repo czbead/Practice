@@ -1,0 +1,42 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(lgn) | O(S): O(1) | Rt: 88ms | 
+```python
+    def rangeBitwiseAnd(self, m: int, n: int) -> int:
+        mask = 1
+        while mask < m: mask = (mask<<1) | 1
+        if n != mask & n: return 0
+        n = mask & n
+        move = 0
+        while m != n:
+            move += 1
+            m >>= 1
+            n >>= 1
+        return m << move
+```
+Alternative: without mask. | Rt: 100ms |
+```python
+    def rangeBitwiseAnd(self, m: int, n: int) -> int:
+        if m == 0 or m == n: return m
+        move = 0
+        while m != n:
+            move += 1
+            m >>= 1
+            n >>= 1
+        return m << move
+```
+Referrence: https://leetcode.com/problems/bitwise-and-of-numbers-range/discuss/56729/Bit-operation-solution(JAVA)
+Comment: do & operation from the shorter number's hignest bit, once met a False case, all right bits should be 0s. Anything beyond shorter nubmer(m) highest position is truncated. 
+
+
+**II). Brian Kernighan's Algorithm**
+| O(T): O(lgn) | O(S): O(1) | Rt: 76ms | 
+```python
+    def rangeBitwiseAnd(self, m: int, n: int) -> int:
+        while n > m:
+            #next highest 1 bit
+            n &= (n-1)
+        return n
+```
+Referrence: https://leetcode.com/problems/bitwise-and-of-numbers-range/discuss/56729/Bit-operation-solution(JAVA)/58148; https://leetcode.com/problems/bitwise-and-of-numbers-range/discuss/56721/2-line-Solution-with-detailed-explanation;
+

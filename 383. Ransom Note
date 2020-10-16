@@ -1,0 +1,64 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter Intersection**
+| O(T): O(m+n) | O(S): O(m+n) | Rt: 44ms | 
+```python
+    def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        ct = collections.Counter
+        ctm, ctr = ct(magazine), ct(ransomNote)
+        return ctm & ctr == ctr
+```
+Alternative: Counter Minus | Rt: 36ms |
+```python
+    def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        ct = collections.Counter
+        return not (ct(ransomNote) - ct(magazine))
+```
+Referrence: https://leetcode.com/problems/ransom-note/discuss/85837/O(m%2Bn)-one-liner-Python
+Analysis: (a - b) counter minus returns a counter containing elements and their counts which "a has while b doesn't, or a have more than b's"  
+
+
+**II). Count**
+| O(T): O(mn + n*n) | O(S): O(1) | Rt: 168ms | 
+```python
+    def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        return all(magazine.count(i) >= ransomNote.count(i) for i in ransomNote)
+```
+Alternative: | Rt: 32ms |
+```python
+    def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        return all(magazine.count(i) >= ransomNote.count(i) for i in set(ransomNote))
+```
+Triple: | Rt: 32ms |
+```python
+    def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        for i in set(ransomNote):
+            if ransomNote.count(i) > magazine.count(i): return False
+        return True
+```
+
+
+**III). One Counter**
+| O(T): O(m + n) | O(S): O(n) | Rt: 44ms | 
+```python
+    def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        ct = collections.Counter(magazine)
+        for i in ransomNote:
+            if i not in ct or ct[i] <= 0: return False
+            ct[i] -= 1
+        return True
+```
+
+
+**IV). State Machine**
+| O(T): O(m+n) | O(S): O(1) | Rt: 68ms | 
+```python
+    def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        base, s = ord('a'), [0] * 26
+        for i in magazine: s[ord(i) - base] += 1
+        for i in ransomNote:
+            ind = ord(i) - base
+            s[ind] -= 1
+            if s[ind] < 0: return False
+        return True
+```
+

@@ -1,0 +1,116 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DFS**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def jump(self, nums: List[int]) -> int:
+        def dfs(nums, i, end):
+            if i == end: return 0
+            if i > end or nums[i] == 0: return float('inf')
+            if end - i <= nums[i]: return 1
+            return min(1+ dfs(nums, i+d, end) for d in range(1, nums[i]+1))
+            
+        return dfs(nums, 0, len(nums)-1)
+```
+
+Alternative: | Rt: ms | TLE
+```python
+    def jump(self, nums: List[int]) -> int:
+        def dfs(nums, i, end, dt):
+            if i == end: return 0
+            if i > end or nums[i] == 0: return float('inf')
+            if end - i <= nums[i]: return 1
+            if i not in dt: 
+                dt[i] = min(1+ dfs(nums, i+d, end, dt) for d in range(1, nums[i]+1))
+            return dt[i]
+            
+        return dfs(nums, 0, len(nums)-1, {})
+```
+
+
+**II). Recursive Greedy**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def jump(self, nums: List[int]) -> int:
+        l = len(nums)
+        if l == 1: return 0
+        for i in range(l):
+            if i + nums[i] >= l-1:
+                return 1 + self.jump(nums[:i+1])
+```
+
+Alternative: TLE
+```python
+    def jump(self, nums: List[int]) -> int:
+        def back(nums, end):
+            if end == 0: return 0
+            for i in range(end):
+                if i + nums[i] >= end:
+                    return 1 + back(nums, i)
+                
+        return back(nums, len(nums)-1)
+```
+
+Triple: TLE
+```python
+    def jump(self, nums: List[int]) -> int:
+        jump, end = 0, len(nums)-1
+        while end:
+            for i in range(end):
+                if i + nums[i] >= end:
+                    jump, end = jump+1, i
+                    break
+        return jump
+```
+Referrence: https://leetcode.com/problems/jump-game-ii/discuss/18028/O(n)-BFS-solution
+Comment: this solution suffers when the gap is very narrow like 1, the time complexity grows to O(N*N).
+
+
+**III). Traditional BFS**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def jump(self, nums: List[int]) -> int:
+        q, step, l, used = collections.deque([0]), 0, len(nums), set([0])
+        while q:
+            size = len(q)
+            for _ in range(size):
+                i = q.popleft()
+                if i >= l-1: return step
+                for j in range(1, nums[i]+1):
+                    if i+j >= l-1: return step+1
+                    if i+j not in used:
+                        used.add(i+j)
+                        q.append(i+j)
+            step += 1
+```
+
+
+**IV). Greedy: Max Reach within Current Reach Range**
+| O(T): O(n) | O(S): O(1) | Rt: 84ms | 
+```python
+    def jump(self, nums: List[int]) -> int:
+        l, curReach, mxReach, jump = len(nums), 0, 0, 0
+        for i in range(l-1):
+            mxReach = max(mxReach, i+nums[i])
+            if i == curReach:
+                jump += 1
+                curReach = mxReach
+                if curReach >= l-1: return jump
+        return jump
+```
+Referrence: https://leetcode.com/problems/jump-game-ii/discuss/18014/Concise-O(n)-one-loop-JAVA-solution-based-on-Greedy
+
+
+**V). Range BFS**
+| O(T): O(n) | O(S): O(1) | Rt: 108ms | 
+```python
+    def jump(self, nums: List[int]) -> int:
+        l = len(nums)
+        if l == 1: return 0
+        i, j, ct = 0, nums[0], 1
+        while j < l-1:
+            nxt = max(k+nums[k] for k in range(i, j+1))
+            i, j, ct = j+1, nxt, ct+1
+        return ct
+```
+Referrence: https://leetcode.com/problems/jump-game-ii/discuss/170518/8-Lines-in-Python!-Easiest-Solution!
+

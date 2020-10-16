@@ -1,0 +1,77 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP State Array**
+| O(T): O(n) | O(S): O(n) | Rt: 56ms | 
+```python
+    def minCostClimbingStairs(self, cost: List[int]) -> int:
+        dp = cost
+        for i in range(2, len(dp)):
+            dp[i] += min(dp[i-1], dp[i-2])
+        return min(dp[-1], dp[-2])
+```
+
+
+**II). DP Two State**
+| O(T): O(n) | O(S): O(1) | Rt: 56ms | 
+```python
+    def minCostClimbingStairs(self, cost: List[int]) -> int:
+        a, b = 0, cost[0]
+        for i in range(1, len(cost)):
+            a, b = b, cost[i] + min(a, b)
+        return min(a, b)
+```
+Comment: can initialize as a, b = cost[0], cost[1]. Then the range start from 2 correspondingly. 
+
+
+**III). DP Recursion**
+| O(T): O(n) | O(S): O(lgn) | Rt: 68ms | 
+```python
+    def minCostClimbingStairs(self, cost: List[int]) -> int:
+        cache = {}
+        def recur(st, cost):
+            if st in cache: return cache[st]
+            if st >= len(cost): cost = 0
+            else: 
+                cost1 = recur(st + 1, cost)
+                cost2 = recur(st + 2, cost)
+                cost = cost[st] + min(cost1, cost2)
+            cache[st] = cost
+            return cost
+    
+        return min(recur(0, cost), recur(1, cost))
+```
+Comment: this is so far the only question whoes recursion is much harder than its iterative solution.
+Question: when I search the recursive solution, all solutions look like this bottom-up fashion. As we all know, most recursion starts handling problem from the the end, not from the begining which is exactly the reason why recursion is most likely far easier than iteration. However, I cannot work out a top-down start-from-end recursive solution for this problem. If you know how to make it, I am greatly appreciate your sharing.  
+
+Alternative: top-down fashion. | Rt: TLE |
+```python
+    def minCostClimbingStairs(self, cost: List[int]) -> int:
+        def recur(ind, cost):
+            if ind < 2: return cost[ind]
+            a = recur(ind - 1, cost)
+            b = recur(ind - 2, cost)
+            return min(a, b) + cost[ind]
+            
+        l = len(cost)
+        return min(recur(l - 2, cost), recur(l - 1, cost))
+```
+Triple: top-down with cache.  | Rt: 60ms |
+```python
+    def minCostClimbingStairs(self, cost: List[int]) -> int:
+        cache = {}
+        def recur(ind, cost):
+            if ind in cache: return cache[ind]
+            if ind < 2: cost = cost[ind]
+            else: 
+                a = recur(ind - 1, cost)
+                b = recur(ind - 2, cost)
+                cost = min(a, b) + cost[ind]
+            cache[ind] = cost
+            return cost
+            
+        l = len(cost)
+        return min(recur(l - 2, cost), recur(l - 1, cost))
+```
+Question: I am still curious whether the recursion function can be compressed into the solution which means no individual helper function. 
+
+
+

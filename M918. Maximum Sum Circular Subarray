@@ -1,0 +1,42 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Kadane Brute Force**
+| O(T): O() | O(S): O() | Rt: ms | TLE
+```python
+    def maxSubarraySumCircular(self, A: List[int]) -> int:
+        def kadane(arr, st, step):
+            i, curmx, runsum = st, -float('inf'), 0
+            for _ in range(step):
+                runsum += arr[i%l]
+                if curmx < runsum: curmx = runsum
+                if runsum < 0: runsum = 0
+                i = (i + 1) % l
+            return curmx
+        
+        l = len(A)
+        return max(kadane(A, i, l) for i in range(l))
+```
+
+
+**II). Kadane: Maximum SubArray Sum and Minimum SubArray Sum**
+| O(T): O(n) | O(S): O(1) | Rt: 512ms | 
+```python
+    def maxSubarraySumCircular(self, A: List[int]) -> int:
+        #case 1: maximum subarray sum is in the middle, kadane algorithm works;
+        #case 2: maximum subarray sum is on both ends, which means minimum subarray sum must be in the middle (exclude the two end maximum subarray), compute the minimum subarray sum by Kadane algorithm, then apply sum(A) - mininum subarray sum
+        #sum1 is for kadane maximum subarray sum (curmax)
+        #sum2 is for kadane mininum subarray sum (curmin)
+        #summ equals to sum(A)
+        curmax, sum1, summ = -float('inf'), 0, 0
+        curmin, sum2 = float('inf'), 0
+        for i in A:
+            sum1, sum2, summ = sum1+i, sum2+i, summ+i
+            curmax = max(curmax, sum1)
+            if sum1 < 0: sum1 = 0
+            curmin = min(curmin, sum2)
+            if sum2 > 0: sum2 = 0
+        #this means all negative, cannot adopt the sum(A) - minimum subarray sum
+        if curmax < 0: return curmax
+        return max(curmax, summ-curmin)
+```
+Referrence: https://leetcode.com/problems/maximum-sum-circular-subarray/discuss/178422/One-Pass; https://www.geeksforgeeks.org/largest-sum-contiguous-subarray/
+Comment: the "maxinum subarray sum" subarray and the "minimum subarray sum" subarray are complement. 

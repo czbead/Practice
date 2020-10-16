@@ -1,0 +1,54 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Naive**
+| O(T): O(n*n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def generateMatrix(self, n: int) -> List[List[int]]:
+        rst = [[None] * n for _ in range(n)]
+        mini, minj, maxi, maxj, v = 0, 0, n-1, n-1, 1
+        while v <= n*n:
+            for j in range(minj, maxj+1):
+                rst[mini][j], v = v, v + 1
+            mini += 1
+            for i in range(mini, maxi+1):
+                rst[i][maxj], v = v, v + 1
+            maxj -= 1
+            for j in range(maxj, minj - 1, -1):
+                rst[maxi][j], v = v, v + 1
+            maxi -= 1
+            for i in range(maxi, mini - 1, -1):
+                rst[i][minj], v = v, v + 1
+            minj += 1
+        return rst
+```
+
+
+**II). Dynamic Direction**
+| O(T): O(n*n) | O(S): O(1) | Rt: 28ms | 
+```python
+    def generateMatrix(self, n: int) -> List[List[int]]:
+        rst = [[None] * n for _ in range(n)]
+        step = [n, n-1]
+        i, j, di, dj, switch, v = 0, -1, 0, 1, 0, 0
+        while step[switch]:
+            for _ in range(step[switch]):
+                i, j, v = i + di, j + dj, v+1
+                rst[i][j] = v
+            step[switch] -= 1
+            di, dj, switch = dj, -di, switch ^ 1
+        return rst
+```
+Alternative:  | Rt: 40ms |
+```python
+    def generateMatrix(self, n: int) -> List[List[int]]:
+        rst = [[None] * n for _ in range(n)]
+        i, j, di, dj = 0, -1, 0, 1
+        for v in range(1, n*n + 1):
+            i, j = i + di, j + dj
+            rst[i][j] = v
+            if rst[(i+di) % n][(j + dj) % n] is not None: di, dj = dj, -di
+        return rst
+```
+Referrence: https://leetcode.com/problems/spiral-matrix-ii/discuss/22282/4-9-lines-Python-solutions
+
+
+Others: short rotate solution - https://leetcode.com/problems/spiral-matrix-ii/discuss/22443/9-lines-python-solution; https://leetcode.com/problems/spiral-matrix-ii/discuss/22282/4-9-lines-Python-solutions

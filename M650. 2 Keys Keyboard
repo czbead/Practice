@@ -1,0 +1,40 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). DP with Greedy**
+| O(T): O(nlgn) | O(S): O(n) | Rt: 176ms | 
+```python
+    def minSteps(self, n: int) -> int:
+        dp = [0] * (n+1)
+        #when n == 1: dp[n] = 0
+        for i in range(2, n+1):
+            #assume i is a prime number: [copy, paste, paste, ... paste]. until n 'A'
+            #when i is prime, cannot find a intermedia point (factor)
+            dp[i] = i
+            #find a maximum factor(except itself), take it as intermedia point
+            for j in range(i//2, 1, -1):
+                #ex. i == 9, first get dp[3], then copy once, paste twice
+                #when we get dp[3], we already have 3, only need paste (9-3) // 3 = 2
+                #before we paste, we need a copy operation
+                #i // j = 1 copy + (i//j - 1) paste
+                if i % j == 0: dp[i] = dp[j] + i//j; break
+        return dp[-1]
+```
+Referrence: https://leetcode.com/problems/2-keys-keyboard/discuss/105899/Java-DP-Solution
+Comment: two points. First, this DP solution is very different from naive DP tricks, the currrent state (state[i]) doesn't depends on state[i-1] or state[i+1]. Instead, it has something to do with state[j] where j is the greatest factor of i. This is the most difficult point. Second, this solution includes 'Greedy Thinking'. When we have a n, we first want to half it, if possible (i % 2 == 0), this is the minimum steps. If not, keep trying 1/3, 1/4, something like that. 
+
+
+**II). Greedy: Reduction**
+| O(T): O() | O(S): O() | Rt: 24ms | 
+```python
+    def minSteps(self, n: int) -> int:
+        if n == 1: return 0
+        rst = 0
+        for i in range(2, n+1):
+            #account all i factor in n; reduce n in the process
+            while n % i == 0:
+                rst += i
+                n //= i
+        return rst 
+```
+Referrence: https://leetcode.com/problems/2-keys-keyboard/discuss/105897/Loop-best-case-log(n)-no-DP-no-extra-space-no-recursion-with-explanation
+Comment: break up n into the production of prime factors than sum all of the factors up, and it is the result. Reduce n greedily, from smallest prime (2), until n is a prime itself (has the factor of itself), add it up and return the result. 
+

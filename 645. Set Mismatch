@@ -1,0 +1,94 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Limit State**
+| O(T): O(n) | O(S): O(n) | Rt: 216ms | 
+```python
+    def findErrorNums(self, nums: List[int]) -> List[int]:
+        du, mis, mapp = 0, 0, [0] * len(nums)
+        for i in nums: mapp[i-1] += 1
+        for i, v in enumerate(mapp): 
+            if v == 0: mis = i + 1
+            elif v > 1: du = i + 1
+        return [du, mis]
+```
+Alternative: immediate return. | Rt: 212ms |
+```python
+    def findErrorNums(self, nums: List[int]) -> List[int]:
+        du, mis, mapp = 0, 0, [0] * len(nums)
+        for i in nums: mapp[i-1] += 1
+        for i, v in enumerate(mapp): 
+            if v == 0: mis = i + 1
+            elif v > 1: du = i + 1
+            if du and mis: return [du, mis]
+```
+Triple: trific concise version. | Rt: 204ms | O(T): O(n) |
+```python
+    def findErrorNums(self, nums: List[int]) -> List[int]:
+        mapp = [None] * len(nums)
+        for i in nums: mapp[i-1] = not mapp[i-1]
+        return (mapp.index(False) + 1, mapp.index(None) + 1)
+```
+Referrence: idea from https://leetcode.com/problems/set-mismatch/discuss/105552/Python-Straightforward-with-Explanation/108147
+Comment: wonderful use of None, False and True. None will be taken as False in "not" operation, merely 3 states without change the time complexity.
+
+
+**II). Counter**
+| O(T): O(n) | O(S): O(n) | Rt: 220ms | 
+```python
+    def findErrorNums(self, nums: List[int]) -> List[int]:
+        du, mis, ct = 0, 0, collections.Counter(nums)
+        for i in range(1, len(nums) + 1):
+            if ct[i] == 0: mis = i
+            elif ct[i] > 1: du = i
+        return [du, mis]
+```
+
+
+**III). Get Missed One First**
+| O(T): O(n) | O(S): O(n) | Rt: 200ms | 
+```python
+    def findErrorNums(self, nums: List[int]) -> List[int]:
+        l = len(nums)
+        suma = (1 + l) * l // 2
+        mis = (set(range(1, l + 1)) - set(nums)).pop()
+        return [sum(nums) + mis - suma, mis]
+```
+Comment: Once you can get one of the two, you can calculate the other using math in constant time. 
+
+
+**IV). In-Place Marking**
+| O(T): O(n) | O(S): O(1) | Rt: 216ms | 
+```python
+    def findErrorNums(self, nums: List[int]) -> List[int]:
+        du, mis, l = 0, 0, len(nums)
+        for i in nums: nums[i % l - 1] += l
+        for i, v in enumerate(nums): 
+            if v <= l: mis = i + 1
+            elif v > 2 * l: du = i + 1
+            if du and mis: return [du, mis]
+```
+Comment: same as the limited state solution, no extra space required. Learn the trick how to mark index info without using extra space by negating value or add by length. Both tricks won't cost you the original value, you can find them back throught abs or mod. Why we don't utilize negating here? because negating method can only distinguish two states while we need 3 states here (correct, duplicated, missed). The add by length can distinguish 3 state here by value check. 
+Alternative: using negating trick with middle check. | Rt: 236ms |
+```python
+    def findErrorNums(self, nums: List[int]) -> List[int]:
+        du = 0
+        for i in nums:
+            if nums[abs(i) - 1] < 0: du = abs(i)
+            nums[abs(i) - 1] = - abs(nums[abs(i) - 1])
+        for i, v in enumerate(nums): 
+            if v > 0: return [du, i + 1] 
+```
+Referrence: idea from https://leetcode.com/problems/set-mismatch/discuss/105507/Java-O(n)-Time-O(1)-Space
+
+
+**V). Get Duplicated One First**
+| O(T): O(n) | O(S): O(n) | Rt: 196ms | 
+```python
+    def findErrorNums(self, nums: List[int]) -> List[int]:
+        setsum = sum(set(nums))
+        du = sum(nums) - setsum
+        suma = (1 + len(nums)) * len(nums) // 2
+        return [du, suma - setsum]
+```
+
+Others: Swap solution. I really don't suggest this solution because it is not efficient and too heavy to solve a problem like this easy. Also, you easily get lost in the swaping process. Anyway -- https://leetcode.com/problems/set-mismatch/discuss/105515/C%2B%2B-6-lines-solution-with-explanation
+

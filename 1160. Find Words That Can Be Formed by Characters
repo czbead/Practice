@@ -1,0 +1,49 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Counter**
+| O(T): O(mn) | O(S): O(mn) | Rt: 312ms | 
+```python
+    def countCharacters(self, words: List[str], chars: str) -> int:
+        ct = collections.Counter
+        base = ct(chars)
+        return sum(len(word) for word in words if not (ct(word) - base))
+```
+Alternative: | Rt: 172ms |
+```python
+    def countCharacters(self, words: List[str], chars: str) -> int:
+        ct = collections.Counter
+        base = ct(chars)
+        isgood = lambda w, c: all(w[i] <= c[i] for i in w) 
+        return sum(len(word) for word in words if isgood(ct(word), base))
+```
+
+
+**II). Collect and Check in the Run**
+| O(T): O(mn) | O(S): O(1) | Rt: 96ms | 
+```python
+    def countCharacters(self, words: List[str], chars: str) -> int:
+        rst, m = 0, [0] * 26
+        for i in chars: m[ord(i) - ord('a')] += 1
+        for word in words:
+            isgood, mm = True, [0] * 26
+            for i in word:
+                ind = ord(i) - ord('a')
+                mm[ind] += 1
+                if mm[ind] > m[ind]: isgood = False; break
+            if isgood: rst += len(word)
+        return rst
+```
+Comment: once you are sure it is a false case, can break immediately. 
+Alternative: reverse version.  | Rt: 100ms |
+```python
+    def countCharacters(self, words: List[str], chars: str) -> int:
+        rst, m = 0, [0] * 26
+        for i in chars: m[ord(i) - ord('a')] += 1
+        for word in words:
+            isgood, mm = True, m[:]
+            for i in word:
+                ind = ord(i) - ord('a')
+                mm[ind] -= 1
+                if mm[ind] < 0: isgood = False; break
+            if isgood: rst += len(word)
+        return rst
+```

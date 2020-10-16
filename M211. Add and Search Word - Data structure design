@@ -1,0 +1,99 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Trie with Recursive Search**
+| O(T): O() | O(S): O() | Rt: 380ms | 
+```python
+class Node:
+    def __init__(self):
+        self.sub = collections.defaultdict(Node)
+        self.isend = False        
+
+class WordDictionary:
+
+    def __init__(self):
+        self.root = Node()
+
+    def addWord(self, word: str) -> None:
+        cur = self.root
+        for i in word: cur = cur.sub[i]
+        cur.isend = True
+     
+    def searchfrom(self, word: str, node: Node) -> bool:
+        for i in range(len(word)):
+            if word[i] == '.':
+                for n in node.sub.values():
+                    if self.searchfrom(word[i+1:], n): return True
+                return False
+            else:
+                if word[i] not in node.sub: return False
+                node = node.sub[word[i]]
+        return node and node.isend
+    
+    def search(self, word: str) -> bool: 
+        return self.searchfrom(word, self.root)
+```
+Alternative: | Rt: 448ms |
+```python
+class Node:
+    def __init__(self):
+        self.sub = collections.defaultdict(Node)
+        self.isend = False        
+
+class WordDictionary:
+
+    def __init__(self):
+        self.root = Node()
+
+    def addWord(self, word: str) -> None:
+        cur = self.root
+        for i in word: cur = cur.sub[i]
+        cur.isend = True
+     
+    def searchnode(self, word: str, st, node) -> bool:
+        for i in range(st, len(word)):
+            if word[i] == '.':
+                for n in node.sub.values():
+                    if self.searchnode(word, i+1, n): return True
+                return False
+            else:
+                node = node.sub.get(word[i], None)
+                if node is None: return False
+        return node and node.isend
+    
+    def search(self, word: str) -> bool: 
+        return self.searchnode(word, 0, self.root)
+```
+Referrence: https://leetcode.com/problems/add-and-search-word-data-structure-design/discuss/59552/C%2B%2B-Trie
+Comment: this solution is "half recursive and half iterative", I think it will be more efficient than a "full recursive" solution like https://leetcode.com/problems/add-and-search-word-data-structure-design/discuss/59725/Python-easy-to-follow-solution-using-Trie. But a full recursive solution is easier to work out in an interview. 
+
+
+**II). Trie with Iterative Search**
+| O(T): O() | O(S): O() | Rt: 444ms | 
+```python
+class Node:
+    def __init__(self):
+        self.sub = collections.defaultdict(Node)
+        self.isend = False        
+
+class WordDictionary:
+
+    def __init__(self):
+        self.root = Node()
+
+    def addWord(self, word: str) -> None:
+        cur = self.root
+        for i in word: cur = cur.sub[i]
+        cur.isend = True
+    
+    def search(self, word: str) -> bool: 
+        stack, l = [(self.root, 0)], len(word)
+        while stack:
+            node, index = stack.pop()
+            if not node: continue
+            if index == l:
+                if node.isend: return True
+            elif word[index] == '.':
+                for n in node.sub.values():
+                    stack.append((n, index+1))
+            else: stack.append((node.sub.get(word[index]), index+1))
+        return False
+```

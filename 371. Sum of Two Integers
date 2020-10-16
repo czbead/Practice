@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Iterative**
+| O(T): O(?) | O(S): O(1) | Rt: 28ms | 
+```python
+    def getSum(self, a: int, b: int) -> int:
+        mask = 0xffffffff
+        while b != 0:
+            carry = a & b 
+            #take care the sign bit 
+            a = (a ^ b) & mask
+            b = (carry << 1) & mask
+        return a if a <= 0x7fffffff else ~(a ^ mask)
+```
+Alternative: | Rt: 28ms |
+```python
+    def getSum(self, a: int, b: int) -> int:
+        mask = 0xffffffff
+        while b != 0:
+            a, b = (a ^ b) & mask, ((a & b) << 1) & mask
+        return a if a <= 0x7fffffff else ~(a ^ mask)
+```
+Comment: don't struggle with the python implementation. I cannot fully understand this solution especially when there are negative involvers. 
+
+
+**II). Recursion**
+| O(T): O(?) | O(S): O(1) | Rt: 28ms | 
+```python
+    def getSum(self, a: int, b: int) -> int:
+        mask = 0xffffffff
+        if b == 0 and a <= 0x7fffffff: return a
+        elif b == 0: return ~(a ^ mask)
+        return self.getSum((a ^ b) & mask, ((a & b) << 1) & mask)
+```
+
+

@@ -1,0 +1,26 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Math**
+| O(T): O(n) | O(S): O(n) | Rt: 24ms | 
+```python
+    def optimalDivision(self, nums: List[int]) -> str:
+        first, rest = nums[0], nums[1:]
+        rst = str(first)
+        if len(rest) == 0: return rst
+        rst += '/'
+        if len(rest) == 1: return rst + str(rest[0])
+        return rst + '(' + '/'.join(map(str, rest)) + ')'
+```
+Referrence: https://leetcode.com/problems/optimal-division/discuss/101687/Easy-to-understand-simple-O(n)-solution-with-explanation
+
+Alternative: concise version. | Rt: 28ms |
+```python
+    def optimalDivision(self, nums: List[int]) -> str:
+        strs = [str(i) for i in nums]
+        if len(strs) < 3: return '/'.join(strs)
+        return f"{strs[0]}/({'/'.join(strs[1:])})"
+```
+Referrence: https://leetcode.com/problems/optimal-division/discuss/101701/Python-Straightforward-with-Explanation-(Insightful-Approach)
+
+
+Others: a nice backtracking solution - https://leetcode.com/problems/optimal-division/discuss/101697/Java-Solution-Backtracking; 
+

@@ -1,0 +1,43 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Two State DP**
+| O(T): O(n*n) | O(S): O(n) | Rt: 840ms | 
+```python
+    def findNumberOfLIS(self, nums: List[int]) -> int:
+        if not nums: return 0
+        l = len(nums)
+        mxlen, ct = [1] * l, [1] * l
+        mx, rst = 1, 0
+        for i in range(l):
+            for j in range(i):
+                if nums[i] > nums[j]:
+                    if mxlen[j] + 1 > mxlen[i]:
+                        mxlen[i] = mxlen[j] + 1
+                        ct[i] = ct[j]
+                    elif mxlen[j] + 1 == mxlen[i]:
+                        ct[i] += ct[j]
+            if mxlen[i] > mx: mx, rst = mxlen[i], ct[i]
+            elif mxlen[i] == mx: rst += ct[i]
+        return rst
+```
+
+Alternative: | Rt: 920ms |
+```python
+    def findNumberOfLIS(self, nums: List[int]) -> int:
+        if not nums: return 0
+        l = len(nums)
+        dp = [[1, 1] for _ in range(l)]
+        mx, rst = 1, 0
+        for i in range(l):
+            for j in range(i):
+                if nums[i] > nums[j]:
+                    if dp[j][0] + 1 > dp[i][0]:
+                        dp[i][0] = dp[j][0] + 1
+                        dp[i][1] = dp[j][1]
+                    elif dp[j][0] + 1 == dp[i][0]:
+                        dp[i][1] += dp[j][1]
+            if dp[i][0] > mx: mx, rst = dp[i][0], dp[i][1]
+            elif dp[i][0] == mx: rst += dp[i][1]
+        return rst
+```
+Referrence: https://leetcode.com/problems/number-of-longest-increasing-subsequence/discuss/107293/JavaC%2B%2B-Simple-dp-solution-with-explanation
+

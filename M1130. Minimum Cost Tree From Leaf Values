@@ -1,0 +1,35 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Greedy**
+| O(T): O(n*n) | O(S): O(1) | Rt: 32ms | 
+```python
+    def mctFromLeafValues(self, arr: List[int]) -> int:
+        rst = 0
+        while len(arr) > 1:
+            i = arr.index(min(arr))
+            if i == 0:
+                rst += arr[i] * arr[1]
+            elif i == len(arr)-1:
+                rst += arr[i] * arr[i-1]
+            else:
+                rst += arr[i] * min(arr[i-1], arr[i+1])
+            arr.pop(i)
+        return rst
+```
+Referrence: https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/discuss/340014/Greedy-python-solution
+
+
+**II). Stack Triple**
+| O(T): O(n) | O(S): O(n) | Rt: 32ms | 
+```python
+    def mctFromLeafValues(self, arr: List[int]) -> int:
+        rst, stack = 0, [float('inf')]
+        for i in arr:
+            while stack[-1] < i:
+                mi = stack.pop()
+                rst += mi * min(stack[-1], i)
+            stack.append(i)
+        while len(stack) > 2:
+            rst += stack.pop() * stack[-1]
+        return rst
+```
+Referrence: https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/discuss/339959/One-Pass-O(N)-Time-and-Space

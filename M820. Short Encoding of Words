@@ -1,0 +1,55 @@
+**Get it Done, Make it Better, Share the Best -- Talse**
+**I). Set**
+| O(T): O(nm) | O(S): O(n) | Rt: 116ms | 
+```python
+    def minimumLengthEncoding(self, words: List[str]) -> int:
+        s = set(words)
+        for i in words:
+            for j in range(1, len(i)):
+                if i[j:] in s: s.remove(i[j:])
+        return sum(len(i) + 1 for i in s) 
+```
+Referrence: https://leetcode.com/problems/short-encoding-of-words/discuss/125811/C%2B%2BJavaPython-Easy-Understood-Solution-with-Explanation
+
+Alternative: the word may contain duplicates. | Rt: 116ms |
+```python
+    def minimumLengthEncoding(self, words: List[str]) -> int:
+        s = set(words)
+        for i in list(s):
+            for j in range(1, len(i)):
+                if i[j:] in s: s.remove(i[j:])
+        return sum(len(i) + 1 for i in s) 
+```
+
+
+**II). Trie with Reversing Word**
+| O(T): O() | O(S): O() | Rt: 136ms | 
+```python
+    def minimumLengthEncoding(self, words: List[str]) -> int:
+        rst, trie = 0, {}
+        for word in sorted(words, key=len, reverse=True):
+            insert, cur = False, trie
+            for i in reversed(word):
+                if i not in cur:
+                    insert = True
+                    cur[i] = {}
+                    cur = cur[i]
+                else: cur = cur[i]
+            if insert: rst += len(word) + 1
+        return rst
+```
+Referrence: https://leetcode.com/problems/short-encoding-of-words/discuss/125869/Simple-Concept-using-Trie
+
+Alternative: without sort. | Rt: 148ms |
+```python
+    def minimumLengthEncoding(self, words: List[str]) -> int:
+        stack, trie = [], {}
+        for word in set(words):
+            cur = trie
+            for i in reversed(word):
+                if i in cur: cur = cur[i]
+                else: cur[i] = {}; cur = cur[i]
+            stack.append((cur, len(word)))
+        return sum(l + 1 for node, l in stack if len(node) == 0)
+```
+Referrence: https://leetcode.com/problems/short-encoding-of-words/discuss/125784/Trie-Solution
